@@ -9,7 +9,7 @@ Need to do it only once and if you haven't used Git before
 
 ### Clone and Open Application:
 
-1. Create a new folder in your machine
+1. Create a new folder in your machine. Open command line and do below steps
 ```
 cd 'new directory path'
 git clone https://github.com/pritamkarmakar/shibpurconnect
