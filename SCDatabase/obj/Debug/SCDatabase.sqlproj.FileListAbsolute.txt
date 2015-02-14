@@ -1,0 +1,5 @@
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDatabase\bin\Debug\SCDatabase.dacpac
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDatabase\obj\Debug\SCDatabase.dll
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDatabase\obj\Debug\SCDatabase.pdb
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDatabase\bin\Debug\SCDatabase.dll
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDatabase\bin\Debug\SCDatabase.pdb

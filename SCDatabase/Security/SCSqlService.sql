@@ -1,0 +1,11 @@
+﻿CREATE USER [SCSqlService]
+	FOR LOGIN [SCSqlService]
+	WITH DEFAULT_SCHEMA = dbo
+
+GO
+
+GRANT CONNECT TO [SCSqlService];
+GO
+
+GRANT VIEW DEFINITION to [SCSqlService];
+GO
