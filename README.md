@@ -1,4 +1,4 @@
-# 2kChakka
+# ShibpurConnect
 IIEST student's welfare web-application
 
 ### Git Configuration:
