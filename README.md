@@ -12,6 +12,6 @@ Need to do it only once and if you haven't used Git before
 1. Create a new folder in your machine. Open command line and do below steps
 ```
 cd 'new directory path'
-git clone https://github.com/pritamkarmakar/shibpurconnect
+git clone https://github.com/pritamkarmakar/shibpurconnect.git
 ```
 2. open 'ShibpurConnect.sln' file using Visual Studio
