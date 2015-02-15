@@ -50,19 +50,19 @@ namespace ShibpurConnectWebApp
             //    clientId: "",
             //    clientSecret: "");
 
-            //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
+            app.UseTwitterAuthentication(
+               consumerKey: "edEikbYXMqP5Vljayvb9CMzI5",
+               consumerSecret: "Jw30S2EqfacEOb7hP9Et7eeOPSclmmpaBbWIh19I9zbTjltIPo");
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            app.UseFacebookAuthentication(
+               appId: "1561377064127021",
+               appSecret: "3c8a3bc7ee6151ae4b341f502e8a13f3");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "108349931194-2h3peq298hndtckune1h1tqi96dbh8bg.apps.googleusercontent.com",
+                ClientSecret = "xKb09OnMBqPZMVnHKCOTPfcJ"
+            });
         }
     }
 }
