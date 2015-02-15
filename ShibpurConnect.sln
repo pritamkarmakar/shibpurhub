@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibpurConnect", "ShibpurConnect\ShibpurConnect.csproj", "{996BD629-F36D-4243-98C8-7EE770DEA204}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SCDatabase", "SCDatabase\SCDatabase.sqlproj", "{2A63F0DF-4729-4F0A-B30B-FEC439C65635}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCDataAccess", "SCDataAccess\SCDataAccess.csproj", "{F9325967-C85E-4B1D-B737-16EA8CEE1005}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShibpurConnectWebApp", "ShibpurConnectWebApp\ShibpurConnectWebApp.csproj", "{C7C66A1F-16E9-4C37-B2C8-9A8780E6B0A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{F9325967-C85E-4B1D-B737-16EA8CEE1005}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9325967-C85E-4B1D-B737-16EA8CEE1005}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9325967-C85E-4B1D-B737-16EA8CEE1005}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7C66A1F-16E9-4C37-B2C8-9A8780E6B0A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C66A1F-16E9-4C37-B2C8-9A8780E6B0A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7C66A1F-16E9-4C37-B2C8-9A8780E6B0A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7C66A1F-16E9-4C37-B2C8-9A8780E6B0A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
