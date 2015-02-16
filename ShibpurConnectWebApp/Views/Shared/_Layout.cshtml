@@ -29,6 +29,10 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        @RenderSection("emailconfirmalert", required: false)
+    </div>
+    @RenderSection("jambo", required: false)
     <div class="container body-content">
         @RenderBody()
         <hr />

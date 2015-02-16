@@ -1,12 +1,26 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "ShibpurConnect";
 }
 
-<div class="jumbotron">
-    <h1>Shibpur Connect</h1>
-    <p class="lead">IIEST student's welfare web-application</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+@section emailconfirmalert {
+    @if (TempData["ConfirmEmail"] != null && !string.IsNullOrEmpty(TempData["ConfirmEmail"].ToString()))
+    {
+        <div class="alert alert-success" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Thanks for signing up!</strong> We have sent a confirmation email to you email. Please confirm your email.
+        </div>
+    }
+}
+
+@section jambo {
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Shibpur Connect</h1>
+            <p class="lead">IIEST student's welfare web-application</p>
+            <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+        </div>
+    </div>
+}
 
 <div class="row">
     <div class="col-md-4">

@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 
 namespace ShibpurConnectWebApp.Controllers
@@ -16,6 +17,7 @@ namespace ShibpurConnectWebApp.Controllers
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
+        private HelperClass _helper = new HelperClass();
 
         public AccountController()
         {
@@ -66,9 +68,48 @@ namespace ShibpurConnectWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+
+        //    // This doesn't count login failures towards account lockout
+        //    // To enable password failures to trigger account lockout, change to shouldLockout: true
+        //    var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+        //    switch (result)
+        //    {
+        //        case SignInStatus.Success:
+        //            return RedirectToLocal(returnUrl);
+        //        case SignInStatus.LockedOut:
+        //            return View("Lockout");
+        //        case SignInStatus.RequiresVerification:
+        //            return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+        //        case SignInStatus.Failure:
+        //        default:
+        //            ModelState.AddModelError("", "Invalid login attempt.");
+        //            return View(model);
+        //    }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            // Require the user to have a confirmed email before they can log on.
+            var user = await UserManager.FindByNameAsync(model.Email);
+            if (user != null)
+            {
+                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    TempData["ConfirmEmail"] = "Please check your email and confirm your account, you must be confirmed "
+                        + "before you can log in. To resend the email click";
+                    TempData["userEmail"] = user.Email;
+
+                    //return RedirectToAction("Index", "Home");
+                    return View("Info");
+                }
             }
 
             // This doesn't count login failures towards account lockout
@@ -87,6 +128,7 @@ namespace ShibpurConnectWebApp.Controllers
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
+
         }
 
         //
@@ -158,13 +200,16 @@ namespace ShibpurConnectWebApp.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
+
+                    TempData["ConfirmEmail"] = "Well done. Please check your email and confirm your account, you must be confirmed "
+                        + "before you can log in.";
 
                     return RedirectToAction("Index", "Home");
                 }
