@@ -187,6 +187,12 @@ namespace ShibpurConnectWebApp.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        public ActionResult Profile()
+        {
+            return View(new ProfileViewModel());
+        }
+
         //
         // POST: /Account/Register
         [HttpPost]

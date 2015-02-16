@@ -8,3 +8,15 @@ C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAcce
 C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.xml
 C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.SqlServer.xml
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\SCDataAccess.dll.config
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\SCDataAccess.dll
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\SCDataAccess.pdb
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\Elmah.dll
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\Elmah.Mvc.dll
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.dll
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.SqlServer.dll
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.xml
+C:\AllRepos\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.SqlServer.xml
+C:\AllRepos\ShibpurConnect\SCDataAccess\obj\Debug\SCDataAccess.csprojResolveAssemblyReference.cache
+C:\AllRepos\ShibpurConnect\SCDataAccess\obj\Debug\SCDataAccess.dll
+C:\AllRepos\ShibpurConnect\SCDataAccess\obj\Debug\SCDataAccess.pdb
