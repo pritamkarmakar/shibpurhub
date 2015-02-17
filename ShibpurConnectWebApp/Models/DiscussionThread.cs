@@ -12,11 +12,11 @@ namespace ShibpurConnectWebApp.Models
 
         public string DetailText { get; set; }
 
-        public List<string> Categories { get; set; }
+        public IList<string> Categories { get; set; }
 
         public DateTime DatePosted { get; set; }
 
-        public List<Answer> Answers { get; set; }
+        public IList<Answer> Answers { get; set; }
              
         public int NumberOfAnswers {
             get
