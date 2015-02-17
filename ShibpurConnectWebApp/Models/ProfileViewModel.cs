@@ -5,7 +5,12 @@ namespace ShibpurConnectWebApp.Models
 {
     public class ProfileViewModel
     {
-        public int UserID { get; set; }
+        public string UserID { get; set; }
+
+        public ProfileViewModel(string userID)
+        {
+            this.UserID = userID;
+        }
 
         [Required]
         [Display(Name="First Name")]
@@ -15,7 +20,7 @@ namespace ShibpurConnectWebApp.Models
         public string LastName { get; set; }
 
         [Required]
-        [Display(Name = "DepartMent")]
+        [Display(Name = "Department")]
         public string DepartMent { get; set; }
 
         public IEnumerable<string> Departments = new List<string> 
