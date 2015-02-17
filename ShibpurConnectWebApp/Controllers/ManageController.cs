@@ -261,6 +261,14 @@ namespace ShibpurConnectWebApp.Controllers
                 if (result.Succeeded)
                 {
                     var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                    
+                    // send confirmation email if user email is not yet confirmed. This situation may come when user signed-up using social network and trying to set the password from settings
+                    if (!user.EmailConfirmed)
+                    {
+                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        await UserManager.SendEmailAsync(user.Id, "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
+                    }
                     if (user != null)
                     {
                         await SignInAsync(user, isPersistent: false);
