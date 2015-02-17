@@ -428,7 +428,7 @@ namespace ShibpurConnectWebApp.Controllers
                         if (result2.Succeeded)
                         {
                             await SignInManager.SignInAsync(userInfo, isPersistent: false, rememberBrowser: false);
-                            return RedirectToLocal(returnUrl);
+                            return RedirectToAction("Index", "Feed");
                         }
                     }
                     else
@@ -443,7 +443,7 @@ namespace ShibpurConnectWebApp.Controllers
                             if (result3.Succeeded)
                             {
                                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                                return RedirectToLocal(returnUrl);
+                                return RedirectToAction("Index", "Feed");
                             }
                         }
                         AddErrors(result3);
