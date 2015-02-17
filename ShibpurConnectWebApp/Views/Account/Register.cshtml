@@ -4,6 +4,16 @@
     ViewBag.Title = "Sign up to ShibpurConnect";
 }
 
+@section emailconfirmalert {
+    @if (TempData["error"] != null && !string.IsNullOrEmpty(TempData["error"].ToString()))
+    {
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Error!</strong> @TempData["error"].
+        </div>
+    }
+}
+
 <h2>@ViewBag.Title</h2>
 
 <div class="row">

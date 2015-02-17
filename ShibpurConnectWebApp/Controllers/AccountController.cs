@@ -95,21 +95,16 @@ namespace ShibpurConnectWebApp.Controllers
                 return View(model);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
             // Require the user to have a confirmed email before they can log on.
             var user = await UserManager.FindByNameAsync(model.Email);
-            if (user != null)
+            if (user != null && ! user.EmailConfirmed && !string.IsNullOrEmpty(user.PasswordHash))
             {
-                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
-                {
-                    TempData["ConfirmEmail"] = "Please check your email and confirm your account, you must be confirmed "
-                        + "before you can log in. To resend the email click";
-                    TempData["userEmail"] = user.Email;
+                TempData["ConfirmEmail"] = "Please check your email and confirm your account, you must be confirmed "
+                                           + "before you can log in.";
+                TempData["userEmail"] = user.Email;
 
-                    //return RedirectToAction("Index", "Home");
-                    return View("Info");
-                }
+                //return RedirectToAction("Index", "Home");
+                return View("Info");
             }
 
             // This doesn't count login failures towards account lockout
@@ -202,6 +197,29 @@ namespace ShibpurConnectWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // check if user already exist
+                var userInfo = await UserManager.FindByNameAsync(model.Email);
+                
+                // if user already exist but there is no local password then add that. This will happen when user initially signed up using social network and then signing up using local account (same email)
+                if (userInfo != null && string.IsNullOrEmpty(userInfo.PasswordHash))
+                {
+                    var result2 = await UserManager.AddPasswordAsync(userInfo.Id, model.Password);
+                    if (result2.Succeeded)
+                    {
+                        // Send an email with this link
+                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(userInfo.Id);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userInfo.Id, code = code }, protocol: Request.Url.Scheme);
+                        await UserManager.SendEmailAsync(userInfo.Id, "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
+
+                        TempData["ConfirmEmail"] = "Well done. Please check your email and confirm your account, you must be confirmed "
+                            + "before you can log in.";
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                    AddErrors(result2);
+                }
+
+                // if we are here that means user hasn't been created before. So add a new account
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -394,11 +412,45 @@ namespace ShibpurConnectWebApp.Controllers
                     return RedirectToAction("SendCode", new {ReturnUrl = returnUrl, RememberMe = false});
                 case SignInStatus.Failure:
                 default:
-                    // If the user does not have an account, then prompt the user to create an account
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation",
-                        new ExternalLoginConfirmationViewModel {Email = loginInfo.Email});
+                    // if email is null then return back to signup page
+                    if (loginInfo.Email == null)
+                    {
+                        TempData["error"] = "No email associated with this social account";
+                        return View("Register");
+                    }
+
+                    // check if user already exist or not. If exist then add the new login and proceed for the signin option
+                    var userInfo = await UserManager.FindByNameAsync(loginInfo.Email);
+                    if (userInfo != null)
+                    {
+                        // add the new login (this may come, when user first time signed up using google and then later trying to signup with facebook (same email in both account)
+                        var result2 = await UserManager.AddLoginAsync(userInfo.Id, loginInfo.Login);
+                        if (result2.Succeeded)
+                        {
+                            await SignInManager.SignInAsync(userInfo, isPersistent: false, rememberBrowser: false);
+                            return RedirectToLocal(returnUrl);
+                        }
+                    }
+                    else
+                    {
+                        // create new account
+                        var user = new ApplicationUser {UserName = loginInfo.Email, Email = loginInfo.Email};
+                        //await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
+                        var result3 = await UserManager.CreateAsync(user);
+                        if (result3.Succeeded)
+                        {
+                            result3 = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
+                            if (result3.Succeeded)
+                            {
+                                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                                return RedirectToLocal(returnUrl);
+                            }
+                        }
+                        AddErrors(result3);
+                    }
+
+                    // If we are here then something is wrong, send back to the login screen
+                    return View("Register");
             }
         }
 
@@ -426,6 +478,7 @@ namespace ShibpurConnectWebApp.Controllers
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    // add user to database
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {

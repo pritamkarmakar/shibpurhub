@@ -3,7 +3,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
+using Microsoft.Owin.Security.Twitter;
 using Owin;
 using ShibpurConnectWebApp.Models;
 
@@ -50,13 +52,18 @@ namespace ShibpurConnectWebApp
             //    clientId: "",
             //    clientSecret: "");
 
-            app.UseTwitterAuthentication(
-               consumerKey: "edEikbYXMqP5Vljayvb9CMzI5",
-               consumerSecret: "Jw30S2EqfacEOb7hP9Et7eeOPSclmmpaBbWIh19I9zbTjltIPo");
+            //app.UseTwitterAuthentication(
+            //   consumerKey: "edEikbYXMqP5Vljayvb9CMzI5",
+            //   consumerSecret: "Jw30S2EqfacEOb7hP9Et7eeOPSclmmpaBbWIh19I9zbTjltIPo");
 
-            app.UseFacebookAuthentication(
-               appId: "1561377064127021",
-               appSecret: "3c8a3bc7ee6151ae4b341f502e8a13f3");
+            // added email in the scope
+            FacebookAuthenticationOptions fbao = new FacebookAuthenticationOptions();
+            fbao.AppId = "1561377064127021";
+            fbao.AppSecret = "3c8a3bc7ee6151ae4b341f502e8a13f3";
+            fbao.Scope.Add("email");
+            fbao.SignInAsAuthenticationType = Microsoft.Owin.Security.AppBuilderSecurityExtensions.GetDefaultSignInAsAuthenticationType(app);
+            
+            app.UseFacebookAuthentication(fbao);
 
             app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             {
