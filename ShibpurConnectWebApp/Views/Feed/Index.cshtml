@@ -1,0 +1,90 @@
+﻿@model ShibpurConnectWebApp.Models.IndexViewModel
+@{
+    ViewBag.Title = "Feed";
+}
+
+<style type="text/css">
+    div.main {
+        float: left;
+        width: 70%;
+        position: relative;
+        padding-left: 10px;
+    }
+
+    #threads {
+        clear: both;
+        float: left;
+        width: 728px;
+        margin-bottom: 20px;
+    }
+
+    div.thread {
+        padding: 12px 0 10px 0;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 15px 0;
+        float: left;
+        width: 728px;
+    }
+
+    div.user {
+        width: 70px;
+        text-align: right;
+        height: 70px;
+        display: block;
+        position: absolute;
+        left: -80px;
+    }
+
+    .avatar {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        background-color: #CCCCCA;
+        cursor: pointer;
+        -webkit-transition: opacity ease-in-out .25s 0s;
+        -moz-transition: opacity ease-in-out .25s 0s;
+        -o-transition: opacity ease-in-out .25s 0s;
+        transition: opacity ease-in-out .25s 0s;
+    }
+
+    div.detail {
+        float: left;
+        width: 630px;
+    }
+
+    .detail h3 {
+        font-size: 20px;
+        line-height: 1.4;
+        margin-bottom: .5em;
+        margin-top: 0;
+    }
+
+    footer {
+        float: left;
+        clear: both;
+    }
+</style>
+
+
+<div class="main">
+    <div id="threads">
+        @for (int i = 0; i < Model.Threads.Count; i++)
+        {
+            <div class="thread">
+                <div class="user">
+                    <img class="avatar" width="40" height="40" src="~/Content/images/profile-image.jpg">
+                    @Html.DisplayFor(m => m.Threads[i].AskedBy)
+                </div>
+                <div class="detail">
+                    <h3>
+                        @Html.ActionLink(Model.Threads[i].Question, "Index", "Home")
+                    </h3>
+                    <div class="excerpt">
+                        @Html.DisplayFor(m => m.Threads[i].DetailText)
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
