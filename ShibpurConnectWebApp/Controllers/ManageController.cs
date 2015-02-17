@@ -64,8 +64,6 @@ namespace ShibpurConnectWebApp.Controllers
                     await AuthenticationManager.TwoFactorBrowserRememberedAsync(User.Identity.GetUserId())
             };
             return View(model);
-
-            return View();
         }
 
         //
