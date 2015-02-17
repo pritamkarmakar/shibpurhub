@@ -15,7 +15,7 @@ namespace ShibpurConnectWebApp.Models
         public string LastName { get; set; }
 
         [Required]
-        [Display(Name = "DepartMent")]
+        [Display(Name = "Department")]
         public string DepartMent { get; set; }
 
         public IEnumerable<string> Departments = new List<string> 
