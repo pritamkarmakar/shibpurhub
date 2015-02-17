@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="SCCatalogModelStoreContainer" CdmEntityContainer="SCCatalogEntities">
+    <EntitySetMapping Name="UserProfiles">
+      <EntityTypeMapping TypeName="SCCatalogModel.UserProfile">
+        <MappingFragment StoreEntitySet="UserProfile">
+          <ScalarProperty Name="PGuid" ColumnName="PGuid" />
+          <ScalarProperty Name="Dept" ColumnName="Dept" />
+          <ScalarProperty Name="PassoutBatch" ColumnName="PassoutBatch" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Legal_First_Name" ColumnName="Legal_First_Name" />
+          <ScalarProperty Name="Legal_last_Name" ColumnName="Legal_last_Name" />
+          <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="CreateDatetime" ColumnName="CreateDatetime" />
+          <ScalarProperty Name="UpdateDatetime" ColumnName="UpdateDatetime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="spUpsertUser" FunctionName="SCCatalogModel.Store.spUpsertUser" />
+    <EntitySetMapping Name="Tickets">
+      <EntityTypeMapping TypeName="SCCatalogModel.Ticket">
+        <MappingFragment StoreEntitySet="Ticket">
+          <ScalarProperty Name="UpdateDatetime" ColumnName="UpdateDatetime" />
+          <ScalarProperty Name="CreateDatetime" ColumnName="CreateDatetime" />
+          <ScalarProperty Name="TicketId" ColumnName="TicketId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TicketCategoryMappings">
+      <EntityTypeMapping TypeName="SCCatalogModel.TicketCategoryMapping">
+        <MappingFragment StoreEntitySet="TicketCategoryMapping">
+          <ScalarProperty Name="UpdateDatetime" ColumnName="UpdateDatetime" />
+          <ScalarProperty Name="CreateDatetime" ColumnName="CreateDatetime" />
+          <ScalarProperty Name="TicketCategoryMappingId" ColumnName="TicketCategoryMappingId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TicketCategoryMasters">
+      <EntityTypeMapping TypeName="SCCatalogModel.TicketCategoryMaster">
+        <MappingFragment StoreEntitySet="TicketCategoryMaster">
+          <ScalarProperty Name="UpdateDatetime" ColumnName="UpdateDatetime" />
+          <ScalarProperty Name="CreateDatetime" ColumnName="CreateDatetime" />
+          <ScalarProperty Name="Category_Description" ColumnName="Category_Description" />
+          <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TicketCommentMappings">
+      <EntityTypeMapping TypeName="SCCatalogModel.TicketCommentMapping">
+        <MappingFragment StoreEntitySet="TicketCommentMapping">
+          <ScalarProperty Name="UpdateDatetime" ColumnName="UpdateDatetime" />
+          <ScalarProperty Name="CreateDatetime" ColumnName="CreateDatetime" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="TicketUserId" ColumnName="TicketUserId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TicketStatus">
+      <EntityTypeMapping TypeName="SCCatalogModel.TicketStatu">
+        <MappingFragment StoreEntitySet="TicketStatus">
+          <ScalarProperty Name="UpdateDatetime" ColumnName="UpdateDatetime" />
+          <ScalarProperty Name="CreateDatetime" ColumnName="CreateDatetime" />
+          <ScalarProperty Name="Status_Description" ColumnName="Status_Description" />
+          <ScalarProperty Name="TicketStatusId" ColumnName="TicketStatusId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="FK_Ticket_TicketStatus" TypeName="SCCatalogModel.FK_Ticket_TicketStatus" StoreEntitySet="Ticket">
+      <EndProperty Name="Ticket">
+        <ScalarProperty Name="TicketId" ColumnName="TicketId" />
+      </EndProperty>
+      <EndProperty Name="TicketStatu">
+        <ScalarProperty Name="TicketStatusId" ColumnName="TicketStatusId" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_TicketCategoryMapping_Ticket" TypeName="SCCatalogModel.FK_TicketCategoryMapping_Ticket" StoreEntitySet="TicketCategoryMapping">
+      <EndProperty Name="TicketCategoryMapping">
+        <ScalarProperty Name="TicketCategoryMappingId" ColumnName="TicketCategoryMappingId" />
+      </EndProperty>
+      <EndProperty Name="Ticket">
+        <ScalarProperty Name="TicketId" ColumnName="TicketId" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_TicketCommentMapping_Ticket" TypeName="SCCatalogModel.FK_TicketCommentMapping_Ticket" StoreEntitySet="TicketCommentMapping">
+      <EndProperty Name="TicketCommentMapping">
+        <ScalarProperty Name="TicketUserId" ColumnName="TicketUserId" />
+      </EndProperty>
+      <EndProperty Name="Ticket">
+        <ScalarProperty Name="TicketId" ColumnName="TicketId" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_TicketCategoryMapping_Category" TypeName="SCCatalogModel.FK_TicketCategoryMapping_Category" StoreEntitySet="TicketCategoryMapping">
+      <EndProperty Name="TicketCategoryMapping">
+        <ScalarProperty Name="TicketCategoryMappingId" ColumnName="TicketCategoryMappingId" />
+      </EndProperty>
+      <EndProperty Name="TicketCategoryMaster">
+        <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_Ticket_UserProfile" TypeName="SCCatalogModel.FK_Ticket_UserProfile" StoreEntitySet="Ticket">
+      <EndProperty Name="Ticket">
+        <ScalarProperty Name="TicketId" ColumnName="TicketId" />
+      </EndProperty>
+      <EndProperty Name="UserProfile">
+        <ScalarProperty Name="UserId" ColumnName="CreatedByUserId" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK_TicketCommentMapping_UserProfile" TypeName="SCCatalogModel.FK_TicketCommentMapping_UserProfile" StoreEntitySet="TicketCommentMapping">
+      <EndProperty Name="TicketCommentMapping">
+        <ScalarProperty Name="TicketUserId" ColumnName="TicketUserId" />
+      </EndProperty>
+      <EndProperty Name="UserProfile">
+        <ScalarProperty Name="UserId" ColumnName="UserId" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping>

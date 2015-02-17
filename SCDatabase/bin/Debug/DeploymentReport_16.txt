@@ -1,0 +1,21 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       None
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Create
+       [SCSqlService] (User)
+       [dbo].[SecreteQuestionMaster] (Table)
+       [dbo].[UserProfile] (Table)
+       [dbo].[UserSecreteMap] (Table)
+       [SCCatalog].[SCUser] (Table)
+       Permission (Permission)
+       Permission (Permission)
+
+** Supporting actions

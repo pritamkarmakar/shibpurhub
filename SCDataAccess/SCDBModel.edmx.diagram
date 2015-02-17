@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="58abadb12cce45cfabc7f2686615e05d" Name="Diagram1">
+        <EntityTypeShape EntityType="SCCatalogModel.C__RefactorLog" Width="1.5" PointX="2.75" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SCCatalogModel.Ticket" Width="1.5" PointX="3" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SCCatalogModel.TicketCategoryMapping" Width="1.5" PointX="5.25" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SCCatalogModel.TicketCategoryMaster" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SCCatalogModel.TicketCommentMapping" Width="1.5" PointX="5.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SCCatalogModel.TicketStatu" Width="1.5" PointX="0.75" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SCCatalogModel.UserProfile" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
+        <AssociationConnector Association="SCCatalogModel.FK_Ticket_TicketStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="SCCatalogModel.FK_Ticket_UserProfile" ManuallyRouted="false" />
+        <AssociationConnector Association="SCCatalogModel.FK_TicketCategoryMapping_Ticket" ManuallyRouted="false" />
+        <AssociationConnector Association="SCCatalogModel.FK_TicketCommentMapping_Ticket" ManuallyRouted="false" />
+        <AssociationConnector Association="SCCatalogModel.FK_TicketCategoryMapping_Category" ManuallyRouted="false" />
+        <AssociationConnector Association="SCCatalogModel.FK_TicketCommentMapping_UserProfile" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

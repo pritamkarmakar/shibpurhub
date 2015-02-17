@@ -1,0 +1,19 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       None
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Drop
+       [SCCatalog].[FK_Ticket_User] (Foreign Key)
+       [SCCatalog].[FK_TicketCommentMapping_User] (Foreign Key)
+     Create
+       [SCCatalog].[FK_Ticket_UserProfile] (Foreign Key)
+       [SCCatalog].[FK_TicketCommentMapping_UserProfile] (Foreign Key)
+
+** Supporting actions

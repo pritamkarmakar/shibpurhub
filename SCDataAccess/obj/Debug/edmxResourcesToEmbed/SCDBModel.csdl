@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SCCatalogModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="C__RefactorLog">
+    <Key>
+      <PropertyRef Name="OperationKey" />
+    </Key>
+    <Property Name="OperationKey" Type="Guid" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Ticket">
+    <Key>
+      <PropertyRef Name="TicketId" />
+    </Key>
+    <Property Name="TicketId" Type="Int32" Nullable="false" />
+    <Property Name="CreateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="TicketStatu" Relationship="Self.FK_Ticket_TicketStatus" FromRole="Ticket" ToRole="TicketStatus" />
+    <NavigationProperty Name="UserProfile" Relationship="Self.FK_Ticket_UserProfile" FromRole="Ticket" ToRole="UserProfile" />
+    <NavigationProperty Name="TicketCategoryMappings" Relationship="Self.FK_TicketCategoryMapping_Ticket" FromRole="Ticket" ToRole="TicketCategoryMapping" />
+    <NavigationProperty Name="TicketCommentMappings" Relationship="Self.FK_TicketCommentMapping_Ticket" FromRole="Ticket" ToRole="TicketCommentMapping" />
+  </EntityType>
+  <EntityType Name="TicketCategoryMapping">
+    <Key>
+      <PropertyRef Name="TicketCategoryMappingId" />
+    </Key>
+    <Property Name="TicketCategoryMappingId" Type="Int32" Nullable="false" />
+    <Property Name="CreateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="Ticket" Relationship="Self.FK_TicketCategoryMapping_Ticket" FromRole="TicketCategoryMapping" ToRole="Ticket" />
+    <NavigationProperty Name="TicketCategoryMaster" Relationship="Self.FK_TicketCategoryMapping_Category" FromRole="TicketCategoryMapping" ToRole="TicketCategoryMaster" />
+  </EntityType>
+  <EntityType Name="TicketCategoryMaster">
+    <Key>
+      <PropertyRef Name="CategoryId" />
+    </Key>
+    <Property Name="CategoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Category_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="TicketCategoryMappings" Relationship="Self.FK_TicketCategoryMapping_Category" FromRole="TicketCategoryMaster" ToRole="TicketCategoryMapping" />
+  </EntityType>
+  <EntityType Name="TicketCommentMapping">
+    <Key>
+      <PropertyRef Name="TicketUserId" />
+    </Key>
+    <Property Name="TicketUserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="Ticket" Relationship="Self.FK_TicketCommentMapping_Ticket" FromRole="TicketCommentMapping" ToRole="Ticket" />
+    <NavigationProperty Name="UserProfile" Relationship="Self.FK_TicketCommentMapping_UserProfile" FromRole="TicketCommentMapping" ToRole="UserProfile" />
+  </EntityType>
+  <EntityType Name="TicketStatu">
+    <Key>
+      <PropertyRef Name="TicketStatusId" />
+    </Key>
+    <Property Name="TicketStatusId" Type="Int32" Nullable="false" />
+    <Property Name="Status_Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="Tickets" Relationship="Self.FK_Ticket_TicketStatus" FromRole="TicketStatus" ToRole="Ticket" />
+  </EntityType>
+  <EntityType Name="UserProfile">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="PGuid" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Legal_First_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Legal_last_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="EmailAddress" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Address" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="PassoutBatch" Type="Int32" />
+    <Property Name="Dept" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CreateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateDatetime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="Tickets" Relationship="Self.FK_Ticket_UserProfile" FromRole="UserProfile" ToRole="Ticket" />
+    <NavigationProperty Name="TicketCommentMappings" Relationship="Self.FK_TicketCommentMapping_UserProfile" FromRole="UserProfile" ToRole="TicketCommentMapping" />
+  </EntityType>
+  <Association Name="FK_Ticket_TicketStatus">
+    <End Role="TicketStatus" Type="Self.TicketStatu" Multiplicity="1" />
+    <End Role="Ticket" Type="Self.Ticket" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_Ticket_UserProfile">
+    <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="1" />
+    <End Role="Ticket" Type="Self.Ticket" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_TicketCategoryMapping_Ticket">
+    <End Role="Ticket" Type="Self.Ticket" Multiplicity="1" />
+    <End Role="TicketCategoryMapping" Type="Self.TicketCategoryMapping" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_TicketCommentMapping_Ticket">
+    <End Role="Ticket" Type="Self.Ticket" Multiplicity="1" />
+    <End Role="TicketCommentMapping" Type="Self.TicketCommentMapping" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_TicketCategoryMapping_Category">
+    <End Role="TicketCategoryMaster" Type="Self.TicketCategoryMaster" Multiplicity="1" />
+    <End Role="TicketCategoryMapping" Type="Self.TicketCategoryMapping" Multiplicity="*" />
+  </Association>
+  <Association Name="FK_TicketCommentMapping_UserProfile">
+    <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="1" />
+    <End Role="TicketCommentMapping" Type="Self.TicketCommentMapping" Multiplicity="*" />
+  </Association>
+  <EntityContainer Name="SCCatalogEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="C__RefactorLog" EntityType="Self.C__RefactorLog" />
+    <EntitySet Name="Tickets" EntityType="Self.Ticket" />
+    <EntitySet Name="TicketCategoryMappings" EntityType="Self.TicketCategoryMapping" />
+    <EntitySet Name="TicketCategoryMasters" EntityType="Self.TicketCategoryMaster" />
+    <EntitySet Name="TicketCommentMappings" EntityType="Self.TicketCommentMapping" />
+    <EntitySet Name="TicketStatus" EntityType="Self.TicketStatu" />
+    <EntitySet Name="UserProfiles" EntityType="Self.UserProfile" />
+    <AssociationSet Name="FK_Ticket_TicketStatus" Association="Self.FK_Ticket_TicketStatus">
+      <End Role="TicketStatus" EntitySet="TicketStatus" />
+      <End Role="Ticket" EntitySet="Tickets" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Ticket_UserProfile" Association="Self.FK_Ticket_UserProfile">
+      <End Role="UserProfile" EntitySet="UserProfiles" />
+      <End Role="Ticket" EntitySet="Tickets" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TicketCategoryMapping_Ticket" Association="Self.FK_TicketCategoryMapping_Ticket">
+      <End Role="Ticket" EntitySet="Tickets" />
+      <End Role="TicketCategoryMapping" EntitySet="TicketCategoryMappings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TicketCommentMapping_Ticket" Association="Self.FK_TicketCommentMapping_Ticket">
+      <End Role="Ticket" EntitySet="Tickets" />
+      <End Role="TicketCommentMapping" EntitySet="TicketCommentMappings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TicketCategoryMapping_Category" Association="Self.FK_TicketCategoryMapping_Category">
+      <End Role="TicketCategoryMaster" EntitySet="TicketCategoryMasters" />
+      <End Role="TicketCategoryMapping" EntitySet="TicketCategoryMappings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TicketCommentMapping_UserProfile" Association="Self.FK_TicketCommentMapping_UserProfile">
+      <End Role="UserProfile" EntitySet="UserProfiles" />
+      <End Role="TicketCommentMapping" EntitySet="TicketCommentMappings" />
+    </AssociationSet>
+    <FunctionImport Name="spUpsertUser">
+      <Parameter Name="UserID" Mode="In" Type="Int32" />
+      <Parameter Name="Id" Mode="In" Type="String" />
+      <Parameter Name="Password" Mode="In" Type="String" />
+      <Parameter Name="Fname" Mode="In" Type="String" />
+      <Parameter Name="Lname" Mode="In" Type="String" />
+      <Parameter Name="Address" Mode="In" Type="String" />
+      <Parameter Name="EmailAddress" Mode="In" Type="String" />
+      <Parameter Name="ErrorCode" Mode="InOut" Type="Int32" />
+    </FunctionImport>
+  </EntityContainer>
+</Schema>

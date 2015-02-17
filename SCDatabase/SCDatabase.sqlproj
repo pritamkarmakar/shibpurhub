@@ -68,15 +68,17 @@
     <None Include="Default.Publish.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="SCCatalog\Tables\SCUser.sql" />
     <Build Include="Security\Logins\SCSqlService.sql" />
     <Build Include="Security\SCOwner.sql" />
     <Build Include="Security\SCCatalog.sql" />
     <Build Include="Security\SCSqlService.sql" />
     <Build Include="SCCatalog\Tables\UserProfile.sql" />
-    <Build Include="SCCatalog\Tables\SecreteQuestionMaster.sql" />
-    <Build Include="SCCatalog\Tables\UserSecreteMap.sql" />
     <Build Include="SCCatalog\Stored Procedures\spUpsertUser.sql" />
+    <Build Include="SCCatalog\Tables\TicketCategoryMaster.sql" />
+    <Build Include="SCCatalog\Tables\Ticket.sql" />
+    <Build Include="SCCatalog\Tables\TicketCommentMapping.sql" />
+    <Build Include="SCCatalog\Tables\TicketStatus.sql" />
+    <Build Include="SCCatalog\Tables\TicketCategoryMapping.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="SCSqlServicePassword">
@@ -88,6 +90,6 @@
     <RefactorLog Include="SCDatabase.refactorlog" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="utl_pop_SecreteQuestion.sql" />
+    <PostDeploy Include="utl_pop_TicketCatagory.sql" />
   </ItemGroup>
 </Project>

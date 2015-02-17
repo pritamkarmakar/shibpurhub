@@ -1,0 +1,10 @@
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\SCDataAccess.dll
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\SCDataAccess.pdb
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\obj\Debug\SCDataAccess.csprojResolveAssemblyReference.cache
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\obj\Debug\SCDataAccess.dll
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\obj\Debug\SCDataAccess.pdb
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\SCDataAccess.dll.config
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.dll
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.xml
+C:\Users\v-sukda\documents\visual studio 2013\Projects\ShibpurConnect\SCDataAccess\bin\Debug\EntityFramework.SqlServer.xml
