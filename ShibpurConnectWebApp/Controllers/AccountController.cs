@@ -184,7 +184,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         public ActionResult Profile()
         {
-            return View(new ProfileViewModel());
+            var userId = User.Identity.GetUserId();
+            return View(new ProfileViewModel(userId));
         }
 
         //

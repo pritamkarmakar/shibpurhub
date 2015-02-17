@@ -5,7 +5,12 @@ namespace ShibpurConnectWebApp.Models
 {
     public class ProfileViewModel
     {
-        public int UserID { get; set; }
+        public string UserID { get; set; }
+
+        public ProfileViewModel(string userID)
+        {
+            this.UserID = userID;
+        }
 
         [Required]
         [Display(Name="First Name")]
