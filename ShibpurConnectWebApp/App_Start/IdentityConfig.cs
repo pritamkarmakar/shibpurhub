@@ -33,7 +33,7 @@ namespace ShibpurConnectWebApp
             var myMessage = new SendGridMessage();
             myMessage.AddTo(message.Destination);
             myMessage.From = new System.Net.Mail.MailAddress(
-                                "nvoicedotcom@gmail.com", "NVoice");
+                                "pritam83@gmail.com", "ShibpurConnect");
             myMessage.Subject = message.Subject;
             myMessage.Text = message.Body;
             myMessage.Html = message.Body;
