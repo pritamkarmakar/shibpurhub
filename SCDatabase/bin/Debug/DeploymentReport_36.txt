@@ -1,0 +1,34 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       None
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Create
+       [SCSqlService] (User)
+       [SCOwner] (User)
+       [SCCatalog] (Schema)
+       [SCCatalog].[TicketCategoryMaster] (Table)
+       [SCCatalog].[TicketStatus] (Table)
+       [SCCatalog].[TicketCategoryMapping] (Table)
+       [SCCatalog].[TicketCommentMapping] (Table)
+       [SCCatalog].[Ticket] (Table)
+       [SCCatalog].[UserProfile] (Table)
+       [SCCatalog].[FK_TicketCategoryMapping_Ticket] (Foreign Key)
+       [SCCatalog].[FK_TicketCategoryMapping_Category] (Foreign Key)
+       [SCCatalog].[FK_TicketCommentMapping_UserProfile] (Foreign Key)
+       [SCCatalog].[FK_TicketCommentMapping_Ticket] (Foreign Key)
+       [SCCatalog].[FK_Ticket_UserProfile] (Foreign Key)
+       [SCCatalog].[FK_Ticket_TicketStatus] (Foreign Key)
+       [SCCatalog].[spUpsertUser] (Procedure)
+       Permission (Permission)
+       Permission (Permission)
+       Permission (Permission)
+       Permission (Permission)
+
+** Supporting actions
