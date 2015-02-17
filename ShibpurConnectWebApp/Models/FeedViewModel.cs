@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ShibpurConnectWebApp.Models
 {
-    public class IndexViewModel
+    public class FeedViewModel
     {
         public int ItemsPerPage
         {

@@ -196,7 +196,7 @@
     <Compile Include="Models\CustomModel.cs" />
     <Compile Include="Models\DiscussionThread.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\IndexViewModel.cs" />
+    <Compile Include="Models\FeedViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

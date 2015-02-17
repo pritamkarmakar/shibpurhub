@@ -12,7 +12,7 @@ namespace ShibpurConnectWebApp.Controllers
         // GET: Feed
         public ActionResult Index()
         {
-            var model = new IndexViewModel
+            var model = new FeedViewModel
             {
                 Threads = new List<DiscussionThread> 
                 { 
