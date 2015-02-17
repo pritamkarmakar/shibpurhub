@@ -2,6 +2,8 @@
     ViewBag.Title = "ShibpurConnect";
 }
 
+@model ShibpurConnectWebApp.Models.IndexViewModel
+
 @section emailconfirmalert {
     @if (TempData["ConfirmEmail"] != null && !string.IsNullOrEmpty(TempData["ConfirmEmail"].ToString()))
     {
@@ -12,34 +14,111 @@
     }
 }
 
-@section jambo {
+@*@section jambo {
     <div class="jumbotron">
         <div class="container">
             <h1>Shibpur Connect</h1>
             <p class="lead">IIEST student's welfare web-application</p>
-            <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+            <p><a href="#" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
         </div>
     </div>
-}
+}*@
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+<style type="text/css">
+
+    div.main{
+        float: left;
+        width: 70%;
+        position:relative;
+        padding-left: 10px;
+    }
+    
+    #threads{
+        clear: both;
+        float: left;
+        width: 728px;
+        margin-bottom: 20px;
+    }
+    div.thread
+    {
+        padding: 12px 0 10px 0;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 15px 0;
+        float: left;
+        width: 728px;
+    }
+    div.user{
+        width: 70px;
+        text-align: right;
+        height: 70px;
+        display: block;
+        position: absolute;
+        left: -80px;
+    }
+    .avatar {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        background-color: #CCCCCA;
+        cursor: pointer;
+        -webkit-transition: opacity ease-in-out .25s 0s;
+        -moz-transition: opacity ease-in-out .25s 0s;
+        -o-transition: opacity ease-in-out .25s 0s;
+        transition: opacity ease-in-out .25s 0s;
+    }
+    div.detail
+    {
+        float: left;
+        width: 630px;
+    }
+    .detail h3 {
+        font-size: 20px;
+        line-height: 1.4;
+        margin-bottom: .5em;
+        margin-top: 0;
+    }
+
+    footer {
+        float:left;
+        clear:both;
+    }
+</style>
+
+
+<div class="main">
+    <div id="threads">
+        @for (int i = 0; i < Model.Threads.Count; i++)
+        {
+            <div class="thread">
+                <div class="user">
+                    <img class="avatar" width="40" height="40" src="~/Content/images/profile-image.jpg">
+                    @Html.DisplayFor(m => m.Threads[i].AskedBy)
+                </div>
+                <div class="detail">
+                    <h3>
+                        @Html.ActionLink(Model.Threads[i].Question, "Index","Home")
+                    </h3>
+                    <div class="excerpt">
+                        @Html.DisplayFor(m => m.Threads[i].DetailText)
+                    </div>
+                </div>
+                
+            </div>
+        }
     </div>
 </div>
+
+
+
+
+@*<div class="row">
+    <div class="col-md-4">
+        
+    </div>
+    <div class="col-md-4">
+        
+    </div>
+    <div class="col-md-4">
+        
+    </div>
+</div>*@

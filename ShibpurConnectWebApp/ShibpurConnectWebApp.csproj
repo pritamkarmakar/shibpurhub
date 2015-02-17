@@ -191,8 +191,11 @@
     </Compile>
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Answer.cs" />
     <Compile Include="Models\CustomModel.cs" />
+    <Compile Include="Models\DiscussionThread.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\IndexViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -207,6 +210,7 @@
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\images\profile-image.jpg" />
     <Content Include="Content\social-button.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
