@@ -6,7 +6,6 @@
 <style type="text/css">
     div.main {
         float: left;
-        width: 70%;
         position: relative;
         padding-left: 10px;
     }
@@ -14,7 +13,6 @@
     #threads {
         clear: both;
         float: left;
-        width: 728px;
         margin-bottom: 20px;
     }
 
@@ -23,7 +21,6 @@
         border-bottom: 1px solid #e0e0e0;
         padding: 15px 0;
         float: left;
-        width: 728px;
     }
 
     div.user {
@@ -49,7 +46,6 @@
 
     div.detail {
         float: left;
-        width: 630px;
     }
 
     .detail h3 {
@@ -70,12 +66,12 @@
     <div id="threads">
         @for (int i = 0; i < Model.Threads.Count; i++)
         {
-            <div class="thread">
+            <div class="thread col-md-8">
                 <div class="user">
                     <img class="avatar" width="40" height="40" src="~/Content/images/profile-image.jpg">
                     @Html.DisplayFor(m => m.Threads[i].AskedBy)
                 </div>
-                <div class="detail">
+                <div class="detail col-md-10">
                     <h3>
                         @Html.ActionLink(Model.Threads[i].Question, "Details", "Feed", new { id = Model.Threads[i].ThreadID }, null)
                     </h3>
