@@ -63,8 +63,8 @@
         float: left;
         clear: both;
     }
+    
 </style>
-
 
 <div class="main">
     <div id="threads">
@@ -77,7 +77,7 @@
                 </div>
                 <div class="detail">
                     <h3>
-                        @Html.ActionLink(Model.Threads[i].Question, "Index", "Home")
+                        @Html.ActionLink(Model.Threads[i].Question, "Details", "Feed", new { id = Model.Threads[i].ThreadID }, null)
                     </h3>
                     <div class="excerpt">
                         @Html.DisplayFor(m => m.Threads[i].DetailText)
