@@ -6,6 +6,8 @@ namespace ShibpurConnectWebApp.Models
 {
     public class DiscussionThread
     {
+        public int ThreadID { get; set; }
+
         public string Question { get; set; }
 
         public string AskedBy { get; set; }

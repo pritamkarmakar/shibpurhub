@@ -289,6 +289,10 @@
     <Content Include="Views\Account\Profile.cshtml" />
     <Content Include="Views\Account\Info.cshtml" />
     <Content Include="Views\Feed\Index.cshtml" />
+    <Content Include="Views\Feed\Details.cshtml" />
+    <Content Include="Views\Feed\Categories.cshtml" />
+    <Content Include="Views\Feed\Users.cshtml" />
+    <Content Include="Views\Feed\StartDiscussion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

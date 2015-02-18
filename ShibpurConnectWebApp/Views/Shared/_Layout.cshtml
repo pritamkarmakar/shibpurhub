@@ -37,6 +37,39 @@
     <div class="container">
         @RenderSection("emailconfirmalert", required: false)
     </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="container">
+            <div id="toolbar" class="btn-toolbar" role="toolbar">
+                <div class="btn-group" role="group">
+                    @using (Html.BeginForm("Index", "Feed", FormMethod.Get))
+                    {
+                        <input type="submit" class="btn btn-default" value="Dicussions">
+                    }
+                </div>
+                <div class="btn-group" role="group">
+                    @using (Html.BeginForm("Categories", "Feed", FormMethod.Get))
+                    {
+                        <input type="submit" class="btn btn-default" value="Categories">
+                    }
+
+                </div>
+                <div class="btn-group" role="group">
+                    @using (Html.BeginForm("Users", "Feed", FormMethod.Get))
+                    {
+                        <input type="submit" class="btn btn-default" value="Users">
+                    }
+                </div>
+                <div class="btn-group" role="group">
+                    @using (Html.BeginForm("StartDiscussion", "Feed", FormMethod.Get))
+                    {
+                        <input type="submit" class="btn btn-default" value="Start Discussion">
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    
     @RenderSection("jambo", required: false)
     <div class="container body-content">
         @RenderBody()
