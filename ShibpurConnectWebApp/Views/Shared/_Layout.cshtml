@@ -40,7 +40,7 @@
     @if (User.Identity.IsAuthenticated)
     {
         <div class="container">
-            <div id="toolbar" class="btn-toolbar" role="toolbar">
+            <div class="col-md-5 col-md-offset-7" id="toolbar"  role="toolbar">
                 <div class="btn-group" role="group">
                     @using (Html.BeginForm("Index", "Feed", FormMethod.Get))
                     {

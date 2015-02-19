@@ -6,7 +6,6 @@
 <style type="text/css">
     div.main {
         float: left;
-        width: 70%;
         position: relative;
         padding-left: 10px;
     }
@@ -14,7 +13,6 @@
     #threads {
         clear: both;
         float: left;
-        width: 728px;
         margin-bottom: 20px;
     }
 
@@ -23,7 +21,6 @@
         border-bottom: 1px solid #e0e0e0;
         padding: 15px 0;
         float: left;
-        width: 728px;
     }
 
     div.user {
@@ -49,7 +46,6 @@
 
     div.detail {
         float: left;
-        width: 630px;
     }
 
     .detail h3 {
@@ -57,6 +53,37 @@
         line-height: 1.4;
         margin-bottom: .5em;
         margin-top: 0;
+    }
+
+    .tags {
+        padding: 0;
+        margin-top: 2%;
+    }
+    .post-tag {
+        color: #566e76;
+        background: #f7fdff;
+        border: 1px solid #c0d4db;
+        padding: .4em .5em;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 11px;
+        line-height: 1;
+        color: #3e6d8e;
+        background-color: #e4edf4;
+        margin: 2px 2px 2px 0;
+        text-decoration: none;
+        font-size: 12px;
+        white-space: nowrap;
+        display: inline-block;
+        border-radius: 0;
+        border: 1px solid #e4edf4;
+    }
+    a:visited {
+        color: #0c65a5;
+    }
+    div.stat
+    {
+        color: #808080;
     }
 
     footer {
@@ -70,17 +97,27 @@
     <div id="threads">
         @for (int i = 0; i < Model.Threads.Count; i++)
         {
-            <div class="thread">
+            <div class="thread col-md-8">
                 <div class="user">
                     <img class="avatar" width="40" height="40" src="~/Content/images/profile-image.jpg">
                     @Html.DisplayFor(m => m.Threads[i].AskedBy)
                 </div>
-                <div class="detail">
+                <div class="detail col-md-10">
                     <h3>
                         @Html.ActionLink(Model.Threads[i].Question, "Details", "Feed", new { id = Model.Threads[i].ThreadID }, null)
                     </h3>
                     <div class="excerpt">
                         @Html.DisplayFor(m => m.Threads[i].DetailText)
+                    </div>
+                    <div class="tags col-md-10">
+                        @for (int j = 0; j < Model.Threads[i].Categories.Count; j++)
+                        {
+                            @Html.ActionLink(Model.Threads[i].Categories[j], "Categories", "Feed", new { category = Model.Threads[i].Categories[j] }, new { @class="post-tag"})
+                        }
+                    </div>
+                    <div class="stat col-md-2">
+                        @Html.DisplayFor(m => m.Threads[i].DatePostedFormatted)
+                        @Html.DisplayFor(m => m.Threads[i].NumberOfAnswers)
                     </div>
                 </div>
 
