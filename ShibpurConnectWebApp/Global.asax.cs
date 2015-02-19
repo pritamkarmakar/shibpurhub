@@ -15,7 +15,7 @@ namespace ShibpurConnectWebApp
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.MapRoute(
                 "Categories",                                           // Route name
-                "Feed/{category}",                            // URL with parameters
+                "Feed/Categories/{category}",                            // URL with parameters
                 new { controller = "Feed", action = "Categories" }  // Parameter defaults
             );
             routes.MapRoute(
