@@ -250,7 +250,7 @@
     <Compile Include="Models\Answer.cs" />
     <Compile Include="Models\Categories.cs" />
     <Compile Include="Models\Comments.cs" />
-    <Compile Include="Models\CommentsController.cs" />
+    <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Models\CustomModel.cs" />
     <Compile Include="Models\DiscussionThread.cs" />
     <Compile Include="Models\IdentityModels.cs" />
