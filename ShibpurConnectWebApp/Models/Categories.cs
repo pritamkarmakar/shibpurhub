@@ -16,6 +16,6 @@ namespace ShibpurConnectWebApp.Models
         public string Name { get; set; }
 
         // One category can be used in multiple question. There is a many to many relation between Questions and Category tables
-        public virtual IEnumerable<Questions> Questions { get; set; } 
+        //public virtual IEnumerable<Questions> Questions { get; set; } 
     }
 }

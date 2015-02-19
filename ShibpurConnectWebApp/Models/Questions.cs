@@ -42,6 +42,10 @@ namespace ShibpurConnectWebApp.Models
         
         // One question can have multiple comments
         [DataMember]
-        public virtual IEnumerable<Comments> Comments { get; set; } 
+        public virtual IEnumerable<Comments> Comments { get; set; }
+
+        // Categories associated with the question
+        [DataMember]
+        public virtual IEnumerable<Categories> Categories { get; set; } 
     }
 }

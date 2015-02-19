@@ -49,18 +49,19 @@ namespace ShibpurConnectWebApp.Controllers
         // Will return all the questions tagged to a particular category
         [ResponseType(typeof(Questions))]
         [HttpGet]
-        public IHttpActionResult QuestionsForACategory(string categoryId)
+        public IHttpActionResult QuestionsForACategory(string categoryName)
         {
-            Categories category = db.Categories.Find(categoryId);
+            // check if supplied category is valid or not
+            Categories category = db.Categories.Where(m => m.Name == categoryName).ToList().Count == 0 ? null : db.Categories.Where(m => m.Name == categoryName).ToList()[0];
             if (category == null)
             {
-                return NotFound();
+                return BadRequest("Invalid category name");
             }
 
             // Get the associated question for this category
             var result = from n in db.Questions
                 where (from m in db.CategoryTaggings
-                    where m.CategoryId == categoryId
+                    where m.CategoryId == category.CategoryId
                     select m.QuestionId).Contains(n.QuestionId)
                 select n;
 
@@ -103,17 +104,42 @@ namespace ShibpurConnectWebApp.Controllers
         }
 
         // POST: api/Questions
-        [ResponseType(typeof(Questions))]
+        [ResponseType(typeof (Questions))]
         public IHttpActionResult PostQuestions(Questions questions)
         {
             if (!ModelState.IsValid || questions == null)
             {
                 return BadRequest(ModelState);
             }
-            
+
+            // if Question doesn't have any category tagging then its a bad request
+            if (questions.Categories == null || questions.Categories.ToList().Count == 0)
+                return BadRequest("Question must have a category association");
+
             // Create the QuestionId guid if it is null (for new question)
             if (questions.QuestionId == null)
                 questions.QuestionId = Guid.NewGuid().ToString();
+
+            // validate associated categories are add then into db context
+            foreach (var category in questions.Categories)
+            {
+                Categories categories =  db.Categories.Where(m => m.Name == category.Name).ToList().Count == 0 ? null : db.Categories.Where(m => m.Name == category.Name).ToList()[0];
+
+                if (categories == null)
+                    return BadRequest( string.Format("Category {0} is not valid.", category.Name));
+                else
+                {
+                    db.CategoryTaggings.Add(new CategoryTaggings()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        CategoryId = categories.CategoryId,
+                        QuestionId = questions.QuestionId
+                    });
+                }
+            }
+
+            // add the datetime stamp for this question
+            questions.PostedOnUtc = DateTime.UtcNow;
 
             db.Questions.Add(questions);
 
@@ -133,7 +159,7 @@ namespace ShibpurConnectWebApp.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = questions.QuestionId }, questions);
+            return CreatedAtRoute("DefaultApi", new {id = questions.QuestionId}, questions);
         }
 
         // DELETE: api/Questions/5

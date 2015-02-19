@@ -81,7 +81,7 @@ namespace ShibpurConnectWebApp.Migrations
                  {
                      QuestionId = c.String(nullable: false, maxLength: 128),
                      Title = c.String(nullable: false, maxLength: 128),
-                     Description = c.String(nullable: false, maxLength: 128),
+                     Description = c.String(nullable: false),
                      HasAnswered = c.Boolean(nullable: true),
                      PostedOnUtc = c.DateTime(nullable: false),
                      UserId = c.String(nullable: false, maxLength: 128),
@@ -95,7 +95,7 @@ namespace ShibpurConnectWebApp.Migrations
                  c => new
                  {
                      CommentId = c.String(nullable: false, maxLength: 128),
-                     Description = c.String(nullable: false, maxLength: 128),
+                     Description = c.String(nullable: false),
                      PostedOnUtc = c.DateTime(nullable: false),
                      QuestionId = c.String(nullable: false, maxLength: 128),
                      UserId = c.String(nullable: false, maxLength: 128),
@@ -103,7 +103,7 @@ namespace ShibpurConnectWebApp.Migrations
                  .PrimaryKey(t => t.CommentId)
                  .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: false)
                  .ForeignKey("dbo.Questions", t => t.QuestionId, cascadeDelete: false)
-                 .Index(t => t.Description);
+                 .Index(t => t.UserId);
            
             CreateTable(
                  "dbo.Categories",
