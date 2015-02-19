@@ -97,7 +97,7 @@ namespace ShibpurConnectWebApp.Controllers
 
             // Require the user to have a confirmed email before they can log on.
             var user = await UserManager.FindByNameAsync(model.Email);
-            if (user != null && ! user.EmailConfirmed && !string.IsNullOrEmpty(user.PasswordHash))
+            if (user != null && !user.EmailConfirmed && !string.IsNullOrEmpty(user.PasswordHash))
             {
                 TempData["ConfirmEmail"] = "Please check your email and confirm your account, you must be confirmed "
                                            + "before you can log in.";
