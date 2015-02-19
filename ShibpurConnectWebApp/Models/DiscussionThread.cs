@@ -18,12 +18,21 @@ namespace ShibpurConnectWebApp.Models
 
         public DateTime DatePosted { get; set; }
 
-        public IList<Answer> Answers { get; set; }
-             
-        public int NumberOfAnswers {
+        public string DatePostedFormatted
+        {
             get
             {
-                return Answers.Count;
+                return this.DatePosted.ToString("MMM") + " " + this.DatePosted.ToString("dd") + "'" + this.DatePosted.ToString("yy");
+            }
+        }
+
+        public IList<Answer> Answers { get; set; }
+             
+        public string NumberOfAnswers {
+            get
+            {
+                var count = Answers == null ? 0 : Answers.Count;
+                return count.ToString() + " answers";
             }
         }
 

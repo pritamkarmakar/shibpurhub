@@ -18,7 +18,7 @@ namespace ShibpurConnectWebApp.Controllers
                         AskedBy = "Pritam", 
                         Question="Who is working on authentication?", 
                         DetailText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                        Categories=new List<string>{"General"}, 
+                        Categories=new List<string>{"General", "authentication", "tech"}, 
                         DatePosted=new DateTime(2015,2,15)
                     },
                     new DiscussionThread 
@@ -27,7 +27,7 @@ namespace ShibpurConnectWebApp.Controllers
                         AskedBy = "Sukanta", 
                         Question="Where should we keep the database?", 
                         DetailText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                        Categories=new List<string>{"General"},
+                        Categories=new List<string>{"General","Database"},
                         DatePosted=new DateTime(2015,2,15)
                     },
                     new DiscussionThread 
@@ -96,10 +96,9 @@ namespace ShibpurConnectWebApp.Controllers
             {
                 return View();
             }
-        }      
+        }           
 
-
-        public ActionResult Categories()
+        public ActionResult Categories(string category)
         {
             return View();
         }
