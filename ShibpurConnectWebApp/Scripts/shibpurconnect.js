@@ -25,20 +25,20 @@ $(document).ready(function () {
         });
     }
 
-    $('#li_discussion').click(function () {
-        $.ajax({
-            url: SERVER + "questions/GetQuestions",
-            type: "GET",            
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            processData: false,
-            success: function (result) {
-                if (!result) {
-                    return;
-                }
+    //$('#li_discussion').click(function () {
+    //    $.ajax({
+    //        url: SERVER + "questions/GetQuestions",
+    //        type: "GET",            
+    //        dataType: "json",
+    //        contentType: "application/json; charset=utf-8",
+    //        processData: false,
+    //        success: function (result) {
+    //            if (!result) {
+    //                return;
+    //            }
 
-                alert($.parseJSON(result));
-            }
-        });
-    });
+    //            alert($.parseJSON(result));
+    //        }
+    //    });
+    //});
 });

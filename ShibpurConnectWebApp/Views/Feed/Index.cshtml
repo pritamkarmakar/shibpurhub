@@ -93,6 +93,47 @@
     
 </style>
 
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    $(document).ready(function () {
+        alert("Discuss");
+        jQuery.support.cors = true;
+        var SERVER = "http://shibpur.azurewebsites.net/api/";
+        $.ajax({
+            url: SERVER + "questions/GetQuestions",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            headers: {          
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                //"Access-Control-Allow-Origin": "*"
+            },     
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS");
+            },
+            success: function (result) {
+                if (!result) {
+                    return;
+                }
+
+                //alert($.parseJSON(result));
+
+                var questions = $.parseJSON(result);
+                $(questions).each(function (index, question) {
+                    var thread = $('div.thread.hide').clone();
+
+                    $(thread).removeClass('hide');
+                    $(thread).find('div.detail h3 a').text(question.title);
+                    $(thread).find('div.detail .excerpt').text(question.description);
+
+                    $('#threads').append(thread);
+                });
+            }
+        });
+    });
+</script>
+
 <div class="main">
     <div id="threads">
         @for (int i = 0; i < Model.Threads.Count; i++)
@@ -123,7 +164,29 @@
 
             </div>
         }
-    </div>
+
+        <div class="hide thread col-md-10">
+            <div class="user">
+                <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+                Pritam
+            </div>
+            <div class="detail col-md-10">
+                <h3>
+                    <a href="/Feed/Details/1">Who is working on authentication?</a>
+                </h3>
+                <div class="excerpt">
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                </div>
+                <div class="tags col-md-10">
+                    <a class="post-tag" href="/Feed/Categories/General">General</a><a class="post-tag" href="/Feed/Categories/authentication">authentication</a><a class="post-tag" href="/Feed/Categories/tech">tech</a>
+                </div>
+                <div class="stat col-md-2">
+                    Feb 15'15
+                    0 answers
+                </div>
+            </div>
+        </div>
+</div>
     <div id="disqus_thread"></div>
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
