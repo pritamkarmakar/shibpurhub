@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
 using ShibpurConnectWebApp;
 using ShibpurConnectWebApp.Models;
@@ -14,6 +15,7 @@ using ShibpurConnectWebApp.Models;
 namespace ShibpurConnectWebApp.Controllers
 {
     [Authorize]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class QuestionsController : ApiController
     {
         private ShibpurConnectDB db = new ShibpurConnectDB();
