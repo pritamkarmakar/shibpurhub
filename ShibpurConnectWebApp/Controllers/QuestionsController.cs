@@ -25,7 +25,7 @@ namespace ShibpurConnectWebApp.Controllers
         /// <returns></returns>
         public IQueryable<Questions> GetQuestions()
         {
-            return db.Questions;
+            return db.Questions.OrderByDescending(a => a.PostedOnUtc);
         }
 
         // GET: api/Questions/5
@@ -134,7 +134,7 @@ namespace ShibpurConnectWebApp.Controllers
                     {
                         Id = Guid.NewGuid().ToString(),
                         CategoryId = categories.CategoryId,
-                        QuestionId = questions.QuestionId
+                        QuestionId = questions.QuestionId                        
                     });
                 }
             }
