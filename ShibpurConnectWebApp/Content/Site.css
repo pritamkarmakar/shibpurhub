@@ -26,3 +26,8 @@ textarea {
 #toolbar{
         margin-top: 1.34%;
     }
+
+footer {
+        float: left;
+        clear: both;
+    }

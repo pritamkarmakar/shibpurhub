@@ -72,10 +72,11 @@ namespace ShibpurConnectWebApp.Controllers
         }
 
         // GET: Feed/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(string id)
         {
-            var thread = Threads.Where(a => a.ThreadID == id).FirstOrDefault();
-            return View(thread);
+            //var thread = Threads.Where(a => a.ThreadID == id).FirstOrDefault();
+            //return View(thread);
+            return View();
         }
 
         // GET: Feed/Create
