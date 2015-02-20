@@ -124,6 +124,8 @@
     $(document).ready(function () {
         jQuery.support.cors = true;
         var SERVER = "http://shibpur.azurewebsites.net/api/";
+        var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        
         $.ajax({
             url: SERVER + "questions/GetQuestions",
             type: "GET",
@@ -134,7 +136,7 @@
                 "Content-Type": "application/json",
             },     
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS");
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
             },
             success: function (result) {
                 if (!result) {
