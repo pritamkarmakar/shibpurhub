@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using Microsoft.Owin.Security.OAuth;
 
 namespace ShibpurConnectWebApp.App_Start
 {
@@ -15,17 +16,15 @@ namespace ShibpurConnectWebApp.App_Start
             // Web API routes
             config.MapHttpAttributeRoutes();
 
-            //config.Routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "api/{controller}/{id}",
-            //    defaults: new {id = RouteParameter.Optional}
-            //    );
-
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new {id = RouteParameter.Optional}
                 );
+
+            // To enable bearer token authentication for the web api
+            config.SuppressDefaultHostAuthentication();
+            config.Filters.Add(new HostAuthenticationFilter("Bearer"));  
 
             // WebAPI when dealing with JSON & JavaScript!
             // Setup json serialization to serialize classes to camel (std. Json format)

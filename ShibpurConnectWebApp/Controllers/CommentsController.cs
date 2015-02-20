@@ -12,6 +12,7 @@ using ShibpurConnectWebApp;
 
 namespace ShibpurConnectWebApp.Models
 {
+    [Authorize]
     public class CommentsController : ApiController
     {
         private ShibpurConnectDB db = new ShibpurConnectDB();

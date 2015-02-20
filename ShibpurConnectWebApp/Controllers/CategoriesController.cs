@@ -13,6 +13,7 @@ using ShibpurConnectWebApp.Models;
 
 namespace ShibpurConnectWebApp.Controllers
 {
+    [Authorize]
     public class CategoriesController : ApiController
     {
         private ShibpurConnectDB db = new ShibpurConnectDB();
@@ -23,17 +24,17 @@ namespace ShibpurConnectWebApp.Controllers
             return db.Categories;
         }
 
-        // GET: api/Categories/5
+        // GET: api/Categories/placement
         [ResponseType(typeof(Categories))]
-        public IHttpActionResult GetCategories(string categoryId)
+        public IHttpActionResult GetCategories(string categoryName)
         {
-            Categories categories = db.Categories.Find(categoryId);
-            if (categories == null)
+            Categories category = db.Categories.Where(m => m.Name == categoryName).ToList().Count == 0 ? null : db.Categories.Where(m => m.Name == categoryName).ToList()[0];
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return Ok(categories);
+            return Ok(category);
         }
 
         // PUT: api/Categories/5

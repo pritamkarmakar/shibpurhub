@@ -13,6 +13,7 @@ using ShibpurConnectWebApp.Models;
 
 namespace ShibpurConnectWebApp.Controllers
 {
+    [Authorize]
     public class QuestionsController : ApiController
     {
         private ShibpurConnectDB db = new ShibpurConnectDB();
