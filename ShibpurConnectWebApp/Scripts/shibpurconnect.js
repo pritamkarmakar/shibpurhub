@@ -25,6 +25,28 @@ $(document).ready(function () {
         });
     }
 
+    var token = localStorage.getItem("TOKEN");
+    if(!token)
+    {
+        $.ajax({
+            url: "http://shibpur.azurewebsites.net/token",
+            type: "POST",
+            data: {
+                "grant_type": "password",
+                "userName": "Taiseer@gmail.com",
+                "password": "SuperPass"
+            },
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "json",
+            processData: false,
+            success: function (result) {
+                if (result) {
+                    localStorage.setItem("TOKEN", result.access_token);
+                }
+            }
+        });
+    }
+
     //$('#li_discussion').click(function () {
     //    $.ajax({
     //        url: SERVER + "questions/GetQuestions",

@@ -86,6 +86,12 @@
         color: #808080;
     }
 
+    div.stat span
+    {
+        display: inline-block;
+        width: 100%;
+    }
+
     footer {
         float: left;
         clear: both;
@@ -95,38 +101,68 @@
 
 @Scripts.Render("~/bundles/jquery")
 <script type="text/javascript">
+    function getMonth(month)
+    {
+        var monthArray = {
+            "0": "Jan",
+            "1": "Feb",
+            "2": "Mar",
+            "3": "Apr",
+            "4": "May",
+            "5": "Jun",
+            "6": "Jul",
+            "7": "Aug",
+            "8": "Sep",
+            "9": "Oct",
+            "10": "Nov",
+            "11": "Dec",
+        }
+
+        return monthArray[month];
+    }
+
     $(document).ready(function () {
-        alert("Discuss");
         jQuery.support.cors = true;
         var SERVER = "http://shibpur.azurewebsites.net/api/";
+        var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        
         $.ajax({
             url: SERVER + "questions/GetQuestions",
-            type: "POST",
+            type: "GET",
             dataType: "json",
             contentType: "application/json",
             headers: {          
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                //"Access-Control-Allow-Origin": "*"
             },     
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS");
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
             },
             success: function (result) {
                 if (!result) {
                     return;
                 }
 
-                //alert($.parseJSON(result));
-
-                var questions = $.parseJSON(result);
+                var questions = result;
                 $(questions).each(function (index, question) {
                     var thread = $('div.thread.hide').clone();
+                    var utcDate = new Date(question.postedOnUtc);
+                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2,2);;
 
                     $(thread).removeClass('hide');
-                    $(thread).find('div.detail h3 a').text(question.title);
+                    $(thread).find('div.user span.userName').text(question.userId);
+                    $(thread).find('div.detail h3 a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
                     $(thread).find('div.detail .excerpt').text(question.description);
+                    $(thread).find('div.stat span.date').text(dateString);
+                    $(thread).find('div.stat span.answercount').text((question.comments || "0") + " answers");
 
+                    if (question.categories)
+                    {
+                        $(question.categories).each(function (i, category) {
+                            $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/Categories/" + category);
+                        });
+                    }
+                    
                     $('#threads').append(thread);
                 });
             }
@@ -135,54 +171,25 @@
 </script>
 
 <div class="main">
-    <div id="threads">
-        @for (int i = 0; i < Model.Threads.Count; i++)
-        {
-            <div class="thread col-md-10">
-                <div class="user">
-                    <img class="avatar" width="40" height="40" src="~/Content/images/profile-image.jpg">
-                    @Html.DisplayFor(m => m.Threads[i].AskedBy)
-                </div>
-                <div class="detail col-md-10">
-                    <h3>
-                        @Html.ActionLink(Model.Threads[i].Question, "Details", "Feed", new { id = Model.Threads[i].ThreadID }, null)
-                    </h3>
-                    <div class="excerpt">
-                        @Html.DisplayFor(m => m.Threads[i].DetailText)
-                    </div>
-                    <div class="tags col-md-10">
-                        @for (int j = 0; j < Model.Threads[i].Categories.Count; j++)
-                        {
-                            @Html.ActionLink(Model.Threads[i].Categories[j], "Categories", "Feed", new { category = Model.Threads[i].Categories[j] }, new { @class="post-tag"})
-                        }
-                    </div>
-                    <div class="stat col-md-2">
-                        @Html.DisplayFor(m => m.Threads[i].DatePostedFormatted)
-                        @Html.DisplayFor(m => m.Threads[i].NumberOfAnswers)
-                    </div>
-                </div>
-
-            </div>
-        }
+    <div id="threads">     
 
         <div class="hide thread col-md-10">
             <div class="user">
                 <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                Pritam
+                <span class="userName"></span>
             </div>
             <div class="detail col-md-10">
                 <h3>
-                    <a href="/Feed/Details/1">Who is working on authentication?</a>
+                    <a href="#"></a>
                 </h3>
                 <div class="excerpt">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                    
                 </div>
                 <div class="tags col-md-10">
-                    <a class="post-tag" href="/Feed/Categories/General">General</a><a class="post-tag" href="/Feed/Categories/authentication">authentication</a><a class="post-tag" href="/Feed/Categories/tech">tech</a>
                 </div>
                 <div class="stat col-md-2">
-                    Feb 15'15
-                    0 answers
+                    <span class="date"></span>
+                    <span class="answercount"></span>
                 </div>
             </div>
         </div>
