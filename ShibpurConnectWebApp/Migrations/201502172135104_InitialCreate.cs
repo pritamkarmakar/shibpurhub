@@ -123,6 +123,7 @@ namespace ShibpurConnectWebApp.Migrations
                      QuestionId = c.String(nullable: false, maxLength: 128),
                      CategoryId = c.String(nullable: false, maxLength: 128),
                  })
+                 .PrimaryKey(t => t.Id)
                  .ForeignKey("dbo.Questions", t => t.QuestionId, cascadeDelete: false)
                  .ForeignKey("dbo.Categories", t => t.CategoryId, cascadeDelete: false)
                  .Index(t => t.Id);
