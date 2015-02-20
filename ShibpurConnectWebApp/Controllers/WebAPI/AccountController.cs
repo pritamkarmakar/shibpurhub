@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Microsoft.AspNet.Identity;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Providers;
@@ -12,6 +13,7 @@ using ShibpurConnectWebApp.Providers;
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
     [RoutePrefix("api/Account")]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class AccountController : ApiController
     {
         private AuthRepository _repo = null;
