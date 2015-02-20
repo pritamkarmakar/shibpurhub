@@ -1,15 +1,15 @@
 ﻿
-var SRVER = "http://localhost:57604/";
+var SERVER = "http://shibpur.azurewebsites.net/api/";
 $(document).ready(function () {
     jQuery.support.cors = true;
     var userID = $("#hdnUserID").val();
     if(userID)
     {
         $.ajax({
-            url: "api/Register/Register",
+            url: SERVER + "Account/Register",
             type: "POST",
             data: {
-                "userName": "Taiseer",
+                "userName": userID,
                 "password": "SuperPass",
                 "confirmPassword": "SuperPass"
             },
@@ -27,14 +27,17 @@ $(document).ready(function () {
 
     $('#li_discussion').click(function () {
         $.ajax({
-            url: "api/questions/GetQuestions",
+            url: SERVER + "questions/GetQuestions",
             type: "GET",            
             dataType: "json",
+            contentType: "application/json; charset=utf-8",
             processData: false,
             success: function (result) {
-                if (result) {
-                    alert(resu.data);
+                if (!result) {
+                    return;
                 }
+
+                alert($.parseJSON(result));
             }
         });
     });
