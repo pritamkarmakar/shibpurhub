@@ -66,6 +66,8 @@ namespace ShibpurConnectWebApp.Controllers
             {
                 Threads = this.Threads
             };
+
+            TempData["SelectedPage"] = "Threads";
             return View(model);
         }
 
@@ -79,6 +81,7 @@ namespace ShibpurConnectWebApp.Controllers
         // GET: Feed/Create
         public ActionResult StartDiscussion()
         {
+            TempData["SelectedPage"] = "StartDiscussion";
             return View();
         }
 
@@ -89,22 +92,23 @@ namespace ShibpurConnectWebApp.Controllers
             try
             {
                 // TODO: Add insert logic here
-
                 return RedirectToAction("Index");
             }
             catch
             {
                 return View();
             }
-        }           
+        }  
 
         public ActionResult Categories(string category)
         {
+            TempData["SelectedPage"] = "Categories";
             return View();
         }
 
         public ActionResult Users()
         {
+            TempData["SelectedPage"] = "Users";
             return View();
         }
     }
