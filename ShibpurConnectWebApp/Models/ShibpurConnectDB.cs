@@ -1,4 +1,5 @@
 using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Models.WebAPI;
 
 namespace ShibpurConnectWebApp
 {
