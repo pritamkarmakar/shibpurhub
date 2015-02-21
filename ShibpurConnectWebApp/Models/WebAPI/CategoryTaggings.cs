@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
-namespace ShibpurConnectWebApp.Models
+namespace ShibpurConnectWebApp.Models.WebAPI
 {
     public class CategoryTaggings
     {

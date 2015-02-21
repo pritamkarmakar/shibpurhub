@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
-using ShibpurConnectWebApp;
-using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Models.WebAPI;
 
-namespace ShibpurConnectWebApp.Controllers
+namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
     [Authorize]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
@@ -25,9 +22,27 @@ namespace ShibpurConnectWebApp.Controllers
         /// Will return all available questions
         /// </summary>
         /// <returns></returns>
-        public IQueryable<Questions> GetQuestions()
+        public IQueryable<QuestionsDTO> GetQuestions()
         {
-            return db.Questions.OrderByDescending(a => a.PostedOnUtc);
+            var result = db.Questions
+                             .ToList()
+                             .Select(item =>
+                                 new QuestionsDTO()
+            {
+                QuestionId = item.QuestionId,
+                Title = item.Title,
+                Description = item.Description,
+                HasAnswered = item.HasAnswered,
+                PostedOnUtc = item.PostedOnUtc,
+                UserId = item.UserId,
+                // username field is not in the Question object. Adding it here
+                UserName = db.AspNetUsers.Where(u => u.Id == item.UserId) != null
+                    ? db.AspNetUsers.Find(item.UserId).Email
+                    : null
+            })
+            .AsQueryable();
+
+            return result;
         }
 
         // GET: api/Questions/5
@@ -43,6 +58,8 @@ namespace ShibpurConnectWebApp.Controllers
 
             // Get the associated comments for this question
             IEnumerable<Comments> comments = db.Comments.Where(m => m.QuestionId == questionId).ToList();
+            // find who submitted this question
+            string userName = db.AspNetUsers.Where(m => m.Id == questions.UserId).ToList()[0].UserName;
             questions.Comments = comments;
 
             return Ok(questions);
@@ -63,10 +80,10 @@ namespace ShibpurConnectWebApp.Controllers
 
             // Get the associated question for this category
             var result = from n in db.Questions
-                where (from m in db.CategoryTaggings
-                    where m.CategoryId == category.CategoryId
-                    select m.QuestionId).Contains(n.QuestionId)
-                select n;
+                         where (from m in db.CategoryTaggings
+                                where m.CategoryId == category.CategoryId
+                                select m.QuestionId).Contains(n.QuestionId)
+                         select n;
 
             return Ok(result);
         }
@@ -107,7 +124,7 @@ namespace ShibpurConnectWebApp.Controllers
         }
 
         // POST: api/Questions
-        [ResponseType(typeof (Questions))]
+        [ResponseType(typeof(Questions))]
         public IHttpActionResult PostQuestions(Questions questions)
         {
             if (!ModelState.IsValid || questions == null)
@@ -126,17 +143,17 @@ namespace ShibpurConnectWebApp.Controllers
             // validate associated categories are add then into db context
             foreach (var category in questions.Categories)
             {
-                Categories categories =  db.Categories.Where(m => m.Name == category.Name).ToList().Count == 0 ? null : db.Categories.Where(m => m.Name == category.Name).ToList()[0];
+                Categories categories = db.Categories.Where(m => m.Name == category.Name).ToList().Count == 0 ? null : db.Categories.Where(m => m.Name == category.Name).ToList()[0];
 
                 if (categories == null)
-                    return BadRequest( string.Format("Category {0} is not valid.", category.Name));
+                    return BadRequest(string.Format("Category {0} is not valid.", category.Name));
                 else
                 {
                     db.CategoryTaggings.Add(new CategoryTaggings()
                     {
                         Id = Guid.NewGuid().ToString(),
                         CategoryId = categories.CategoryId,
-                        QuestionId = questions.QuestionId                        
+                        QuestionId = questions.QuestionId
                     });
                 }
             }
@@ -162,7 +179,7 @@ namespace ShibpurConnectWebApp.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new {id = questions.QuestionId}, questions);
+            return CreatedAtRoute("DefaultApi", new { id = questions.QuestionId }, questions);
         }
 
         // DELETE: api/Questions/5
