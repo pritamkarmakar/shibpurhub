@@ -2,4 +2,125 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery.support.cors = true;
+        var SERVER = "http://shibpur.azurewebsites.net/api/";
+        var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
+        $.ajax({
+            url: SERVER + "categories/GetCategories",
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (result) {
+                if (!result) {
+                    return;
+                }
+
+                var categories = result;
+                $(categories).each(function (i, category) {
+                    var option = $('<option>').text(category.name).val(category.categoryId);
+                    $('#select_categories').append(option);
+                });
+                
+            }
+        });
+
+        $('#btn_Save').click(function () {
+            var question = $('#txt_question').val();
+            var description = $('#txtarea_description').val();
+            var categories = $('#select_categories').val();
+
+            if(!question || !description || !categories)
+            {
+                return;
+            }
+
+            var arrCategories = [];
+            $('#select_categories :selected').each(function (i, e) {
+                arrCategories.push({ "name": $(e).text() });
+            });
+
+            var userID = $('#hdnUserID').val();
+            var data = {
+                "Title": question, 
+                "Description": description,
+                "HasAnswered": 0,
+                "UserId": "b1e1d70e-9e4e-42ed-809a-abd71cab423e",
+                "Categories": arrCategories
+            };
+
+            var SERVER = "http://shibpur.azurewebsites.net/api/";
+            var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
+            $.ajax({
+                url: SERVER + "questions/PostQuestions",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(data,null,2),
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function (result) {
+                    if (!result) {
+                        return;
+                    }                  
+
+                    document.location.href = "/Feed/Index";
+                }
+            });
+
+            return false;
+            
+        });
+    });
+</script>
+<h4>Details</h4>
+<hr />
+    <div class="panel-body">
+        <form action="#" class="form-horizontal" method="post" role="form">
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Question">Question</label>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-10">
+                            <input class="form-control" id="txt_question" placeholder="What is your question?" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="DetailedText">Description</label>
+                <div class="col-md-6">
+                    <textarea class="form-control" id="txtarea_description" placeholder="Description" rows="3" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="Categories">Categories</label>
+                <div class="col-md-10">
+                    <select class="form-control" id="select_categories" multiple>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="button" class="btn btn-primary" id="btn_Save" value="Save">
+                </div>
+            </div>
+        </form>
+    </div>
+
 
