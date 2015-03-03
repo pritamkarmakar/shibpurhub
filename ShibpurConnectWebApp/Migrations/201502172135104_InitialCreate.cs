@@ -35,6 +35,8 @@ namespace ShibpurConnectWebApp.Migrations
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
+                        FirstName = c.String(nullable: false, maxLength: 128),
+                        LastName = c.String(nullable: false, maxLength: 128),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
@@ -46,6 +48,7 @@ namespace ShibpurConnectWebApp.Migrations
                         LockoutEnabled = c.Boolean(nullable: false),
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
+                        ProfileType = c.Int(nullable: false)
                     })
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.UserName, unique: true, name: "UserNameIndex");
@@ -127,6 +130,45 @@ namespace ShibpurConnectWebApp.Migrations
                  .ForeignKey("dbo.Questions", t => t.QuestionId, cascadeDelete: false)
                  .ForeignKey("dbo.Categories", t => t.CategoryId, cascadeDelete: false)
                  .Index(t => t.Id);
+
+            CreateTable(
+                "dbo.EducationalHistories",
+                c => new
+                {
+                    Id = c.String(nullable: false, maxLength: 128),
+                    UniversityName = c.String(nullable: false, maxLength: 128),
+                    Department = c.String(nullable: false, maxLength: 128),
+                    GraduateYear = c.Int(nullable: false),
+                    UserId = c.String(nullable: false, maxLength: 128),
+                })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: false)
+                .ForeignKey("dbo.Departments", t => t.Id, cascadeDelete: false)
+                .Index(t => t.Id);
+
+            CreateTable(
+                "dbo.EmploymentHistories",
+                c => new
+                {
+                    Id = c.String(nullable: false, maxLength: 128),
+                    CompanyName = c.String(nullable: false, maxLength: 128),
+                    From = c.DateTime(nullable: false),
+                    To = c.DateTime(nullable: false),
+                    UserId = c.String(nullable: false, maxLength: 128),
+                })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: false)
+                .Index(t => t.Id);
+
+            CreateTable(
+               "dbo.Departments",
+               c => new
+               {
+                   Id = c.String(nullable: false, maxLength: 128),
+                   Department = c.String(nullable: false, maxLength: 128),
+               })
+               .PrimaryKey(t => t.Id)
+               .Index(t => t.Id);
         }
         
         public override void Down()

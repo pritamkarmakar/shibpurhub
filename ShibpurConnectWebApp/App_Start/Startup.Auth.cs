@@ -79,6 +79,8 @@ namespace ShibpurConnectWebApp
             fbao.AppId = "1561377064127021";
             fbao.AppSecret = "3c8a3bc7ee6151ae4b341f502e8a13f3";
             fbao.Scope.Add("email");
+            fbao.Scope.Add("public_profile");
+            //fbao.Scope.Add("last_name");
             fbao.SignInAsAuthenticationType = Microsoft.Owin.Security.AppBuilderSecurityExtensions.GetDefaultSignInAsAuthenticationType(app);
             
             app.UseFacebookAuthentication(fbao);

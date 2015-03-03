@@ -24,8 +24,11 @@ namespace ShibpurConnectWebApp
         public virtual DbSet<Questions> Questions { get; set; }
         public virtual DbSet<Comments> Comments { get; set; }
         public virtual DbSet<Categories> Categories { get; set; }
-        public virtual DbSet<CategoryTaggings> CategoryTaggings { get; set; } 
-
+        public virtual DbSet<CategoryTaggings> CategoryTaggings { get; set; }
+        public virtual DbSet<EducationalHistory> EducationalHistories { get; set; }
+        public virtual DbSet<EmploymentHistory> EmploymentHistories { get; set; }
+        public virtual DbSet<Departments> Departmentses { get; set; }
+       
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AspNetRoles>()
@@ -43,5 +46,7 @@ namespace ShibpurConnectWebApp
                 .WithRequired(e => e.AspNetUsers)
                 .HasForeignKey(e => e.UserId);
         }
+
+        //public System.Data.Entity.DbSet<ShibpurConnectWebApp.Models.WebAPI.EducationalHistory> EducationalHistories { get; set; }
     }
 }

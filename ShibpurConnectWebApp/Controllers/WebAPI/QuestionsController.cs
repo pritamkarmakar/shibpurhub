@@ -127,10 +127,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [ResponseType(typeof(Questions))]
         public IHttpActionResult PostQuestions(Questions questions)
         {
-            if (!ModelState.IsValid || questions == null)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            if(questions == null)
+                return BadRequest("Request body is null. Please send a valid Questions object");
 
             // if Question doesn't have any category tagging then its a bad request
             if (questions.Categories == null || questions.Categories.ToList().Count == 0)

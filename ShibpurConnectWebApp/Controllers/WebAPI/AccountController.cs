@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Models.WebAPI;
 using ShibpurConnectWebApp.Providers;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
@@ -23,7 +25,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _repo = new AuthRepository();
         }
 
-        // POST api/Account/Register
+        // POST api/Register
         [AllowAnonymous]
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterViewModel userModel)
@@ -34,6 +36,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             IdentityResult result = await _repo.RegisterUser(userModel);
+            
 
             IHttpActionResult errorResult = GetErrorResult(result);
 
@@ -82,6 +85,32 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return null;
+        }
+
+        // GET api/Finduser
+        [AllowAnonymous]
+        [Route("FindUser")]
+        [HttpGet]
+        public async Task<CustomUserInfo> FindUser(string userName, string password)
+        {
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                IdentityUser user = await _repo.FindUser(userName, password);
+
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new CustomUserInfo
+                    {
+                        Email = user.Email,
+                        UserId = user.Id,
+                        
+                    };
+                }
+            }
         }
     }
 }

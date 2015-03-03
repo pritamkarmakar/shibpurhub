@@ -9,7 +9,7 @@ using ShibpurConnectWebApp.Models.WebAPI;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
-    [Authorize]
+    //[Authorize]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CommentsController : ApiController
     {
@@ -77,6 +77,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(ModelState);
             }
+            if (comments == null)
+                return BadRequest("Request body is null. Please send a valid Comments object");
 
             db.Comments.Add(comments);
 

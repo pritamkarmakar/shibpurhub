@@ -60,7 +60,9 @@ namespace ShibpurConnectWebApp.Providers
             ApplicationUser user = new ApplicationUser
             {
                 UserName = userModel.Email,
-                Email = userModel.Email
+                Email = userModel.Email,
+                FirstName = userModel.FirstName,
+                LastName = userModel.LastName
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);

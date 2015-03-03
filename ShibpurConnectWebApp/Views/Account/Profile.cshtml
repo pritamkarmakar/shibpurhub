@@ -2,73 +2,89 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@*@model ShibpurConnectWebApp.Models.WebAPI.Departments
+@model ShibpurConnectWebApp.Models.WebAPI.EducationalHistory*@
 
+@section Scripts {
+    <script type="text/javascript" >
+        $(document).ready(function() {
+            // hide the employment history div and title
+            $("#employmentDetails").hide();
+            $("#empTitle").hide();
+        });
 
-@model ShibpurConnectWebApp.Models.ProfileViewModel
+        function saveEducationalHistory() {
+            jQuery.support.cors = true;
+            var SERVER = "http://localhost:56135/api/";
+            var userid = "@HttpContext.Current.Session["userid"].ToString()";
+
+            var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+            var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#UniversityName').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userid + '"' + '}';
+
+            //debugger;
+
+            $.ajax({
+                url: SERVER + "EducationalHistories/PostEducationalHistory",
+                type: "POST",
+                data: educationalHistory,
+                contentType: "application/json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function(data, result) {
+                    if (result) {
+                        // show the employment history section and title
+                        $("#employmentDetails").show();
+                        $("#empTitle").show();
+
+                        // hide the educational history section and title
+                        $("#educationalHistory").hide();
+                        $("#eduTitle").hide();
+                    }
+                }
+            });
+        }
+
+        function saveEmploymentHistory() {
+            jQuery.support.cors = true;
+            var SERVER = "http://localhost:56135/api/";
+            var userid = "@HttpContext.Current.Session["userid"].ToString()";
+
+            var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+            var educationalHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userid + '"' + '}';
+
+            $.ajax({
+                url: SERVER + "EmploymentHistories/PostEmploymentHistory",
+                type: "POST",
+                data: educationalHistory,
+                contentType: "application/json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function(data, result) {
+                    if (result) {
+                        // redirect to the question(feed) page
+                        window.location.href = "/Feed";
+                    }
+                }
+            });
+        }
+
+    </script>
+}
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm("Profile", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("Profile", "Account", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
 {
     @Html.AntiForgeryToken()
-    <h4>Profile Details</h4>
+    <h4 id="eduTitle">Educational History</h4>
+    <h4 id="empTitle">Employment History</h4>
     <hr />
 
-    @Html.ValidationSummary("", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "First Name" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Last Name" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.DepartMent, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">            
-            @Html.DropDownListFor(m => m.DepartMent, new SelectList(Model.Departments), new { @class = "form-control", @placeholder = "Department" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.PassoutYear, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.PassoutYear, new { @class = "form-control", @placeholder = "Passout Year", @min="1900", @value=2006 })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Address, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "Address" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Phone, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @placeholder = "Phone Number" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-primary" value="Save" />
-        </div>
-    </div>
+    @Html.ValidationSummary("", new {@class = "text-danger"})
+    Html.RenderPartial("../PartialViews/_EducationHistory");
+    Html.RenderPartial("../PartialViews/_EmploymentHistory");
 }
 
 

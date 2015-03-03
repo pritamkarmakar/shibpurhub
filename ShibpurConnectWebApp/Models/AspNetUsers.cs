@@ -17,6 +17,11 @@ namespace ShibpurConnectWebApp
 
         public string Id { get; set; }
 
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        // to indicate whether its a student, alumni or authority profile
+        public int ProfileType { get; set; }
+        
         [StringLength(256)]
         public string Email { get; set; }
 

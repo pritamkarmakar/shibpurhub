@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using ShibpurConnectWebApp.Controllers.WebAPI;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Models.WebAPI;
 
 namespace ShibpurConnectWebApp.Controllers
 {
-    [Authorize]
+    [System.Web.Mvc.Authorize]
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
@@ -43,7 +48,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/Login
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
@@ -63,8 +68,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/Login
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -95,15 +100,23 @@ namespace ShibpurConnectWebApp.Controllers
                 return View(model);
             }
 
-            // Require the user to have a confirmed email before they can log on.
+
             var user = await UserManager.FindByNameAsync(model.Email);
-            if (user != null && !user.EmailConfirmed && !string.IsNullOrEmpty(user.PasswordHash))
+
+            // if this email doesn't exist then return error
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Email doesn't exist");
+                return View(model);
+            }
+
+            // Require the user to have a confirmed email before they can log on.
+            if (!user.EmailConfirmed && !string.IsNullOrEmpty(user.PasswordHash))
             {
                 TempData["ConfirmEmail"] = "Please check your email and confirm your account, you must be confirmed "
                                            + "before you can log in.";
                 TempData["userEmail"] = user.Email;
 
-                //return RedirectToAction("Index", "Home");
                 return View("Info");
             }
 
@@ -113,6 +126,16 @@ namespace ShibpurConnectWebApp.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    // save the user id, token as session variable
+                    System.Web.HttpContext.Current.Session["userid"] = user.Id;
+
+                    // check whether user has added educational history, if not then redirect to the profile page
+                    EducationalHistoriesController controller = new EducationalHistoriesController();
+                    if (controller.GetEducationalHistory(user.Id) == null)
+                    {
+                        return RedirectToAction("Profile", "Account");
+                    }
+
                     return RedirectToAction("Index", "Feed");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -128,7 +151,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/VerifyCode
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
             // Require that the user has already logged in via username/password or external login
@@ -146,8 +169,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/VerifyCode
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
         {
@@ -174,9 +197,9 @@ namespace ShibpurConnectWebApp.Controllers
             }
         }
 
-        //
+        
         // GET: /Account/Register
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult Register()
         {
             return View();
@@ -184,14 +207,19 @@ namespace ShibpurConnectWebApp.Controllers
 
         public ActionResult Profile()
         {
-            var userId = User.Identity.GetUserId();
-            return View(new ProfileViewModel(userId));
+           // var userId = User.Identity.GetUserId();
+            //return View(new ProfileViewModel(userId));
+            // get the department list and send it to the view
+            DepartmentsController DP = new DepartmentsController();
+            IQueryable<Departments> departmentList = DP.GetDepartments();
+            ViewBag.Departments = departmentList;
+            return View();
         }
 
         //
         // POST: /Account/Register
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
@@ -201,26 +229,27 @@ namespace ShibpurConnectWebApp.Controllers
                 var userInfo = await UserManager.FindByNameAsync(model.Email);
                 
                 // if user already exist but there is no local password then add that. This will happen when user initially signed up using social network and then signing up using local account (same email)
-                if (userInfo != null && string.IsNullOrEmpty(userInfo.PasswordHash))
-                {
-                    var result2 = await UserManager.AddPasswordAsync(userInfo.Id, model.Password);
-                    if (result2.Succeeded)
-                    {
-                        // Send an email with this link
-                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(userInfo.Id);
-                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userInfo.Id, code = code }, protocol: Request.Url.Scheme);
-                        await UserManager.SendEmailAsync(userInfo.Id, "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
+                // this shouldn't be allowed otherwise anyone will be able to set password for someone else. this needs to be done from account management after user login using social account
+                //if (userInfo != null && string.IsNullOrEmpty(userInfo.PasswordHash))
+                //{
+                //    var result2 = await UserManager.AddPasswordAsync(userInfo.Id, model.Password);
+                //    if (result2.Succeeded)
+                //    {
+                //        // Send an email with this link
+                //        string code = await UserManager.GenerateEmailConfirmationTokenAsync(userInfo.Id);
+                //        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userInfo.Id, code = code }, protocol: Request.Url.Scheme);
+                //        await UserManager.SendEmailAsync(userInfo.Id, "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
 
-                        TempData["ConfirmEmail"] = "Well done. Please check your email and confirm your account, you must be confirmed "
-                            + "before you can log in.";
+                //        TempData["ConfirmEmail"] = "Well done. Please check your email and confirm your account, you must be confirmed "
+                //            + "before you can log in.";
 
-                        return RedirectToAction("Index", "Home");
-                    }
-                    AddErrors(result2);
-                }
+                //        return RedirectToAction("Index", "Home");
+                //    }
+                //    AddErrors(result2);
+                //}
 
                 // if we are here that means user hasn't been created before. So add a new account
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName};
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -246,7 +275,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/ConfirmEmail
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -259,7 +288,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/ForgotPassword
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return View();
@@ -267,8 +296,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/ForgotPassword
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
@@ -295,7 +324,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/ForgotPasswordConfirmation
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();
@@ -303,7 +332,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/ResetPassword
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
@@ -311,8 +340,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/ResetPassword
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
@@ -337,7 +366,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/ResetPasswordConfirmation
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
             return View();
@@ -345,8 +374,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/ExternalLogin
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
@@ -356,7 +385,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/SendCode
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
             var userId = await SignInManager.GetVerifiedUserIdAsync();
@@ -371,8 +400,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/SendCode
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SendCode(SendCodeViewModel model)
         {
@@ -391,7 +420,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/ExternalLoginCallback
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
@@ -402,6 +431,7 @@ namespace ShibpurConnectWebApp.Controllers
 
             // Sign in the user with this external login provider if the user already has a login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+
             switch (result)
             {
                 case SignInStatus.Success:
@@ -434,7 +464,11 @@ namespace ShibpurConnectWebApp.Controllers
                     else
                     {
                         // create new account
-                        var user = new ApplicationUser {UserName = loginInfo.Email, Email = loginInfo.Email};
+                        string firstName = loginInfo.ExternalIdentity.Name.Split(' ')[0];
+                        string lastName =
+                            loginInfo.ExternalIdentity.Name.Split(' ')[
+                                loginInfo.ExternalIdentity.Name.Split(' ').Length - 1];
+                        var user = new ApplicationUser {UserName = loginInfo.Email, Email = loginInfo.Email, FirstName = firstName, LastName = lastName};
                         //await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                         var result3 = await UserManager.CreateAsync(user);
                         if (result3.Succeeded)
@@ -456,8 +490,8 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/ExternalLoginConfirmation
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
@@ -495,7 +529,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
@@ -505,7 +539,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Account/ExternalLoginFailure
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {
             return View();

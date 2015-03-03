@@ -236,6 +236,9 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\WebAPI\CategoriesController.cs" />
+    <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
+    <Compile Include="Controllers\WebAPI\EducationalHistoriesController.cs" />
+    <Compile Include="Controllers\WebAPI\EmploymentHistoriesController.cs" />
     <Compile Include="Controllers\WebAPI\QuestionsController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
@@ -267,6 +270,10 @@
     <Compile Include="Models\FeedViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
+    <Compile Include="Models\WebAPI\CustomUserInfo.cs" />
+    <Compile Include="Models\WebAPI\Departments.cs" />
+    <Compile Include="Models\WebAPI\EducationalHistory.cs" />
+    <Compile Include="Models\WebAPI\EmploymentHistory.cs" />
     <Compile Include="Models\WebAPI\Questions.cs" />
     <Compile Include="Models\WebAPI\CategoryTaggings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -393,6 +400,9 @@
     <Content Include="Views\Feed\Categories.cshtml" />
     <Content Include="Views\Feed\Users.cshtml" />
     <Content Include="Views\Feed\StartDiscussion.cshtml" />
+    <Content Include="Views\PartialViews\_DepartmentDropdown.cshtml" />
+    <Content Include="Views\PartialViews\_EducationHistory.cshtml" />
+    <Content Include="Views\PartialViews\_EmploymentHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
