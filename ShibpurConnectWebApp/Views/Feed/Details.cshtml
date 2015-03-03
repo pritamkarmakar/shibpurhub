@@ -7,7 +7,59 @@
     ViewBag.Title = "Feed Details";
 }
 
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery.support.cors = true;
+        var SERVER = "http://shibpur.azurewebsites.net/api/";
+        var url = window.location.href;
+        var splitArr = url.split('/');
+        var questionID = splitArr[splitArr.length - 1];
+        $.ajax({
+            url: SERVER + "questions/GetQuestion",
+            type: "GET",
+            dataType: "json",
+            data: { "questionId" : questionID},
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                //"Access-Control-Allow-Origin": "*"
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function (result) {
+                if (!result) {
+                    return;
+                }
+
+                var question = result;               
+
+                $('.header h1').text(question.title);
+                $('.description').text(question.description);
+            }
+        });
+    });
+</script>
+
 <div>
-    @Html.DisplayFor(m => m.Question)
+    <div id="details">
+        <div class="col-md-10">            
+            <div class="header col-md-12">
+                <h1>                    
+                </h1>
+            </div>
+            <div class="description col-md-12">
+            </div>
+                <div class="tags col-md-10">
+                </div>
+                <div class="stat col-md-2">
+                    <span class="date"></span>
+                    <span class="answercount"></span>
+                </div>
+            
+        </div>
+    </div>
 </div>
 
