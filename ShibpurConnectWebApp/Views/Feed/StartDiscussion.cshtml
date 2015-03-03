@@ -30,7 +30,7 @@
                     var option = $('<option>').text(category.name).val(category.categoryId);
                     $('#select_categories').append(option);
                 });
-                
+
             }
         });
 
@@ -51,14 +51,14 @@
 
             var userID = $('#hdnUserID').val();
             var data = {
-                "Title": question, 
+                "Title": question,
                 "Description": description,
                 "HasAnswered": 0,
-                "UserId": "b1e1d70e-9e4e-42ed-809a-abd71cab423e",
+                "UserId": "@HttpContext.Current.Session["userid"].ToString()",
                 "Categories": arrCategories
             };
 
-            var SERVER = "http://shibpur.azurewebsites.net/api/";
+            var SERVER = "/api/";
             var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
             $.ajax({
                 url: SERVER + "questions/PostQuestions",
@@ -76,14 +76,14 @@
                 success: function (result) {
                     if (!result) {
                         return;
-                    }                  
+                    }
 
                     document.location.href = "/Feed/Index";
                 }
             });
 
             return false;
-            
+
         });
     });
 </script>

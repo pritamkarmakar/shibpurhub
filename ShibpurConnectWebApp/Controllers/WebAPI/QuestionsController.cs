@@ -11,7 +11,6 @@ using ShibpurConnectWebApp.Models.WebAPI;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
-    [Authorize]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class QuestionsController : ApiController
     {

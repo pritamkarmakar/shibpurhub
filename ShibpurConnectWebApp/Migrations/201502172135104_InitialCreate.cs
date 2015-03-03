@@ -143,7 +143,7 @@ namespace ShibpurConnectWebApp.Migrations
                 })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: false)
-                .ForeignKey("dbo.Departments", t => t.Id, cascadeDelete: false)
+                .ForeignKey("dbo.Departments", t => t.Department, cascadeDelete: false)
                 .Index(t => t.Id);
 
             CreateTable(
