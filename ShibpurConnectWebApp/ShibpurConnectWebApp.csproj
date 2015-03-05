@@ -291,7 +291,13 @@
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\images\DSC_0059.jpg" />
+    <Content Include="Content\images\DSC_0064.jpg" />
+    <Content Include="Content\images\DSC_0081.jpg" />
     <Content Include="Content\images\profile-image.jpg" />
+    <Content Include="Content\images\shibpur1.jpg" />
+    <Content Include="Content\images\shibpur3.jpg" />
+    <Content Include="Content\images\shibpur4.jpg" />
     <Content Include="Content\social-button.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />

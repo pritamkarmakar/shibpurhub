@@ -1,36 +1,121 @@
-﻿@{
+﻿<!DOCTYPE html>
+@{
+    Layout = "";
+}
+
+@{
     ViewBag.Title = "ShibpurConnect";
 }
 
-@section emailconfirmalert {
-    @if (TempData["ConfirmEmail"] != null && !string.IsNullOrEmpty(TempData["ConfirmEmail"].ToString()))
-    {
-        <div class="alert alert-success" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Thanks for signing up!</strong> Please check your email to complete the sign-up process.
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background: url("../../Content/images/Shibpur1.jpg") no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        #page-wrap {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            -moz-box-shadow: 0 0 20px black;
+            -webkit-box-shadow: 0 0 20px black;
+            box-shadow: 0 0 20px black;
+        }
+
+        p {
+            font: 15px/2 Georgia, Serif;
+            margin: 0 0 30px 0;
+            text-indent: 40px;
+        }
+
+        body {
+            color: white;
+            background-color: transparent;
+        }
+    </style>
+
+    <script type="text/javascript">
+        //$(document).ready(function() {
+        //    var images = ['../../Content/images/Shibpur3.jpg', '../../Content/images/Shibpur4.jpg', '../../Content/images/Shibpur1.jpg'];
+        //    var i = 0;
+
+        //    setInterval(function() {
+        //        $('html').css('background-image', function() {
+        //            if (i >= images.length) {
+        //                i = 0;
+        //            }
+        //            return 'url(' + images[i++] + ')';
+        //        });
+        //    }, 10000);
+        //});
+    </script>
+
+</head>
+<body>
+
+
+
+    @section emailconfirmalert {
+        @if (TempData["ConfirmEmail"] != null && !string.IsNullOrEmpty(TempData["ConfirmEmail"].ToString()))
+        {
+            <div class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Thanks for signing up!</strong> Please check your email to complete the sign-up process.
+            </div>
+        }
+    }
+
+
+
+    <nav class="navbar navbar-default navbar-fixed-top" style="background-color: transparent; border-color: transparent;">
+        <div class="container">
+            <ul class="nav navbar-nav navbar-right">
+                <a href="/Account/Login" class="btn btn-primary btn-md"><b>Login</b></a>
+                <a href="/Account/Register" class="btn btn-primary btn-md"><b>Signup</b></a>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <label style="font-size: 80px; text-align: center; display: block;">Shibpur Connect</label>
+        <label style="font-size: 40px; text-align: center; display: block;">One platform to connect student, alumnus and authority</label>
+        <div style="width:200px; margin:auto;">
+            <a class="btn btn-primary" href="#">Learn more &raquo;</a>
+        </div>
+
+        <footer class="footer navbar-fixed-bottom">
+            <div class="container">
+                <p>&copy; @DateTime.Now.Year - ShibpurConnect</p>
+            </div>
+        </footer>
+    </div>
+
+    @section jambo {
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Shibpur Connect</h1>
+                <p class="lead">IIEST student's welfare web-application</p>
+                <p><a href="#" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+            </div>
         </div>
     }
-}
-
-@section jambo {
-    <div class="jumbotron">
-        <div class="container">
-            <h1>Shibpur Connect</h1>
-            <p class="lead">IIEST student's welfare web-application</p>
-            <p><a href="#" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-        </div>
-    </div>
-}
-
-
-@*<div class="row">
-    <div class="col-md-4">
-        
-    </div>
-    <div class="col-md-4">
-        
-    </div>
-    <div class="col-md-4">
-        
-    </div>
-</div>*@
+</body>
+</html>
