@@ -7,6 +7,83 @@
     ViewBag.Title = "Feed Details";
 }
 
+<style type="text/css">
+    .block {
+        border-top: 1px solid #d3d4cf;
+        padding-top: 20px;
+        margin-bottom: 29px;
+    }
+    .column {
+        float: left;
+        width: calc(85% - 20px);
+        margin-right: 20px;
+    }
+    div.user {
+        width: 70px;
+        text-align: center;
+        height: 70px;
+        display: block;
+        float: left;
+        margin-right: 12px;
+    }
+
+    .avatar {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        background-color: #CCCCCA;
+        cursor: pointer;
+        -webkit-transition: opacity ease-in-out .25s 0s;
+        -moz-transition: opacity ease-in-out .25s 0s;
+        -o-transition: opacity ease-in-out .25s 0s;
+        transition: opacity ease-in-out .25s 0s;
+    }
+    
+    .comment-form textarea {
+        /*-webkit-appearance: none;
+        line-height: 20px;
+        background-color: #f9faf7;
+        border: 1px solid #D9DAD6;
+        padding: 9px 13px;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        resize: none;
+        height: 40px;*/
+        border-radius: 5px;        
+    }
+    
+    .button, input[type=submit] {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        padding-left: 22px;
+        padding-right: 22px;
+        height: 40px;
+        min-width: 104px;
+        border-radius: 5px;
+        border: 0;
+        font-weight: 700;
+        color: #fcfcfa;
+        background-color: #7ab21e;
+    }
+    .comment-form.active form textarea {
+        resize: vertical;
+        margin-bottom: 11px;
+        min-height: 50px;
+        height: 150px;
+        -webkit-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+        -moz-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+        -o-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+        transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+    }
+    .comment-form.active input[type=submit] {
+        top: inherit;
+        right: 0;
+        bottom: 0;
+    }
+</style>
+
 @Scripts.Render("~/bundles/jquery")
 <script type="text/javascript">
     $(document).ready(function () {
@@ -40,6 +117,14 @@
                 $('.description').text(question.description);
             }
         });
+
+        $('textarea').focus(function () {
+            var textarea = $(this);
+            $('.comment-form').addClass('active');
+            var parentDiv = $(textarea).parent();
+            $(parentDiv).removeClass("col-md-8").addClass("col-md-12");
+            $(parentDiv).next().addClass("col-md-offset-9");
+        });
     });
 </script>
 
@@ -57,9 +142,35 @@
                 <div class="stat col-md-2">
                     <span class="date"></span>
                     <span class="answercount"></span>
-                </div>
-            
+                </div>            
         </div>
+    </div>
+
+    <div class="column block left">
+        <section>
+            <react render="commentCollection" context="context" post="post">
+                <section>
+                    <aside class="comment-form">
+                        <div class="user">
+                            <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+                            <span class="userName"></span>
+                        </div>
+                        <div class="col-md-10">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <div class="col-md-8">
+                                        <textarea class="form-control" required="" placeholder="Write an answer..." maxlength="6000"></textarea>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="submit" value="Answer Question">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                     </aside>
+                 </section>
+            </react>
+        </section>
     </div>
 </div>
 
