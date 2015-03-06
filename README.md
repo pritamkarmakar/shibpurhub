@@ -1,5 +1,5 @@
 # ShibpurConnect
-IIEST student's welfare web-application
+[IIEST] (http://en.wikipedia.org/wiki/Indian_Institute_of_Engineering_Science_and_Technology,_Shibpur) student's welfare web-application, see our progress here http://shibpur.azurewebsites.net/
 
 ### Git Configuration:
 Need to do it only once and if you haven't used Git before
