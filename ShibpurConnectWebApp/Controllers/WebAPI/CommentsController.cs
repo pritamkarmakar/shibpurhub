@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -13,122 +11,122 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CommentsController : ApiController
     {
-        private ShibpurConnectDB db = new ShibpurConnectDB();
+        //private ShibpurConnectDB db = new ShibpurConnectDB();
 
-        // GET: api/Comments
-        public IQueryable<Comments> GetComments()
-        {
-            return db.Comments;
-        }
+        //// GET: api/Comments
+        //public IQueryable<Comments> GetComments()
+        //{
+        //    return db.Comments;
+        //}
 
-        // GET: api/Comments/5
-        [ResponseType(typeof(Comments))]
-        public IHttpActionResult GetComments(string id)
-        {
-            Comments comments = db.Comments.Find(id);
-            if (comments == null)
-            {
-                return NotFound();
-            }
+        //// GET: api/Comments/5
+        //[ResponseType(typeof(Comments))]
+        //public IHttpActionResult GetComments(string id)
+        //{
+        //    Comments comments = db.Comments.Find(id);
+        //    if (comments == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(comments);
-        }
+        //    return Ok(comments);
+        //}
 
-        // PUT: api/Comments/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutComments(string id, Comments comments)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// PUT: api/Comments/5
+        //[ResponseType(typeof(void))]
+        //public IHttpActionResult PutComments(string id, Comments comments)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            if (id != comments.CommentId)
-            {
-                return BadRequest();
-            }
+        //    if (id != comments.CommentId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            db.Entry(comments).State = EntityState.Modified;
+        //    db.Entry(comments).State = EntityState.Modified;
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        db.SaveChanges();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!CommentsExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+        //    return StatusCode(HttpStatusCode.NoContent);
+        //}
 
-        // POST: api/Comments
-        [ResponseType(typeof(Comments))]
-        public IHttpActionResult PostComments(Comments comments)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            if (comments == null)
-                return BadRequest("Request body is null. Please send a valid Comments object");
+        //// POST: api/Comments
+        //[ResponseType(typeof(Comments))]
+        //public IHttpActionResult PostComments(Comments comments)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    if (comments == null)
+        //        return BadRequest("Request body is null. Please send a valid Comments object");
 
-            db.Comments.Add(comments);
+        //    db.Comments.Add(comments);
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateException)
-            {
-                if (CommentsExists(comments.CommentId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        db.SaveChanges();
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        if (CommentsExists(comments.CommentId))
+        //        {
+        //            return Conflict();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return CreatedAtRoute("DefaultApi", new { id = comments.CommentId }, comments);
-        }
+        //    return CreatedAtRoute("DefaultApi", new { id = comments.CommentId }, comments);
+        //}
 
-        // DELETE: api/Comments/5
-        [ResponseType(typeof(Comments))]
-        public IHttpActionResult DeleteComments(string id)
-        {
-            Comments comments = db.Comments.Find(id);
-            if (comments == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Comments/5
+        //[ResponseType(typeof(Comments))]
+        //public IHttpActionResult DeleteComments(string id)
+        //{
+        //    Comments comments = db.Comments.Find(id);
+        //    if (comments == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            db.Comments.Remove(comments);
-            db.SaveChanges();
+        //    db.Comments.Remove(comments);
+        //    db.SaveChanges();
 
-            return Ok(comments);
-        }
+        //    return Ok(comments);
+        //}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
 
-        private bool CommentsExists(string id)
-        {
-            return db.Comments.Count(e => e.CommentId == id) > 0;
-        }
+        //private bool CommentsExists(string id)
+        //{
+        //    return db.Comments.Count(e => e.CommentId == id) > 0;
+        //}
     }
 }

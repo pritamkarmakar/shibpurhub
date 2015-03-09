@@ -31,7 +31,8 @@
                 beforeSend: function(xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success: function(data, result) {
+                success:function (data, result) {
+                    alert(result);
                     if (result) {
                         // show the employment history section and title
                         $("#employmentDetails").show();
@@ -41,7 +42,11 @@
                         $("#educationalHistory").hide();
                         $("#eduTitle").hide();
                     }
-                }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                    $("#errorLabel").text(errorText);
+            }
             });
         }
 
@@ -74,7 +79,7 @@
 }
 
 <h2>@ViewBag.Title</h2>
-
+<label id="errorLabel" style="color: red;"></label>
 @using (Html.BeginForm("Profile", "Account", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
 {
     @Html.AntiForgeryToken()
@@ -83,7 +88,7 @@
     <hr />
 
     @Html.ValidationSummary("", new {@class = "text-danger"})
-    Html.RenderPartial("../PartialViews/_EducationHistory");
+    Html.RenderPartial("../PartialViews/_EducationalHistory");
     Html.RenderPartial("../PartialViews/_EmploymentHistory");
 }
 

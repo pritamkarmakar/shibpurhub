@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -11,9 +13,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class Questions
     {
         // Primary key
-        [Key]
-        [DataMember]
-        public string QuestionId { get; set; }
+        [BsonId]
+        public ObjectId QuestionId { get; set; }
         
         [Required]
         [DataMember]
@@ -32,17 +33,17 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         // Foreign key
         [ForeignKey("AspNetUsers")]
         [DataMember]
-        public string UserId { get; set; }
+        public ObjectId UserId { get; set; }
 
-        public virtual AspNetUsers AspNetUsers { get; set; }
+        //public virtual AspNetUsers AspNetUsers { get; set; }
         
-        // One question can have multiple comments
-        [DataMember]
-        public virtual IEnumerable<Comments> Comments { get; set; }
+        //// One question can have multiple comments
+        //[DataMember]
+        //public virtual IEnumerable<Comment> Comments { get; set; }
 
-        // Categories associated with the question
-        [DataMember]
-        public virtual IEnumerable<Categories> Categories { get; set; } 
+        //// Categories associated with the question
+        //[DataMember]
+        //public virtual IEnumerable<Category> Categories { get; set; } 
     }
 
     /// <summary>
@@ -52,7 +53,6 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [NotMapped]
     public class QuestionsDTO : Questions
     {
-        [DataMember]
-        public string UserName { get; set; }         
+        public string CategoriesName { get; set; }         
     }
 }

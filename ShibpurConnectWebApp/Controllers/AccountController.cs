@@ -1,16 +1,14 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
-using System.Net.Http;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Http;
 using System.Web.Mvc;
-using System.Web.WebPages;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using MongoDB.Bson;
 using ShibpurConnectWebApp.Controllers.WebAPI;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
@@ -22,16 +20,14 @@ namespace ShibpurConnectWebApp.Controllers
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
-        private HelperClass _helper = new HelperClass();
-
+        
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager)
         {
             UserManager = userManager;
-            SignInManager = signInManager;
         }
 
         public ApplicationUserManager UserManager
@@ -55,15 +51,18 @@ namespace ShibpurConnectWebApp.Controllers
             return View();
         }
 
-        private ApplicationSignInManager _signInManager;
+        private SignInHelper _helper;
 
-        public ApplicationSignInManager SignInManager
+        private SignInHelper SignInHelper
         {
             get
             {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                if (_helper == null)
+                {
+                    _helper = new SignInHelper(UserManager, AuthenticationManager);
+                }
+                return _helper;
             }
-            private set { _signInManager = value; }
         }
 
         //
@@ -122,7 +121,7 @@ namespace ShibpurConnectWebApp.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInHelper.PasswordSignIn(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -139,7 +138,7 @@ namespace ShibpurConnectWebApp.Controllers
                     return RedirectToAction("Index", "Feed");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
-                case SignInStatus.RequiresVerification:
+                case SignInStatus.RequiresTwoFactorAuthentication:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
@@ -155,11 +154,11 @@ namespace ShibpurConnectWebApp.Controllers
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
             // Require that the user has already logged in via username/password or external login
-            if (!await SignInManager.HasBeenVerifiedAsync())
+            if (!await SignInHelper.HasBeenVerified())
             {
                 return View("Error");
             }
-            var user = await UserManager.FindByIdAsync(await SignInManager.GetVerifiedUserIdAsync());
+            var user = await UserManager.FindByIdAsync(await SignInHelper.GetVerifiedUserIdAsync());
             if (user != null)
             {
                 var code = await UserManager.GenerateTwoFactorTokenAsync(user.Id, provider);
@@ -183,7 +182,7 @@ namespace ShibpurConnectWebApp.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInHelper.TwoFactorSignIn(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -211,7 +210,25 @@ namespace ShibpurConnectWebApp.Controllers
             //return View(new ProfileViewModel(userId));
             // get the department list and send it to the view
             DepartmentsController DP = new DepartmentsController();
-            IQueryable<Departments> departmentList = DP.GetDepartments();
+            IList<Departments> departmentList = DP.GetDepartments();
+
+            // if there is no departments in the db then add the default departments
+            if (departmentList.Count == 0)
+            {
+                var _mongoHelper = new MongoHelper<Departments>();
+                foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
+                {
+                    Departments obj = new Departments();
+                    obj.DepartmentName = department;
+                    obj.Id = ObjectId.GenerateNewId();
+
+                    _mongoHelper.Collection.Save(obj);
+                }
+
+                // reset the departmentList
+                departmentList = DP.GetDepartments();
+            }
+
             ViewBag.Departments = departmentList;
             return View();
         }
@@ -388,7 +405,7 @@ namespace ShibpurConnectWebApp.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
-            var userId = await SignInManager.GetVerifiedUserIdAsync();
+            var userId = await SignInHelper.GetVerifiedUserIdAsync();
             if (userId == null)
             {
                 return View("Error");
@@ -411,7 +428,7 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
             // Generate the token and send it
-            if (!await SignInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
+            if (!await SignInHelper.SendTwoFactorCode(model.SelectedProvider))
             {
                 return View("Error");
             }
@@ -430,7 +447,7 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = await SignInHelper.ExternalSignIn(loginInfo, isPersistent: false);
 
             switch (result)
             {
@@ -438,7 +455,7 @@ namespace ShibpurConnectWebApp.Controllers
                     return RedirectToAction("Index", "Feed");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
-                case SignInStatus.RequiresVerification:
+                case SignInStatus.RequiresTwoFactorAuthentication:
                     return RedirectToAction("SendCode", new {ReturnUrl = returnUrl, RememberMe = false});
                 case SignInStatus.Failure:
                 default:
@@ -457,7 +474,7 @@ namespace ShibpurConnectWebApp.Controllers
                         var result2 = await UserManager.AddLoginAsync(userInfo.Id, loginInfo.Login);
                         if (result2.Succeeded)
                         {
-                            await SignInManager.SignInAsync(userInfo, isPersistent: false, rememberBrowser: false);
+                            await SignInHelper.SignInAsync(userInfo, isPersistent: false, rememberBrowser: false);
                             return RedirectToAction("Index", "Feed");
                         }
                     }
@@ -476,7 +493,7 @@ namespace ShibpurConnectWebApp.Controllers
                             result3 = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                             if (result3.Succeeded)
                             {
-                                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                                await SignInHelper.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                                 return RedirectToAction("Index", "Feed");
                             }
                         }
@@ -516,7 +533,7 @@ namespace ShibpurConnectWebApp.Controllers
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await SignInHelper.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
                 }

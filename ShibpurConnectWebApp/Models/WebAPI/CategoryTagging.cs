@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
-    public class CategoryTaggings
+    public class CategoryTagging
     {
         // Primary key
-        [Key]
-        public string Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
 
         // Foreign keys
-        public string QuestionId { get; set; }
-        public string CategoryId { get; set; }
+        public ObjectId QuestionId { get; set; }
+        public ObjectId CategoryId { get; set; }
 
         public virtual Questions Question { get; set; }
         // One question can be part of many Categories

@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using System.Web;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     public class Departments
     {
         // Primary key
-        [Key]
-        [DataMember]
-        public string Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
 
         [DataMember]
-        public string Department { get; set; }
+        public string DepartmentName { get; set; }
     }
 }
