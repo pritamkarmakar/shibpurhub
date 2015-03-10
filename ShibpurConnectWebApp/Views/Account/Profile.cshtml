@@ -31,8 +31,7 @@
                 beforeSend: function(xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success:function (data, result) {
-                    alert(result);
+                success: function(data, result) {
                     if (result) {
                         // show the employment history section and title
                         $("#employmentDetails").show();
@@ -43,10 +42,10 @@
                         $("#eduTitle").hide();
                     }
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
                     var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                     $("#errorLabel").text(errorText);
-            }
+                }
             });
         }
 

@@ -12,11 +12,11 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public ObjectId Id { get; set; }
 
         // Foreign keys
-        public ObjectId QuestionId { get; set; }
+        public string QuestionId { get; set; }
         public ObjectId CategoryId { get; set; }
 
-        public virtual Questions Question { get; set; }
+        //public virtual Questions Question { get; set; }
         // One question can be part of many Categories
-        public virtual IEnumerable<Categories> Categories { get; set; }
+        //public virtual IEnumerable<Categories> Categories { get; set; }
     }
 }

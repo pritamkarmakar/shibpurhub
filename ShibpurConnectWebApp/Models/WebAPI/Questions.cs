@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -14,7 +15,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         // Primary key
         [BsonId]
-        public ObjectId QuestionId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty(PropertyName = "questionId")]
+        public string QuestionId { get; set; }
         
         [Required]
         [DataMember]
@@ -31,10 +34,11 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public DateTime? PostedOnUtc { get; set; }
 
         // Foreign key
-        [ForeignKey("AspNetUsers")]
+        //[ForeignKey("AspNetUsers")]
+        [Required]
         [DataMember]
-        public ObjectId UserId { get; set; }
-
+        public string UserId { get; set; }
+        
         //public virtual AspNetUsers AspNetUsers { get; set; }
         
         //// One question can have multiple comments
@@ -53,6 +57,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [NotMapped]
     public class QuestionsDTO : Questions
     {
-        public string CategoriesName { get; set; }         
+        [Required]
+        [DataMember]
+        public string[] Categories { get; set; }         
     }
 }

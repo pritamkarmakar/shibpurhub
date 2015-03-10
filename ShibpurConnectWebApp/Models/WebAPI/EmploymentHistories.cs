@@ -17,17 +17,21 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public ObjectId Id { get; set; }
 
         [Required]
+        [DataMember]
         public string CompanyName { get; set; }
 
         [Required]
+        [DataMember]
         public DateTime? From { get; set; }
-        
+
+        [DataMember]
         public DateTime? To { get; set; }
 
         // Foreign key
-        [ForeignKey("AspNetUsers")]
+        //[ForeignKey("AspNetUsers")]
+        [Required]
         [DataMember]
-        public ObjectId UserId { get; set; }
+        public string UserId { get; set; }
 
         //public virtual AspNetUsers AspNetUsers { get; set; }
     }

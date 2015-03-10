@@ -16,11 +16,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class QuestionsController : ApiController
     {
-        private MongoHelper<Questions> _mongoHelper;
+        private MongoHelper<QuestionsDTO> _mongoHelper;
 
         public QuestionsController()
         {
-            _mongoHelper = new MongoHelper<Questions>();
+            _mongoHelper = new MongoHelper<QuestionsDTO>();
         }
 
         // GET: api/Questions
@@ -28,7 +28,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// Will return all available questions
         /// </summary>
         /// <returns></returns>
-        public IList<Questions> GetQuestions()
+        public IList<QuestionsDTO> GetQuestions()
         {
             var result = _mongoHelper.Collection.FindAll().ToList();
 
@@ -37,22 +37,28 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         // GET: api/Questions/5
         // Will return a specific question with comments
-        [ResponseType(typeof(Questions))]
+        [ResponseType(typeof(QuestionsDTO))]
         public IHttpActionResult GetQuestion(string questionId)
         {
-            var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId.ToString() == questionId);
+            // validate questionId is valid hex string
+
+            try
+            {
+                ObjectId.Parse(questionId);
+            }
+            catch (Exception)
+            {
+                return BadRequest(String.Format("Supplied questionId: {0} is not a valid object id", questionId));
+            }
+            
+
+            var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId);
             if (questions.Count() == 0)
             {
                 return NotFound();
             }
 
-            //// Get the associated comments for this question
-            //IEnumerable<Comments> comments = db.Comments.Where(m => m.QuestionId == questionId).ToList();
-            //// find who submitted this question
-            //string userName = db.AspNetUsers.Where(m => m.Id == questions.UserId).ToList()[0].UserName;
-            //questions.Comments = comments;
-
-            return Ok(questions);
+            return Ok(questions.ToList()[0]);
         }
 
         // PUT: api/Questions/5
@@ -102,13 +108,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("Request body is null. Please send a valid Questions object");
 
             // if Question doesn't have any category tagging then its a bad request
-            if (question.CategoriesName == null || question.CategoriesName.Split(',').ToList().Count == 0)
+            if (question.Categories == null || question.Categories.Length == 0)
                 return BadRequest("Question must have a category association");
 
             // validate given categories are valid and create the category object list
             List<Categories> categoryList = new List<Categories>();
             CategoriesController categoriesController = new CategoriesController();
-            foreach (var category in question.CategoriesName.Split(','))
+            foreach (var category in question.Categories)
             {
                 var actionResult = categoriesController.GetCategory(category);
                 var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
@@ -120,31 +126,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
             }
 
-            // Create the QuestionId guid if it is null (for new question)
-            if (question.QuestionId == null)
-                question.QuestionId = ObjectId.GenerateNewId();
-
-            //// validate associated categories are add them into db context
-            //foreach (var category in question.Categories)
-            //{
-            //    Category categories = db.Categories.Where(m => m.Name == category.Name).ToList().Count == 0 ? null : db.Categories.Where(m => m.Name == category.Name).ToList()[0];
-
-            //    if (categories == null)
-            //        return BadRequest(string.Format("Category {0} is not valid.", category.Name));
-            //    else
-            //    {
-            //        db.CategoryTaggings.Add(new CategoryTagging()
-            //        {
-            //            Id = Guid.NewGuid().ToString(),
-            //            CategoryId = categories.CategoryId,
-            //            QuestionId = question.QuestionId
-            //        });
-            //    }
-            //}
-
             // add the datetime stamp for this question
             question.PostedOnUtc = DateTime.UtcNow;
 
+            // save the question to the database
             _mongoHelper.Collection.Save(question);
             
             // update the CategoryTagging collection

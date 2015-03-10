@@ -23,6 +23,44 @@ namespace ShibpurConnectWebApp.Controllers
         
         public AccountController()
         {
+            // get the department list and send it to the view
+            DepartmentsController DP = new DepartmentsController();
+            IList<Departments> departmentList = DP.GetDepartments();
+
+            // if there is no departments in the db then add the default departments
+            if (departmentList.Count == 0)
+            {
+                var _mongoHelper = new MongoHelper<Departments>();
+                foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
+                {
+                    Departments obj = new Departments();
+                    obj.DepartmentName = department;
+                    //obj.Id = ObjectId.GenerateNewId();
+
+                    _mongoHelper.Collection.Save(obj);
+                }
+
+                // reset the departmentList
+                departmentList = DP.GetDepartments();
+            }
+
+            CategoriesController categoriesController = new CategoriesController();
+            IList<Categories> categoryList = categoriesController.GetCategories();
+
+            // if there is no categories in the db then add the default categories
+            if (categoryList.Count == 0)
+            {
+                var _mongoHelper = new MongoHelper<Categories>();
+                foreach (var category in ConfigurationManager.AppSettings["categories"].Split(','))
+                {
+                    Categories obj = new Categories();
+                    obj.CategoryName = category;
+
+                    _mongoHelper.Collection.Save(obj);
+                }
+            }
+
+            ViewBag.Departments = departmentList;
         }
 
         public AccountController(ApplicationUserManager userManager)
@@ -208,28 +246,7 @@ namespace ShibpurConnectWebApp.Controllers
         {
            // var userId = User.Identity.GetUserId();
             //return View(new ProfileViewModel(userId));
-            // get the department list and send it to the view
-            DepartmentsController DP = new DepartmentsController();
-            IList<Departments> departmentList = DP.GetDepartments();
-
-            // if there is no departments in the db then add the default departments
-            if (departmentList.Count == 0)
-            {
-                var _mongoHelper = new MongoHelper<Departments>();
-                foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
-                {
-                    Departments obj = new Departments();
-                    obj.DepartmentName = department;
-                    obj.Id = ObjectId.GenerateNewId();
-
-                    _mongoHelper.Collection.Save(obj);
-                }
-
-                // reset the departmentList
-                departmentList = DP.GetDepartments();
-            }
-
-            ViewBag.Departments = departmentList;
+            
             return View();
         }
 

@@ -23,15 +23,17 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         //[DataMember]
         //public string Department { get; set; }
 
+        [Required]
         [DataMember]
         public int GraduateYear { get; set; }
 
-        // Foreign key
-        //[BsonRepresentation(BsonType.ObjectId)]
+        [Required]
+        [DataMember]
         public string UserId { get; set; }
 
         // Foreign key
-        [ForeignKey("Departments")]
+        //[ForeignKey("Departments")]
+        [Required]
         [DataMember]
         public string Department { get; set; }
 

@@ -88,7 +88,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         jQuery.support.cors = true;
-        var SERVER = "http://shibpur.azurewebsites.net/api/";
+        var SERVER = "/api/";
         var url = window.location.href;
         var splitArr = url.split('/');
         var questionID = splitArr[splitArr.length - 1];
@@ -110,7 +110,7 @@
                 if (!result) {
                     return;
                 }
-
+                debugger;
                 var question = result;               
 
                 $('.header h1').text(question.title);

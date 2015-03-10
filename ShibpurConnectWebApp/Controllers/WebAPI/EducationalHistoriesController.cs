@@ -90,9 +90,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (educationalHistory == null)
                 return BadRequest("Request body is null. Please send a valid EducationalHistory object");
 
-            // add the object id for this history
-            educationalHistory.Id = ObjectId.GenerateNewId();
-
             // read the corresponding department id
             DepartmentsController DC = new DepartmentsController();
             IHttpActionResult actionResult = DC.GetDepartment(educationalHistory.Department.ToString());

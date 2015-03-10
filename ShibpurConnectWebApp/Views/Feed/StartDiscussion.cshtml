@@ -6,7 +6,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         jQuery.support.cors = true;
-        var SERVER = "http://shibpur.azurewebsites.net/api/";
+        var SERVER = "/api/";
         var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
         $.ajax({
             url: SERVER + "categories/GetCategories",
@@ -27,7 +27,7 @@
 
                 var categories = result;
                 $(categories).each(function (i, category) {
-                    var option = $('<option>').text(category.name).val(category.categoryId);
+                    var option = $('<option>').text(category.categoryName).val(category.categoryId);
                     $('#select_categories').append(option);
                 });
 
@@ -46,7 +46,7 @@
 
             var arrCategories = [];
             $('#select_categories :selected').each(function (i, e) {
-                arrCategories.push({ "name": $(e).text() });
+                arrCategories.push($(e).text());
             });
 
             var userID = $('#hdnUserID').val();
@@ -57,7 +57,7 @@
                 "UserId": "@HttpContext.Current.Session["userid"].ToString()",
                 "Categories": arrCategories
             };
-
+            debugger;
             var SERVER = "/api/";
             var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
             $.ajax({
