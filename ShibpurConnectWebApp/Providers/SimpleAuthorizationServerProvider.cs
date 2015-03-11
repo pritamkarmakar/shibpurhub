@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
+using AspNet.Identity.MongoDB;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security.OAuth;
+using MongoDB.Driver;
+using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 
 namespace ShibpurConnectWebApp.Providers
@@ -45,13 +46,19 @@ namespace ShibpurConnectWebApp.Providers
 
     public class AuthRepository : IDisposable
     {
-        private ApplicationDbContext _ctx;
+        private ApplicationIdentityContext _ctx;
+        
 
         private UserManager<ApplicationUser> _userManager;
 
         public AuthRepository()
         {
-            _ctx = new ApplicationDbContext();
+            var con = new MongoConnectionStringBuilder(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
+
+            var server = MongoServer.Create(con);
+            var db = server.GetDatabase(con.DatabaseName);
+
+            _ctx = new ApplicationIdentityContext(db.GetCollection<IdentityUser>("users"), db.GetCollection<IdentityUser>("roles"));
             _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
         }
 

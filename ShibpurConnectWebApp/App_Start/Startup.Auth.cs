@@ -6,7 +6,6 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OAuth;
-using Microsoft.Owin.Security.Twitter;
 using Owin;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Providers;
@@ -18,12 +17,11 @@ namespace ShibpurConnectWebApp
         public static string PublicClientId { get; private set; }
 
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
-        public void ConfigureAuth(IAppBuilder app)
-        {
-            // Configure the db context, user manager and signin manager to use a single instance per request
-            app.CreatePerOwinContext(ApplicationDbContext.Create);
+        public void ConfigureAuth(IAppBuilder app) {
+            // Configure the db context, user manager and role manager to use a single instance per request
+            app.CreatePerOwinContext(ApplicationIdentityContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
-            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
 
             // Token Generation
             // Configure the application for OAuth based flow

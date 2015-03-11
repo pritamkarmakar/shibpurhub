@@ -1,8 +1,7 @@
-﻿using System.Data.Entity;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using AspNet.Identity.MongoDB;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace ShibpurConnectWebApp.Models
 {
@@ -24,16 +23,16 @@ namespace ShibpurConnectWebApp.Models
         }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
-    {
-        public ApplicationDbContext()
-            : base("ShibpurConnectDB", throwIfV1Schema: false)
-        {
-        }
+    //public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    //{
+    //    public ApplicationDbContext()
+    //        : base("ShibpurConnectDB", throwIfV1Schema: false)
+    //    {
+    //    }
 
-        public static ApplicationDbContext Create()
-        {
-            return new ApplicationDbContext();
-        }
-    }
+    //    public static ApplicationDbContext Create()
+    //    {
+    //        return new ApplicationDbContext();
+    //    }
+    //}
 }

@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Web;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
     [DataContract(IsReference = true)]
-    public class EducationalHistory
+    public class EducationalHistories
     {
         // Primary key
-        [Key]
-        [DataMember]
-        public string Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
 
         [Required]
         [DataMember]
@@ -25,20 +23,21 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         //[DataMember]
         //public string Department { get; set; }
 
+        [Required]
         [DataMember]
         public int GraduateYear { get; set; }
 
-        // Foreign key
-        [ForeignKey("AspNetUsers")]
+        [Required]
         [DataMember]
         public string UserId { get; set; }
 
         // Foreign key
-        [ForeignKey("Departments")]
+        //[ForeignKey("Departments")]
+        [Required]
         [DataMember]
         public string Department { get; set; }
 
-        public virtual AspNetUsers AspNetUsers { get; set; }
-        public virtual Departments Departments { get; set; }
+        //public virtual AspNetUsers AspNetUsers { get; set; }
+        //public virtual Department Departments { get; set; }
     }
 }

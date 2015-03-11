@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using ShibpurConnectWebApp.App_Start;
-using ShibpurConnectWebApp.Models;
 
 namespace ShibpurConnectWebApp
 {
@@ -42,7 +36,7 @@ namespace ShibpurConnectWebApp
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // to solve the EF error "The model backing the ‘ctx’ context has changed since the database was created. Consider using Code First Migrations to update the database"
-            Database.SetInitializer<ApplicationDbContext>(null);
+            //Database.SetInitializer<ApplicationDbContext>(null);
 
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         }

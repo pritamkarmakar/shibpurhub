@@ -43,20 +43,14 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="AspNet.Identity.MongoDB">
+      <HintPath>..\packages\AspNet.Identity.MongoDB.1.0.11\lib\net45\AspNet.Identity.MongoDB.dll</HintPath>
+    </Reference>
     <Reference Include="Elmah">
       <HintPath>..\packages\elmah.corelibrary.1.2.1\lib\Elmah.dll</HintPath>
     </Reference>
     <Reference Include="Elmah.Mvc">
       <HintPath>..\packages\Elmah.MVC.2.1.1\lib\net40\Elmah.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -94,6 +88,12 @@
     <Reference Include="Microsoft.Owin.Security.Twitter, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Owin.Security.Twitter.3.0.0\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\packages\mongocsharpdriver.1.9.0\lib\net35\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver">
+      <HintPath>..\packages\mongocsharpdriver.1.9.0\lib\net35\MongoDB.Driver.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -193,15 +193,14 @@
     <Reference Include="Microsoft.AspNet.Identity.Owin">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.1.0\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.1.0\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\ApplicationIdentityContext.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\EnsureAuthIndexes.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -235,12 +234,15 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\WebAPI\AnswersController.cs" />
     <Compile Include="Controllers\WebAPI\CategoriesController.cs" />
+    <Compile Include="Controllers\WebAPI\CategoryTaggingController.cs" />
     <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
     <Compile Include="Controllers\WebAPI\EducationalHistoriesController.cs" />
     <Compile Include="Controllers\WebAPI\EmploymentHistoriesController.cs" />
     <Compile Include="Controllers\WebAPI\QuestionsController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
+    <Compile Include="Helper\MongoHelper.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\AspNetUserClaims.cs" />
     <Compile Include="Models\AspNetUserLogins.cs" />
@@ -272,10 +274,10 @@
     <Compile Include="Models\ProfileViewModel.cs" />
     <Compile Include="Models\WebAPI\CustomUserInfo.cs" />
     <Compile Include="Models\WebAPI\Departments.cs" />
-    <Compile Include="Models\WebAPI\EducationalHistory.cs" />
-    <Compile Include="Models\WebAPI\EmploymentHistory.cs" />
+    <Compile Include="Models\WebAPI\EducationalHistories.cs" />
+    <Compile Include="Models\WebAPI\EmploymentHistories.cs" />
     <Compile Include="Models\WebAPI\Questions.cs" />
-    <Compile Include="Models\WebAPI\CategoryTaggings.cs" />
+    <Compile Include="Models\WebAPI\CategoryTagging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ShibpurConnectDB.cs" />
     <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
@@ -291,13 +293,9 @@
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
-    <Content Include="Content\images\DSC_0059.jpg" />
-    <Content Include="Content\images\DSC_0064.jpg" />
-    <Content Include="Content\images\DSC_0081.jpg" />
     <Content Include="Content\images\profile-image.jpg" />
     <Content Include="Content\images\shibpur1.jpg" />
-    <Content Include="Content\images\shibpur3.jpg" />
-    <Content Include="Content\images\shibpur4.jpg" />
+    <Content Include="Content\richtextform\bootstrap3-wysihtml5.min.css" />
     <Content Include="Content\social-button.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
@@ -357,6 +355,9 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.all.min.js" />
+    <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.min.js" />
+    <Content Include="Scripts\richtextform\wysihtml5x-toolbar.min.js" />
     <Content Include="Scripts\shibpurconnect.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
@@ -407,7 +408,7 @@
     <Content Include="Views\Feed\Users.cshtml" />
     <Content Include="Views\Feed\StartDiscussion.cshtml" />
     <Content Include="Views\PartialViews\_DepartmentDropdown.cshtml" />
-    <Content Include="Views\PartialViews\_EducationHistory.cshtml" />
+    <Content Include="Views\PartialViews\_EducationalHistory.cshtml" />
     <Content Include="Views\PartialViews\_EmploymentHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>

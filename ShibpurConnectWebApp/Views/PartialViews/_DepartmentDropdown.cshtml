@@ -1,8 +1,8 @@
 ﻿@model ShibpurConnectWebApp.Models.WebAPI.Departments
     
 <div class="form-group">
-    @Html.LabelFor(m => m.Department, new { @class = "col-md-2 control-label" })
+    @Html.LabelFor(m => m.DepartmentName, new { @class = "col-md-2 control-label" })
     <div class="col-md-10">
-        @Html.DropDownListFor(model => model.Id, new SelectList(ViewBag.Departments, "Id", "Department"), "--Select Department--", new { @class = "form-control", @Id="DepartmentDropdown"})
+        @Html.DropDownListFor(model => model.Id, new SelectList(ViewBag.Departments, "Id", "DepartmentName"), "--Select Department--", new { @class = "form-control", @Id="DepartmentDropdown"})
     </div>
 </div>

@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace ShibpurConnectWebApp
 {
@@ -21,6 +20,8 @@ namespace ShibpurConnectWebApp
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
+                      "~/Scripts/richtextform/bootstrap3-wysihtml5.min.js",
+                      "~/Scripts/richtextform/wysihtml5x-toolbar.min.js",
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
@@ -28,6 +29,7 @@ namespace ShibpurConnectWebApp
                       "~/Content/site.css",
                       "~/Content/font-awesome.css",
                       "~/Content/social-button.css",
+                      "~/Content/richtextform/bootstrap3-wysihtml5.min.css",
                       "~/Content/cosmo.css"));
 
             // Set EnableOptimizations to false for debugging. For more information,

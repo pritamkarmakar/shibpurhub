@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -11,8 +14,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class Questions
     {
         // Primary key
-        [Key]
-        [DataMember]
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty(PropertyName = "questionId")]
         public string QuestionId { get; set; }
         
         [Required]
@@ -30,19 +34,20 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public DateTime? PostedOnUtc { get; set; }
 
         // Foreign key
-        [ForeignKey("AspNetUsers")]
+        //[ForeignKey("AspNetUsers")]
+        [Required]
         [DataMember]
         public string UserId { get; set; }
-
-        public virtual AspNetUsers AspNetUsers { get; set; }
         
-        // One question can have multiple comments
-        [DataMember]
-        public virtual IEnumerable<Comments> Comments { get; set; }
+        //public virtual AspNetUsers AspNetUsers { get; set; }
+        
+        //// One question can have multiple comments
+        //[DataMember]
+        //public virtual IEnumerable<Comment> Comments { get; set; }
 
-        // Categories associated with the question
-        [DataMember]
-        public virtual IEnumerable<Categories> Categories { get; set; } 
+        //// Categories associated with the question
+        //[DataMember]
+        //public virtual IEnumerable<Category> Categories { get; set; } 
     }
 
     /// <summary>
@@ -52,7 +57,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [NotMapped]
     public class QuestionsDTO : Questions
     {
+        [Required]
         [DataMember]
-        public string UserName { get; set; }         
+        public string[] Categories { get; set; }         
     }
 }
