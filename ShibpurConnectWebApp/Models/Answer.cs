@@ -1,17 +1,37 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models
 {
     public class Answer
     {
-        public string AnsweredBy { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty(PropertyName = "answerId")]
+        public string AnswerId { get; set; }
 
-        public string DetailText { get; set; }
+        [DataMember]
+        public string UserId { get; set; }
 
-        public bool Accepted { get; set; }
+        [DataMember]
+        public string QuestionId { get; set; }
 
-        public int Reputation { get; set; }
+        [DataMember]
+        public string AnswerText { get; set; }
 
-        public DateTime DatePosted { get; set; }
+        [DataMember]
+        public bool MarkedAsAnswer { get; set; }
+
+        [DataMember]
+        public int UpVoteCount { get; set; }
+
+        [DataMember]
+        public int DownVoteCount { get; set; }
+
+        [DataMember]
+        public DateTime PostedOnUtc { get; set; }
     }
 }

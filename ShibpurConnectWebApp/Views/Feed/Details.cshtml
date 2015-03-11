@@ -38,7 +38,7 @@
         -o-transition: opacity ease-in-out .25s 0s;
         transition: opacity ease-in-out .25s 0s;
     }
-    
+
     .comment-form textarea {
         /*-webkit-appearance: none;
         line-height: 20px;
@@ -50,9 +50,9 @@
         box-sizing: border-box;
         resize: none;
         height: 40px;*/
-        border-radius: 5px;        
+        border-radius: 5px;
     }
-    
+
     .button, input[type=submit] {
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
@@ -84,7 +84,20 @@
     }
 </style>
 
-@Scripts.Render("~/bundles/jquery")
+@*@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")*@
+
+<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/wysihtml5x/dist/wysihtml5x-toolbar.min.js"></script>
+<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/jquery/dist/jquery.min.js"></script>
+<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/handlebars/handlebars.runtime.min.js"></script>
+<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/bootstrap/dist/css/bootstrap.min.css"></link>
+@*<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/bootstrap/dist/css/bootstrap-theme.min.css"></link>*@
+<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/components-font-awesome/css/font-awesome.min.css"></link>
+<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.css"></link>
+
 <script type="text/javascript">
     $(document).ready(function () {
         jQuery.support.cors = true;
@@ -96,7 +109,7 @@
             url: SERVER + "questions/GetQuestion",
             type: "GET",
             dataType: "json",
-            data: { "questionId" : questionID},
+            data: { "questionId": questionID },
             contentType: "application/json",
             headers: {
                 Accept: "application/json",
@@ -110,8 +123,8 @@
                 if (!result) {
                     return;
                 }
-                debugger;
-                var question = result;               
+                //debugger;
+                var question = result;
 
                 $('.header h1').text(question.title);
                 $('.description').text(question.description);
@@ -125,52 +138,100 @@
             $(parentDiv).removeClass("col-md-8").addClass("col-md-12");
             $(parentDiv).next().addClass("col-md-offset-9");
         });
+
+        $('.textarea').wysihtml5();
     });
+
+    function saveAnswer() {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var userid = "@HttpContext.Current.Session["userid"].ToString()";
+
+        var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        var answerObject = '{"AnswerText":' + '"' + $('.textarea')[0].value + '"' + ',"QuestionId":' + '"54ff9a339245732b9cd12c6e"' + ',"UserId":' + '"' + userid + '"' + '}';
+
+        //debugger;
+
+        $.ajax({
+            url: SERVER + "Answers/PostAnswer",
+            type: "POST",
+            data: answerObject,
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {
+                    // we have to replace '$('.textarea')[0].value' with the object coming from this POST call. As we need the anserid, datetime stamp, upvote, downvote count etc
+                    $('#answerdiv p').append($('.textarea')[0].value);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                $("#errorLabel").text(errorText);
+            }
+        });
+    }
 </script>
 
-<div>
+<div class="container">
     <div id="details">
-        <div class="col-md-10">            
+        <div class="col-md-10">
             <div class="header col-md-12">
-                <h1>                    
-                </h1>
+                <h1></h1>
             </div>
             <div class="description col-md-12">
             </div>
-                <div class="tags col-md-10">
-                </div>
-                <div class="stat col-md-2">
-                    <span class="date"></span>
-                    <span class="answercount"></span>
-                </div>            
+            <div class="tags col-md-10">
+            </div>
+            <div class="stat col-md-2">
+                <span class="date"></span>
+                <span class="answercount"></span>
+            </div>
         </div>
     </div>
 
-    <div class="column block left">
-        <section>
-            <react render="commentCollection" context="context" post="post">
-                <section>
-                    <aside class="comment-form">
-                        <div class="user">
-                            <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                            <span class="userName"></span>
-                        </div>
-                        <div class="col-md-10">
-                            <form class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    <div class="col-md-8">
-                                        <textarea class="form-control" required="" placeholder="Write an answer..." maxlength="6000"></textarea>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="submit" value="Answer Question">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                     </aside>
-                 </section>
-            </react>
-        </section>
+    <div id="moduleanswers" class="col-md-12">
+        <h2>Answers:</h2>
+        <ol id="answerlist">
+            <li>
+                <div id="answerdiv">
+                    <p></p>
+                </div>
+            </li>
+        </ol>
     </div>
-</div>
+    
+    <div class="jumbotron" style="margin-top:40px">
+        <textarea class="textarea" placeholder="Enter text ..." style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
+        <a class="btn btn-primary" onclick="saveAnswer(); return false;" style="margin-top: 10px;">Submit Answer</a>
+        </div>
+        @*<div class="column block left">
+                <section>
+                    <react render="commentCollection" context="context" post="post">
+                        <section>
+                            <aside class="comment-form">
+                                <div class="user">
+                                    <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+                                    <span class="userName"></span>
+                                </div>
+                                <div class="col-md-10">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <div class="col-md-8">
+                                                <textarea id="answerTextArea" class="form-control" required="" placeholder="Write an answer..." maxlength="6000"></textarea>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="submit" value="Answer Question" onclick="saveAnswer();return false;">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </aside>
+                        </section>
+                    </react>
+                </section>
+            </div>*@
+
+    </div>
 

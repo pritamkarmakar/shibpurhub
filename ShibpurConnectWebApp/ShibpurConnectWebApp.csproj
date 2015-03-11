@@ -234,6 +234,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\WebAPI\AnswersController.cs" />
     <Compile Include="Controllers\WebAPI\CategoriesController.cs" />
     <Compile Include="Controllers\WebAPI\CategoryTaggingController.cs" />
     <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
@@ -292,13 +293,9 @@
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
-    <Content Include="Content\images\DSC_0059.jpg" />
-    <Content Include="Content\images\DSC_0064.jpg" />
-    <Content Include="Content\images\DSC_0081.jpg" />
     <Content Include="Content\images\profile-image.jpg" />
     <Content Include="Content\images\shibpur1.jpg" />
-    <Content Include="Content\images\shibpur3.jpg" />
-    <Content Include="Content\images\shibpur4.jpg" />
+    <Content Include="Content\richtextform\bootstrap3-wysihtml5.min.css" />
     <Content Include="Content\social-button.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
@@ -358,6 +355,9 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.all.min.js" />
+    <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.min.js" />
+    <Content Include="Scripts\richtextform\wysihtml5x-toolbar.min.js" />
     <Content Include="Scripts\shibpurconnect.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
