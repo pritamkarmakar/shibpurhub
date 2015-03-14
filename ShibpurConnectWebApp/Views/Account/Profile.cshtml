@@ -3,14 +3,54 @@
 }
 
 @*@model ShibpurConnectWebApp.Models.WebAPI.Departments
-@model ShibpurConnectWebApp.Models.WebAPI.EducationalHistory*@
+    @model ShibpurConnectWebApp.Models.WebAPI.EducationalHistory*@
 
 @section Scripts {
-    <script type="text/javascript" >
-        $(document).ready(function() {
-            // hide the employment history div and title
-            $("#employmentDetails").hide();
-            $("#empTitle").hide();
+    <script type="text/javascript">
+        //$(document).ready(function() {
+        //    // display user details
+
+        //    $("#employmentDetails").hide();
+        //    $("#empTitle").hide();
+        //});
+
+        $(document).ready(function () {
+            jQuery.support.cors = true;
+            var SERVER = "/api/";
+            $.ajax({
+                url: SERVER + "profile/getprofile",
+                type: "GET",
+                dataType: "json",
+                data: { "useremail": "pritam83@gmail.com" },
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    //"Access-Control-Allow-Origin": "*"
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                },
+                success: function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    debugger;
+                    $("#userName").text(result.userInfo.firstName + " " + result.userInfo.lastName);
+
+                    // iterate over all the educational histories
+                    jQuery.each(result.educationalHistories, function (i, val) {
+                        //var eduDiv = document.getElementById('educationalList');
+                        $('#educationalList').append("<div id=\"educationalDetails\"><h5 id=\"collegeName\">University Name:" + val.universityName + "</h5><h5 id=\"year\">Graduate Year:" + val.graduateYear + "</h5><h5 id=\"year\">Department:" + val.department + "</h5></div><hr>");
+                    });
+
+                    // iterate over all the employment histories
+                    jQuery.each(result.employmentHistories, function (i, val) {
+                        //var eduDiv = document.getElementById('educationalList');
+                        $('#employmentList').append("<div id=\"employmentDetails\"><h5 id=\"companyName\">Compnay Name:" + val.companyName + "</h5><h5 id=\"From\">From:" + val.from + "</h5><h5 id=\"To\">To:" + val.to + "</h5></div><hr>");
+                    });
+                }
+            });
         });
 
         function saveEducationalHistory() {
@@ -28,10 +68,10 @@
                 type: "POST",
                 data: educationalHistory,
                 contentType: "application/json",
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success: function(data, result) {
+                success: function (data, result) {
                     if (result) {
                         // show the employment history section and title
                         $("#employmentDetails").show();
@@ -42,7 +82,7 @@
                         $("#eduTitle").hide();
                     }
                 },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
                     var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                     $("#errorLabel").text(errorText);
                 }
@@ -62,10 +102,10 @@
                 type: "POST",
                 data: educationalHistory,
                 contentType: "application/json",
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success: function(data, result) {
+                success: function (data, result) {
                     if (result) {
                         // redirect to the question(feed) page
                         window.location.href = "/Feed";
@@ -79,16 +119,27 @@
 
 <h2>@ViewBag.Title</h2>
 <label id="errorLabel" style="color: red;"></label>
-@using (Html.BeginForm("Profile", "Account", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+
+
+@using (Html.BeginForm("Profile", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    <h4 id="eduTitle">Educational History</h4>
-    <h4 id="empTitle">Employment History</h4>
-    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
 
-    @Html.ValidationSummary("", new {@class = "text-danger"})
-    Html.RenderPartial("../PartialViews/_EducationalHistory");
-    Html.RenderPartial("../PartialViews/_EmploymentHistory");
+    <div class="page-header">
+        <h1 id="userName"></h1>
+    </div>
+    <h4 id="eduTitle">Education</h4>
+    <div id="educationalList">
+
+    </div>
+    //Html.RenderPartial("../PartialViews/_EducationalHistory"));
+    <br /><br /><br /><br />
+    <h4 id="empTitle">Employment</h4>
+    <div id="employmentList">
+
+    </div>
+    //Html.RenderPartial("../PartialViews/_EmploymentHistory");
 }
 
 
