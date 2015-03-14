@@ -9,6 +9,18 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @*@RenderSection("Scripts", false/*required*/)*@
+
+    @Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+            if(userDetails)
+            {                
+                var userInfo = $.parseJSON(userDetails);
+                $('.txtWelcome').text("Welcome " + userInfo.firstName + "!");
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">

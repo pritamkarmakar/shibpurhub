@@ -93,18 +93,20 @@
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/handlebars/handlebars.runtime.min.js"></script>
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/bootstrap/dist/css/bootstrap.min.css"></link>
+<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/bootstrap/dist/css/bootstrap.min.css"/>
 @*<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/bootstrap/dist/css/bootstrap-theme.min.css"></link>*@
-<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/components-font-awesome/css/font-awesome.min.css"></link>
-<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.css"></link>
+<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/components-font-awesome/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.css" />
 
 <script type="text/javascript">
+    var questionID = '';
     $(document).ready(function () {
         jQuery.support.cors = true;
         var SERVER = "/api/";
         var url = window.location.href;
         var splitArr = url.split('/');
-        var questionID = splitArr[splitArr.length - 1];
+        questionID = splitArr[splitArr.length - 1];
+
         $.ajax({
             url: SERVER + "questions/GetQuestion",
             type: "GET",
@@ -131,6 +133,11 @@
             }
         });
 
+        $('.btn-submit-answer').click(function () {
+            saveAnswer();
+            
+        });
+
         $('textarea').focus(function () {
             var textarea = $(this);
             $('.comment-form').addClass('active');
@@ -144,18 +151,28 @@
 
     function saveAnswer() {
         jQuery.support.cors = true;
+        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }
+
+        var userInfo = $.parseJSON(userDetails);
+        
+
         var SERVER = "/api/";
-        var userid = "@HttpContext.Current.Session["userid"].ToString()";
+        var userid = userInfo.userId;
 
         var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var answerObject = '{"AnswerText":' + '"' + $('.textarea')[0].value + '"' + ',"QuestionId":' + '"54ff9a339245732b9cd12c6e"' + ',"UserId":' + '"' + userid + '"' + '}';
+        var answerObject = { "AnswerText": $('.textarea')[0].value, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName };
+        
 
         //debugger;
 
         $.ajax({
             url: SERVER + "Answers/PostAnswer",
             type: "POST",
-            data: answerObject,
+            data: JSON.stringify(answerObject),
             contentType: "application/json",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + token);
@@ -204,7 +221,7 @@
     
     <div class="jumbotron" style="margin-top:40px">
         <textarea class="textarea" placeholder="Enter text ..." style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
-        <a class="btn btn-primary" onclick="saveAnswer(); return false;" style="margin-top: 10px;">Submit Answer</a>
+        <a class="btn btn-primary btn-submit-answer" style="margin-top: 10px;">Submit Answer</a>
         </div>
         @*<div class="column block left">
                 <section>
