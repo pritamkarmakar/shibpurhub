@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
@@ -30,11 +31,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return _mongoHelper.Collection.FindAll().ToList();
         }
 
-        // GET: api/EducationalHistories/userid
+        // GET: api/Educational/GetEducationalHistories?useremail=
+        // this api will return all educational histories of a user
         [ResponseType(typeof(EducationalHistories))]
-        public IHttpActionResult GetEducationalHistory(string userId)
+        public async Task<IHttpActionResult> GetEducationalHistories(string userEmail)
         {
-            var educationalHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).ToList();
+            // get the userID and verify userEmail is valid or not
+            Helper.Helper helper = new Helper.Helper();
+            var actionResult = helper.FindUserByEmail(userEmail);
+            var userInfo = await actionResult;
+
+            if (userInfo == null)
+                return NotFound();
+
+            var educationalHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userInfo.UserId).ToList();
             if (educationalHistory.Count == 0)
             {
                 return null;

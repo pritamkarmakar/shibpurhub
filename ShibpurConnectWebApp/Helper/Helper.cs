@@ -3,13 +3,16 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
+using System.Web.Http;
 using Newtonsoft.Json;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
+using ShibpurConnectWebApp.Providers;
 
 namespace ShibpurConnectWebApp.Helper
 {
-    public class HelperClass
+    public class Helper
     {
         // Bearer token to access the Web API
         public string token = string.Empty;
@@ -115,6 +118,30 @@ namespace ShibpurConnectWebApp.Helper
                 return registerApi.Message;
 
             return "Succeed";
+        }
+
+        public async Task<CustomUserInfo> FindUserByEmail(string userEmail)
+        {
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                ApplicationUser user = await _repo.FindUserByEmail(userEmail);
+
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new CustomUserInfo()
+                    {
+                        Email = user.Email,
+                        UserId = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
+                    };
+
+                }
+            }
         }
     }
 }

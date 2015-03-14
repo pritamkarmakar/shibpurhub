@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using MongoDB.Driver.Builders;
@@ -28,18 +29,27 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return _mongoHelper.Collection.FindAll().ToList();
         }
 
-        // GET: api/EmploymentHistories/5
-        //[ResponseType(typeof(EmploymentHistory))]
-        //public IHttpActionResult GetEmploymentHistory(string id)
-        //{
-        //    EmploymentHistory employmentHistory = db.EmploymentHistories.Find(id);
-        //    if (employmentHistory == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: api/Employment/getemploymenthistory?useremail=
+        // this api will return all employment histories of a user
+        [ResponseType(typeof(EmploymentHistories))]
+        public async Task<IHttpActionResult> GetEmploymentHistories(string userEmail)
+        {
+            // get the userID and verify userEmail is valid or not
+            Helper.Helper helper = new Helper.Helper();
+            var actionResult = helper.FindUserByEmail(userEmail);
+            var userInfo = await actionResult;
 
-        //    return Ok(employmentHistory);
-        //}
+            if (userInfo == null)
+                return NotFound();
+
+            var employmentHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userInfo.UserId).ToList();
+            if (employmentHistory.Count == 0)
+            {
+                return null;
+            }
+
+            return Ok(employmentHistory);
+        }
 
         // PUT: api/EmploymentHistories/5
         //[ResponseType(typeof(void))]
@@ -95,7 +105,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper.Collection.Save(employmentHistory);
             // try
             //{
-            
+
             //}
             //catch (DbUpdateException)
             //{

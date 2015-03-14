@@ -47,16 +47,14 @@ namespace ShibpurConnectWebApp.Providers
     public class AuthRepository : IDisposable
     {
         private ApplicationIdentityContext _ctx;
-        
+
 
         private UserManager<ApplicationUser> _userManager;
 
         public AuthRepository()
         {
-            var con = new MongoConnectionStringBuilder(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
-
-            var server = MongoServer.Create(con);
-            var db = server.GetDatabase(con.DatabaseName);
+            var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
+            var db = client.GetServer().GetDatabase("shibpurconnect");
 
             _ctx = new ApplicationIdentityContext(db.GetCollection<IdentityUser>("users"), db.GetCollection<IdentityUser>("roles"));
             _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
@@ -77,9 +75,16 @@ namespace ShibpurConnectWebApp.Providers
             return result;
         }
 
-        public async Task<IdentityUser> FindUser(string userName, string password)
+        public async Task<ApplicationUser> FindUser(string userName, string password)
         {
-            IdentityUser user = await _userManager.FindAsync(userName, password);
+            ApplicationUser user = await _userManager.FindAsync(userName, password);
+
+            return user;
+        }
+
+        public async Task<ApplicationUser> FindUserByEmail(string userName)
+        {
+            ApplicationUser user = await _userManager.FindByEmailAsync(userName);
 
             return user;
         }

@@ -4,6 +4,8 @@ using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -20,7 +22,7 @@ namespace ShibpurConnectWebApp.Controllers
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
-        
+
         public AccountController()
         {
             // get the department list and send it to the view
@@ -110,27 +112,27 @@ namespace ShibpurConnectWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(model);
-        //    }
+            //    if (!ModelState.IsValid)
+            //    {
+            //        return View(model);
+            //    }
 
-        //    // This doesn't count login failures towards account lockout
-        //    // To enable password failures to trigger account lockout, change to shouldLockout: true
-        //    var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-        //    switch (result)
-        //    {
-        //        case SignInStatus.Success:
-        //            return RedirectToLocal(returnUrl);
-        //        case SignInStatus.LockedOut:
-        //            return View("Lockout");
-        //        case SignInStatus.RequiresVerification:
-        //            return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-        //        case SignInStatus.Failure:
-        //        default:
-        //            ModelState.AddModelError("", "Invalid login attempt.");
-        //            return View(model);
-        //    }
+            //    // This doesn't count login failures towards account lockout
+            //    // To enable password failures to trigger account lockout, change to shouldLockout: true
+            //    var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            //    switch (result)
+            //    {
+            //        case SignInStatus.Success:
+            //            return RedirectToLocal(returnUrl);
+            //        case SignInStatus.LockedOut:
+            //            return View("Lockout");
+            //        case SignInStatus.RequiresVerification:
+            //            return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+            //        case SignInStatus.Failure:
+            //        default:
+            //            ModelState.AddModelError("", "Invalid login attempt.");
+            //            return View(model);
+            //    }
 
             if (!ModelState.IsValid)
             {
@@ -168,7 +170,9 @@ namespace ShibpurConnectWebApp.Controllers
 
                     // check whether user has added educational history, if not then redirect to the profile page
                     EducationalHistoriesController controller = new EducationalHistoriesController();
-                    if (controller.GetEducationalHistory(user.Id) == null)
+                    IHttpActionResult actionResult = await controller.GetEducationalHistories(user.Email);
+                    var education = actionResult as OkNegotiatedContentResult<List<EducationalHistories>>;
+                    if (education == null)
                     {
                         return RedirectToAction("Profile", "Account");
                     }
@@ -220,7 +224,7 @@ namespace ShibpurConnectWebApp.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInHelper.TwoFactorSignIn(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInHelper.TwoFactorSignIn(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -234,7 +238,7 @@ namespace ShibpurConnectWebApp.Controllers
             }
         }
 
-        
+
         // GET: /Account/Register
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Register()
@@ -244,9 +248,9 @@ namespace ShibpurConnectWebApp.Controllers
 
         public ActionResult Profile()
         {
-           // var userId = User.Identity.GetUserId();
+            // var userId = User.Identity.GetUserId();
             //return View(new ProfileViewModel(userId));
-            
+
             return View();
         }
 
@@ -261,7 +265,7 @@ namespace ShibpurConnectWebApp.Controllers
             {
                 // check if user already exist
                 var userInfo = await UserManager.FindByNameAsync(model.Email);
-                
+
                 // if user already exist but there is no local password then add that. This will happen when user initially signed up using social network and then signing up using local account (same email)
                 // this shouldn't be allowed otherwise anyone will be able to set password for someone else. this needs to be done from account management after user login using social account
                 //if (userInfo != null && string.IsNullOrEmpty(userInfo.PasswordHash))
@@ -283,12 +287,12 @@ namespace ShibpurConnectWebApp.Controllers
                 //}
 
                 // if we are here that means user hasn't been created before. So add a new account
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName};
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -473,7 +477,7 @@ namespace ShibpurConnectWebApp.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresTwoFactorAuthentication:
-                    return RedirectToAction("SendCode", new {ReturnUrl = returnUrl, RememberMe = false});
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
                 case SignInStatus.Failure:
                 default:
                     // if email is null then return back to signup page
@@ -502,7 +506,7 @@ namespace ShibpurConnectWebApp.Controllers
                         string lastName =
                             loginInfo.ExternalIdentity.Name.Split(' ')[
                                 loginInfo.ExternalIdentity.Name.Split(' ').Length - 1];
-                        var user = new ApplicationUser {UserName = loginInfo.Email, Email = loginInfo.Email, FirstName = firstName, LastName = lastName};
+                        var user = new ApplicationUser { UserName = loginInfo.Email, Email = loginInfo.Email, FirstName = firstName, LastName = lastName };
                         //await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                         var result3 = await UserManager.CreateAsync(user);
                         if (result3.Succeeded)
