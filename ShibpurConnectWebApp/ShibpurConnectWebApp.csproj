@@ -262,7 +262,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\Answer.cs" />
+    <Compile Include="Models\WebAPI\Answer.cs" />
     <Compile Include="Models\WebAPI\Categories.cs" />
     <Compile Include="Models\WebAPI\Comments.cs" />
     <Compile Include="Controllers\WebAPI\CommentsController.cs" />
@@ -276,6 +276,8 @@
     <Compile Include="Models\WebAPI\Departments.cs" />
     <Compile Include="Models\WebAPI\EducationalHistories.cs" />
     <Compile Include="Models\WebAPI\EmploymentHistories.cs" />
+    <Compile Include="Models\WebAPI\UserProfile.cs" />
+    <Compile Include="Controllers\WebAPI\ProfileController.cs" />
     <Compile Include="Models\WebAPI\Questions.cs" />
     <Compile Include="Models\WebAPI\CategoryTagging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
