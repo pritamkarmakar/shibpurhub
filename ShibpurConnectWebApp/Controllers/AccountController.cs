@@ -246,7 +246,7 @@ namespace ShibpurConnectWebApp.Controllers
             return View();
         }
 
-        public ActionResult Profile()
+        public ActionResult Profile(string userEmail)
         {
             // var userId = User.Identity.GetUserId();
             //return View(new ProfileViewModel(userId));
