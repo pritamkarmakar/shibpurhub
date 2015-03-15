@@ -21,6 +21,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // POST api/Register
+        /// <summary>
+        /// POST: Register a new user
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterViewModel userModel)
@@ -83,14 +88,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET api/Finduser
+        /// <summary>
+        /// Find user, you have to provide your email and password. This API will help you to get userid, that require for making any POST call
+        /// </summary>
+        /// <param name="userEmail">user email</param>
+        /// <param name="password">password</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [Route("FindUser")]
         [HttpGet]
-        public async Task<CustomUserInfo> FindUser(string userName, string password)
+        public async Task<CustomUserInfo> FindUser(string userEmail, string password)
         {
             using (AuthRepository _repo = new AuthRepository())
             {
-                ApplicationUser user = await _repo.FindUser(userName, password);
+                ApplicationUser user = await _repo.FindUser(userEmail, password);
 
                 if (user == null)
                 {

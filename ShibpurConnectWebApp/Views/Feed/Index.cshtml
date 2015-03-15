@@ -147,10 +147,11 @@
                 $(questions).each(function (index, question) {
                     var thread = $('div.thread.hide').clone();
                     var utcDate = new Date(question.postedOnUtc);
-                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2,2);;
+                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2,2);
 
                     $(thread).removeClass('hide');
                     $(thread).find('div.user span.userName').text(question.displayName);
+                    $(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail="+question.userEmail+"'");
                     $(thread).find('div.detail h3 a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
                     $(thread).find('div.detail .excerpt').text(question.description);
                     $(thread).find('div.stat span.date').text(dateString);
@@ -168,6 +169,8 @@
             }
         });
     });
+
+
 </script>
 
 <div class="container">
@@ -188,7 +191,7 @@
     <div id="threads">     
 
         <div class="hide thread col-md-10">
-            <div class="user">
+            <div class="user" id="userdetails">
                 <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
                 <span class="userName"></span>
             </div>

@@ -87,10 +87,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ModelState);
             }
 
-            // Create the CategoryId guid if it is null (for new category)
-            if (category.CategoryId == null)
-                category.CategoryId = ObjectId.GenerateNewId();
-
             _mongoHelper.Collection.Save(category);
 
            return CreatedAtRoute("DefaultApi", new { id = category.CategoryId }, category);

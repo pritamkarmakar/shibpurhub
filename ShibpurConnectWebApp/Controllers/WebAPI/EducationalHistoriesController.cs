@@ -15,6 +15,7 @@ using ShibpurConnectWebApp.Models.WebAPI;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
+
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class EducationalHistoriesController : ApiController
     {
@@ -26,13 +27,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/EducationalHistories
+        /// <summary>
+        /// Get education histories for all users
+        /// </summary>
+        /// <returns></returns>
         public IList GetEducationalHistory()
         {
             return _mongoHelper.Collection.FindAll().ToList();
         }
 
         // GET: api/Educational/GetEducationalHistories?useremail=
-        // this api will return all educational histories of a user
+        /// <summary>
+        /// Api to get all educational histories of a user
+        /// </summary>
+        /// <param name="userEmail">user email</param>
+        /// <returns></returns>
         [ResponseType(typeof(EducationalHistories))]
         public async Task<IHttpActionResult> GetEducationalHistories(string userEmail)
         {
@@ -89,6 +98,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         //}
 
         // POST: api/EducationalHistories
+        /// <summary>
+        /// Save a new educational history for a user
+        /// </summary>
+        /// <param name="educationalHistory"></param>
+        /// <returns></returns>
         [ResponseType(typeof(EducationalHistories))]
         public IHttpActionResult PostEducationalHistory(EducationalHistories educationalHistory)
         {
@@ -119,6 +133,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // DELETE: api/EducationalHistories/5
+        /// <summary>
+        /// Delete a education history record by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [ResponseType(typeof(EducationalHistories))]
         public IHttpActionResult DeleteEducationalHistory(string id)
         {
@@ -132,19 +151,5 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return Ok(educationalHistory);
         }
-
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        db.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
-
-        //private bool EducationalHistoryExists(string id)
-        //{
-        //    return db.EducationalHistories.Count(e => e.Id == id) > 0;
-        //}
     }
 }

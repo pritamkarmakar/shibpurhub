@@ -37,25 +37,14 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         //[ForeignKey("AspNetUsers")]
         [Required]
         [DataMember]
-        public string UserId { get; set; }
-        
-        
-        //public virtual AspNetUsers AspNetUsers { get; set; }
-        
-        //// One question can have multiple comments
-        //[DataMember]
-        //public virtual IEnumerable<Comment> Comments { get; set; }
-
-        //// Categories associated with the question
-        //[DataMember]
-        //public virtual IEnumerable<Category> Categories { get; set; } 
+        public string UserEmail { get; set; }
     }
 
     /// <summary>
     /// We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later
     /// </summary>
     [Serializable]
-    [NotMapped]
+    [BsonIgnoreExtraElements]
     public class QuestionsDTO : Questions
     {
         [Required]
