@@ -35,6 +35,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return result;
         }
 
+        public IList<QuestionsDTO> GetQuestionsByCategory(string category)
+        {
+            var result = new List<QuestionsDTO>();
+            var allQuestions = _mongoHelper.Collection.FindAll().ToList();
+            foreach (var question in allQuestions)
+            {
+                var searchedCategory = question.Categories.Where(a => a.ToLower().Trim() == category.ToLower().Trim()).FirstOrDefault();
+                if(!string.IsNullOrEmpty(searchedCategory))
+                {
+                    result.Add(question);
+                }
+            }
+
+            return result;
+        }
+
         // GET: api/Questions/5
         // Will return a specific question with comments
         [ResponseType(typeof(QuestionsDTO))]

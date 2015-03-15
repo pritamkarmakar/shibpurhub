@@ -74,6 +74,7 @@ namespace ShibpurConnectWebApp.Controllers
         {
             //var thread = Threads.Where(a => a.ThreadID == id).FirstOrDefault();
             //return View(thread);
+            TempData["SelectedPage"] = "Threads";
             return View();
         }
 
@@ -102,6 +103,12 @@ namespace ShibpurConnectWebApp.Controllers
         public ActionResult Categories(string category)
         {
             TempData["SelectedPage"] = "Categories";
+            return View();
+        }
+
+        public ActionResult FeedByCategory(string category)
+        {
+            TempData["SelectedPage"] = "Threads";
             return View();
         }
 
