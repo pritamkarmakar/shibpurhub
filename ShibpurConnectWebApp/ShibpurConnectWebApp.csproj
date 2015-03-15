@@ -414,6 +414,8 @@
     <Content Include="Views\PartialViews\_DepartmentDropdown.cshtml" />
     <Content Include="Views\PartialViews\_EducationalHistory.cshtml" />
     <Content Include="Views\PartialViews\_EmploymentHistory.cshtml" />
+    <Content Include="Views\PartialViews\_FeedList.cshtml" />
+    <Content Include="Views\Feed\FeedByCategory.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,6 +1,5 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    //string profileEmail = (string)ViewData["profileEmail"];
 }
 
 @*@model ShibpurConnectWebApp.Models.WebAPI.Departments
@@ -15,76 +14,52 @@
         //    $("#empTitle").hide();
         //});
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             jQuery.support.cors = true;
             var SERVER = "/api/";
-            var profileEmail = @Html.Raw(Json.Encode(ViewData["profileEmail"]));
+            $.ajax({
+                url: SERVER + "profile/getprofile",
+                type: "GET",
+                dataType: "json",
+                data: { "useremail": "pritam83@gmail.com" },
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    //"Access-Control-Allow-Origin": "*"
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                },
+                success: function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    //debugger;
+                    $("#userName").text(result.userInfo.firstName + " " + result.userInfo.lastName);
 
-            // check if this call for a different user or current logged-in user. If there is no data in the TempData["profileEmail"] then consider current session user
-            if (!profileEmail) {
-                // get current user email from session
-               var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
-            if (!userDetails) {
-                //TO-DO: Handle if userdetail is not available in Session Storage
-                return;
-            }
+                    // iterate over all the educational histories
+                    jQuery.each(result.educationalHistories, function (i, val) {
+                        //var eduDiv = document.getElementById('educationalList');
+                        $('#educationalList').append("<div id=\"educationalDetails\"><h5 id=\"collegeName\">University Name:" + val.universityName + "</h5><h5 id=\"year\">Graduate Year:" + val.graduateYear + "</h5><h5 id=\"year\">Department:" + val.department + "</h5></div><hr>");
+                    });
 
-            var userInfo = $.parseJSON(userDetails);
-                profileEmail = userInfo.email;
-            }
-
-                
-
-        $.ajax({
-            url: SERVER + "profile/getprofile",
-            type: "GET",
-            dataType: "json",
-            data: { "useremail": profileEmail },
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                //"Access-Control-Allow-Origin": "*"
-            },
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-            },
-            success: function(result) {
-                if (!result) {
-                    return;
+                    // iterate over all the employment histories
+                    jQuery.each(result.employmentHistories, function (i, val) {
+                        //var eduDiv = document.getElementById('educationalList');
+                        $('#employmentList').append("<div id=\"employmentDetails\"><h5 id=\"companyName\">Compnay Name:" + val.companyName + "</h5><h5 id=\"From\">From:" + val.from + "</h5><h5 id=\"To\">To:" + val.to + "</h5></div><hr>");
+                    });
                 }
-                
-                $("#userName").text(result.userInfo.firstName + " " + result.userInfo.lastName);
-
-                // iterate over all the educational histories
-                jQuery.each(result.educationalHistories, function(i, val) {
-                    //var eduDiv = document.getElementById('educationalList');
-                    $('#educationalList').append("<div id=\"educationalDetails\"><h5 id=\"collegeName\">University Name:" + val.universityName + "</h5><h5 id=\"year\">Graduate Year:" + val.graduateYear + "</h5><h5 id=\"year\">Department:" + val.department + "</h5></div><br/>");
-                });
-
-                // iterate over all the employment histories
-                jQuery.each(result.employmentHistories, function(i, val) {
-                    //var eduDiv = document.getElementById('educationalList');
-                    $('#employmentList').append("<div id=\"employmentDetails\"><h5 id=\"companyName\">Compnay Name:" + val.companyName + "</h5><h5 id=\"From\">From:" + val.from + "</h5><h5 id=\"To\">To:" + val.to + "</h5></div><br/>");
-                });
-            }
+            });
         });
-    });
 
         function saveEducationalHistory() {
             jQuery.support.cors = true;
             var SERVER = "/api/";
-
-            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
-            if (!userDetails) {
-                //TO-DO: Handle if userdetail is not available in Session Storage
-                return;
-            }
-
-            var userInfo = $.parseJSON(userDetails);
+            var userid = "@HttpContext.Current.Session["userid"].ToString()";
 
             var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-            var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#UniversityName').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + '}';
+            var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#UniversityName').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userid + '"' + '}';
 
             //debugger;
 
@@ -117,16 +92,10 @@
         function saveEmploymentHistory() {
             jQuery.support.cors = true;
             var SERVER = "/api/";
-            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
-            if (!userDetails) {
-                //TO-DO: Handle if userdetail is not available in Session Storage
-                return;
-            }
-
-            var userInfo = $.parseJSON(userDetails);
+            var userid = "@HttpContext.Current.Session["userid"].ToString()";
 
             var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-            var educationalHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + '}';
+            var educationalHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userid + '"' + '}';
 
             $.ajax({
                 url: SERVER + "EmploymentHistories/PostEmploymentHistory",
@@ -165,7 +134,7 @@
 
     </div>
     //Html.RenderPartial("../PartialViews/_EducationalHistory"));
-    <br /><br />
+    <br /><br /><br /><br />
     <h4 id="empTitle">Employment</h4>
     <div id="employmentList">
 

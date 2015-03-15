@@ -35,6 +35,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return result;
         }
 
+        public IList<QuestionsDTO> GetQuestionsByCategory(string category)
+        {
+            var result = new List<QuestionsDTO>();
+            var allQuestions = _mongoHelper.Collection.FindAll().ToList();
+            foreach (var question in allQuestions)
+            {
+                var searchedCategory = question.Categories.Where(a => a.ToLower().Trim() == category.ToLower().Trim()).FirstOrDefault();
+                if(!string.IsNullOrEmpty(searchedCategory))
+                {
+                    result.Add(question);
+                }
+            }
+
+            return result;
+        }
+
         // GET: api/Questions/5
         // Will return a specific question with comments
         [ResponseType(typeof(QuestionsDTO))]
@@ -59,6 +75,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return Ok(questions.ToList()[0]);
+        }
+
+        public int GetAnswersCount(string questionId)
+        {
+            try
+            {
+                ObjectId.Parse(questionId);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+
+            var answerMongoHelper = new MongoHelper<Answer>();
+            var count = answerMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).ToList().Count;
+            return count;
         }
 
         // PUT: api/Questions/5

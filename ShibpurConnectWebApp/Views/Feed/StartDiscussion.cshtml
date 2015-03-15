@@ -35,6 +35,7 @@
         });
 
         $('#btn_Save').click(function () {
+            debugger;
             var question = $('#txt_question').val();
             var description = $('#txtarea_description').val();
             var categories = $('#select_categories').val();
@@ -60,11 +61,11 @@
                 "Title": question,
                 "Description": description,
                 "HasAnswered": 0,
-                "UserEmail": userInfo.email,
+                "UserId": userInfo.userId,
                 "DisplayName": userInfo.firstName,
                 "Categories": arrCategories
             };
-
+            //debugger;
             var SERVER = "/api/";
             var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
             $.ajax({
@@ -94,6 +95,21 @@
         });
     });
 </script>
+
+<div class="container">
+    <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
+        @{
+            var routeAction = TempData["SelectedPage"];
+        }
+        <ul class="nav nav-pills">
+            <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
+            <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
+            <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
+            <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
+        </ul>
+    </div>
+</div>
+
 <h4>Details</h4>
 <hr />
     <div class="panel-body">
