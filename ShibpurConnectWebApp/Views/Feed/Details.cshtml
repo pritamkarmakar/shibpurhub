@@ -24,7 +24,6 @@
         height: 70px;
         display: block;
         float: left;
-        margin-right: 12px;
     }
 
     .avatar {
@@ -82,6 +81,34 @@
         right: 0;
         bottom: 0;
     }
+    #answerlist
+    {
+        list-style-type: none;
+    }
+    li.answer
+    {
+        padding-bottom: 15px;
+    }
+    #answerlist li:last-child {
+        padding-bottom: 0;
+    }
+
+    li.answer div.stat
+    {
+        float: right !important;
+
+    }
+    div.stat
+    {
+        color: #808080;
+        font-size: 9pt;
+    }
+
+    div.stat span
+    {
+        display: inline-block;
+        width: 100%;
+    }
 </style>
 
 @*@Scripts.Render("~/bundles/jquery")
@@ -133,9 +160,10 @@
             }
         });
 
+        getAnswers();
+
         $('.btn-submit-answer').click(function () {
-            saveAnswer();
-            
+            saveAnswer();            
         });
 
         $('textarea').focus(function () {
@@ -149,7 +177,27 @@
         $('.textarea').wysihtml5();
     });
 
+    function getMonth(month) {
+        var monthArray = {
+            "0": "Jan",
+            "1": "Feb",
+            "2": "Mar",
+            "3": "Apr",
+            "4": "May",
+            "5": "Jun",
+            "6": "Jul",
+            "7": "Aug",
+            "8": "Sep",
+            "9": "Oct",
+            "10": "Nov",
+            "11": "Dec",
+        }
+
+        return monthArray[month];
+    }
+
     function saveAnswer() {
+        
         jQuery.support.cors = true;
         var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
         if (!userDetails) {
@@ -157,8 +205,7 @@
             return;
         }
 
-        var userInfo = $.parseJSON(userDetails);
-        
+        var userInfo = $.parseJSON(userDetails);        
 
         var SERVER = "/api/";
         var userid = userInfo.userId;
@@ -166,8 +213,6 @@
         var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
         var answerObject = { "AnswerText": $('.textarea')[0].value, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName };
         
-
-        //debugger;
 
         $.ajax({
             url: SERVER + "Answers/PostAnswer",
@@ -180,12 +225,66 @@
             success: function (data, result) {
                 if (result) {
                     // we have to replace '$('.textarea')[0].value' with the object coming from this POST call. As we need the anserid, datetime stamp, upvote, downvote count etc
-                    $('#answerdiv p').append($('.textarea')[0].value);
+                    //$('#answerdiv p').append($('.textarea')[0].value);
+
+                    var utcDate = new Date(data.postedOnUtc);
+                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+
+
+                    var answerBlock = $('#answerlist li.answer.hide').clone();
+                    $(answerBlock).removeClass('hide');
+                    $(answerBlock).find('.text').html(data.answerText);
+                    $(answerBlock).find('.userName').text(data.displayName);
+                    $(answerBlock).find('.date').text(dateString);
+
+                    $('#answerlist').prepend(answerBlock);
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                 $("#errorLabel").text(errorText);
+            }
+        });
+    }
+
+    function getAnswers()
+    {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+
+        $.ajax({
+            url: SERVER + "answers/GetAnswers",
+            type: "GET",
+            dataType: "json",
+            data: { "questionId": questionID },
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function (result) {
+                if (!result) {
+                    return;
+                }
+                
+                var save = $('#answerlist .answer.hide').detach();
+                $('#answerlist').empty().append(save);
+
+                $(result).each(function (index, answer) {
+                    var answerBlock = $('#answerlist li.answer.hide').clone();
+                    $(answerBlock).removeClass('hide');
+                    $(answerBlock).find('.text').html(answer.answerText);
+                    $(answerBlock).find('.userName').text(answer.displayName);
+
+                    var utcDate = new Date(answer.postedOnUtc);
+                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+                    $(answerBlock).find('.date').text(dateString);
+
+                    $('#answerlist').prepend(answerBlock);
+                });
             }
         });
     }
@@ -210,16 +309,28 @@
 
     <div id="moduleanswers" class="col-md-12">
         <h2>Answers:</h2>
-        <ol id="answerlist">
-            <li>
-                <div id="answerdiv">
-                    <p></p>
-                </div>
-            </li>
-        </ol>
+        <ul id="answerlist">
+            
+                @*<div id="answerdiv">*@
+                    <li class="hide answer col-md-10">
+                        <div class="user">
+                            <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+                            <span class="userName"></span>
+                        </div>
+                        <div class="detail col-md-10">
+                            <div class="text">
+                            </div>                            
+                            <div class="stat col-md-2">
+                                <span class="date"></span>
+                            </div>
+                        </div>
+                    </li>
+                @*</div>*@
+            
+        </ul>
     </div>
     
-    <div class="jumbotron" style="margin-top:40px">
+    <div class="wirte-answer" style="margin-top:40px">
         <textarea class="textarea" placeholder="Enter text ..." style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
         <a class="btn btn-primary btn-submit-answer" style="margin-top: 10px;">Submit Answer</a>
         </div>

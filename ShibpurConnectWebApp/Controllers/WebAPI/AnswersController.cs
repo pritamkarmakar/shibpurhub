@@ -57,7 +57,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return NotFound();
             }
 
-            return Ok(questions.ToList()[0]);
+            return Ok(questions.ToList());
         }
 
         // POST: api/Questions
