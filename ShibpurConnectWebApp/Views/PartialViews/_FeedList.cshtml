@@ -187,8 +187,13 @@
             var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
 
             $(thread).removeClass('hide');
-            $(thread).find('div.user span.userName').text(question.displayName);
-            $(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
+            var userNameAnchor = $(thread).find('div.user a.userName');
+            $(userNameAnchor).text(question.displayName);
+            if (question.userEmail != null) {
+                var url = $(userNameAnchor).attr('href') + '?userEmail=' + question.userEmail;
+                $(userNameAnchor).attr('href', url);
+            }
+            //$(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
             $(thread).find('div.detail h3 a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
             $(thread).find('div.detail .excerpt').text(question.description);
             $(thread).find('div.stat span.date').text(dateString);
@@ -238,19 +243,7 @@
     }
 </script>
 
-<div class="container">
-    <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
-        @{
-            var routeAction = TempData["SelectedPage"];
-        }
-        <ul class="nav nav-pills">
-            <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
-            <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
-            <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
-            <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
-        </ul>
-    </div>
-</div>
+
 
 <div class="main">
     <div id="threads">
@@ -258,7 +251,7 @@
         <div class="hide thread col-md-10">
             <div class="user">
                 <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                <span class="userName"></span>
+                <a class="userName" href="\Account\Profile"></a>
             </div>
             <div class="detail col-md-10">
                 <h3>

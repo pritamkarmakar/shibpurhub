@@ -227,6 +227,7 @@
                     // we have to replace '$('.textarea')[0].value' with the object coming from this POST call. As we need the anserid, datetime stamp, upvote, downvote count etc
                     //$('#answerdiv p').append($('.textarea')[0].value);
 
+                    debugger;
                     var utcDate = new Date(data.postedOnUtc);
                     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
 
@@ -290,19 +291,7 @@
     }
 </script>
 
-<div class="container">
-    <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
-        @{
-            var routeAction = TempData["SelectedPage"];
-        }
-        <ul class="nav nav-pills">
-            <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
-            <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
-            <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
-            <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
-        </ul>
-    </div>
-</div>
+
 
 <div class="container">
     <div id="details">
@@ -346,7 +335,7 @@
     
     <div class="wirte-answer" style="margin-top:40px">
         <textarea class="textarea" placeholder="Enter text ..." style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
-        <a class="btn btn-primary btn-submit-answer" onclick="saveAnswer();return false;" style=" margin-top: 10px;">Submit Answer</a>
+        <a class="btn btn-primary btn-submit-answer" style=" margin-top: 10px;">Submit Answer</a>
         </div>
         @*<div class="column block left">
                 <section>
