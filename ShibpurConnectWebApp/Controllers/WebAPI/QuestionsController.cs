@@ -61,6 +61,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(questions.ToList()[0]);
         }
 
+        public int GetAnswersCount(string questionId)
+        {
+            try
+            {
+                ObjectId.Parse(questionId);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+
+            var answerMongoHelper = new MongoHelper<Answer>();
+            var count = answerMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).ToList().Count;
+            return count;
+        }
+
         // PUT: api/Questions/5
         //[ResponseType(typeof(void))]
         //public IHttpActionResult PutQuestions(string id, Question questions)
