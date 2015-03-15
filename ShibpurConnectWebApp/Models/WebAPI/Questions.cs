@@ -39,6 +39,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public string UserId { get; set; }
         
+        
         //public virtual AspNetUsers AspNetUsers { get; set; }
         
         //// One question can have multiple comments
@@ -59,6 +60,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         [Required]
         [DataMember]
-        public string[] Categories { get; set; }         
+        public string[] Categories { get; set; }
+
+        [DataMember]
+        public string DisplayName { get; set; }
     }
 }

@@ -38,11 +38,17 @@
             var question = $('#txt_question').val();
             var description = $('#txtarea_description').val();
             var categories = $('#select_categories').val();
-
-            if(!question || !description || !categories)
-            {
+            if (!question || !description || !categories) {
                 return;
             }
+
+            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+            if (!userDetails) {
+                //TO-DO: Handle if userdetail is not available in Session Storage
+                return;
+            }
+
+            var userInfo = $.parseJSON(userDetails);            
 
             var arrCategories = [];
             $('#select_categories :selected').each(function (i, e) {
@@ -54,7 +60,8 @@
                 "Title": question,
                 "Description": description,
                 "HasAnswered": 0,
-                "UserId": "@HttpContext.Current.Session["userid"].ToString()",
+                "UserId": userInfo.userId,
+                "DisplayName": userInfo.firstName,
                 "Categories": arrCategories
             };
             debugger;

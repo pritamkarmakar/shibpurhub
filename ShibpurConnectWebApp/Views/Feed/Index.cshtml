@@ -150,7 +150,7 @@
                     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2,2);;
 
                     $(thread).removeClass('hide');
-                    $(thread).find('div.user span.userName').text(question.userName);
+                    $(thread).find('div.user span.userName').text(question.displayName);
                     $(thread).find('div.detail h3 a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
                     $(thread).find('div.detail .excerpt').text(question.description);
                     $(thread).find('div.stat span.date').text(dateString);

@@ -90,7 +90,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             using (AuthRepository _repo = new AuthRepository())
             {
-                IdentityUser user = await _repo.FindUser(userName, password);
+                ApplicationUser user = await _repo.FindUser(userName, password);
 
                 if (user == null)
                 {
@@ -102,7 +102,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         Email = user.Email,
                         UserId = user.Id,
-                        
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
                     };
                 }
             }
