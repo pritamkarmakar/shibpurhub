@@ -108,25 +108,29 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return question == null ? 0 : question.ViewCount;
         }
 
-        [ResponseType(typeof(void))]
-        [HttpPost]
-        public void IncrementViewCount(string id)
+        [ResponseType(typeof(int))]
+        [ActionName("IncrementViewCount")]
+        public int IncrementViewCount(QuestionsDTO question)
         {
             try
             {
-                ObjectId.Parse(id);
+                ObjectId.Parse(question.QuestionId);
             }
             catch (Exception)
             {
-                
+                return 0;
             }
 
-            var question = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == id).FirstOrDefault();
-            if(question != null)
+            var questionInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == question.QuestionId).FirstOrDefault();
+            if (questionInDB != null)
             {
-                question.ViewCount += 1;
-                _mongoHelper.Collection.Save(question);
+                var count = questionInDB.ViewCount + 1;
+                questionInDB.ViewCount = count;
+                _mongoHelper.Collection.Save(questionInDB);
+                return count;
             }
+
+            return 0;
         }
 
         // PUT: api/Questions/5
