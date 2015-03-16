@@ -11,6 +11,10 @@
     @*@RenderSection("Scripts", false/*required*/)*@
 
     @Scripts.Render("~/bundles/jquery")
+    @*@Scripts.Render("~/bundles/tokeninput")*@
+
+    <script src="~/Scripts/jquery.tokeninput.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function () {
             var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
@@ -83,6 +87,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/shibpurconnect.js"></script>
+    
     @RenderSection("scripts", required: false)
 
 </body>

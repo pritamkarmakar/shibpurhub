@@ -88,6 +88,11 @@
             width: 100%;
         }
 
+        div.stat span.answercount, div.stat span.viewcount{
+        width: 40%;
+        float:left;
+    }
+
     footer {
         float: left;
         clear: both;
@@ -198,6 +203,7 @@
             $(thread).find('div.detail .excerpt').text(question.description);
             $(thread).find('div.stat span.date').text(dateString);
             updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));
+            $(thread).find('div.stat span.viewcount').text(question.viewCount + " views");
             //$(thread).find('div.stat span.answercount').text((question.comments || "0") + " answers");
 
             if (question.categories) {
@@ -260,11 +266,14 @@
                 <div class="excerpt">
 
                 </div>
-                <div class="tags col-md-10">
+                <div class="tags col-md-8">
                 </div>
-                <div class="stat col-md-2">
+                <div class="stat col-md-3">
                     <span class="date"></span>
-                    <span class="answercount"></span>
+                    <span>
+                        <span class="viewcount"></span>
+                        <span class="answercount"></span>                        
+                    </span>
                 </div>
             </div>
         </div>

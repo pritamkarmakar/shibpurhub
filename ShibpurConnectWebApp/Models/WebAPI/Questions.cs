@@ -38,6 +38,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [Required]
         [DataMember]
         public string UserEmail { get; set; }
+
+        [DataMember]
+        public int ViewCount { get; set; }
     }
 
     /// <summary>

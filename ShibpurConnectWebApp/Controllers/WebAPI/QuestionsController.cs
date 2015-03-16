@@ -30,7 +30,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         public IList<QuestionsDTO> GetQuestions()
         {
-            var result = _mongoHelper.Collection.FindAll().ToList();
+            var result = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).ToList();
 
             return result;
         }
@@ -91,6 +91,42 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var answerMongoHelper = new MongoHelper<Answer>();
             var count = answerMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).ToList().Count;
             return count;
+        }
+
+        public int GetViewCount(string questionId)
+        {
+            try
+            {
+                ObjectId.Parse(questionId);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+
+            var question = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).FirstOrDefault();
+            return question == null ? 0 : question.ViewCount;
+        }
+
+        [ResponseType(typeof(void))]
+        [HttpPost]
+        public void IncrementViewCount(string id)
+        {
+            try
+            {
+                ObjectId.Parse(id);
+            }
+            catch (Exception)
+            {
+                
+            }
+
+            var question = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == id).FirstOrDefault();
+            if(question != null)
+            {
+                question.ViewCount += 1;
+                _mongoHelper.Collection.Save(question);
+            }
         }
 
         // PUT: api/Questions/5
