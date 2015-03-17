@@ -3,11 +3,16 @@
 }
 
 @Scripts.Render("~/bundles/jquery")
+@*@Scripts.Render("~/bundles/tokeninput")*@
+
+
+
 <script type="text/javascript">
     $(document).ready(function () {
         jQuery.support.cors = true;
         var SERVER = "/api/";
         var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
+        //$('#select_categories').tokenInput("/api/categories/GetCategories");
         $.ajax({
             url: SERVER + "categories/GetCategories",
             type: "GET",
@@ -25,12 +30,19 @@
                     return;
                 }
 
+                debugger;
                 var categories = result;
+                //var categoriesArray = [];
                 $(categories).each(function (i, category) {
                     var option = $('<option>').text(category.categoryName).val(category.categoryId);
                     $('#select_categories').append(option);
+
+                    //var objCategory = { "id": category.categoryId, "name": category.categoryName };
+                    //categoriesArray.push(objCategory);
                 });
 
+                
+                //$('#select_categories').tokenInput(categoriesArray);
             }
         });
 
@@ -96,19 +108,7 @@
     });
 </script>
 
-<div class="container">
-    <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
-        @{
-            var routeAction = TempData["SelectedPage"];
-        }
-        <ul class="nav nav-pills">
-            <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
-            <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
-            <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
-            <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
-        </ul>
-    </div>
-</div>
+
 
 <h4>Details</h4>
 <hr />
@@ -118,7 +118,7 @@
                 <label class="control-label col-md-2" for="Question">Question</label>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <div class="col-md-10">
+                        <div class="col-md-12">
                             <input class="form-control" id="txt_question" placeholder="What is your question?" type="text" required>
                         </div>
                     </div>
@@ -132,18 +132,22 @@
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="Categories">Categories</label>
-                <div class="col-md-10">
-                    <select class="form-control" id="select_categories" multiple>
-                    </select>
+                <div class="col-md-6">
+                    
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @*<input class="form-control" id="select_categories" placeholder="Type in a few character" type="text" required />*@
+                            <select class="form-control" id="select_categories" multiple></select>
+                        </div>
+                    </div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="button" class="btn btn-primary" id="btn_Save" value="Save">
-                </div>
-            </div>
-        </form>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="button" class="btn btn-primary" id="btn_Save" value="Save">
+                        </div>
+                    </div>
+</form>
     </div>
 
 

@@ -109,6 +109,7 @@
         display: inline-block;
         width: 100%;
     }
+    
 </style>
 
 @*@Scripts.Render("~/bundles/jquery")
@@ -157,6 +158,26 @@
 
                 $('.header h1').text(question.title);
                 $('.description').text(question.description);
+            }
+        });
+
+        var objQuestion = new Object();
+        objQuestion.id = questionID;
+        $.ajax({
+            url: SERVER + "questions/IncrementViewCount",
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify({"QuestionID": questionID}),
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function (result) {
+                
             }
         });
 
@@ -211,7 +232,7 @@
         var userid = userInfo.userId;
 
         var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var answerObject = { "AnswerText": $('.textarea')[0].value, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName };
+        var answerObject = { "AnswerText": $('.textarea')[0].value, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName, "UserEmail": userInfo.email };
         
 
         $.ajax({
@@ -236,6 +257,13 @@
                     $(answerBlock).find('.text').html(data.answerText);
                     $(answerBlock).find('.userName').text(data.displayName);
                     $(answerBlock).find('.date').text(dateString);
+
+                    var userNameAnchor = $(answerBlock).find('div.user a.userName');
+                    $(userNameAnchor).text(data.displayName);
+                    if (data.userEmail != null) {
+                        var url = $(userNameAnchor).attr('href') + '?userEmail=' + data.userEmail;
+                        $(userNameAnchor).attr('href', url);
+                    }
 
                     $('#answerlist').prepend(answerBlock);
                 }
@@ -277,7 +305,14 @@
                     var answerBlock = $('#answerlist li.answer.hide').clone();
                     $(answerBlock).removeClass('hide');
                     $(answerBlock).find('.text').html(answer.answerText);
-                    $(answerBlock).find('.userName').text(answer.displayName);
+                    //$(answerBlock).find('.userName').text(answer.displayName);
+
+                    var userNameAnchor = $(answerBlock).find('div.user a.userName');
+                    $(userNameAnchor).text(answer.displayName);
+                    if (answer.userEmail != null) {
+                        var url = $(userNameAnchor).attr('href') + '?userEmail=' + answer.userEmail;
+                        $(userNameAnchor).attr('href', url);
+                    }
 
                     var utcDate = new Date(answer.postedOnUtc);
                     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
@@ -290,19 +325,7 @@
     }
 </script>
 
-<div class="container">
-    <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
-        @{
-            var routeAction = TempData["SelectedPage"];
-        }
-        <ul class="nav nav-pills">
-            <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
-            <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
-            <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
-            <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
-        </ul>
-    </div>
-</div>
+
 
 <div class="container">
     <div id="details">
@@ -329,7 +352,7 @@
                     <li class="hide answer col-md-10">
                         <div class="user">
                             <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                            <span class="userName"></span>
+                            <a class="userName" href="\Account\Profile"></a>
                         </div>
                         <div class="detail col-md-10">
                             <div class="text">
@@ -346,7 +369,7 @@
     
     <div class="wirte-answer" style="margin-top:40px">
         <textarea class="textarea" placeholder="Enter text ..." style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
-        <a class="btn btn-primary btn-submit-answer" onclick="saveAnswer();return false;" style=" margin-top: 10px;">Submit Answer</a>
+        <a class="btn btn-primary btn-submit-answer" style=" margin-top: 10px;">Submit Answer</a>
         </div>
         @*<div class="column block left">
                 <section>
