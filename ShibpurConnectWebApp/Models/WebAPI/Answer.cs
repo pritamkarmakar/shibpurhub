@@ -17,6 +17,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string UserId { get; set; }
 
         [DataMember]
+        public string UserEmail { get; set; }
+
+        [DataMember]
         public string DisplayName { get; set; }
 
         [DataMember]

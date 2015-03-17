@@ -71,17 +71,19 @@
 </head>
 <body>
 
+    
 
-
-    @section emailconfirmalert {
+    @*@section emailconfirmalert {*@
         @if (TempData["ConfirmEmail"] != null && !string.IsNullOrEmpty(TempData["ConfirmEmail"].ToString()))
         {
-            <div class="alert alert-success" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <strong>Thanks for signing up!</strong> Please check your email to complete the sign-up process.
+            <div class="container">
+                <div class="alert alert-success" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Thanks for signing up!</strong> Please check your email to complete the sign-up process.
+                </div>
             </div>
         }
-    }
+    @*  *@}
 
 
 
@@ -96,7 +98,7 @@
 
     <div class="container">
         <label style="font-size: 80px; text-align: center; display: block;">Shibpur Connect</label>
-        <label style="font-size: 40px; text-align: center; display: block;">One platform to connect student, alumnus and authority</label>
+        <label style="font-size: 40px; text-align: center; display: block;">One platform to connect students, alumnus and authority</label>
         <div style="width:200px; margin:auto;">
             <a class="btn btn-primary" href="#">Learn more &raquo;</a>
         </div>

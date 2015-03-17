@@ -1,20 +1,15 @@
-﻿﻿@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    //string profileEmail = (string)ViewData["profileEmail"];
 }
 
-@*@model ShibpurConnectWebApp.Models.WebAPI.Departments
-    @model ShibpurConnectWebApp.Models.WebAPI.EducationalHistory*@
-
 @section Scripts {
+    <style type="text/css">
+        #companyname {
+            font-size: 20px;
+        }
+    </style>
     <script type="text/javascript">
-        //$(document).ready(function() {
-        //    // display user details
-
-        //    $("#employmentDetails").hide();
-        //    $("#empTitle").hide();
-        //});
-
+        // get the user profile for this user
         $(document).ready(function() {
             jQuery.support.cors = true;
             var SERVER = "/api/";
@@ -32,9 +27,6 @@
                 var userInfo = $.parseJSON(userDetails);
                 profileEmail = userInfo.email;
             }
-
-
-
             $.ajax({
                 url: SERVER + "profile/getprofile",
                 type: "GET",
@@ -58,19 +50,26 @@
 
                     // iterate over all the educational histories
                     jQuery.each(result.educationalHistories, function(i, val) {
-                        //var eduDiv = document.getElementById('educationalList');
-                        $('#educationalList').append("<div id=\"educationalDetails\"><h5 id=\"collegeName\">University Name:" + val.universityName + "</h5><h5 id=\"year\">Graduate Year:" + val.graduateYear + "</h5><h5 id=\"year\">Department:" + val.department + "</h5></div><br/>");
+                        //$('#educationalList').append("<div id=\"educationalDetails\"><h5 id=\"collegeName\">University Name:" + val.universityName + "</h5><h5 id=\"year\">Graduate Year:" + val.graduateYear + "</h5><h5 id=\"year\">Department:" + val.department + "</h5></div><br/>");
+                        $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", "  +"<span id=\"department\">" + val.department + "</span></h4><span id=\"year\">" + val.graduateYear + "</span></div><br/>");
                     });
 
                     // iterate over all the employment histories
                     jQuery.each(result.employmentHistories, function(i, val) {
                         //var eduDiv = document.getElementById('educationalList');
-                        $('#employmentList').append("<div id=\"employmentDetails\"><h5 id=\"companyName\">Compnay Name:" + val.companyName + "</h5><h5 id=\"From\">From:" + val.from + "</h5><h5 id=\"To\">To:" + val.to + "</h5></div><br/>");
+                        var toDate;
+                        if (val.to != null)
+                            toDate = val.to.toString('dd/mm/yyyy');
+                        else {
+                            toDate = "Present";
+                        }
+                        $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-"  + toDate + "</span></div><br/>");
                     });
                 }
             });
         });
 
+        // method to save new educational history
         function saveEducationalHistory() {
             jQuery.support.cors = true;
             var SERVER = "/api/";
@@ -82,11 +81,8 @@
             }
 
             var userInfo = $.parseJSON(userDetails);
-
             var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
             var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#UniversityName').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + '}';
-
-            //debugger;
 
             $.ajax({
                 url: SERVER + "EducationalHistories/PostEducationalHistory",
@@ -98,13 +94,36 @@
                 },
                 success: function (data, result) {
                     if (result) {
-                        // show the employment history section and title
-                        $("#employmentDetails").show();
-                        $("#empTitle").show();
+                        // get the educational history from the server and update the div
+                        $.ajax({
+                            url: SERVER + "educationalhistories/geteducationalhistories",
+                            type: "GET",
+                            dataType: "json",
+                            data: { "userEmail": userInfo.email },
+                            contentType: "application/json",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                                //"Access-Control-Allow-Origin": "*"
+                            },
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                            },
+                            success: function(result) {
+                                if (!result) {
+                                    return;
+                                }
+                                // toggle the 'Add education' button, so that the form will get close
+                                $("#educationContent").slideToggle();
+                                // clear div content
+                                $('#educationdiv').empty();
 
-                        // hide the educational history section and title
-                        $("#educationalHistory").hide();
-                        $("#eduTitle").hide();
+                                // iterate over all the educational histories
+                                jQuery.each(result, function(i, val) {
+                                    $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + "</h4><h5 id=\"department\">" + val.department + "</h5><span id=\"year\">" + val.graduateYear + "</span></div><br/>");
+                                });
+                            }
+                        });
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -114,61 +133,226 @@
             });
         }
 
+        // method to save new employment history
         function saveEmploymentHistory() {
             jQuery.support.cors = true;
             var SERVER = "/api/";
             var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
             if (!userDetails) {
                 //TO-DO: Handle if userdetail is not available in Session Storage
+                // show the error dialog
                 return;
             }
-
             var userInfo = $.parseJSON(userDetails);
-
             var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-            var educationalHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + '}';
+            var employmentHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('input#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + ',"Title":' + '"' + $('#Title').val() + '"' +
+                ',"Location":' + '"' + $('#Location').val() + '"' +'}';
 
             $.ajax({
                 url: SERVER + "EmploymentHistories/PostEmploymentHistory",
                 type: "POST",
-                data: educationalHistory,
+                data: employmentHistory,
                 contentType: "application/json",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
                 success: function (data, result) {
                     if (result) {
-                        // redirect to the question(feed) page
-                        window.location.href = "/Feed";
+                        // get the latest data from server and update the profile page
+                        $.ajax({
+                            url: SERVER + "employmenthistories/getemploymenthistories",
+                            type: "GET",
+                            dataType: "json",
+                            data: { "userEmail": userInfo.email },
+                            contentType: "application/json",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                                //"Access-Control-Allow-Origin": "*"
+                            },
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                            },
+                            success: function(result) {
+                                if (!result) {
+                                    return;
+                                }
+
+                                // clear div content
+                                $('#employmentdiv').empty();
+
+                                // iterate over all the employment histories
+                                jQuery.each(result, function(i, val) {
+                                    var toDate;
+                                    if (val.to != null)
+                                        toDate = val.to.toString('dd/mm/yyyy');
+                                    else {
+                                        toDate = "Present";
+                                    }
+                                    //$('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"companyName\">" + val.companyName + "</h4><span id=\"From\">" + val.from + "-"  + toDate + "</span></div><br/>");
+                                    $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-"  + toDate + "</span></div><br/>");
+                                });
+
+                                // toggle the 'Add position' button, so that the form will get close
+                                $("#expanderContent").slideToggle();
+                            }
+                        });
                     }
+                },
+                error: function(){
+                    // show the error dialog
+                    $('#failuremessage').css('display', 'block');
                 }
             });
         }
 
+        // expand the new employment div
+        $("#newPosition").click(function(){
+            $("#expanderContent").slideToggle();
+            if ($("#expanderSign").text() == "+") {
+                $("#expanderSign").html("−");
+            }
+            else {
+                $("#expanderSign").text("+");
+            }
+        });
+
+        // expand the new education div
+        $("#newEducation").click(function(){
+            $("#educationContent").slideToggle();
+            if ($("#expanderSign").text() == "+") {
+                $("#expanderSign").html("−");
+            }
+            else {
+                $("#expanderSign").text("+");
+            }
+        });
     </script>
 }
 
 <h2>@ViewBag.Title</h2>
 <label id="errorLabel" style="color: red;"></label>
 
-
-@using (Html.BeginForm("Profile", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary("", new { @class = "text-danger" })
-
-    <div class="page-header">
-        <h1 id="userName"></h1>
+<div class="container">
+    <div class="alert alert-success" role="alert" id="successmessage" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Data saved successfully.
     </div>
-    <h4 id="eduTitle">Education</h4>
-    <div id="educationalList">
+</div>
 
+<div class="container">
+    <div class="alert alert-danger" role="alert" id="failuremessage" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <p>Something went wrong..Please try again.</p>
     </div>
-    //Html.RenderPartial("../PartialViews/_EducationalHistory"));
-    <br /><br />
-    <h4 id="empTitle">Employment</h4>
-    <div id="employmentList">
+</div>
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-xs-10">
+            <div class="well panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 text-center">
+                            <img src="https://media.licdn.com/mpr/mpr/shrinknp_200_200/p/2/000/0ea/3c3/00948c4.jpg" alt="" class="center-block img-circle img-thumbnail img-responsive">
+                            <ul class="list-inline ratings text-center" title="Ratings">
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                            </ul>
+                        </div>
+                        <!--/col-->
+                        <div class="col-xs-12 col-sm-8">
+                            <h1 id="userName"></h1>
+                            <p><strong>About: </strong> QA Engineer / Web Developer</p>
+                            <p><strong>Hobbies: </strong> Read, out with friends, listen to music, draw and learn new things. </p>
+                            <p>
+                                <strong>Skills: </strong>
+                                <span class="label label-info tags">html5</span>
+                                <span class="label label-info tags">css3</span>
+                                <span class="label label-info tags">jquery</span>
+                                <span class="label label-info tags">bootstrap3</span>
+                            </p>
+                        </div>
+
+                        <!--/col-->
+                        <div class="clearfix"></div>
+                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
+                            <h2><strong> 20,7K </strong></h2>
+                            <p><small>Followers</small></p>
+                            <button class="btn btn-success"><span class="fa fa-plus-circle"></span> Follow </button>
+                        </div>
+                        <!--/col-->
+                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
+                            <h2><strong>245</strong></h2>
+                            <p><small>Following</small></p>
+                            <button class="btn btn-info"><span class="fa fa-user"></span> View Profile </button>
+                        </div>
+                        <!--/col-->
+                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
+                            <h2><strong>43</strong></h2>
+                            <p><small>Snippets</small></p>
+                            <button type="button" class="btn btn-primary"><span class="fa fa-gear"></span> Options </button>
+                        </div>
+                        <!--/col-->
+                    </div>
+                    <!--/row-->
+                </div>
+            </div>
+            <!--/panel-->
+        </div>
+
+        <!-- Education details-->
+        <div class="col-md-6 col-xs-10">
+            <div class="well panel panel-default" style="background-color: rgba(245, 245, 245, 0.1);">
+                <div class="panel-heading" style="background-color:rgba(245, 245, 245, 0.0);">
+                    <h3 class="panel-title">Education</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="educationdiv"></div>
+                    <button class="btn btn-primary btn-xs" id="newEducation">Add education</button>
+
+                </div>
+            </div>
+        </div>
+       
+        <!-- Employment details -->
+        <div class="col-md-6 col-xs-10">
+            <div class="well panel panel-default" style="background-color: rgba(245, 245, 245, 0.1);">
+                <div class="panel-heading" style="background-color:rgba(245, 245, 245, 0.0);">
+                    <h3 class="panel-title">Experience</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="employmentdiv"></div>
+                    <button class="btn btn-primary btn-xs" id="newPosition">Add position</button>
+                    @*<h4 id="expanderHead" style="cursor:pointer;">
+                    Add position
+                </h4>*@
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-xs-10" id="educationContent" style="display:none">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Partial("../PartialViews/_EducationalHistory")
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-xs-10" id="expanderContent" style="display:none">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Partial("../PartialViews/_EmploymentHistory")
+                    @*<div id="expanderContent" style="display:none">
+
+                    </div>*@
+                </div>
+            </div>
+        </div>
     </div>
-    //Html.RenderPartial("../PartialViews/_EmploymentHistory");
-}
+    <!--/row-->
+</div>
+<!--/container-->

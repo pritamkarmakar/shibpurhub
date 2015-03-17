@@ -101,7 +101,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             using (AuthRepository _repo = new AuthRepository())
             {
-                ApplicationUser user = await _repo.FindUser(userEmail, password);
+                ApplicationUser user = await _repo.FindUser(userEmail.ToLower(), password);
 
                 if (user == null)
                 {

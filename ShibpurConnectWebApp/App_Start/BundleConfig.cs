@@ -22,6 +22,7 @@ namespace ShibpurConnectWebApp
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/richtextform/bootstrap3-wysihtml5.min.js",
                       "~/Scripts/richtextform/wysihtml5x-toolbar.min.js",
+                      "~/Scripts/date.js",
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(

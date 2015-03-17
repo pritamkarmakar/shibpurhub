@@ -22,6 +22,14 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [Required]
         [DataMember]
+        public string Title { get; set; }
+
+        [Required]
+        [DataMember]
+        public string Location { get; set; }
+
+        [Required]
+        [DataMember]
         public DateTime? From { get; set; }
 
         [DataMember]

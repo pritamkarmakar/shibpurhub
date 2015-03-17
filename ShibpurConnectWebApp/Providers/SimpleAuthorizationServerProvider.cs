@@ -64,8 +64,8 @@ namespace ShibpurConnectWebApp.Providers
         {
             ApplicationUser user = new ApplicationUser
             {
-                UserName = userModel.Email,
-                Email = userModel.Email,
+                UserName = userModel.Email.ToLower(),
+                Email = userModel.Email.ToLower(),
                 FirstName = userModel.FirstName,
                 LastName = userModel.LastName
             };

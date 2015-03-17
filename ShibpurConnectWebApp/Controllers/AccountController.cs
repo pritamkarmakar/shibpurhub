@@ -140,7 +140,7 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
 
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByNameAsync(model.Email.ToLower());
 
             // if this email doesn't exist then return error
             if (user == null)
@@ -156,12 +156,12 @@ namespace ShibpurConnectWebApp.Controllers
                                            + "before you can log in.";
                 TempData["userEmail"] = user.Email;
 
-                return View("Info");
+                return RedirectToAction("Index", "Home");
             }
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInHelper.PasswordSignIn(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInHelper.PasswordSignIn(model.Email.ToLower(), model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -265,7 +265,7 @@ namespace ShibpurConnectWebApp.Controllers
             if (ModelState.IsValid)
             {
                 // check if user already exist
-                var userInfo = await UserManager.FindByNameAsync(model.Email);
+                var userInfo = await UserManager.FindByNameAsync(model.Email.ToLower());
 
                 // if user already exist but there is no local password then add that. This will happen when user initially signed up using social network and then signing up using local account (same email)
                 // this shouldn't be allowed otherwise anyone will be able to set password for someone else. this needs to be done from account management after user login using social account
@@ -288,7 +288,7 @@ namespace ShibpurConnectWebApp.Controllers
                 //}
 
                 // if we are here that means user hasn't been created before. So add a new account
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
+                var user = new ApplicationUser { UserName = model.Email.ToLower(), Email = model.Email.ToLower(), FirstName = model.FirstName, LastName = model.LastName };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
