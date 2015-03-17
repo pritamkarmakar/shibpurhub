@@ -128,7 +128,9 @@
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
-                    $("#errorLabel").text(errorText);
+                    //$("#errorLabel").text(errorText);
+                    $('#failuremessage').css('display', 'block');
+                    $('#failuremessage').text(errorText);
                 }
             });
         }
@@ -189,7 +191,6 @@
                                     else {
                                         toDate = "Present";
                                     }
-                                    //$('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"companyName\">" + val.companyName + "</h4><span id=\"From\">" + val.from + "-"  + toDate + "</span></div><br/>");
                                     $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-"  + toDate + "</span></div><br/>");
                                 });
 
@@ -199,9 +200,11 @@
                         });
                     }
                 },
-                error: function(){
-                    // show the error dialog
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                    //$("#errorLabel").text(errorText);
                     $('#failuremessage').css('display', 'block');
+                    $('#failuremessage').text(errorText);
                 }
             });
         }
@@ -326,7 +329,7 @@
                 </div>
                 <div class="panel-body">
                     <div id="employmentdiv"></div>
-                    <button class="btn btn-primary btn-xs" id="newPosition">Add position</button>
+                    <button class="btn btn-primary btn-xs" id="newPosition">Add experience</button>
                     @*<h4 id="expanderHead" style="cursor:pointer;">
                     Add position
                 </h4>*@
