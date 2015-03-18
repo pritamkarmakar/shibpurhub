@@ -4,7 +4,7 @@
 @model Collection<ApiDescription>
 
 @{
-    ViewBag.Title = "Shibpur Connect REST Service Help Page";
+    ViewBag.Title = "Shibpur Connect REST API Help Page";
 
     // Group APIs by controller
     ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = Model.ToLookup(api => api.ActionDescriptor.ControllerDescriptor);

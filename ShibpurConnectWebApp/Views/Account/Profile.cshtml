@@ -7,6 +7,18 @@
         #companyname {
             font-size: 20px;
         }
+
+        hr#dotted {
+            border-top: 1px dotted rgb(234, 231, 231);
+            color: #fff;
+            background-color: #fff;
+            margin: 8px 0 8px 0;
+        }
+
+        hr {
+            border-top: 1px solid rgb(234, 231, 231);
+            margin: 8px 0 8px 0;
+        }
     </style>
     <script type="text/javascript">
         // get the user profile for this user
@@ -50,8 +62,7 @@
 
                     // iterate over all the educational histories
                     jQuery.each(result.educationalHistories, function(i, val) {
-                        //$('#educationalList').append("<div id=\"educationalDetails\"><h5 id=\"collegeName\">University Name:" + val.universityName + "</h5><h5 id=\"year\">Graduate Year:" + val.graduateYear + "</h5><h5 id=\"year\">Department:" + val.department + "</h5></div><br/>");
-                        $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", "  +"<span id=\"department\">" + val.department + "</span></h4><span id=\"year\">" + val.graduateYear + "</span></div><br/>");
+                        $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><span id=\"year\">" + val.graduateYear + "</span></div><hr id='dotted'/>");
                     });
 
                     // iterate over all the employment histories
@@ -63,7 +74,7 @@
                         else {
                             toDate = "Present";
                         }
-                        $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-"  + toDate + "</span></div><br/>");
+                        $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-" + toDate + "</span></div><hr id='dotted'/>");
                     });
                 }
             });
@@ -89,10 +100,10 @@
                 type: "POST",
                 data: educationalHistory,
                 contentType: "application/json",
-                beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success: function (data, result) {
+                success: function(data, result) {
                     if (result) {
                         // get the educational history from the server and update the div
                         $.ajax({
@@ -126,7 +137,7 @@
                         });
                     }
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
                     var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                     //$("#errorLabel").text(errorText);
                     $('#failuremessage').css('display', 'block');
@@ -148,17 +159,17 @@
             var userInfo = $.parseJSON(userDetails);
             var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
             var employmentHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('input#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + ',"Title":' + '"' + $('#Title').val() + '"' +
-                ',"Location":' + '"' + $('#Location').val() + '"' +'}';
+                ',"Location":' + '"' + $('#Location').val() + '"' + '}';
 
             $.ajax({
                 url: SERVER + "EmploymentHistories/PostEmploymentHistory",
                 type: "POST",
                 data: employmentHistory,
                 contentType: "application/json",
-                beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success: function (data, result) {
+                success: function(data, result) {
                     if (result) {
                         // get the latest data from server and update the profile page
                         $.ajax({
@@ -191,16 +202,16 @@
                                     else {
                                         toDate = "Present";
                                     }
-                                    $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-"  + toDate + "</span></div><br/>");
+                                    $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-" + toDate + "</span></div><br/>");
                                 });
 
                                 // toggle the 'Add position' button, so that the form will get close
-                                $("#expanderContent").slideToggle();
+                                $("#employmentContent").slideToggle();
                             }
                         });
                     }
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
                     var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                     //$("#errorLabel").text(errorText);
                     $('#failuremessage').css('display', 'block');
@@ -210,26 +221,36 @@
         }
 
         // expand the new employment div
-        $("#newPosition").click(function(){
-            $("#expanderContent").slideToggle();
+        $("#newPosition").click(function() {
+            $("#employmentContent").slideToggle();
             if ($("#expanderSign").text() == "+") {
                 $("#expanderSign").html("−");
-            }
-            else {
+            } else {
                 $("#expanderSign").text("+");
             }
         });
 
         // expand the new education div
-        $("#newEducation").click(function(){
+        $("#newEducation").click(function() {
             $("#educationContent").slideToggle();
             if ($("#expanderSign").text() == "+") {
                 $("#expanderSign").html("−");
-            }
-            else {
+            } else {
                 $("#expanderSign").text("+");
             }
         });
+
+        // if user click on the Cancel button in the newEmployment div then collapse that div
+        function cancelSaveEmploymentHistory() {
+            $("#employmentContent").slideToggle();
+            $('html, body').animate({ scrollTop:  $("#employmentContent").offset().top - 50 }, 'slow');
+        }
+
+        // if user click on the Cancel button in the newEducation div then collapse that div
+        function cancelSaveEducationalHistory() {
+            $("#educationContent").slideToggle();
+        }
+
     </script>
 }
 
@@ -268,15 +289,15 @@
                         </div>
                         <!--/col-->
                         <div class="col-xs-12 col-sm-8">
-                            <h1 id="userName"></h1>
+                            <h1 id="userName" class='text-primary'><strong></strong></h1>
                             <p><strong>About: </strong> QA Engineer / Web Developer</p>
                             <p><strong>Hobbies: </strong> Read, out with friends, listen to music, draw and learn new things. </p>
                             <p>
                                 <strong>Skills: </strong>
-                                <span class="label label-info tags">html5</span>
-                                <span class="label label-info tags">css3</span>
-                                <span class="label label-info tags">jquery</span>
-                                <span class="label label-info tags">bootstrap3</span>
+                                <span class="label label-success tags">html5</span>
+                                <span class="label label-success tags">css3</span>
+                                <span class="label label-success tags">jquery</span>
+                                <span class="label label-success tags">bootstrap3</span>
                             </p>
                         </div>
 
@@ -307,36 +328,17 @@
             <!--/panel-->
         </div>
 
-        <!-- Education details-->
-        <div class="col-md-6 col-xs-10">
-            <div class="well panel panel-default" style="background-color: rgba(245, 245, 245, 0.1);">
-                <div class="panel-heading" style="background-color:rgba(245, 245, 245, 0.0);">
-                    <h3 class="panel-title">Education</h3>
-                </div>
+        <!--Div to show all educational histories-->
+        <div class="col-md-12 col-xs-10">
+            <div class="panel panel-default">
                 <div class="panel-body">
+                    <h3 style="margin-top: 1px;" class='text-primary'><strong>Education</strong></h3><hr />
                     <div id="educationdiv"></div>
-                    <button class="btn btn-primary btn-xs" id="newEducation">Add education</button>
-
+                    <button class="btn btn-primary btn-xs" id="newEducation">Add education</button><br /><br />
                 </div>
             </div>
         </div>
-       
-        <!-- Employment details -->
-        <div class="col-md-6 col-xs-10">
-            <div class="well panel panel-default" style="background-color: rgba(245, 245, 245, 0.1);">
-                <div class="panel-heading" style="background-color:rgba(245, 245, 245, 0.0);">
-                    <h3 class="panel-title">Experience</h3>
-                </div>
-                <div class="panel-body">
-                    <div id="employmentdiv"></div>
-                    <button class="btn btn-primary btn-xs" id="newPosition">Add experience</button>
-                    @*<h4 id="expanderHead" style="cursor:pointer;">
-                    Add position
-                </h4>*@
-                </div>
-            </div>
-        </div>
-        
+        <!--Add new education div -->
         <div class="col-md-12 col-xs-10" id="educationContent" style="display:none">
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -344,18 +346,26 @@
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-12 col-xs-10" id="expanderContent" style="display:none">
+
+        <!--Div to show all experiences-->
+        <div class="col-md-12 col-xs-10">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    @Html.Partial("../PartialViews/_EmploymentHistory")
-                    @*<div id="expanderContent" style="display:none">
-
-                    </div>*@
+                    <h3 style="margin-top: 1px;" class='text-primary'><strong>Experience</strong></h3><hr />
+                    <div id="employmentdiv"></div>
+                    <button class="btn btn-primary btn-xs" id="newPosition">Add experience</button><br /><br />
+                </div>
+            </div>
+            </div>
+            <!--Add new experience div-->
+            <div class="col-md-12 col-xs-10" id="employmentContent" style="display:none">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        @Html.Partial("../PartialViews/_EmploymentHistory")
+                    </div>
                 </div>
             </div>
         </div>
+        <!--/row-->
     </div>
-    <!--/row-->
-</div>
 <!--/container-->
