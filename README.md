@@ -9,9 +9,13 @@ Need to do it only once and if you haven't used Git before
 
 ### Clone Application:
 
-1. Create a new folder in your machine. Open command line and do below steps
+* Create a new folder in your machine. Open command line and do below steps
 ```
 cd 'new directory path'
 git clone https://github.com/pritamkarmakar/shibpurconnect.git
 ```
-2. open 'ShibpurConnect.sln' file using Visual Studio
+* open 'ShibpurConnect.sln' file using Visual Studio
+* if you see any error with dll reference run below command from Package Manager Console
+```
+Update-Package -Reinstall
+```
