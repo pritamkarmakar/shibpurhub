@@ -551,6 +551,12 @@
             <param name="password">password</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Helper.ElasticSearchHelper.ElasticClient">
+            <summary>
+            Method to create the Elastic Search client instance
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Helper.Helper.HttpGETResponse(System.String,System.String)">
             <summary>
             Method to retrieve the response of a http GET request

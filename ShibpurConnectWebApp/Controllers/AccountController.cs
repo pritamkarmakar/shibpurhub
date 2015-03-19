@@ -22,9 +22,13 @@ namespace ShibpurConnectWebApp.Controllers
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
+        private ElasticSearchHelper _elasticSearchHelper;
 
         public AccountController()
         {
+            // create the ElasticSearchHelper class instance
+            _elasticSearchHelper = new ElasticSearchHelper();            
+
             // get the department list and send it to the view
             DepartmentsController DP = new DepartmentsController();
             IList<Departments> departmentList = DP.GetDepartments();
@@ -267,32 +271,21 @@ namespace ShibpurConnectWebApp.Controllers
                 // check if user already exist
                 var userInfo = await UserManager.FindByNameAsync(model.Email.ToLower());
 
-                // if user already exist but there is no local password then add that. This will happen when user initially signed up using social network and then signing up using local account (same email)
-                // this shouldn't be allowed otherwise anyone will be able to set password for someone else. this needs to be done from account management after user login using social account
-                //if (userInfo != null && string.IsNullOrEmpty(userInfo.PasswordHash))
-                //{
-                //    var result2 = await UserManager.AddPasswordAsync(userInfo.Id, model.Password);
-                //    if (result2.Succeeded)
-                //    {
-                //        // Send an email with this link
-                //        string code = await UserManager.GenerateEmailConfirmationTokenAsync(userInfo.Id);
-                //        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userInfo.Id, code = code }, protocol: Request.Url.Scheme);
-                //        await UserManager.SendEmailAsync(userInfo.Id, "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
-
-                //        TempData["ConfirmEmail"] = "Well done. Please check your email and confirm your account, you must be confirmed "
-                //            + "before you can log in.";
-
-                //        return RedirectToAction("Index", "Home");
-                //    }
-                //    AddErrors(result2);
-                //}
-
                 // if we are here that means user hasn't been created before. So add a new account
                 var user = new ApplicationUser { UserName = model.Email.ToLower(), Email = model.Email.ToLower(), FirstName = model.FirstName, LastName = model.LastName };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    // add the new user in the elastic search index
+                    var client = _elasticSearchHelper.ElasticClient();
+                    var index = client.Index(new CustomUserInfo
+                    {
+                        Email = user.Email,
+                        UserId = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
+                    });
+
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -322,6 +315,7 @@ namespace ShibpurConnectWebApp.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
+
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 

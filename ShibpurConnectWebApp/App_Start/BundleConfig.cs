@@ -34,8 +34,7 @@ namespace ShibpurConnectWebApp
                       "~/Content/font-awesome.css",
                       "~/Content/social-button.css",
                       "~/Content/richtextform/bootstrap3-wysihtml5.min.css",
-                      "~/Content/token-input.css",
-                      "~/Content/cosmo.css"));
+                      "~/Content/token-input.css"));
 
             // Set EnableOptimizations to false for debugging. For more information,
             // visit http://go.microsoft.com/fwlink/?LinkId=301862
