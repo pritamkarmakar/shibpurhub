@@ -31,6 +31,12 @@
         float: left;
     }
 
+    div.user a.mark-answer
+    {   
+        margin-top: 6px;
+        padding: 3px 6px;
+    }
+
     .avatar {
         border-radius: 50%;
         width: 40px;
@@ -205,6 +211,7 @@
 
 <script type="text/javascript">
     var questionID = '';
+    var askedBy = '';
     $(document).ready(function () {
         jQuery.support.cors = true;
         var SERVER = "/api/";
@@ -235,6 +242,8 @@
 
                 $('.header h1').text(question.title);
                 $('.description').text(question.description);
+                askedBy = question.userEmail;
+                getAnswers();
             }
         });
 
@@ -258,7 +267,7 @@
             }
         });
 
-        getAnswers();
+        //getAnswers();
 
         $('.btn-submit-answer').click(function () {
             saveAnswer();            
@@ -359,6 +368,14 @@
 
     function getAnswers()
     {
+        var isAskedByMe = false;
+        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        if (userDetails) {
+            var userInfo = $.parseJSON(userDetails);
+            isAskedByMe = askedBy == userInfo.email;
+        }
+        
+
         jQuery.support.cors = true;
         var SERVER = "/api/";
 
@@ -385,8 +402,9 @@
 
                 $(result).each(function (index, answer) {
                     var answerBlock = $('#answerlist li.answer.hide').clone();
-                    $(answerBlock).removeClass('hide');
+                    $(answerBlock).removeClass('hide').attr('data-answerid', answer.answerId);
                     $(answerBlock).find('.text').html(answer.answerText);
+                    $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
                     //$(answerBlock).find('.userName').text(answer.displayName);
 
                     var userNameAnchor = $(answerBlock).find('div.user a.userName');
@@ -400,7 +418,51 @@
                     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
                     $(answerBlock).find('.date').text(dateString);
 
+                    if (answer.markedAsAnswer)
+                    {
+                        $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
+                    }
+
                     $('#answerlist').prepend(answerBlock);
+                    if(isAskedByMe)
+                    {
+                        var markAnswer = $(answerBlock).find('.mark-answer');
+                        $(markAnswer).removeClass('hide').click(function () {
+                            var span = $(this);
+                            if ($(span).hasClass('btn-success'))
+                            {
+                                return;
+                            }
+
+                            var answerId = $(span).closest('li.answer').attr('data-answerid');
+                            var answers = [];
+                            answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
+                            $('.mark-answer.btn-success').each(function (i,e) {
+                                $(e).removeClass('btn-success');
+                                var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
+                                answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
+                            });
+
+                            $.ajax({
+                                url: SERVER + "answers/UpdateMarkAsAnswer",
+                                type: "POST",
+                                dataType: "json",
+                                data: JSON.stringify(answers),
+                                contentType: "application/json",
+                                headers: {
+                                    Accept: "application/json",
+                                    "Content-Type": "application/json",
+                                },
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                                },
+                                success: function (result) {
+                                    $(span).addClass('btn-success');
+                                }
+                            });
+                                                      
+                        });
+                    }
                     
                 });
 
@@ -409,6 +471,29 @@
                     var anchor = $(this);
                     var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
                     $(commentBox).removeClass('hide');
+                });
+
+                $('.upvote-anchor').click(function (event) {
+                    event.preventDefault();
+                    var anchor = $(this);
+                    var answerId = $(anchor).closest('li.answer').attr('data-answerid');
+                    $.ajax({
+                        url: SERVER + "answers/UpdateUpVoteCount",
+                        type: "POST",
+                        dataType: "json",
+                        data: JSON.stringify({ "AnswerID": answerId }),
+                        contentType: "application/json",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                        },
+                        success: function (result) {
+                            $(anchor).find('.count').text(result);
+                        }
+                    });
                 });
             }
         });
@@ -443,7 +528,11 @@
                         <div class="user">
                             <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
                             <a class="userName" href="\Account\Profile"></a>
+                            <a class="btn btn-default btn-sm mark-answer hide" title="Mark as answer">
+                                <i class="fa fa-check-square-o fa-lg"></i>
+                            </a>
                         </div>
+                       
                         <div class="detail col-md-10">
                             <div class="text">
                             </div>                            
@@ -454,7 +543,7 @@
                         <div class="answer-links col-md-10">
                             <span class="link upvote-span">
                                 <a class="upvote-anchor" href="#">Upvote
-                                <span class="count">100</span>
+                                <span class="count">0</span>
                                 </a>
                             </span>
                             <span class="link">

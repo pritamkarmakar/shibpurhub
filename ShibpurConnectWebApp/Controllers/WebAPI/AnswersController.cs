@@ -51,7 +51,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
 
-            var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId);
+            var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).OrderBy(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc);
             if (questions.Count() == 0)
             {
                 return NotFound();
@@ -86,6 +86,72 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper.Collection.Save(answer);
 
             return CreatedAtRoute("DefaultApi", new {id = answer.QuestionId}, answer);
+        }
+
+        public int UpdateUpVoteCount(Answer answer)
+        {
+            try
+            {
+                ObjectId.Parse(answer.AnswerId);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+
+            var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
+            if (answerInDB != null)
+            {
+                    var upCount = answerInDB.UpVoteCount + 1;
+                    answerInDB.UpVoteCount = upCount;
+                    _mongoHelper.Collection.Save(answerInDB);
+                    return upCount;                
+            }
+
+            return 0;
+        }
+
+        public int UpdateDownVoteCount(Answer answer)
+        {
+            try
+            {
+                ObjectId.Parse(answer.AnswerId);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+
+            var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
+            if (answerInDB != null)
+            {                
+                    var downCount = answerInDB.DownVoteCount + 1;
+                    answerInDB.DownVoteCount = downCount;
+                    _mongoHelper.Collection.Save(answerInDB);
+                    return downCount;
+            }
+
+            return 0;
+        }
+
+        public bool UpdateMarkAsAnswer(List<Answer> answers)
+        {
+            if(answers == null || answers.Count == 0)
+            {
+                return false;
+            }
+
+            foreach(var answer in answers)
+            {
+                var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
+                if(answerInDB != null)
+                {
+                    answerInDB.MarkedAsAnswer = answer.MarkedAsAnswer;
+                }
+                _mongoHelper.Collection.Save(answerInDB);
+            }
+
+            return true;
         }
 
         //// DELETE: api/Questions/5
