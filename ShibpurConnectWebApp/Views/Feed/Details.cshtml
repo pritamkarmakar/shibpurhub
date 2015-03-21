@@ -264,13 +264,6 @@
             saveAnswer();            
         });
 
-        $('a.comment-anchor').click(function () {
-            var anchor = $(this);
-            var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
-            $(commentBox).removeClass('hide');
-            return false;
-        });
-
         $('textarea').focus(function () {
             var textarea = $(this);
             $('.comment-form').addClass('active');
@@ -408,6 +401,14 @@
                     $(answerBlock).find('.date').text(dateString);
 
                     $('#answerlist').prepend(answerBlock);
+                    
+                });
+
+                $('.comment-anchor').click(function (event) {
+                    event.preventDefault();
+                    var anchor = $(this);
+                    var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
+                    $(commentBox).removeClass('hide');
                 });
             }
         });
@@ -459,7 +460,7 @@
                             <span class="link">
                                 <a class="downvote-anchor" href="#">Downvote</a>
                             </span>
-                            <span class="link">
+                            <span class="link comment-span">
                                 <a class="comment-anchor" href="#">Comments</a>
                             </span>
                         </div>
