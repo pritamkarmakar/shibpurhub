@@ -81,6 +81,8 @@
 
     div.stat {
         color: #808080;
+        padding-top: 10px;
+        font-size: 9pt;
     }
 
         div.stat span {
@@ -203,7 +205,7 @@
             $(thread).find('div.detail .excerpt').text(question.description);
             $(thread).find('div.stat span.date').text(dateString);
             updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));
-            $(thread).find('div.stat span.viewcount').text(question.viewCount + " views");
+            $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " views");
             //$(thread).find('div.stat span.answercount').text((question.comments || "0") + " answers");
 
             if (question.categories) {
@@ -242,7 +244,7 @@
             },
             success: function (result) {
 
-                $(span).text((result || "0") + " answers");
+                $(span).html("<b>" + (result || "0") + "</b>"+ " answers");
             }
 
         });
