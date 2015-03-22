@@ -4,7 +4,33 @@
 }
 
    <div>
-       @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
+       @if (User.Identity.IsAuthenticated)
+       {
+
+           <div class="container">
+               <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
+                   @{
+           var routeAction = TempData["SelectedPage"];
+                   }
+                   <ul class="nav nav-pills">
+                       <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
+                       <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
+                       <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
+                       <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
+                   </ul>
+               </div>
+           </div>
+
+           @Html.Hidden("hdnUserID", User.Identity.Name)
+       }
+       <div class="col-md-9">
+           @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
+       </div>
+       <div class="col-md-3">
+           <div class="tagCloud">
+               <h3>Tags</h3><hr/>
+           </div>
+       </div>
    </div>
     @*<div id="disqus_thread"></div>
     <script type="text/javascript">

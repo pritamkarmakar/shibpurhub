@@ -62,7 +62,7 @@
     <div class="container">
         @RenderSection("emailconfirmalert", required: false)
     </div>
-    @if (User.Identity.IsAuthenticated)
+    @*@if (User.Identity.IsAuthenticated)
     {       
 
         <div class="container">
@@ -80,7 +80,7 @@
         </div>
 
         @Html.Hidden("hdnUserID", User.Identity.Name)
-    }
+    }*@
 
     
     @RenderSection("jambo", required: false)
