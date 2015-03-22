@@ -337,7 +337,11 @@ getAnswers();
         });
 
         // add the rich text answer plugin
-        $('.textarea').wysihtml5();
+        $('.textarea').wysihtml5({
+            toolbar: {
+                "image": false
+            }
+        });
     });
 
     function getMonth(month) {
@@ -559,85 +563,81 @@ getAnswers();
 
 
 <div class="container">
-    <div id="details">
-        <div class="col-md-10">
-            <div class="header col-md-12">
-                <h1></h1>
-            </div>
-            <div class="description col-md-12">
-            </div>
-            <div class="tags col-md-10">
-            </div>
-            <div class="stat col-md-2">
-                <span class="date"></span>
-                <span class="answercount"></span>
-            </div>
-        </div>
-    </div>
-
-    <!--div to show Ask to Answer module-->
     <div class="row">
-        <div class="col-md-2"></div>
-        <div class="well panel panel-default col-md-6" id="userToAnswer">
-            <h4>Ask to Answer</h4><hr id="bigseparator" />
+        <div id="details">
+            <div class="col-md-10">
+                <div class="header col-md-12">
+                    <h1></h1>
+                </div>
+                <div class="description col-md-12">
+                </div>
+                <div class="tags col-md-10">
+                </div>
+                <div class="stat col-md-2">
+                    <span class="date"></span>
+                    <span class="answercount"></span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div id="moduleanswers" class="col-md-12">
-        <h2>Answers:</h2>
-        <ul id="answerlist">
-            
+        <div id="moduleanswers" class="col-md-12">
+            <h2>Answers:</h2>
+            <ul id="answerlist">
+
                 @*<div id="answerdiv">*@
-                    <li class="hide answer col-md-10">
-                        <div class="user">
-                            <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                            <a class="userName" href="\Account\Profile"></a>
-                            <a class="btn btn-default btn-sm mark-answer hide" title="Mark as answer">
-                                <i class="fa fa-check-square-o fa-lg"></i>
-                            </a>
+                <li class="hide answer col-md-10">
+                    <div class="user">
+                        <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+                        <a class="userName" href="\Account\Profile"></a>
+                        <a class="btn btn-default btn-sm mark-answer hide" title="Mark as answer">
+                            <i class="fa fa-check-square-o fa-lg"></i>
+                        </a>
+                    </div>
+                    <div class="detail col-md-10">
+                        <div class="text">
                         </div>
-                        <div class="detail col-md-10">
-                            <div class="text">
-                            </div>                            
-                            <div class="stat col-md-2">
-                                <span class="date"></span>
-                            </div>
+                        <div class="stat col-md-2">
+                            <span class="date"></span>
                         </div>
-                        <div class="answer-links col-md-10">
-                            <span class="link upvote-span">
-                                <a class="upvote-anchor" href="#">Upvote
+                    </div>
+                    <div class="answer-links col-md-10">
+                        <span class="link upvote-span">
+                            <a class="upvote-anchor" href="#">
+                                Upvote
                                 <span class="count">0</span>
-                                </a>
-                            </span>
-                            <span class="link">
-                                <a class="downvote-anchor" href="#">Downvote</a>
-                            </span>
-                            <span class="link comment-span">
-                                <a class="comment-anchor" href="#">Comments</a>
-                            </span>
-                        </div>
+                            </a>
+                        </span>
+                        <span class="link">
+                            <a class="downvote-anchor" href="#">Downvote</a>
+                        </span>
+                        <span class="link comment-span">
+                            <a class="comment-anchor" href="#">Comments</a>
+                        </span>
+                    </div>
 
-                        <div class="answer-comments hide col-md-10">
-                            <div class="comment-box">
-                                <a class="commentor" href="#">
-                                    <img height="25" width="25" src="/Content/images/profile-image.jpg"></a>                                
-                                    <div class="col-md-9">
-                                        <input class="form-control" id="txt_question" placeholder="Add comment" type="text" required>
-                                    </div>                                
-                                    <div class="col-md-2">
-                                        <input type="button" class="btn btn-primary" id="btn_Save" value="Comment">
-                                    </div>         
+                    <div class="answer-comments hide col-md-10">
+                        <div class="comment-box">
+                            <a class="commentor" href="#">
+                                <img height="25" width="25" src="/Content/images/profile-image.jpg">
+                            </a>
+                            <div class="col-md-9">
+                                <input class="form-control" id="txt_question" placeholder="Add comment" type="text" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="button" class="btn btn-primary" id="btn_Save" value="Comment">
                             </div>
                         </div>
-                    </li>
+                    </div>
+                </li>
                 @*</div>*@
-            
-        </ul>
-    </div>
-    
-    <div class="wirte-answer" style="margin-top:40px">
-        <textarea class="textarea" placeholder="Enter text ..." style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
-        <a class="btn btn-primary btn-submit-answer" style=" margin-top: 10px;">Submit Answer</a>
+
+            </ul>
+        </div>
+
+        <div class="wirte-answer col-md-6" style="margin-top:40px">
+            <textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
+            <a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>
+        </div>
         </div>
         @*<div class="column block left">
                 <section>
@@ -666,5 +666,13 @@ getAnswers();
                 </section>
             </div>*@
 
+        <!--div to show Ask to Answer module-->
+    <br/><br/>
+        <div class="row">
+            @*<div class="col-md-2"></div>*@
+            <div class="well panel panel-default col-md-6" id="userToAnswer">
+                <h4>Ask to Answer</h4><hr id="bigseparator" />
+            </div>
+        </div>
     </div>
 
