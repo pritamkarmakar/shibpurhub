@@ -2,11 +2,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@Scripts.Render("~/bundles/jquery")
-@*@Scripts.Render("~/bundles/tokeninput")*@
-
-
-
 <script type="text/javascript">
     $(document).ready(function () {
         jQuery.support.cors = true;
@@ -29,8 +24,7 @@
                 if (!result) {
                     return;
                 }
-
-                debugger;
+                
                 var categories = result;
                 //var categoriesArray = [];
                 $(categories).each(function (i, category) {
@@ -42,12 +36,13 @@
                 });
 
                 
-                //$('#select_categories').tokenInput(categoriesArray);
+                //$('#select_categories').tokenInput(categoriesArray);              
+
+
             }
         });
 
         $('#btn_Save').click(function () {
-            debugger;
             var question = $('#txt_question').val();
             var description = $('#txtarea_description').val();
             var categories = $('#select_categories').val();
@@ -63,10 +58,10 @@
 
             var userInfo = $.parseJSON(userDetails);            
 
-            var arrCategories = [];
-            $('#select_categories :selected').each(function (i, e) {
-                arrCategories.push($(e).text());
-            });
+            var arrCategories = categories.split(',');
+            //$.each(categories.split(','), function () {
+            //    arrCategories.push($(this).text());
+            //});
 
             var userID = $('#hdnUserID').val();
             var data = {
@@ -98,14 +93,31 @@
                         return;
                     }
 
-                    document.location.href = "/Feed/Index";
+                    document.location.href = "/Feed/Details/" + result.questionId;
                 }
             });
 
             return false;
 
         });
+
+        //var data = ["option 1", "option 2", "option 3"];
+        //var items = data.map(function (x) { return { item: x }; });
+
+        //$('#input-tags').selectize({
+        //    delimiter: ',',
+        //    persist: false,
+        //    maxItems: 2,
+        //    options: items,
+        //    labelField: "item",
+        //    valueField: "item",
+        //    sortField: 'item',
+        //    searchField: 'item'
+        //});
     });
+
+    
+   
 </script>
 
 
@@ -129,25 +141,37 @@
                 <div class="col-md-6">
                     <textarea class="form-control" id="txtarea_description" placeholder="Description" rows="3" required></textarea>
                 </div>
-            </div>
+            </div>            
             <div class="form-group">
+                <label class="control-label col-md-2" for="Categories">Categories</label>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input class="form-control" id="select_categories" placeholder="Add categories" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="form-group">
                 <label class="col-md-2 control-label" for="Categories">Categories</label>
                 <div class="col-md-6">
                     
                     <div class="form-group">
-                        <div class="col-md-12">
-                            @*<input class="form-control" id="select_categories" placeholder="Type in a few character" type="text" required />*@
+                        <div class="col-md-12">                           
                             <select class="form-control" id="select_categories" multiple></select>
                         </div>
                     </div>
                     </div>
-                </div>
+                </div>*@
+            
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
                             <input type="button" class="btn btn-primary" id="btn_Save" value="Save">
                         </div>
                     </div>
 </form>
+        @*<div class="demo">
+            <input type="text" value="test" class="demo-default selectized" id="input-tags" tabindex="-1" style="display: block;">
+        </div>*@
     </div>
-
 

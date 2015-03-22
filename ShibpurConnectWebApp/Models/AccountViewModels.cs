@@ -74,6 +74,10 @@ namespace ShibpurConnectWebApp.Models
         public string LastName { get; set; }
 
         [Required]
+        [Display(Name = "Current Location")]
+        public string Location { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

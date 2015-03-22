@@ -597,6 +597,13 @@
             Use this model for populating the user profile page with educational history and employment history
             </summary>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfileByUserId(System.String)">
+            <summary>
+            API to get user info using user id
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionsDTO">
             <summary>
             We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later

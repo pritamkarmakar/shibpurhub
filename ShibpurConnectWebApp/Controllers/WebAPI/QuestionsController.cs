@@ -10,6 +10,12 @@ using MongoDB.Bson;
 using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System.Text;
+using System.Collections;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -17,10 +23,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class QuestionsController : ApiController
     {
         private MongoHelper<QuestionsDTO> _mongoHelper;
+        private ElasticSearchHelper _elasticSearchHealer;
 
         public QuestionsController()
         {
             _mongoHelper = new MongoHelper<QuestionsDTO>();
+            _elasticSearchHealer = new ElasticSearchHelper();
         }
 
         // GET: api/Questions
@@ -42,7 +50,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             foreach (var question in allQuestions)
             {
                 var searchedCategory = question.Categories.Where(a => a.ToLower().Trim() == category.ToLower().Trim()).FirstOrDefault();
-                if(!string.IsNullOrEmpty(searchedCategory))
+                if (!string.IsNullOrEmpty(searchedCategory))
                 {
                     result.Add(question);
                 }
@@ -66,7 +74,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(String.Format("Supplied questionId: {0} is not a valid object id", questionId));
             }
-            
+
 
             var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId);
             if (questions.Count() == 0)
@@ -183,39 +191,49 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (question.Categories == null || question.Categories.Length == 0)
                 return BadRequest("Question must have a category association");
 
-            // validate given categories are valid and create the category object list
+            // create the new categories            
             List<Categories> categoryList = new List<Categories>();
             CategoriesController categoriesController = new CategoriesController();
-            foreach (var category in question.Categories)
+            foreach (string category in question.Categories)
             {
                 var actionResult = categoriesController.GetCategory(category);
                 var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
-                if (contentResult.Content == null)
-                    return BadRequest("Supplied category is not valid");
-                else
+                if (contentResult == null)
                 {
-                    categoryList.Add(contentResult.Content);
-                }
-            }
+                    Categories catg = new Categories()
+                    {
+                        CategoryId = ObjectId.GenerateNewId(),
+                        CategoryName = category.Trim().ToLower(),
+                        HasPublished = false
+                    };
+                    var actionResult2 = categoriesController.PostCategories(catg);
+                    var contentResult2 = actionResult2 as CreatedAtRouteNegotiatedContentResult<Categories>;
+                    if (contentResult2 != null)
+                    {
+                        // update the CategoryTagging collection
+                        CategoryTaggingController categoryTaggingController = new CategoryTaggingController();
+
+                        CategoryTagging ct = new CategoryTagging();
+                        ct.Id = ObjectId.GenerateNewId();
+                        ct.CategoryId = catg.CategoryId;
+                        ct.QuestionId = question.QuestionId;
+                        categoryTaggingController.PostCategoryTagging(ct);
+                    }
+                    else
+                        return InternalServerError(new Exception()); 
+                }               
+            }          
 
             // add the datetime stamp for this question
             question.PostedOnUtc = DateTime.UtcNow;
-
+            // create the question id
+            question.QuestionId = ObjectId.GenerateNewId().ToString();
             // save the question to the database
-            _mongoHelper.Collection.Save(question);
-            
-            // update the CategoryTagging collection
-            CategoryTaggingController categoryTaggingController = new CategoryTaggingController();
-            foreach (var category in categoryList)
-            {
-                CategoryTagging ct = new CategoryTagging();
-                ct.Id = ObjectId.GenerateNewId();
-                ct.CategoryId = category.CategoryId;
-                ct.QuestionId = question.QuestionId;
+            var result = _mongoHelper.Collection.Save(question);
 
-                categoryTaggingController.PostCategoryTagging(ct);
-            }
-            
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();     
 
             return CreatedAtRoute("DefaultApi", new { id = question.QuestionId }, question);
         }
@@ -235,5 +253,50 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         //    //return Ok(questions);
         //}
+
+        public async Task<IHttpActionResult> GetSuggestedUserProfiles(string categories)
+        {
+            // validate categories is not empty
+            if (string.IsNullOrEmpty(categories))
+            {
+                return null;
+            }
+
+            // convert the comma(,) separated categories into space separeted single string. We will use this string as search text in elastic search
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string str in categories.Split(','))
+            {
+                sb.Append(str.Trim() + " ");
+            }
+
+            var client = _elasticSearchHealer.ElasticClient();
+            var result = client.Search<object>(s => s.AllIndices().AllTypes().Query(query => query
+        .QueryString(qs => qs.Query(sb.ToString().TrimEnd()))));
+
+                   
+            // retrieve the unique user info from the result
+            HashSet<string> hash = new HashSet<string>();
+            List<UserProfile> userProfileList = new List<UserProfile>();
+            
+            foreach (object obj in result.Documents)
+            {
+                var userData = JObject.Parse(obj.ToString());
+                if (!hash.Contains((string)userData["userId"]))
+                {
+                  hash.Add((string)userData["userId"]);
+
+                    // retrieve the userInfo
+                  ProfileController profileController = new ProfileController();
+                  IHttpActionResult actionResult = await profileController.GetProfileByUserId((string)userData["userId"]);
+                  var userProfile = actionResult as OkNegotiatedContentResult<UserProfile>;
+
+                  userProfileList.Add(userProfile.Content);
+                }
+            }
+
+
+            return Ok(userProfileList);
+        }
     }
 }

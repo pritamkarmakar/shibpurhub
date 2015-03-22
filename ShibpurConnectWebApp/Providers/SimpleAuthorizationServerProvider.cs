@@ -89,6 +89,13 @@ namespace ShibpurConnectWebApp.Providers
             return user;
         }
 
+        public async Task<ApplicationUser> FindUserById(string userId)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+            return user;
+        }
+
         public void Dispose()
         {
             _ctx.Dispose();

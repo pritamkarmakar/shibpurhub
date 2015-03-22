@@ -17,10 +17,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class EmploymentHistoriesController : ApiController
     {
         private readonly MongoHelper<EmploymentHistories> _mongoHelper;
+        private ElasticSearchHelper _elasticSearchHelper;
 
         public EmploymentHistoriesController()
         {
             _mongoHelper = new MongoHelper<EmploymentHistories>();
+            _elasticSearchHelper = new ElasticSearchHelper();
         }
 
         // GET: api/EmploymentHistories
@@ -102,22 +104,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // add the guid id for this record
             //employmentHistory.Id = Guid.NewGuid().ToString();
 
-            _mongoHelper.Collection.Save(employmentHistory);
-            // try
-            //{
+            var result = _mongoHelper.Collection.Save(employmentHistory);
 
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    if (EmploymentHistoryExists(employmentHistory.Id))
-            //    {
-            //        return Conflict();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();
+            
+            // add the new entry in elastic search
+            var client = _elasticSearchHelper.ElasticClient();
+            client.Index(new EmploymentHistories()
+                {
+                    CompanyName = employmentHistory.CompanyName,
+                    Location = employmentHistory.Location,
+                    Title = employmentHistory.Title,
+                    UserId = employmentHistory.UserId
+                });
 
             return CreatedAtRoute("DefaultApi", new { id = employmentHistory.Id }, employmentHistory);
         }

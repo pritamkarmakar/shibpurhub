@@ -34,7 +34,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [ResponseType(typeof(Categories))]
         public IHttpActionResult GetCategory(string categoryName)
         {
-            Categories category = _mongoHelper.Collection.AsQueryable().Where(m => m.CategoryName == categoryName).ToList().Count == 0 ? null : _mongoHelper.Collection.AsQueryable().Where(m => m.CategoryName == categoryName).ToList()[0];
+            Categories category = null;
+
+            try
+            {
+                category = _mongoHelper.Collection.AsQueryable().Where(m => m.CategoryName.ToLower() == categoryName.Trim().ToLower()).ToList().Count == 0 ? null : _mongoHelper.Collection.AsQueryable().Where(m => m.CategoryName.ToLower() == categoryName.Trim().ToLower()).ToList()[0];
+            }
+            catch(Exception ex)
+            {
+                return InternalServerError(ex);                
+            }
+
             if (category == null)
             {
                 return NotFound();
@@ -87,7 +97,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ModelState);
             }
 
-            _mongoHelper.Collection.Save(category);
+            var result = _mongoHelper.Collection.Save(category);
+
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError(new Exception("Failed to save the category in the database"));
 
            return CreatedAtRoute("DefaultApi", new { id = category.CategoryId }, category);
         }

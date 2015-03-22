@@ -137,7 +137,33 @@ namespace ShibpurConnectWebApp.Helper
                         Email = user.Email,
                         UserId = user.Id,
                         FirstName = user.FirstName,
-                        LastName = user.LastName
+                        LastName = user.LastName,
+                        Location = user.Location
+                    };
+
+                }
+            }
+        }
+
+        public async Task<CustomUserInfo> FindUserById(string userId)
+        {
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                ApplicationUser user = await _repo.FindUserById(userId);
+
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new CustomUserInfo()
+                    {
+                        Email = user.Email,
+                        UserId = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Location = user.Location
                     };
 
                 }

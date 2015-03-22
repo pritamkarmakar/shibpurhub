@@ -83,7 +83,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             answer.PostedOnUtc = DateTime.UtcNow;
 
             // save the question to the database
-            _mongoHelper.Collection.Save(answer);
+            var result = _mongoHelper.Collection.Save(answer);
+
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();
 
             return CreatedAtRoute("DefaultApi", new {id = answer.QuestionId}, answer);
         }

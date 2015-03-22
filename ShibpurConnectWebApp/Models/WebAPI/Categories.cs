@@ -13,6 +13,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [Required]
         public string CategoryName { get; set; }
 
+        [Required]
+        public bool HasPublished { get; set; }
+
         // One category can be used in multiple question. There is a many to many relation between Questions and Category tables
         //public virtual IEnumerable<Questions> Questions { get; set; } 
     }

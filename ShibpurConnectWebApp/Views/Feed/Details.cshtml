@@ -109,6 +109,27 @@
         display: inline-block;
         width: 100%;
     }
+
+     /* CSS for Ask to Answer*/
+     hr#bigseparator {
+        border-top: 3px double white;
+        color: #fff;
+        background-color: #fff;
+        margin: 8px 0 8px 0;
+        width:90%;
+    } 
+    hr#smallseparator {
+        border-top: 1px double white;
+        color: #fff;
+        background-color: #fff;
+        margin: 8px 0 8px 0;
+        width:90%;
+    }
+    .wantedanswersuggestion{
+        float:left;
+        width: 90%;
+        margin-bottom: 12px;
+    }
     
 </style>
 
@@ -131,6 +152,7 @@
         var url = window.location.href;
         var splitArr = url.split('/');
         questionID = splitArr[splitArr.length - 1];
+        var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
 
         $.ajax({
             url: SERVER + "questions/GetQuestion",
@@ -155,6 +177,40 @@
 
                 $('.header h1').text(question.title);
                 $('.description').text(question.description);
+
+                // show the suggested user who can answer this question using elastic search
+                $.ajax({
+                    url: SERVER + "questions/GetSuggestedUserProfiles",
+                    type: "GET",
+                    data: { "categories": result.categories.toString() },
+                    dataType: "json",
+                    contentType: "application/json",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + token);
+                    },
+                    success: function (result) {
+                        if (!result) {
+                            return;
+                        }
+
+                        // uodate the div with the user data received from the API
+                        jQuery.each(result, function (i, val) {
+                            //$('#userToAnswer').append("<div id=\"userDetails\"><span id=\"userName\">" + val.firstName + " " + val.lastName + "</span><div><hr id='bigseparator' />");
+                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a href='#' class='btn btn-primary btn-sm' style='float:right;'>Ask</a></div><hr id='smallseparator'/>")
+                        });
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                        //$("#errorLabel").text(errorText);
+                        $('#failuremessage').css('display', 'block');
+                        $('#failuremessage').text(errorText);
+                    }
+                });
             }
         });
 
@@ -192,6 +248,7 @@
             $(parentDiv).next().addClass("col-md-offset-9");
         });
 
+        // add the rich text answer plugin
         $('.textarea').wysihtml5();
     });
 
@@ -338,6 +395,14 @@
                 <span class="date"></span>
                 <span class="answercount"></span>
             </div>
+        </div>
+    </div>
+
+    <!--div to show Ask to Answer module-->
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="well panel panel-default col-md-6" id="userToAnswer">
+            <h4>Ask to Answer</h4><hr id="bigseparator" />
         </div>
     </div>
 

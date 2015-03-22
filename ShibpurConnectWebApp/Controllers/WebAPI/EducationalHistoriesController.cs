@@ -20,10 +20,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class EducationalHistoriesController : ApiController
     {
         private readonly MongoHelper<EducationalHistories> _mongoHelper;
+        private ElasticSearchHelper _elasticSearchHelper;
 
         public EducationalHistoriesController()
         {
             _mongoHelper = new MongoHelper<EducationalHistories>();
+            _elasticSearchHelper = new ElasticSearchHelper();
         }
 
         // GET: api/EducationalHistories
@@ -125,9 +127,27 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // save the department id into the educationalHistory object
             //educationalHistory.Department = contentResult.Content.Id;
+            
+            // generate the unique id for this new record
+            educationalHistory.Id = ObjectId.GenerateNewId();
 
             // save the entry in the database
-            _mongoHelper.Collection.Save(educationalHistory);
+            var result = _mongoHelper.Collection.Save(educationalHistory);
+
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();
+
+            // add the new entry in elastic search
+            var client = _elasticSearchHelper.ElasticClient();
+            client.Index(new EducationalHistories()
+            {
+               Id = educationalHistory.Id,
+               UserId = educationalHistory.UserId,
+               Department = educationalHistory.Department,
+               GraduateYear = educationalHistory.GraduateYear,
+               UniversityName = educationalHistory.UniversityName               
+            });
 
             return CreatedAtRoute("DefaultApi", new { id = educationalHistory.Id }, educationalHistory);
         }

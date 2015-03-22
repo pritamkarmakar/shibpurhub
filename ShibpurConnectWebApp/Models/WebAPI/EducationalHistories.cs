@@ -4,15 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
-    [DataContract(IsReference = true)]
+    //[DataContract(IsReference = true)]
+    //[JsonObject(IsReference = false)]
     public class EducationalHistories
     {
         // Primary key
-        [BsonId]
+        //[BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id { get; set; }
 
         [Required]

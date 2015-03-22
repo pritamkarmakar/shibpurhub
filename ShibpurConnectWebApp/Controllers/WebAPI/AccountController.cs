@@ -114,7 +114,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         Email = user.Email,
                         UserId = user.Id,
                         FirstName = user.FirstName,
-                        LastName = user.LastName
+                        LastName = user.LastName,
+                        Location = user.Location
                     };
                 }
             }

@@ -10,6 +10,7 @@ namespace ShibpurConnectWebApp.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Location { get; set; }
         // to indicate whether its a student, alumni or authority profile
         public int ProfileType { get; set; }
 

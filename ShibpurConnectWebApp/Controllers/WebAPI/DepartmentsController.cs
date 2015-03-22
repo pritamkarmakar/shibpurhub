@@ -89,7 +89,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // add the id
             departments.Id = ObjectId.GenerateNewId();
 
-            _mongoHelper.Collection.Save(departments);
+            var result = _mongoHelper.Collection.Save(departments);
+
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();
 
            return CreatedAtRoute("DefaultApi", new { id = departments.Id }, departments);
         }

@@ -5,11 +5,13 @@ using System.Runtime.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
     [DataContract(IsReference = true)]
+    [JsonObject(IsReference = false)]
     public class EmploymentHistories
     {
         // Primary key
