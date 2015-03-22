@@ -18,12 +18,23 @@
         width: calc(85% - 20px);
         margin-right: 20px;
     }
+    div.detail
+    {
+        min-height: 65px;
+        
+    }
     div.user {
-        width: 70px;
+        width: 60px;
         text-align: center;
-        height: 70px;
+        height: 60px;
         display: block;
         float: left;
+    }
+
+    div.user a.mark-answer
+    {   
+        margin-top: 6px;
+        padding: 3px 6px;
     }
 
     .avatar {
@@ -88,6 +99,12 @@
     li.answer
     {
         padding-bottom: 15px;
+        padding-top: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    li.answer:nth-last-child(2)
+    {
+        border:none;
     }
     #answerlist li:last-child {
         padding-bottom: 0;
@@ -110,6 +127,75 @@
         width: 100%;
     }
 
+    div.answer-links
+    {
+        margin-left: 60px;
+        font-size: 10pt;
+    }
+
+    span.link
+    {
+        margin-right: 20px;
+    }
+
+    span.link a{
+        color:#999;
+    }
+
+    span.link a.upvote-anchor {
+        box-sizing: border-box;
+        transition: all ease-in-out 100ms;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px 0 rgba(200,200,200,0.2);
+        display: inline-block;
+        font-weight: 500;
+        outline: 0;
+        padding: 3px 7px 4px 7px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        background: #e4edf4;
+        color: #3e6d8e;
+        border: 1px solid #bbcadc;
+    }
+
+    .upvote-anchor span.count {
+        background: 0;
+        padding: 0;
+        margin: 0;
+        margin-left: 6px;
+        padding-left: 6px;
+        transition: all ease-in-out 100ms;
+        position: relative;
+        border-radius: 0 3px 3px 0;
+        -webkit-font-smoothing: antialiased;
+        color: #3e6d8e;
+        font-weight: bold;
+        min-width: 10px;
+        text-align: center;
+        display: inline-block;
+        float: none;
+        border-left: 1px solid #3e6d8e;
+    }
+
+    div.answer-comments {
+        font-size: 13px;
+        margin-left: 75px;
+        margin-top: 8px;
+        background: #f6f6f6;
+        border: 1px solid #e2e2e2;
+        border-radius: 2px;
+    }
+    div.comment-box
+    {
+        overflow: auto;
+        padding: 5px 0;
+    }
+    a.commentor
+    {
+        float:left;
+    }
+    
      /* CSS for Ask to Answer*/
      hr#bigseparator {
         border-top: 3px double white;
@@ -146,6 +232,7 @@
 
 <script type="text/javascript">
     var questionID = '';
+    var askedBy = '';
     $(document).ready(function () {
         jQuery.support.cors = true;
         var SERVER = "/api/";
@@ -177,7 +264,8 @@
 
                 $('.header h1').text(question.title);
                 $('.description').text(question.description);
-
+askedBy = question.userEmail;
+getAnswers();
                 // show the suggested user who can answer this question using elastic search
                 $.ajax({
                     url: SERVER + "questions/GetSuggestedUserProfiles",
@@ -234,7 +322,7 @@
             }
         });
 
-        getAnswers();
+        //getAnswers();
 
         $('.btn-submit-answer').click(function () {
             saveAnswer();            
@@ -279,14 +367,18 @@
             //TO-DO: Handle if userdetail is not available in Session Storage
             return;
         }
-
+        var answer = $('.textarea')[0].value;
+        if (!answer || answer == "")
+        {
+            return;
+        }
         var userInfo = $.parseJSON(userDetails);        
 
         var SERVER = "/api/";
         var userid = userInfo.userId;
 
         var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var answerObject = { "AnswerText": $('.textarea')[0].value, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName, "UserEmail": userInfo.email };
+        var answerObject = { "AnswerText": answer, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName, "UserEmail": userInfo.email };
         
 
         $.ajax({
@@ -320,6 +412,7 @@
                     }
 
                     $('#answerlist').prepend(answerBlock);
+                    $('.textarea').val('');
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -331,6 +424,14 @@
 
     function getAnswers()
     {
+        var isAskedByMe = false;
+        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        if (userDetails) {
+            var userInfo = $.parseJSON(userDetails);
+            isAskedByMe = askedBy == userInfo.email;
+        }
+        
+
         jQuery.support.cors = true;
         var SERVER = "/api/";
 
@@ -357,8 +458,9 @@
 
                 $(result).each(function (index, answer) {
                     var answerBlock = $('#answerlist li.answer.hide').clone();
-                    $(answerBlock).removeClass('hide');
+                    $(answerBlock).removeClass('hide').attr('data-answerid', answer.answerId);
                     $(answerBlock).find('.text').html(answer.answerText);
+                    $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
                     //$(answerBlock).find('.userName').text(answer.displayName);
 
                     var userNameAnchor = $(answerBlock).find('div.user a.userName');
@@ -372,7 +474,82 @@
                     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
                     $(answerBlock).find('.date').text(dateString);
 
+                    if (answer.markedAsAnswer)
+                    {
+                        $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
+                    }
+
                     $('#answerlist').prepend(answerBlock);
+                    if(isAskedByMe)
+                    {
+                        var markAnswer = $(answerBlock).find('.mark-answer');
+                        $(markAnswer).removeClass('hide').click(function () {
+                            var span = $(this);
+                            if ($(span).hasClass('btn-success'))
+                            {
+                                return;
+                            }
+
+                            var answerId = $(span).closest('li.answer').attr('data-answerid');
+                            var answers = [];
+                            answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
+                            $('.mark-answer.btn-success').each(function (i,e) {
+                                $(e).removeClass('btn-success');
+                                var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
+                                answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
+                            });
+
+                            $.ajax({
+                                url: SERVER + "answers/UpdateMarkAsAnswer",
+                                type: "POST",
+                                dataType: "json",
+                                data: JSON.stringify(answers),
+                                contentType: "application/json",
+                                headers: {
+                                    Accept: "application/json",
+                                    "Content-Type": "application/json",
+                                },
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                                },
+                                success: function (result) {
+                                    $(span).addClass('btn-success');
+                                }
+                            });
+                                                      
+                        });
+                    }
+                    
+                });
+
+                $('.comment-anchor').click(function (event) {
+                    event.preventDefault();
+                    var anchor = $(this);
+                    var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
+                    $(commentBox).removeClass('hide');
+                });
+
+                $('.upvote-anchor').click(function (event) {
+                    event.preventDefault();
+                    var anchor = $(this);
+                    var answerId = $(anchor).closest('li.answer').attr('data-answerid');
+                    $.ajax({
+                        url: SERVER + "answers/UpdateUpVoteCount",
+                        type: "POST",
+                        dataType: "json",
+                        data: JSON.stringify({ "AnswerID": answerId }),
+                        contentType: "application/json",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                        },
+                        success: function (result) {
+                            $(anchor).find('.count').text(result);
+                        }
+                    });
                 });
             }
         });
@@ -415,12 +592,41 @@
                         <div class="user">
                             <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
                             <a class="userName" href="\Account\Profile"></a>
+                            <a class="btn btn-default btn-sm mark-answer hide" title="Mark as answer">
+                                <i class="fa fa-check-square-o fa-lg"></i>
+                            </a>
                         </div>
                         <div class="detail col-md-10">
                             <div class="text">
                             </div>                            
                             <div class="stat col-md-2">
                                 <span class="date"></span>
+                            </div>
+                        </div>
+                        <div class="answer-links col-md-10">
+                            <span class="link upvote-span">
+                                <a class="upvote-anchor" href="#">Upvote
+                                <span class="count">0</span>
+                                </a>
+                            </span>
+                            <span class="link">
+                                <a class="downvote-anchor" href="#">Downvote</a>
+                            </span>
+                            <span class="link comment-span">
+                                <a class="comment-anchor" href="#">Comments</a>
+                            </span>
+                        </div>
+
+                        <div class="answer-comments hide col-md-10">
+                            <div class="comment-box">
+                                <a class="commentor" href="#">
+                                    <img height="25" width="25" src="/Content/images/profile-image.jpg"></a>                                
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="txt_question" placeholder="Add comment" type="text" required>
+                                    </div>                                
+                                    <div class="col-md-2">
+                                        <input type="button" class="btn btn-primary" id="btn_Save" value="Comment">
+                                    </div>         
                             </div>
                         </div>
                     </li>
