@@ -18,13 +18,130 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
-            if(userDetails)
-            {                
+            if (userDetails) {
                 var userInfo = $.parseJSON(userDetails);
                 $('.txtWelcome').text("Welcome " + userInfo.firstName + "!");
             }
         });
+
+        $(document).ready(function () {
+            // get the new notification count and update notification center
+            jQuery.support.cors = true;
+            var SERVER = "/api/";
+            var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
+            $.ajax({
+                url: SERVER + "notifications/GetNotifications",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function (result) {
+                    if (!result) {
+                        return;
+                    }
+
+                    $("#notification_count").text(10);
+                    $("#notificationsBody").text("<p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/>");
+
+                }
+            });
+
+            $("#notificationLink").click(function () {
+                $("#notificationContainer").fadeToggle(300);
+                $("#notification_count").fadeOut("slow");
+                return false;
+            });
+
+            //Document Click hiding the popup
+            $(document).click(function () {
+                $("#notificationContainer").hide();
+            });
+
+            //Popup on click
+            $("#notificationContainer").click(function () {
+                return false;
+            });
+
+        });
     </script>
+
+    <style type="text/css">
+        #notification_li {
+            position: relative;
+        }
+
+        #notificationContainer {
+            background-color: #fff;
+            border: 1px solid rgba(100, 100, 100, .4);
+            -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+            overflow: visible;
+            position: absolute;
+            top: 30px;
+            margin-left: -170px;
+            width: 400px;
+            z-index: -1;
+            display: none;
+            /*Enable this after jquery implementation;*/
+        }
+
+            /*Popup Arrow*/
+            #notificationContainer:before {
+                content: '';
+                display: block;
+                position: absolute;
+                width: 0;
+                height: 0;
+                color: transparent;
+                border: 10px solid black;
+                border-color: transparent transparent white;
+                margin-top: -20px;
+                margin-left: 188px;
+            }
+
+        #notificationTitle {
+            font-weight: bold;
+            padding: 8px;
+            font-size: 13px;
+            background-color: #ffffff;
+            position: fixed;
+            z-index: 1000;
+            width: 384px;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        #notificationsBody {
+            padding: 33px 0px 0px 0px !important;
+            min-height: 300px;
+        }
+
+        #notificationFooter {
+            background-color: #e9eaed;
+            text-align: center;
+            font-weight: bold;
+            padding: 8px;
+            font-size: 12px;
+            border-top: 1px solid #dddddd;
+        }
+
+        #notification_count {
+            padding: 3px 7px 3px 7px;
+            background: #cc0000;
+            color: #ffffff;
+            font-weight: bold;
+            margin-left: 77px;
+            border-radius: 9px;
+            -moz-border-radius: 9px;
+            -webkit-border-radius: 9px;
+            position: absolute;
+            font-size: 11px;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar navbar-default navbar-fixed-top">
@@ -42,6 +159,18 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li>@Html.ActionLink("Profile", "Profile", "Account")</li>
+
+                        <!-- Notification center-->
+                        <li id="notification_li">
+                            <span id="notification_count"></span>
+                            <a href="#" id="notificationLink">Notifications</a>
+
+                            <div id="notificationContainer">
+                                <div id="notificationTitle">Notifications</div>
+                                <div id="notificationsBody" class="notifications"></div>
+                                <div id="notificationFooter"><a href="#">See All</a></div>
+                            </div>
+                        </li>
                     }
                     <li>@Html.ActionLink("Questions", "Index", "Feed")</li>
                 </ul>
@@ -55,6 +184,7 @@
                         </div>
                     </form>
                 </div>
+
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
@@ -62,27 +192,7 @@
     <div class="container">
         @RenderSection("emailconfirmalert", required: false)
     </div>
-    @*@if (User.Identity.IsAuthenticated)
-    {       
 
-        <div class="container">
-        <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
-            @{
-            var routeAction = TempData["SelectedPage"];
-            }
-            <ul class="nav nav-pills">
-                <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
-                <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
-                <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
-                <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
-            </ul>
-        </div>
-        </div>
-
-        @Html.Hidden("hdnUserID", User.Identity.Name)
-    }*@
-
-    
     @RenderSection("jambo", required: false)
     <div class="container body-content">
         @RenderBody()
@@ -94,7 +204,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/shibpurconnect.js"></script>
-    
+
     @RenderSection("scripts", required: false)
 
 </body>

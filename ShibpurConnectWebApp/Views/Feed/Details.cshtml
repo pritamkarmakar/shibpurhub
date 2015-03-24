@@ -254,7 +254,7 @@
 @Scripts.Render("~/bundles/bootstrap")*@
 
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/wysihtml5x/dist/wysihtml5x-toolbar.min.js"></script>
-<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/jquery/dist/jquery.min.js"></script>
+@*<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/jquery/dist/jquery.min.js"></script>*@
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/handlebars/handlebars.runtime.min.js"></script>
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.js"></script>
 
@@ -325,7 +325,7 @@
                         // uodate the div with the user data received from the API
                         jQuery.each(result, function (i, val) {
                             //$('#userToAnswer').append("<div id=\"userDetails\"><span id=\"userName\">" + val.firstName + " " + val.lastName + "</span><div><hr id='bigseparator' />");
-                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a href='#' class='btn btn-primary btn-sm' style='float:right;'>Ask</a></div><hr id='smallseparator'/>")
+                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
                         });
 
                     },
@@ -338,6 +338,9 @@
                 });
             }
         });
+
+        // get the notification details
+
 
         var objQuestion = new Object();
         objQuestion.id = questionID;
@@ -381,7 +384,38 @@
         });
     });
 
-    function getMonth(month) {
+    // function to send notification to the specific user
+    function SendNotification(elm)
+        {
+        alert(elm.attributes["data-id"].value);
+
+        var data = {
+            "UserId": elm.attributes["data-id"].value,
+            "NotificationContent": "Someone asked you to answer this quesrion",
+            "NotificationType": "AskToAnswer"
+        };
+
+        var SERVER = "/api/";
+        $.ajax({
+            url: SERVER + "notifications/PostNotification",
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(data, null, 2),            
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function (result) {
+                alert("notification submitted");
+            }
+        });
+        }
+
+     function getMonth(month) {
         var monthArray = {
             "0": "Jan",
             "1": "Feb",
@@ -730,7 +764,7 @@
         <br /><br />
         <div class="row">
             @*<div class="col-md-2"></div>*@
-            <div class="well panel panel-default col-md-8" id="userToAnswer">
+            <div class="well panel panel-default col-md-12" id="userToAnswer">
                 <h4>Ask to Answer</h4><hr id="bigseparator" />
             </div>
         </div>

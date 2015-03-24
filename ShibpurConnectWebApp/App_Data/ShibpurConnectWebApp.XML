@@ -530,6 +530,12 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.PostNotification(ShibpurConnectWebApp.Models.WebAPI.Notifications)">
+            <summary>
+            Submit a new notification
+            </summary>
+            <param name="notification">Notification object</param>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestions">
             <summary>
             Will return all available questions
@@ -590,6 +596,16 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo">
             <summary>
             We will use this model in the api/FindUser API. Main intention is to send the userid to the API user, so that we can use the userid for other APIs
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.Notifications">
+            <summary>
+            Notification model
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.NotificationTypes">
+            <summary>
+            Notification types that we support
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.UserProfile">
