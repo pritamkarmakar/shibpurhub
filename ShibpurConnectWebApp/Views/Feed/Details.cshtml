@@ -421,7 +421,7 @@
         // save this into the Notification collection
         var data = {
             "UserId": elm.attributes["data-id"].value,
-            "NotificationContent": "<div><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div><a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>requested you to answer this <a href='" + window.location.href +"'>question</a></div></div>",
+            "NotificationContent": "<div><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a> requested you to answer this <a href='" + window.location.href +"'>question</a></div></div>",
             "NotificationType": "AskToAnswer"
         };
 
