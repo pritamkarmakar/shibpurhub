@@ -16,21 +16,19 @@
     <script src="~/Scripts/jquery.tokeninput.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
-            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        $(document).ready(function () {            
             if (userDetails) {
                 var userInfo = $.parseJSON(userDetails);
                 $('.txtWelcome').text("Welcome " + userInfo.firstName + "!");
             }
-        });
-
-        $(document).ready(function () {
+  
             // get the new notification count and update notification center
             jQuery.support.cors = true;
             var SERVER = "/api/";
             var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
             $.ajax({
-                url: SERVER + "notifications/GetNotifications",
+                url: SERVER + "notifications/GetNewNotifications?userId=" + userInfo.userId,
                 type: "GET",
                 dataType: "json",
                 contentType: "application/json",
@@ -46,13 +44,96 @@
                         return;
                     }
 
-                    $("#notification_count").text(10);
-                    $("#notificationsBody").text("<p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/><p>Hola</p><hr/>");
+                    if (result.length > 0) {
+                        $("#notification_count").show();
+                        $("#notification_count").text(result.length);
+                    }
+                    else
+                        $("#notification_count").hide();                                    
 
                 }
             });
 
+            // get all the notifications
+            $.ajax({
+                url: SERVER + "notifications/GetNotifications?userId=" + userInfo.userId,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    // remove existing notifications and add new ones
+                    $("#notificationsBody").empty();
+
+                    // append notifications
+                    jQuery.each(result, function (i, val) {
+                        $("#notificationsBody").append(val.notificationContent +"<hr/>");
+                    });
+
+                }
+            });
+
+
             $("#notificationLink").click(function () {
+
+                // get current logged-in user details
+                var userInfo = $.parseJSON(userDetails);
+
+                // get all notifications and update the div
+                $.ajax({
+                    url: SERVER + "notifications/GetNotifications?userId=" + userInfo.userId,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + token);
+                    },
+                    success: function (result) {
+                        if (!result) {
+                            return;
+                        }
+                        // remove existing notifications and add new ones
+                        $("#notificationsBody").empty();
+                        // append notifications
+                        jQuery.each(result, function (i, val) {
+                            $("#notificationsBody").append(val.notificationContent + "<hr/>");
+                        });
+
+                    }
+                });
+               
+                // mark all new notification as old
+                var SERVER = "/api/";
+                $.ajax({
+                    url: SERVER + "notifications/MarkAllNewNotificationsAsOld?userId="+ userInfo.userId,
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                    },
+                    success: function (result) {
+                        $('#askmeto').text("Already Asked");
+                    }
+                });
+
                 $("#notificationContainer").fadeToggle(300);
                 $("#notification_count").fadeOut("slow");
                 return false;
@@ -82,8 +163,8 @@
             -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
             overflow: visible;
             position: absolute;
-            top: 30px;
-            margin-left: -170px;
+            top: 50px;
+            margin-left: -176px;
             width: 400px;
             z-index: -1;
             display: none;
@@ -118,6 +199,9 @@
         #notificationsBody {
             padding: 33px 0px 0px 0px !important;
             min-height: 300px;
+            max-height: 350px;
+            overflow: auto;
+            margin-top:21px;
         }
 
         #notificationFooter {
@@ -162,8 +246,8 @@
 
                         <!-- Notification center-->
                         <li id="notification_li">
-                            <span id="notification_count"></span>
-                            <a href="#" id="notificationLink">Notifications</a>
+                            <span id="notification_count" style="display:none;"></span>
+                            <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
 
                             <div id="notificationContainer">
                                 <div id="notificationTitle">Notifications</div>

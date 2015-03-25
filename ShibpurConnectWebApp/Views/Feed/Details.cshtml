@@ -325,7 +325,7 @@
                         // uodate the div with the user data received from the API
                         jQuery.each(result, function (i, val) {
                             //$('#userToAnswer').append("<div id=\"userDetails\"><span id=\"userName\">" + val.firstName + " " + val.lastName + "</span><div><hr id='bigseparator' />");
-                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
+                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email +"' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
                         });
 
                     },
@@ -338,9 +338,6 @@
                 });
             }
         });
-
-        // get the notification details
-
 
         var objQuestion = new Object();
         objQuestion.id = questionID;
@@ -386,12 +383,45 @@
 
     // function to send notification to the specific user
     function SendNotification(elm)
-        {
-        alert(elm.attributes["data-id"].value);
+    {
+        // retrieve current logged-in user details
+        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
 
+        // send email notification
+        var emaildata = {
+            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer this <a href='" + window.location.href +"'>question</a>",
+            "EmailAddress": elm.attributes["data-email"].value,
+            "Subject": "Can you answer this question?"
+        };
+
+        var SERVER = "/api/";
+        $.ajax({
+            url: SERVER + "emails/sendasync",
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(emaildata, null, 2),
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function (result) {
+                //alert("sent email");
+            }
+        });
+
+        // save this into the Notification collection
         var data = {
             "UserId": elm.attributes["data-id"].value,
-            "NotificationContent": "Someone asked you to answer this quesrion",
+            "NotificationContent": "<div><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div><a href='http://localhost:56135/Account/Profile?useremail=pritam83@gmail.com'>Pritam Karmakar</a> requested you to answer this <a href='http://localhost:56135/Feed/Details/550ef23968fe6ba80cd621cb'>question</a></div></div>",
             "NotificationType": "AskToAnswer"
         };
 
@@ -410,7 +440,7 @@
                 xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
             },
             success: function (result) {
-                alert("notification submitted");
+                $(elm).text("Asked");
             }
         });
         }

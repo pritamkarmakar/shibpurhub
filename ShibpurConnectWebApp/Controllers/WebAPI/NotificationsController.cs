@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using MongoDB.Driver.Linq;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -20,9 +21,23 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/Notification
-        public IEnumerable<string> GetNotifications()
+        public IList<Notifications> GetNotifications(string userId)
         {
-            return new string[] { "value1", "value2" };
+            var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
+                          where e.UserId == userId
+                          orderby e.PostedOnUtc descending
+                          select e).ToList();
+
+            return result;
+        }
+
+        public IList<Notifications> GetNewNotifications(string userId)
+        {
+            var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
+                          where e.UserId == userId && e.NewNotification == true
+                          select e).ToList();
+
+            return result;
         }
 
         // GET: api/Notification/5
@@ -48,6 +63,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // add the datetime stamp for this notification
             notification.PostedOnUtc = DateTime.UtcNow;
+            // make it as new notification
+            notification.NewNotification = true;
+
 
             // save the notification to the database collection
             var result = _mongoHelper.Collection.Save(notification);
@@ -57,6 +75,30 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return InternalServerError();
 
             return CreatedAtRoute("DefaultApi", new { id = notification.NotificationId }, notification);
+        }
+
+        public IHttpActionResult MarkAllNewNotificationsAsOld(string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Request body is null. Please send a valid email adress");
+
+            // retrieve all the notification those are new
+            var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
+                         where e.UserId == userId && e.NewNotification == true
+                         select e).ToList();
+
+            // mark all these as old and save back to database
+            foreach(var notification in result)
+            {
+                notification.NewNotification = false;
+                _mongoHelper.Collection.Save(notification);
+            }
+
+            return Ok();
         }
 
         // PUT: api/Notification/5

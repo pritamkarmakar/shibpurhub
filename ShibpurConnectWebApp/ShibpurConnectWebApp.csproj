@@ -240,6 +240,7 @@
     <Compile Include="Controllers\WebAPI\CategoryTaggingController.cs" />
     <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
     <Compile Include="Controllers\WebAPI\EducationalHistoriesController.cs" />
+    <Compile Include="Controllers\WebAPI\EmailsController.cs" />
     <Compile Include="Controllers\WebAPI\EmploymentHistoriesController.cs" />
     <Compile Include="Controllers\WebAPI\NotificationsController.cs" />
     <Compile Include="Controllers\WebAPI\QuestionsController.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="Models\WebAPI\CustomUserInfo.cs" />
     <Compile Include="Models\WebAPI\Departments.cs" />
     <Compile Include="Models\WebAPI\EducationalHistories.cs" />
+    <Compile Include="Models\WebAPI\Email.cs" />
     <Compile Include="Models\WebAPI\EmploymentHistories.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />

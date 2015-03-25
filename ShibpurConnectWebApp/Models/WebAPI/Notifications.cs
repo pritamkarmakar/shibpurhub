@@ -30,6 +30,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public bool HasVisited { get; set; }
 
         [DataMember]
+        public bool NewNotification { get; set; }
+
+        [DataMember]
         [Required]
         public string NotificationContent { get; set; }
 
