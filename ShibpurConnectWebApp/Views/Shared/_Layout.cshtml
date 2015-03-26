@@ -7,19 +7,17 @@
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico">
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-    @*@RenderSection("Scripts", false/*required*/)*@
-
+    @Scripts.Render("~/bundles/modernizr") 
     @Scripts.Render("~/bundles/jquery")
-    @*@Scripts.Render("~/bundles/tokeninput")*@
 
     <script src="~/Scripts/jquery.tokeninput.js"></script>
 
     <script type="text/javascript">
         var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        var userInfo;
         $(document).ready(function () {            
             if (userDetails) {
-                var userInfo = $.parseJSON(userDetails);
+                userInfo = $.parseJSON(userDetails);
                 $('.txtWelcome').text("Welcome " + userInfo.firstName + "!");
             }
   
@@ -284,9 +282,6 @@
             <p>&copy; @DateTime.Now.Year - ShibpurConnect</p>
         </footer>
     </div>
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/shibpurconnect.js"></script>
 
     @RenderSection("scripts", required: false)

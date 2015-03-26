@@ -250,11 +250,7 @@
     
 </style>
 
-@*@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")*@
-
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/wysihtml5x/dist/wysihtml5x-toolbar.min.js"></script>
-@*<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/jquery/dist/jquery.min.js"></script>*@
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/handlebars/handlebars.runtime.min.js"></script>
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.js"></script>
 
@@ -704,6 +700,14 @@
                 </div>
             </div>
 
+            <!--div to show Ask to Answer module-->
+            <br /><br />
+                @*<div class="col-md-2"></div>*@
+                <div class="well panel panel-default col-md-12" id="userToAnswer" style="margin-top:30px;">
+                    <h4>Ask to Answer</h4><hr id="bigseparator" />
+                </div>
+            
+
             <div id="moduleanswers" class="col-md-12">
                 <h3>Answers:</h3>
                 <ul id="answerlist">
@@ -790,14 +794,8 @@
                 </section>
             </div>*@
 
-        <!--div to show Ask to Answer module-->
-        <br /><br />
-        <div class="row">
-            @*<div class="col-md-2"></div>*@
-            <div class="well panel panel-default col-md-12" id="userToAnswer">
-                <h4>Ask to Answer</h4><hr id="bigseparator" />
-            </div>
-        </div>
+
+ 
         </div>
     <div class="col-md-3">
         <div class="tagCloud" style="margin-bottom:40px;">
