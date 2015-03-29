@@ -247,6 +247,10 @@
         width: 90%;
         margin-bottom: 12px;
     }
+    .upvote-span.disabled a.upvote-anchor, .upvote-span.disabled span{
+        color: #9D9C9C;
+        background-color: #DBD7D7;
+    }
     
 </style>
 
@@ -504,6 +508,7 @@
                     $(answerBlock).find('.text').html(data.answerText);
                     $(answerBlock).find('.userName').text(data.displayName);
                     $(answerBlock).find('.date').text(dateString);
+                    $(answerBlock).find('.upvote-span').addClass('disabled');
 
                     var userNameAnchor = $(answerBlock).find('div.user a.userName');
                     $(userNameAnchor).text(data.displayName);
@@ -562,6 +567,10 @@
                     $(answerBlock).removeClass('hide').attr('data-answerid', answer.answerId);
                     $(answerBlock).find('.text').html(answer.answerText);
                     $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
+                    if (answer.upvotedBy && answer.upvotedBy.indexOf(userInfo.email) >=0)
+                    {
+                        $(answerBlock).find('.upvote-span').addClass('disabled');
+                    }
                     //$(answerBlock).find('.userName').text(answer.displayName);
 
                     var userNameAnchor = $(answerBlock).find('div.user a.userName');
@@ -633,12 +642,18 @@
                 $('.upvote-anchor').click(function (event) {
                     event.preventDefault();
                     var anchor = $(this);
+                    if ($(anchor).parent().hasClass('disabled'))
+                    {
+                        return false;
+                    }
                     var answerId = $(anchor).closest('li.answer').attr('data-answerid');
                     $.ajax({
                         url: SERVER + "answers/UpdateUpVoteCount",
                         type: "POST",
                         dataType: "json",
-                        data: JSON.stringify({ "AnswerID": answerId }),
+                        data: JSON.stringify({
+                            "AnswerID": answerId, "UserEmail": userInfo.email
+                        }),
                         contentType: "application/json",
                         headers: {
                             Accept: "application/json",
@@ -649,6 +664,7 @@
                         },
                         success: function (result) {
                             $(anchor).find('.count').text(result);
+                            $(anchor).parent().addClass('disabled');
                         }
                     });
                 });

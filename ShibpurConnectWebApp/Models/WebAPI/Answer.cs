@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -39,5 +40,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public DateTime PostedOnUtc { get; set; }
+
+        [DataMember]
+        public List<string> UpvotedBy { get; set; }
     }
 }

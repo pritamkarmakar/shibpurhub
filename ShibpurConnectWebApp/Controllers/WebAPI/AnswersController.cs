@@ -31,7 +31,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public IList<Answer> GetAnswers()
         {
             var result = _mongoHelper.Collection.FindAll().ToList();
-
             return result;
         }
 
@@ -108,6 +107,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                     var upCount = answerInDB.UpVoteCount + 1;
                     answerInDB.UpVoteCount = upCount;
+                    if(answerInDB.UpvotedBy == null)
+                    {
+                        answerInDB.UpvotedBy = new List<string> { answer.UserEmail };
+                    }
+                    answerInDB.UpvotedBy.Add(answer.UserEmail);
                     _mongoHelper.Collection.Save(answerInDB);
                     return upCount;                
             }
