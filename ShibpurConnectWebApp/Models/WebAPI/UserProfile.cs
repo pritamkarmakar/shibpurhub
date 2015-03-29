@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// <summary>
     /// Use this model for populating the user profile page with educational history and employment history
     /// </summary>
+    [BsonIgnoreExtraElements]
     public class UserProfile
     {
         public CustomUserInfo UserInfo { get; set; }

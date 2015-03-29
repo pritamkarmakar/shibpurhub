@@ -4,6 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
+    [BsonIgnoreExtraElements]
     public class Categories
     {
         // Primary key

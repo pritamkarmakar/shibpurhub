@@ -12,6 +12,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [Serializable]
     [DataContract(IsReference = true)]
     [JsonObject(IsReference = false)]
+    [BsonIgnoreExtraElements]
     public class EmploymentHistories
     {
         // Primary key

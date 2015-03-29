@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
+    [BsonIgnoreExtraElements]
     public class Answer
     {
         [BsonId]

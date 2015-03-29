@@ -11,6 +11,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
     [DataContract(IsReference = true)]
+    [BsonIgnoreExtraElements]
     public class Questions
     {
         // Primary key

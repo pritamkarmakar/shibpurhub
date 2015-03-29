@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,6 +8,7 @@ using System.Web;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
+    [BsonIgnoreExtraElements]
     public class Email
     {
         [DataMember]

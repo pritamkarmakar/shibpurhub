@@ -12,6 +12,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// </summary>
     [Serializable]
     [DataContract(IsReference = true)]
+    [BsonIgnoreExtraElements]
     public class Comment
     {
         // Primary key

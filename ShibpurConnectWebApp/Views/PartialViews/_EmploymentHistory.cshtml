@@ -26,14 +26,14 @@
         <div class="form-group">
             @Html.LabelFor(m => m.From, new { @class = "col-md-2 control-label" })
             <div class="col-md-10">
-                @Html.TextBoxFor(m => m.From, new { @class = "form-control", @placeholder = "From" })
+                @Html.TextBoxFor(m => m.From, new { @class = "form-control", @placeholder = "From (mm/dd/yyyy)" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(m => m.To, new { @class = "col-md-2 control-label" })
             <div class="col-md-10">
-                @Html.TextBoxFor(m => m.To, new { @class = "form-control", @placeholder = "To" })
+                @Html.TextBoxFor(m => m.To, new { @class = "form-control", @placeholder = "To (mm/dd/yyy or left empty for current job)" })
             </div>
         </div>
         

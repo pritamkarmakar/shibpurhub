@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
+    [BsonIgnoreExtraElements]
     //[DataContract(IsReference = true)]
     //[JsonObject(IsReference = false)]
     public class EducationalHistories

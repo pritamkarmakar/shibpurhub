@@ -14,6 +14,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// Notification model
     /// </summary>
     [Serializable]
+    [BsonIgnoreExtraElements]
     public class Notifications
     {
         [BsonId]

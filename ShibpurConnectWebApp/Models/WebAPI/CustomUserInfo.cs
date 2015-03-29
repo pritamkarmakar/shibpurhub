@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System.Runtime.Serialization;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -7,6 +8,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// </summary>
     [DataContract(IsReference = true)]
     [JsonObject(IsReference = false)]
+    [BsonIgnoreExtraElements]
     public class CustomUserInfo
     {
         public string UserId { get; set; }
