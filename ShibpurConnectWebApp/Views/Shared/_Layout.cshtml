@@ -20,73 +20,42 @@
                 userInfo = $.parseJSON(userDetails);
                 $('.txtWelcome').text("Welcome " + userInfo.firstName + "!");
             }
-  
-            // get the new notification count and update notification center
-            jQuery.support.cors = true;
-            var SERVER = "/api/";
-            var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
-            $.ajax({
-                url: SERVER + "notifications/GetNewNotifications?userId=" + userInfo.userId,
-                type: "GET",
-                dataType: "json",
-                contentType: "application/json",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (result) {
-                    if (!result) {
-                        return;
+
+            // if userinfo is nul then redirect to login page
+            if (typeof userInfo != "undefined") {
+
+                // get the new notification count and update notification center
+                jQuery.support.cors = true;
+                var SERVER = "/api/";
+                var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
+                $.ajax({
+                    url: SERVER + "notifications/GetNewNotifications?userId=" + userInfo.userId,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + token);
+                    },
+                    success: function (result) {
+                        if (!result) {
+                            return;
+                        }
+
+                        if (result.length > 0) {
+                            $("#notification_count").show();
+                            $("#notification_count").text(result.length);
+                        }
+                        else
+                            $("#notification_count").hide();
+
                     }
+                });
 
-                    if (result.length > 0) {
-                        $("#notification_count").show();
-                        $("#notification_count").text(result.length);
-                    }
-                    else
-                        $("#notification_count").hide();                                    
-
-                }
-            });
-
-            // get all the notifications
-            $.ajax({
-                url: SERVER + "notifications/GetNotifications?userId=" + userInfo.userId,
-                type: "GET",
-                dataType: "json",
-                contentType: "application/json",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (result) {
-                    if (!result) {
-                        return;
-                    }
-                    // remove existing notifications and add new ones
-                    $("#notificationsBody").empty();
-
-                    // append notifications
-                    jQuery.each(result, function (i, val) {
-                        $("#notificationsBody").append(val.notificationContent +"<hr/>");
-                    });
-
-                }
-            });
-
-
-            $("#notificationLink").click(function () {
-
-                // get current logged-in user details
-                var userInfo = $.parseJSON(userDetails);
-
-                // get all notifications and update the div
+                // get all the notifications
                 $.ajax({
                     url: SERVER + "notifications/GetNotifications?userId=" + userInfo.userId,
                     type: "GET",
@@ -105,6 +74,7 @@
                         }
                         // remove existing notifications and add new ones
                         $("#notificationsBody").empty();
+
                         // append notifications
                         jQuery.each(result, function (i, val) {
                             $("#notificationsBody").append(val.notificationContent + "<hr/>");
@@ -112,40 +82,74 @@
 
                     }
                 });
-               
-                // mark all new notification as old
-                var SERVER = "/api/";
-                $.ajax({
-                    url: SERVER + "notifications/MarkAllNewNotificationsAsOld?userId="+ userInfo.userId,
-                    type: "POST",
-                    dataType: "json",
-                    contentType: "application/json",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-                    },
-                    success: function (result) {
-                        $('#askmeto').text("Already Asked");
-                    }
+
+
+                $("#notificationLink").click(function () {
+
+                    // get current logged-in user details
+                    var userInfo = $.parseJSON(userDetails);
+
+                    // get all notifications and update the div
+                    $.ajax({
+                        url: SERVER + "notifications/GetNotifications?userId=" + userInfo.userId,
+                        type: "GET",
+                        dataType: "json",
+                        contentType: "application/json",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Authorization", "Bearer " + token);
+                        },
+                        success: function (result) {
+                            if (!result) {
+                                return;
+                            }
+                            // remove existing notifications and add new ones
+                            $("#notificationsBody").empty();
+                            // append notifications
+                            jQuery.each(result, function (i, val) {
+                                $("#notificationsBody").append(val.notificationContent + "<hr/>");
+                            });
+
+                        }
+                    });
+
+                    // mark all new notification as old
+                    var SERVER = "/api/";
+                    $.ajax({
+                        url: SERVER + "notifications/MarkAllNewNotificationsAsOld?userId=" + userInfo.userId,
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                        },
+                        success: function (result) {
+                            $('#askmeto').text("Already Asked");
+                        }
+                    });
+
+                    $("#notificationContainer").fadeToggle(300);
+                    $("#notification_count").fadeOut("slow");
+                    return false;
                 });
 
-                $("#notificationContainer").fadeToggle(300);
-                $("#notification_count").fadeOut("slow");
-                return false;
-            });
+                //Document Click hiding the popup
+                $(document).click(function () {
+                    $("#notificationContainer").hide();
+                });
 
-            //Document Click hiding the popup
-            $(document).click(function () {
-                $("#notificationContainer").hide();
-            });
-
-            //Popup on click
-            $("#notificationContainer").click(function () {
-                window.location.href = "/Notifications";
-            });
+                //Popup on click
+                $("#notificationContainer").click(function () {
+                    window.location.href = "/Notifications";
+                });
+            }
 
         });
     </script>

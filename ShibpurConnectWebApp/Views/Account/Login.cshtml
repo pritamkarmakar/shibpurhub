@@ -4,7 +4,7 @@
     ViewBag.Title = "Log in to ShibpurConnect";
 }
 
-@Scripts.Render("~/bundles/jquery")
+@*@Scripts.Render("~/bundles/jquery")*@
 <script type="text/javascript">
     $(document).ready(function () {
         $('.btn-login').click(function () {
@@ -20,6 +20,7 @@
                 type: "GET",
                 dataType: "json",
                 data: data,
+                async:   false,
                 contentType: "application/json",
                 headers: {
                     Accept: "application/json",

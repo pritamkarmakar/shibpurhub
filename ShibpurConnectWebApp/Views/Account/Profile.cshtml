@@ -4,6 +4,10 @@
 
 @section Scripts {
     <style type="text/css">
+        span#department
+        {
+            font-size:15px;
+        }
         #companyname {
             font-size: 20px;
         }
@@ -74,7 +78,7 @@
 
                     // iterate over all the educational histories
                     jQuery.each(result.educationalHistories, function(i, val) {
-                        $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><span id=\"year\">" + val.graduateYear + "</span></div><hr id='dotted'/>");
+                        $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
                     });
 
                     // iterate over all the employment histories
@@ -144,7 +148,8 @@
 
                                 // iterate over all the educational histories
                                 jQuery.each(result, function(i, val) {
-                                    $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + "</h4><h5 id=\"department\">" + val.department + "</h5><span id=\"year\">" + val.graduateYear + "</span></div><br/>");
+                                    //$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + "</h4>, " + "<span id=\"department\">" + val.department + "</span><span id=\"year\">" + val.graduateYear + "</span></div><hr id='dotted'/>");
+                                    $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
                                 });
                             }
                         });
