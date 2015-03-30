@@ -39,7 +39,10 @@
         
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" class="btn btn-primary btn-sm" value="Save" onclick="saveEmploymentHistory(); return false;" />
+                <button type="submit" id="addNewEmployment" class="btn btn-primary btn-sm" onclick="saveEmploymentHistory(); return false;">
+                    <i></i><span>Save</span>
+                </button>
+                @*<input type="submit" class="btn btn-primary btn-sm" value="Save" onclick="saveEmploymentHistory(); return false;" />*@
                 <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEmploymentHistory(); return false;" />
             </div>
 

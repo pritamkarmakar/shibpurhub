@@ -112,6 +112,9 @@
             var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
             var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#UniversityName').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + '}';
 
+            // add spinner animation in the save button and change the text to 'Saving..'
+            $('#addNewEducation > i').addClass('fa fa-circle-o-notch fa-spin');
+            $('#addNewEducation > span').text(' Saving...');
             $.ajax({
                 url: SERVER + "EducationalHistories/PostEducationalHistory",
                 type: "POST",
@@ -145,6 +148,12 @@
                                 $("#educationContent").slideToggle();
                                 // clear div content
                                 $('#educationdiv').empty();
+                                // remove the loading class from save button
+                                $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
+                                $('#addNewEducation > span').text('Save');
+
+                                // remove previous error if there is any
+                                $('#failuremessage').css('display', 'none');
 
                                 // iterate over all the educational histories
                                 jQuery.each(result, function(i, val) {
@@ -160,6 +169,12 @@
                     //$("#errorLabel").text(errorText);
                     $('#failuremessage').css('display', 'block');
                     $('#failuremessage').text(errorText);
+                   
+                    // toggle the 'Add education' button, so that the form will get close
+                    $("#educationContent").slideToggle();
+                    // remove the loading class from save button
+                    $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#addNewEducation > span').text('Save');
                 }
             });
         }
@@ -178,6 +193,10 @@
             var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
             var employmentHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('input#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + ',"Title":' + '"' + $('#Title').val() + '"' +
                 ',"Location":' + '"' + $('#Location').val() + '"' + '}';
+
+            // add spinner animation in the save button and change the text to 'Saving..'
+            $('#addNewEmployment > i').addClass('fa fa-circle-o-notch fa-spin');
+            $('#addNewEmployment > span').text(' Saving...');
 
             $.ajax({
                 url: SERVER + "EmploymentHistories/PostEmploymentHistory",
@@ -211,6 +230,9 @@
 
                                 // clear div content
                                 $('#employmentdiv').empty();
+                                // remove the loading class from save button
+                                $('#addNewEmployment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                                $('#addNewEmployment > span').text('Save');
 
                                 // iterate over all the employment histories
                                 jQuery.each(result, function(i, val) {
@@ -225,6 +247,9 @@
 
                                 // toggle the 'Add position' button, so that the form will get close
                                 $("#employmentContent").slideToggle();
+
+                                // remove previous error if there is any
+                                $('#failuremessage').css('display', 'none');
                             }
                         });
                     }
@@ -234,6 +259,12 @@
                     //$("#errorLabel").text(errorText);
                     $('#failuremessage').css('display', 'block');
                     $('#failuremessage').text(errorText);
+
+                    // toggle the 'Add education' button, so that the form will get close
+                    $("#employmentContent").slideToggle();
+                    // remove the loading class from save button
+                    $('#addNewEmployment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#addNewEmployment > span').text('Save');
                 }
             });
         }
