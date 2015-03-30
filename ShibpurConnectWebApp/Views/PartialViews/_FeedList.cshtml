@@ -1,4 +1,9 @@
 ﻿<style type="text/css">
+
+    /*question title font-face size*/
+    .question-hyperlink{
+        font-size:22px;
+    }
     /*CSS form the toolbas to create question*/
     #toolbar
     {
@@ -208,10 +213,14 @@
             }
             //$(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
             $(thread).find('div.detail h3 a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
+            $(thread).find('div.detail h3 a').attr('class', 'question-hyperlink');
             $(thread).find('div.detail .excerpt').text(question.description);
             $(thread).find('div.stat span.date').text(dateString);
             updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));
-            $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " views");
+            if (question.viewCount > 1)
+                $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " views");
+            else
+                $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " view");
             //$(thread).find('div.stat span.answercount').text((question.comments || "0") + " answers");
 
             if (question.categories) {
@@ -249,8 +258,10 @@
                 xhr.setRequestHeader("Authorization", "Bearer " + token);
             },
             success: function (result) {
-
-                $(span).html("<b>" + (result || "0") + "</b>"+ " answers");
+                if (result > 1)
+                    $(span).html("<b>" + (result || "0") + "</b>" + " answers");
+                else
+                    $(span).html("<b>" + (result || "0") + "</b>" + " answer");
             }
 
         });
@@ -262,7 +273,7 @@
 <div class="main">
     <div id="threads">
 
-        <div class="hide thread col-md-10">
+        <div class="hide thread col-md-12">
             <div class="user">
                 <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
                 <a class="userName" href="\Account\Profile"></a>
@@ -276,11 +287,11 @@
                 </div>
                 <div class="tags col-md-8">
                 </div>
-                <div class="stat col-md-3">
+                <div class="stat col-md-4">
                     <span class="date"></span>
                     <span>
                         <span class="viewcount"></span>
-                        <span class="answercount"></span>                        
+                        <span class="answercount"></span>
                     </span>
                 </div>
             </div>

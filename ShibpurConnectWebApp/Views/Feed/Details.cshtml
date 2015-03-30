@@ -10,7 +10,6 @@
 <style type="text/css">
     /*CSS form tags*/
      .tags {
-        padding: 0;
         margin-top: 2%;
     }
      .post-tag {
@@ -676,7 +675,7 @@
 
 
 <div class="container">
-    @if (User.Identity.IsAuthenticated)
+    @*@if (User.Identity.IsAuthenticated)
     {
 
         <div class="container">
@@ -694,14 +693,14 @@
         </div>
 
         @Html.Hidden("hdnUserID", User.Identity.Name)
-    }
+    }*@
     
     <div class="col-md-12">
         <div class="header col-md-12">
-            <h2></h2><hr />
+            <h2 style="font-size:24px;"></h2><hr />
         </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
         <div class="row">
             <div id="details">
                 <div class="col-md-10">
@@ -729,7 +728,7 @@
                 <ul id="answerlist">
 
                     @*<div id="answerdiv">*@
-                    <li class="hide answer col-md-10">
+                    <li class="hide answer col-md-12">
                         <div class="user">
                             <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
                             <a class="userName" href="\Account\Profile"></a>
@@ -755,7 +754,7 @@
                                 <a class="downvote-anchor" href="#">Downvote</a>
                             </span>
                             <span class="link comment-span">
-                                <a class="comment-anchor" href="#">Comments</a>
+                                <a class="comment-anchor" href="#">Comment</a>
                             </span>
                         </div>
 
@@ -813,7 +812,7 @@
 
  
         </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="tagCloud" style="margin-bottom:40px;">
             <h4>Related Questions</h4>
             <div class="list-group">
