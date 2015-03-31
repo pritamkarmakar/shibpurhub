@@ -50,7 +50,7 @@
                 return;
             }
 
-            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+            var userDetails = localStorage.getItem("SC_Session_UserDetails");
             if (!userDetails) {
                 //TO-DO: Handle if userdetail is not available in Session Storage
                 return;

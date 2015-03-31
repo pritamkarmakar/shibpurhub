@@ -13,7 +13,7 @@
     <script src="~/Scripts/jquery.tokeninput.js"></script>
 
     <script type="text/javascript">
-        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
         var userInfo;
         $(document).ready(function () {
             if (userDetails) {

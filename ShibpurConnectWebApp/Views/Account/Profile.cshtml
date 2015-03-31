@@ -46,7 +46,7 @@
             // check if this call for a different user or current logged-in user. If there is no data in the TempData["profileEmail"] then consider current session user
             if (!profileEmail) {
                 // get current user email from session
-                var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+                var userDetails = localStorage.getItem("SC_Session_UserDetails");
                 if (!userDetails) {
                     //TO-DO: Handle if userdetail is not available in Session Storage
                     return;
@@ -102,7 +102,7 @@
             jQuery.support.cors = true;
             var SERVER = "/api/";
 
-            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+            var userDetails = localStorage.getItem("SC_Session_UserDetails");
             if (!userDetails) {
                 //TO-DO: Handle if userdetail is not available in Session Storage
                 return;
@@ -183,7 +183,7 @@
         function saveEmploymentHistory() {
             jQuery.support.cors = true;
             var SERVER = "/api/";
-            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+            var userDetails = localStorage.getItem("SC_Session_UserDetails");
             if (!userDetails) {
                 //TO-DO: Handle if userdetail is not available in Session Storage
                 // show the error dialog

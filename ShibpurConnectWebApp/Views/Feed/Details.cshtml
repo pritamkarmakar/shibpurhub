@@ -321,12 +321,14 @@
                             return;
                         }
 
-                        // uodate the div with the user data received from the API
-                        jQuery.each(result, function (i, val) {
-                            //$('#userToAnswer').append("<div id=\"userDetails\"><span id=\"userName\">" + val.firstName + " " + val.lastName + "</span><div><hr id='bigseparator' />");
-                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email +"' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
-                        });
-
+                        if (result.length == 0)
+                            $('#userToAnswer').append("<span>Sorry no matching profile available</span>");
+                        else {
+                            // uodate the div with the user data received from the API
+                            jQuery.each(result, function (i, val) {
+                                $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
+                            });
+                        }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
@@ -384,7 +386,7 @@
     function SendNotification(elm)
     {
         // retrieve current logged-in user details
-        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (!userDetails) {
             //TO-DO: Handle if userdetail is not available in Session Storage
             return;
@@ -466,7 +468,7 @@
     function saveAnswer() {
         
         jQuery.support.cors = true;
-        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (!userDetails) {
             //TO-DO: Handle if userdetail is not available in Session Storage
             return;
@@ -530,7 +532,7 @@
     function getAnswers()
     {
         var isAskedByMe = false;
-        var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (userDetails) {
             var userInfo = $.parseJSON(userDetails);
             isAskedByMe = askedBy == userInfo.email;
