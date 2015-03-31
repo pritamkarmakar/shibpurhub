@@ -5,6 +5,7 @@ using System.Web.Http.Results;
 using ShibpurConnectWebApp.Models.WebAPI;
 using ShibpurConnectWebApp.Providers;
 using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Helper;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -74,6 +75,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return Ok(userProfile);
         }
+
 
         // GET: api/Profile/5
         public string Get(int id)

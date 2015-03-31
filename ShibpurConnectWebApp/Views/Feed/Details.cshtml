@@ -518,6 +518,7 @@
 
                     $('#answerlist').prepend(answerBlock);
                     $('.textarea').val('');
+                    logActivity(2, data.answerId);
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -608,6 +609,7 @@
                                 answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
                             });
 
+                            logActivity(5, answerId);
                             $.ajax({
                                 url: SERVER + "answers/UpdateMarkAsAnswer",
                                 type: "POST",
@@ -646,6 +648,7 @@
                         return false;
                     }
                     var answerId = $(anchor).closest('li.answer').attr('data-answerid');
+                    logActivity(3, answerId);
                     $.ajax({
                         url: SERVER + "answers/UpdateUpVoteCount",
                         type: "POST",
@@ -732,7 +735,7 @@
                         <div class="detail col-md-10">
                             <div class="text">
                             </div>
-                            <div class="stat col-md-2">
+                            <div class="stat col-md-3">
                                 <span class="date"></span>
                             </div>
                         </div>
