@@ -64,3 +64,36 @@ $(document).ready(function () {
     //    });
     //});
 });
+
+function logActivity(activity, objectId) {
+    var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+    if (!userDetails) {
+        return;
+    }
+
+    var userInfo = $.parseJSON(userDetails);
+    var data = {
+        "UserId": userInfo.userId,
+        "Activity": activity,
+        "ActedOnObjectId": objectId
+    };
+
+
+    $.ajax({
+        url: "/api/useractivity/PostAnActivity",
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(data, null, 2),
+        contentType: "application/json",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+        },
+        success: function (result) {
+        }
+    });
+}
+ 

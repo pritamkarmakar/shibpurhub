@@ -70,6 +70,7 @@
                     xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
                 },
                 success: function(result) {
+                    updateReputation();
                     if (!result) {
                         return;
                     }
@@ -300,6 +301,34 @@
             $("#educationContent").slideToggle();
         }
 
+        function updateReputation()
+        {
+            var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+            if (!userDetails) {
+                return;
+            }
+
+            var userInfo = $.parseJSON(userDetails);
+
+            $.ajax({
+                url: "/api/useractivity/GetUserReputation",
+                type: "GET",
+                dataType: "json",
+                data: { "userId": userInfo.userId },
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                },
+                success: function (result) {
+                    $('.repCount').text(result);
+                }
+            });
+        }
+
     </script>
 }
 
@@ -365,9 +394,9 @@
                         </div>
                         <!--/col-->
                         <div class="col-xs-12 col-sm-4" style="text-align: center;">
-                            <h2><strong>43</strong></h2>
-                            <p><small>Snippets</small></p>
-                            <button type="button" class="btn btn-primary"><span class="fa fa-gear"></span> Options </button>
+                            <h2 class="repCount"><strong>0</strong></h2>
+                            <p><small>Reps</small></p>
+                            <button type="button" class="btn btn-primary"><span class="fa fa-star-o"></span> Reputation </button>
                         </div>
                         <!--/col-->
                     </div>
