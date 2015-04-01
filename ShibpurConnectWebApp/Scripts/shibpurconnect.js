@@ -66,7 +66,7 @@ $(document).ready(function () {
 });
 
 function logActivity(activity, objectId) {
-    var userDetails = sessionStorage.getItem("SC_Session_UserDetails");
+    var userDetails = localStorage.getItem("SC_Session_UserDetails");
     if (!userDetails) {
         return;
     }

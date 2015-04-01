@@ -250,6 +250,10 @@
         color: #9D9C9C;
         background-color: #DBD7D7;
     }
+    .no-right-padding
+    {
+        padding-right:0;
+    }
     
 </style>
 
@@ -748,24 +752,24 @@
                                     <span class="count">0</span>
                                 </a>
                             </span>
-                            <span class="link">
+                            @*<span class="link">
                                 <a class="downvote-anchor" href="#">Downvote</a>
-                            </span>
+                            </span>*@
                             <span class="link comment-span">
                                 <a class="comment-anchor" href="#">Comment</a>
                             </span>
                         </div>
 
-                        <div class="answer-comments hide col-md-10">
+                        <div class="answer-comments hide col-md-10 no-right-padding">
                             <div class="comment-box">
                                 <a class="commentor" href="#">
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
                                 </a>
-                                <div class="col-md-9">
-                                    <input class="form-control" id="txt_question" placeholder="Add comment" type="text" required>
+                                <div class="col-md-9 no-right-padding">
+                                    <input class="form-control input-sm" id="txt_question" placeholder="Add comment" type="text" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="button" class="btn btn-primary" id="btn_Save" value="Comment">
+                                    <input type="button" class="btn btn-sm btn-primary" id="btn_Save" value="Comment">
                                 </div>
                             </div>
                         </div>
