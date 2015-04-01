@@ -92,7 +92,7 @@ function scAjax(options)
             url: ajaxOptions.url,
             type: ajaxOptions.type,
             dataType: ajaxOptions.dataType,
-            data: ajaxOptions.data,
+            data: ajaxOptions.data || "",
             contentType: ajaxOptions.dataType,
             headers: {
                 Accept: "application/json",
