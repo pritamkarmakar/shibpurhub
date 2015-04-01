@@ -71,29 +71,10 @@ function scAjax(options)
     {
         var server = "/api/"
         var ajaxOptions = {
-            "url": server + options.url,
-            "type": options.type || "GET",
-            "dataType": options.dataType || "json",
-            "contentType": options.contentType || "application/json; charset=utf-8",            
-            "success": function (result) {
-                if(options.success && typeof options.success == "function")
-                {
-                    options.success(result);
-                }
-            }
-        };
-
-        if(options.data)
-        {
-            ajaxOptions.data = options.data;
-        }
-
-        $.ajax({
-            url: ajaxOptions.url,
-            type: ajaxOptions.type,
-            dataType: ajaxOptions.dataType,
-            data: ajaxOptions.data || "",
-            contentType: ajaxOptions.dataType,
+            url: server + options.url,
+            type: options.type || "GET",
+            dataType: options.dataType || "json",
+            contentType: options.contentType || "application/json; charset=utf-8",
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -103,9 +84,25 @@ function scAjax(options)
                 xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
             },
             success: function (result) {
-                ajaxOptions.success(result);
+                if(options.success && typeof options.success == "function")
+                {
+                    options.success(result);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown)
+            {
+                if (options.error && typeof options.error == "function") {
+                    options.error(XMLHttpRequest, textStatus, errorThrown);
+                }
             }
-        });
+        };
+
+        if(options.data)
+        {
+            ajaxOptions.data = options.data;
+        }
+
+        $.ajax(ajaxOptions);
     }
     catch(e)
     {

@@ -273,23 +273,11 @@
         var url = window.location.href;
         var splitArr = url.split('/');
         questionID = splitArr[splitArr.length - 1];
-        var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
 
-        $.ajax({
-            url: SERVER + "questions/GetQuestion",
-            type: "GET",
-            dataType: "json",
-            data: { "questionId": questionID },
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                //"Access-Control-Allow-Origin": "*"
-            },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-            },
-            success: function (result) {
+        scAjax({
+            "url": "questions/GetQuestion",
+            "data": { "questionId": questionID },            
+            "success": function (result) {
                 if (!result) {
                     return;
                 }
@@ -307,20 +295,10 @@
                 });
 
                 // show the suggested user who can answer this question using elastic search
-                $.ajax({
-                    url: SERVER + "questions/GetSuggestedUserProfiles",
-                    type: "GET",
-                    data: { "categories": result.categories.toString() },
-                    dataType: "json",
-                    contentType: "application/json",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + token);
-                    },
-                    success: function (result) {
+                scAjax({
+                    "url": "questions/GetSuggestedUserProfiles",
+                    "data": { "categories": result.categories.toString() },
+                    "success": function (result) {
                         if (!result) {
                             return;
                         }
@@ -334,7 +312,7 @@
                             });
                         }
                     },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    "error": function (XMLHttpRequest, textStatus, errorThrown) {
                         var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                         //$("#errorLabel").text(errorText);
                         $('#failuremessage').css('display', 'block');
@@ -343,24 +321,12 @@
                 });
             }
         });
-
-        var objQuestion = new Object();
-        objQuestion.id = questionID;
-        $.ajax({
-            url: SERVER + "questions/IncrementViewCount",
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify({"QuestionID": questionID}),
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-            },
-            success: function (result) {
-                
+        
+        scAjax({
+            "url": "questions/IncrementViewCount",
+            "type": "POST",
+            "data": JSON.stringify({ "QuestionID": questionID }),
+            "success": function (result) {
             }
         });
 
@@ -387,8 +353,7 @@
     });
 
     // function to send notification to the specific user
-    function SendNotification(elm)
-    {
+    function SendNotification(elm) {
         // retrieve current logged-in user details
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (!userDetails) {
@@ -399,56 +364,35 @@
 
         // send email notification
         var emaildata = {
-            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer this <a href='" + window.location.href +"'>question</a>",
+            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer this <a href='" + window.location.href + "'>question</a>",
             "EmailAddress": elm.attributes["data-email"].value,
             "Subject": "Can you answer this question?"
         };
-
-        var SERVER = "/api/";
-        $.ajax({
-            url: SERVER + "emails/sendasync",
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(emaildata, null, 2),
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-            },
-            success: function (result) {
-                //alert("sent email");
+        
+        scAjax({
+            "url": "emails/sendasync",
+            "type": "POST",
+            "data": JSON.stringify(emaildata, null, 2),
+            "success": function (result) {                
             }
         });
 
         // save this into the Notification collection
         var data = {
             "UserId": elm.attributes["data-id"].value,
-            "NotificationContent": "<div><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a> requested you to answer this <a href='" + window.location.href +"'>question</a></div></div>",
+            "NotificationContent": "<div><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a> requested you to answer this <a href='" + window.location.href + "'>question</a></div></div>",
             "NotificationType": "AskToAnswer"
-        };
+        };        
 
-        var SERVER = "/api/";
-        $.ajax({
-            url: SERVER + "notifications/PostNotification",
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(data, null, 2),            
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-            },
-            success: function (result) {
+        scAjax({
+            "url": "notifications/PostNotification",
+            "type": "POST",
+            "data": JSON.stringify(data, null, 2),
+            "success": function (result) {
                 $(elm).text("Asked");
             }
         });
-        }
+    }
 
      function getMonth(month) {
         var monthArray = {
@@ -484,54 +428,50 @@
         }
         var userInfo = $.parseJSON(userDetails);        
 
-        var SERVER = "/api/";
+        //var SERVER = "/api/";
         var userid = userInfo.userId;
 
-        var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        //var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
         var answerObject = { "AnswerText": answer, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName, "UserEmail": userInfo.email };
         
-
-        $.ajax({
-            url: SERVER + "Answers/PostAnswer",
-            type: "POST",
-            data: JSON.stringify(answerObject),
-            contentType: "application/json",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + token);
-            },
-            success: function (data, result) {
-                if (result) {
-                    // we have to replace '$('.textarea')[0].value' with the object coming from this POST call. As we need the anserid, datetime stamp, upvote, downvote count etc
-                    //$('#answerdiv p').append($('.textarea')[0].value);
-
-                    var utcDate = new Date(data.postedOnUtc);
-                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
-
-
-                    var answerBlock = $('#answerlist li.answer.hide').clone();
-                    $(answerBlock).removeClass('hide');
-                    $(answerBlock).find('.text').html(data.answerText);
-                    $(answerBlock).find('.userName').text(data.displayName);
-                    $(answerBlock).find('.date').text(dateString);
-                    $(answerBlock).find('.upvote-span').addClass('disabled');
-
-                    var userNameAnchor = $(answerBlock).find('div.user a.userName');
-                    $(userNameAnchor).text(data.displayName);
-                    if (data.userEmail != null) {
-                        var url = $(userNameAnchor).attr('href') + '?userEmail=' + data.userEmail;
-                        $(userNameAnchor).attr('href', url);
-                    }
-
-                    $('#answerlist').prepend(answerBlock);
-                    $('.textarea').val('');
-                    logActivity(2, data.answerId);
+        scAjax({
+            "url": "Answers/PostAnswer",
+            "type": "POST",
+            "data": JSON.stringify(answerObject),
+            "success": function (result, data) {
+                if (!result) {
+                    return;
                 }
+
+                //alert(result.answerText);
+                var utcDate = new Date(result.postedOnUtc);
+                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+
+
+                var answerBlock = $('#answerlist li.answer.hide').clone();
+                $(answerBlock).removeClass('hide');
+                $(answerBlock).find('.text').html(result.answerText);
+                $(answerBlock).find('.userName').text(result.displayName);
+                $(answerBlock).find('.date').text(dateString);
+                $(answerBlock).find('.upvote-span').addClass('disabled');
+
+                var userNameAnchor = $(answerBlock).find('div.user a.userName');
+                $(userNameAnchor).text(result.displayName);
+                if (result.userEmail != null) {
+                    var url = $(userNameAnchor).attr('href') + '?userEmail=' + result.userEmail;
+                    $(userNameAnchor).attr('href', url);
+                }
+
+                $('#answerlist').prepend(answerBlock);
+                $('.textarea').val('');
+                logActivity(2, result.answerId);
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            "error": function (XMLHttpRequest, textStatus, errorThrown) {
                 var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                 $("#errorLabel").text(errorText);
             }
         });
+        
     }
 
     function getAnswers()
@@ -547,24 +487,14 @@
         jQuery.support.cors = true;
         var SERVER = "/api/";
 
-        $.ajax({
-            url: SERVER + "answers/GetAnswers",
-            type: "GET",
-            dataType: "json",
-            data: { "questionId": questionID },
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-            },
-            success: function (result) {
+        scAjax({
+            "url": "answers/GetAnswers",
+            "data": { "questionId": questionID },
+            "success": function (result) {
                 if (!result) {
                     return;
                 }
-                
+
                 var save = $('#answerlist .answer.hide').detach();
                 $('#answerlist').empty().append(save);
 
@@ -573,8 +503,7 @@
                     $(answerBlock).removeClass('hide').attr('data-answerid', answer.answerId);
                     $(answerBlock).find('.text').html(answer.answerText);
                     $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
-                    if (answer.upvotedBy && answer.upvotedBy.indexOf(userInfo.email) >=0)
-                    {
+                    if (answer.upvotedBy && answer.upvotedBy.indexOf(userInfo.email) >= 0) {
                         $(answerBlock).find('.upvote-span').addClass('disabled');
                     }
                     //$(answerBlock).find('.userName').text(answer.displayName);
@@ -590,27 +519,23 @@
                     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
                     $(answerBlock).find('.date').text(dateString);
 
-                    if (answer.markedAsAnswer)
-                    {
+                    if (answer.markedAsAnswer) {
                         $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
                     }
 
                     $('#answerlist').prepend(answerBlock);
-                    if(isAskedByMe)
-                    {
+                    if (isAskedByMe) {
                         var markAnswer = $(answerBlock).find('.mark-answer');
                         $(markAnswer).removeClass('hide').click(function () {
                             var span = $(this);
-                            if ($(span).hasClass('btn-success'))
-                            {
+                            if ($(span).hasClass('btn-success')) {
                                 return;
                             }
 
-                            
                             var answerId = $(span).closest('li.answer').attr('data-answerid');
                             var answers = [];
                             answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
-                            $('.mark-answer.btn-success').each(function (i,e) {
+                            $('.mark-answer.btn-success').each(function (i, e) {
                                 $(e).removeClass('btn-success');
                                 var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
                                 answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
@@ -618,27 +543,14 @@
 
                             $(span).addClass('btn-success');
                             logActivity(5, answerId);
-                            $.ajax({
-                                url: SERVER + "answers/UpdateMarkAsAnswer",
-                                type: "POST",
-                                dataType: "json",
-                                data: JSON.stringify(answers),
-                                contentType: "application/json",
-                                headers: {
-                                    Accept: "application/json",
-                                    "Content-Type": "application/json",
-                                },
-                                beforeSend: function (xhr) {
-                                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-                                },
-                                success: function (result) {
-                                    //$(span).addClass('btn-success');
-                                }
+                            
+                            scAjax({
+                                "url": "answers/UpdateMarkAsAnswer",
+                                "type": "POST",
+                                "data": JSON.stringify(answers)
                             });
-                                                      
                         });
                     }
-                    
                 });
 
                 $('.comment-anchor').click(function (event) {
@@ -651,35 +563,26 @@
                 $('.upvote-anchor').click(function (event) {
                     event.preventDefault();
                     var anchor = $(this);
-                    if ($(anchor).parent().hasClass('disabled'))
-                    {
+                    if ($(anchor).parent().hasClass('disabled')) {
                         return false;
                     }
                     var answerId = $(anchor).closest('li.answer').attr('data-answerid');
-                    logActivity(3, answerId);
-                    $.ajax({
-                        url: SERVER + "answers/UpdateUpVoteCount",
-                        type: "POST",
-                        dataType: "json",
-                        data: JSON.stringify({
+                    logActivity(3, answerId);                    
+
+                    scAjax({
+                        "url": "answers/UpdateUpVoteCount",
+                        "type": "POST",
+                        "data": JSON.stringify({
                             "AnswerID": answerId, "UserEmail": userInfo.email
                         }),
-                        contentType: "application/json",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                        },
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-                        },
-                        success: function (result) {
+                        "success": function (result) {
                             $(anchor).find('.count').text(result);
                             $(anchor).parent().addClass('disabled');
                         }
                     });
                 });
             }
-        });
+        });        
     }
 </script>
 

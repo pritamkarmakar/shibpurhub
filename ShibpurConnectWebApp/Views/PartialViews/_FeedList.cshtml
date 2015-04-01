@@ -143,21 +143,12 @@
         if (url.indexOf("FeedByCategory") > 1) {
             var splitArr = url.split('/');
             var category = splitArr[splitArr.length - 1];
-            category = decodeURIComponent(category);
-            $.ajax({
-                url: SERVER + "questions/GetQuestionsByCategory",
-                type: "GET",
-                data: {"category": category},
-                dataType: "json",
-                contentType: "application/json",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (result) {
+            category = decodeURIComponent(category);           
+
+            scAjax({
+                "url": "questions/GetQuestionsByCategory",
+                "data": { "category": category },
+                "success": function (result) {
                     if (!result) {
                         return;
                     }
@@ -168,19 +159,9 @@
             });
         }
         else {
-            $.ajax({
-                url: SERVER + "questions/GetQuestions",
-                type: "GET",
-                dataType: "json",
-                contentType: "application/json",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (result) {
+            scAjax({
+                "url": "questions/GetQuestions",
+                "success": function (result) {
                     if (!result) {
                         return;
                     }
@@ -241,29 +222,15 @@
             return;
         }
 
-        var SERVER = "/api/";
-        var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
-
-        $.ajax({
-            url: SERVER + "questions/GetAnswersCount",
-            type: "GET",
-            data: { "questionId": questionId },
-            dataType: "json",
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + token);
-            },
-            success: function (result) {
+        scAjax({
+            "url": "questions/GetAnswersCount",
+            "data": { "questionId": questionId },
+            "success": function (result) {
                 if (result > 1)
                     $(span).html("<b>" + (result || "0") + "</b>" + " answers");
                 else
                     $(span).html("<b>" + (result || "0") + "</b>" + " answer");
             }
-
         });
     }
 </script>

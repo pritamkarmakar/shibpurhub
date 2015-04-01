@@ -8,37 +8,52 @@
         var SERVER = "/api/";
         var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
         //$('#select_categories').tokenInput("/api/categories/GetCategories");
-        $.ajax({
-            url: SERVER + "categories/GetCategories",
-            type: "GET",
-            dataType: "json",
-            contentType: "application/json",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + token);
-            },
-            success: function (result) {
+        //$.ajax({
+        //    url: SERVER + "categories/GetCategories",
+        //    type: "GET",
+        //    dataType: "json",
+        //    contentType: "application/json",
+        //    headers: {
+        //        Accept: "application/json",
+        //        "Content-Type": "application/json",
+        //    },
+        //    beforeSend: function (xhr) {
+        //        xhr.setRequestHeader("Authorization", "Bearer " + token);
+        //    },
+        //    success: function (result) {
+        //        if (!result) {
+        //            return;
+        //        }
+                
+        //        var categories = result;
+        //        //var categoriesArray = [];
+        //        $(categories).each(function (i, category) {
+        //            var option = $('<option>').text(category.categoryName).val(category.categoryId);
+        //            $('#select_categories').append(option);
+
+        //            //var objCategory = { "id": category.categoryId, "name": category.categoryName };
+        //            //categoriesArray.push(objCategory);
+        //        });
+
+                
+        //        //$('#select_categories').tokenInput(categoriesArray);              
+
+
+        //    }
+        //});
+
+        scAjax({
+            "url": "categories/GetCategories",
+            "success": function (result) {
                 if (!result) {
                     return;
                 }
-                
+
                 var categories = result;
-                //var categoriesArray = [];
                 $(categories).each(function (i, category) {
                     var option = $('<option>').text(category.categoryName).val(category.categoryId);
                     $('#select_categories').append(option);
-
-                    //var objCategory = { "id": category.categoryId, "name": category.categoryName };
-                    //categoriesArray.push(objCategory);
                 });
-
-                
-                //$('#select_categories').tokenInput(categoriesArray);              
-
-
             }
         });
 
@@ -73,22 +88,36 @@
                 "Categories": arrCategories
             };
             //debugger;
-            var SERVER = "/api/";
-            var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
-            $.ajax({
-                url: SERVER + "questions/PostQuestions",
-                type: "POST",
-                dataType: "json",
-                contentType: "application/json",
-                data: JSON.stringify(data,null,2),
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (result) {
+            //var SERVER = "/api/";
+            //var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
+            //$.ajax({
+            //    url: SERVER + "questions/PostQuestions",
+            //    type: "POST",
+            //    dataType: "json",
+            //    contentType: "application/json",
+            //    data: JSON.stringify(data,null,2),
+            //    headers: {
+            //        Accept: "application/json",
+            //        "Content-Type": "application/json",
+            //    },
+            //    beforeSend: function (xhr) {
+            //        xhr.setRequestHeader("Authorization", "Bearer " + token);
+            //    },
+            //    success: function (result) {
+            //        if (!result) {
+            //            return;
+            //        }
+
+            //        document.location.href = "/Feed/Details/" + result.questionId;
+            //        logActivity(1, result.questionId);
+            //    }
+            //});
+
+            scAjax({
+                "url": "questions/PostQuestions",
+                "type": "POST",
+                "data": JSON.stringify(data, null, 2),
+                "success": function (result) {
                     if (!result) {
                         return;
                     }
