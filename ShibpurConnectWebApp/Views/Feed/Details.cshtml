@@ -354,7 +354,19 @@
                         else {
                             // uodate the div with the user data received from the API
                             jQuery.each(result, function (i, val) {
-                                $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
+                                // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
+                                scAjax({
+                                    "url": "asktoanswer/GetAskToAnswer",
+                                    "data": { "questionId": questionID, "userId": val.userInfo.userId },
+                                    "success": function (result) {
+                                        if (result == null) {
+                                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
+                                        }
+                                        else
+                                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
+                                    }
+                                });
+                                
                             });
                         }
                     },
@@ -416,14 +428,14 @@
         };
         
         scAjax({
-            "url": "emails/sendasync",
+            "url": "emails/sendemail",
             "type": "POST",
             "data": JSON.stringify(emaildata, null, 2),
             "success": function (result) {                
             }
         });
 
-        // save this into the Notification collection
+        // save this request in the Notification collection
         var data = {
             "UserId": elm.attributes["data-id"].value,
             "NotificationContent": "<div><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a> requested you to answer this <a href='" + window.location.href + "'>question</a></div></div>",
@@ -435,9 +447,29 @@
             "type": "POST",
             "data": JSON.stringify(data, null, 2),
             "success": function (result) {
+                // disable the Ask button and change the test to Asked
                 $(elm).text("Asked");
+                $(elm).attr("disabled", "disabled");
             }
         });
+
+        // save this ask to answer record in database collection
+        var asktoanswer = {
+            "AskedTo": elm.attributes["data-id"].value,
+            "AskedBy": userInfo.userId,
+            "QuestionId": questionID
+        };
+        scAjax({
+            "url": "asktoanswer/postasktoanswer",
+            "type": "POST",
+            "data": JSON.stringify(asktoanswer, null, 2),
+            "success": function (result) {
+                
+            }
+        });
+
+
+
     }
 
      function getMonth(month) {
@@ -492,6 +524,34 @@
                     return;
                 }
 
+                //update the asktoanswer collection if this user has been asked to answer this question
+                scAjax({
+                    "url": "asktoanswer/GetAskToAnswer",
+                    "data": { "questionId": questionID, "userId": userInfo.userId },
+                    "success": function (result) {
+                        if (result != null) {
+                            if (result.hasAnswered == false) {
+                                // mark that the user has answered this question
+                                var asktoanswer = {
+                                    "Id": result.id,
+                                    "AskedTo": userInfo.userId,
+                                    "AskedBy": result.askedBy,
+                                    "QuestionId": result.questionId,
+                                    "HasAnswered": true,
+                                    "AskedOnUtc": result.askedOnUtc
+                                };
+                                scAjax({
+                                    "url": "asktoanswer/postasktoanswer",
+                                    "type": "POST",
+                                    "data": JSON.stringify(asktoanswer, null, 2),
+                                    "success": function (result) {
+
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
                 
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);

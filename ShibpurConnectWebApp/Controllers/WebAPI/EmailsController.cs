@@ -44,7 +44,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
         }
 
-        public Task SendAsync(Email message)
+        public Task SendEmail(Email message)
         {
             // Plug in your email service here to send an email.
             //return Task.FromResult(0);

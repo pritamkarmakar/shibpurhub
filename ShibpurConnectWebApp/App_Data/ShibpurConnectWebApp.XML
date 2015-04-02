@@ -503,6 +503,21 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.GetAskToAnswer(System.String,System.String)">
+            <summary>
+             API to search AskToAnswer collection for a specific question and specific user
+            </summary>
+            <param name="questionId">question id</param>
+            <param name="userId">User to whom we have asked to answer the question</param>
+            <returns>AskToAnswer object; if not found then null</returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.PostAskToAnswer(ShibpurConnectWebApp.Models.WebAPI.AskToAnswer)">
+            <summary>
+            API to save the Ask to answer request 
+            </summary>
+            <param name="askToAnswer"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.GetEducationalHistory">
             <summary>
             Get education histories for all users
@@ -596,6 +611,11 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo">
             <summary>
             We will use this model in the api/FindUser API. Main intention is to send the userid to the API user, so that we can use the userid for other APIs
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.AskToAnswer">
+            <summary>
+            AskToAnswer model
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.Notifications">

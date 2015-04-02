@@ -237,6 +237,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\WebAPI\AnswersController.cs" />
+    <Compile Include="Controllers\WebAPI\AskToAnswerController.cs" />
     <Compile Include="Controllers\WebAPI\CategoriesController.cs" />
     <Compile Include="Controllers\WebAPI\CategoryTaggingController.cs" />
     <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
@@ -283,6 +284,7 @@
     <Compile Include="Models\WebAPI\EducationalHistories.cs" />
     <Compile Include="Models\WebAPI\Email.cs" />
     <Compile Include="Models\WebAPI\EmploymentHistories.cs" />
+    <Compile Include="Models\WebAPI\AskToAnswer.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
     <Compile Include="Models\WebAPI\UserActivityLog.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />
