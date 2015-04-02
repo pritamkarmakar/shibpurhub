@@ -1,132 +1,62 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using System.Web.Http.Description;
+using System.Web.Http.Results;
+using MongoDB.Bson;
+using MongoDB.Driver.Linq;
+using ShibpurConnectWebApp.Helper;
+using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
-{
-    //[Authorize]
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
+{    
+    
     public class CommentsController : ApiController
     {
-        //private ShibpurConnectDB db = new ShibpurConnectDB();
+        private MongoHelper<Comment> _mongoHelper;
 
-        //// GET: api/Comments
-        //public IQueryable<Comments> GetComments()
-        //{
-        //    return db.Comments;
-        //}
+        public CommentsController()
+        {
+            _mongoHelper = new MongoHelper<Comment>();
+        }
 
-        //// GET: api/Comments/5
-        //[ResponseType(typeof(Comments))]
-        //public IHttpActionResult GetComments(string id)
-        //{
-        //    Comments comments = db.Comments.Find(id);
-        //    if (comments == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public IList<Comment> GetCommentsForAnswer(string answerId)
+        {
+            var result = _mongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answerId).ToList();
+            return result;
+        }
 
-        //    return Ok(comments);
-        //}
+        public int GetCommentCountForAnswer(string answerId)
+        {
+            var result = _mongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answerId);
+            return result.Count();
+        }
 
-        //// PUT: api/Comments/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutComments(string id, Comments comments)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        public IHttpActionResult AddComment(Comment comment)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (comment == null)
+            {
+                return BadRequest("Request body is null. Please send a valid Questions object");
+            }
 
-        //    if (id != comments.CommentId)
-        //    {
-        //        return BadRequest();
-        //    }
+            comment.PostedOnUtc = DateTime.UtcNow;
 
-        //    db.Entry(comments).State = EntityState.Modified;
+            // save the question to the database
+            var result = _mongoHelper.Collection.Save(comment);
 
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!CommentsExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();
 
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        //// POST: api/Comments
-        //[ResponseType(typeof(Comments))]
-        //public IHttpActionResult PostComments(Comments comments)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //    if (comments == null)
-        //        return BadRequest("Request body is null. Please send a valid Comments object");
-
-        //    db.Comments.Add(comments);
-
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (CommentsExists(comments.CommentId))
-        //        {
-        //            return Conflict();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return CreatedAtRoute("DefaultApi", new { id = comments.CommentId }, comments);
-        //}
-
-        //// DELETE: api/Comments/5
-        //[ResponseType(typeof(Comments))]
-        //public IHttpActionResult DeleteComments(string id)
-        //{
-        //    Comments comments = db.Comments.Find(id);
-        //    if (comments == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    db.Comments.Remove(comments);
-        //    db.SaveChanges();
-
-        //    return Ok(comments);
-        //}
-
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        db.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
-
-        //private bool CommentsExists(string id)
-        //{
-        //    return db.Comments.Count(e => e.CommentId == id) > 0;
-        //}
+            return CreatedAtRoute("DefaultApi", new { id = comment.CommentId }, comment);
+        }
     }
 }

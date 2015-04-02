@@ -110,6 +110,12 @@ function scAjax(options)
     }
 }
  
+function getDateFormatted(date)
+{
+    var utcDate = new Date(date);
+    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+    return dateString;
+}
 
 function logActivity(activity, objectId) {
     var userDetails = localStorage.getItem("SC_Session_UserDetails");

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -17,27 +18,24 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         // Primary key
         [BsonId]
-        public ObjectId CommentId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty(PropertyName = "commentId")]
+        public string CommentId { get; set; }
         
-        [Required]
         [DataMember]
         public string Description { get; set; }
         
         [DataMember]
-        public DateTime? PostedOnUtc { get; set; }
+        public DateTime PostedOnUtc { get; set; }
         
         // Foreign key
-        [ForeignKey("Question")]
         [DataMember]
-        public ObjectId QuestionId { get; set; }
+        public string AnswerId { get; set; }
 
-        [ForeignKey("AspNetUsers")]
         [DataMember]
-        public ObjectId UserId { get; set; }
+        public string UserId { get; set; }
 
-        //// One comment can be part of only one Question
-        //public virtual Question Question { get; set; }
-
-        //public virtual AspNetUsers AspNetUsers { get; set; }
+        [DataMember]
+        public string DisplayName { get; set; }
     }
 }

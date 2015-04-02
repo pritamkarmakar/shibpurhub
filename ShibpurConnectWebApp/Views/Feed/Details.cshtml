@@ -254,6 +254,29 @@
     {
         padding-right:0;
     }
+
+    .comment-list {
+        border-bottom: 1px solid #e2e2e2;
+        padding: 8px;
+        margin-right: 20px;
+    }
+
+    .comment-date, .comment-user
+    {
+        font-size: 9pt;
+    }
+
+    .comment-user
+    {
+        font-weight: bold;
+        padding-right: 10px;
+    }
+    .comment-text {
+        display: inline-block;
+        width: 100%;
+        padding: 0 10px;
+        word-wrap: break-word;
+    }
     
 </style>
 
@@ -499,6 +522,47 @@
         
     }
 
+    function getComments(answerBlock)
+    {
+        if (!answerBlock)
+        {
+            return;
+        }
+        var answerId = $(answerBlock).attr('data-answerid');
+
+        scAjax({
+            "url": "comments/GetCommentCountForAnswer",
+            "data": { "answerId": answerId },
+            "success": function (result) {
+                if (!result || result == "0") {
+                    return;
+                }
+
+                $(answerBlock).find('.comment-count').text(" (" + result + ")").attr('data-commentcount', result);
+
+                scAjax({
+                    "url": "comments/GetCommentsForAnswer",
+                    "data": { "answerId": answerId },
+                    "success": function (result) {
+                        if (!result) {
+                            return;
+                        }
+                        
+                        $(result).each(function (i, e) {
+                            
+                            var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
+                            $(commentBlock).removeClass('hide');                            
+                            $(commentBlock).find('.comment-text').text(e.description);
+                            $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
+                            $(commentBlock).find('.comment-user').text(e.displayName);
+                            $(answerBlock).find('.answer-comments').prepend(commentBlock);
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     function getAnswers()
     {
         var isAskedByMe = false;
@@ -576,6 +640,8 @@
                             });
                         });
                     }
+
+                    getComments(answerBlock);
                 });
 
                 $('.comment-anchor').click(function (event) {
@@ -583,6 +649,47 @@
                     var anchor = $(this);
                     var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
                     $(commentBox).removeClass('hide');
+                });
+
+                $('.btn-save-comment').click(function () {
+                    var button = $(this);
+                    var commentBox = $(button).closest('.comment-box');
+                    var input = $(commentBox).find('.txt_comment');
+                    var comment = $(input).val();
+                    if(!comment)
+                    {
+                        return;
+                    }
+
+                    var userDetails = localStorage.getItem("SC_Session_UserDetails");
+                    if (!userDetails) {
+                        //TO-DO: Handle if userdetail is not available in Session Storage
+                        return;
+                    }
+                    var userInfo = $.parseJSON(userDetails);
+                    var userId = userInfo.userId;
+
+                    var answerId = $(button).closest('li.answer').attr('data-answerid');
+                    var data = { "Description": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
+                    $(input).val('');
+                    scAjax({
+                        "url": "comments/AddComment",
+                        "type": "POST",
+                        "data": JSON.stringify(data, null, 2),
+                        "success": function (result) {
+                            var answerBlock = $(button).closest('li.answer');
+                            var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
+                            $(commentBlock).removeClass('hide');
+                            $(commentBlock).find('.comment-text').text(comment);
+                            $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
+                            $(commentBlock).find('.comment-user').text(result.displayName);
+                            $(answerBlock).find('.answer-comments').prepend(commentBlock);
+
+                            var spanCount = $(answerBlock).find('.comment-count');
+                            var count = $(spanCount).text() == '' ? 1 : parseInt($(spanCount).attr('data-commentcount')) + 1;
+                            $(spanCount).text(" (" + count + ")");
+                        }
+                    });
                 });
 
                 $('.upvote-anchor').click(function (event) {
@@ -606,6 +713,8 @@
                         }
                     });
                 });
+
+                
             }
         });        
     }
@@ -687,19 +796,25 @@
                             </span>*@
                             <span class="link comment-span">
                                 <a class="comment-anchor" href="#">Comment</a>
+                                <span class="comment-count"></span>
                             </span>
                         </div>
 
                         <div class="answer-comments hide col-md-10 no-right-padding">
+                            <div class="comment-list hide">
+                                <span class="comment-user"></span>
+                                <span class="comment-date"></span>
+                                <span class="comment-text"></span>
+                            </div>
                             <div class="comment-box">
                                 <a class="commentor" href="#">
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
                                 </a>
                                 <div class="col-md-9 no-right-padding">
-                                    <input class="form-control input-sm" id="txt_question" placeholder="Add comment" type="text" required>
+                                    <input class="form-control input-sm txt_comment"  placeholder="Add comment" type="text" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="button" class="btn btn-sm btn-primary" id="btn_Save" value="Comment">
+                                    <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">
                                 </div>
                             </div>
                         </div>
