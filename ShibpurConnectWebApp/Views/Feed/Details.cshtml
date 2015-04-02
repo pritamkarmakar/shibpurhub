@@ -260,14 +260,37 @@
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/wysihtml5x/dist/wysihtml5x-toolbar.min.js"></script>
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/handlebars/handlebars.runtime.min.js"></script>
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.js"></script>
+<script src="~/Scripts/quill.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/components-font-awesome/css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.css" />
+@*<link rel="stylesheet" type="text/css" href="~/Content/quill.base.css" />*@
+<link rel="stylesheet" type="text/css" href="~/Content/quill.snow.css" />
 
 <script type="text/javascript">
     var questionID = '';
     var askedBy = '';
+    var advancedEditor;
     $(document).ready(function () {
+
+         advancedEditor = new Quill('.text-wrapper .editor-container', {
+            modules: {
+                'authorship': {
+                    authorId: 'advanced',
+                    enabled: true
+                },
+                'toolbar': {
+                    container: '.text-wrapper .toolbar-container'
+                },
+                'link-tooltip': true,
+                'image-tooltip': true,
+                'multi-cursor': true
+            },
+            styles: false,
+            theme: 'snow'
+        });
+
+
         jQuery.support.cors = true;
         var SERVER = "/api/";
         var url = window.location.href;
@@ -417,11 +440,13 @@
         
         jQuery.support.cors = true;
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        
         if (!userDetails) {
             //TO-DO: Handle if userdetail is not available in Session Storage
             return;
         }
-        var answer = $('.textarea')[0].value;
+        //var answer = $('.textarea')[0].value;
+        var answer = advancedEditor.getHTML();
         if (!answer || answer == "")
         {
             return;
@@ -434,6 +459,7 @@
         //var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
         var answerObject = { "AnswerText": answer, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName, "UserEmail": userInfo.email };
         
+        advancedEditor.setHTML("");
         scAjax({
             "url": "Answers/PostAnswer",
             "type": "POST",
@@ -443,10 +469,9 @@
                     return;
                 }
 
-                //alert(result.answerText);
+                
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
-
 
                 var answerBlock = $('#answerlist li.answer.hide').clone();
                 $(answerBlock).removeClass('hide');
@@ -684,10 +709,109 @@
                 </ul>
             </div>
 
-            <div class="wirte-answer col-md-8" style="margin-top:40px">
-                <textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>
-                <a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>
-            </div>
+            <div class="wirte-answer col-md-12" style="margin-top:40px">
+                @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
+                <div class="text-wrapper col-md-12">
+                    <div class="toolbar-container">
+                        <span class="ql-format-group">
+                            <select title="Size" class="ql-size">
+                                <option value="10px">Small</option>
+                                <option value="13px" selected>Normal</option>
+                                <option value="18px">Large</option>
+                                <option value="32px">Huge</option>
+                            </select>
+                        </span><span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
+                            <select title="Text Color" class="ql-color">
+                                <option value="rgb(0, 0, 0)" selected></option>
+                                <option value="rgb(230, 0, 0)"></option>
+                                <option value="rgb(255, 153, 0)"></option>
+                                <option value="rgb(255, 255, 0)"></option>
+                                <option value="rgb(0, 138, 0)"></option>
+                                <option value="rgb(0, 102, 204)"></option>
+                                <option value="rgb(153, 51, 255)"></option>
+                                <option value="rgb(255, 255, 255)"></option>
+                                <option value="rgb(250, 204, 204)"></option>
+                                <option value="rgb(255, 235, 204)"></option>
+                                <option value="rgb(255, 255, 204)"></option>
+                                <option value="rgb(204, 232, 204)"></option>
+                                <option value="rgb(204, 224, 245)"></option>
+                                <option value="rgb(235, 214, 255)"></option>
+                                <option value="rgb(187, 187, 187)"></option>
+                                <option value="rgb(240, 102, 102)"></option>
+                                <option value="rgb(255, 194, 102)"></option>
+                                <option value="rgb(255, 255, 102)"></option>
+                                <option value="rgb(102, 185, 102)"></option>
+                                <option value="rgb(102, 163, 224)"></option>
+                                <option value="rgb(194, 133, 255)"></option>
+                                <option value="rgb(136, 136, 136)"></option>
+                                <option value="rgb(161, 0, 0)"></option>
+                                <option value="rgb(178, 107, 0)"></option>
+                                <option value="rgb(178, 178, 0)"></option>
+                                <option value="rgb(0, 97, 0)"></option>
+                                <option value="rgb(0, 71, 178)"></option>
+                                <option value="rgb(107, 36, 178)"></option>
+                                <option value="rgb(68, 68, 68)"></option>
+                                <option value="rgb(92, 0, 0)"></option>
+                                <option value="rgb(102, 61, 0)"></option>
+                                <option value="rgb(102, 102, 0)"></option>
+                                <option value="rgb(0, 55, 0)"></option>
+                                <option value="rgb(0, 41, 102)"></option>
+                                <option value="rgb(61, 20, 102)"></option>
+                            </select><span class="ql-format-separator"></span>
+                            <select title="Background Color" class="ql-background">
+                                <option value="rgb(0, 0, 0)"></option>
+                                <option value="rgb(230, 0, 0)"></option>
+                                <option value="rgb(255, 153, 0)"></option>
+                                <option value="rgb(255, 255, 0)"></option>
+                                <option value="rgb(0, 138, 0)"></option>
+                                <option value="rgb(0, 102, 204)"></option>
+                                <option value="rgb(153, 51, 255)"></option>
+                                <option value="rgb(255, 255, 255)" selected></option>
+                                <option value="rgb(250, 204, 204)"></option>
+                                <option value="rgb(255, 235, 204)"></option>
+                                <option value="rgb(255, 255, 204)"></option>
+                                <option value="rgb(204, 232, 204)"></option>
+                                <option value="rgb(204, 224, 245)"></option>
+                                <option value="rgb(235, 214, 255)"></option>
+                                <option value="rgb(187, 187, 187)"></option>
+                                <option value="rgb(240, 102, 102)"></option>
+                                <option value="rgb(255, 194, 102)"></option>
+                                <option value="rgb(255, 255, 102)"></option>
+                                <option value="rgb(102, 185, 102)"></option>
+                                <option value="rgb(102, 163, 224)"></option>
+                                <option value="rgb(194, 133, 255)"></option>
+                                <option value="rgb(136, 136, 136)"></option>
+                                <option value="rgb(161, 0, 0)"></option>
+                                <option value="rgb(178, 107, 0)"></option>
+                                <option value="rgb(178, 178, 0)"></option>
+                                <option value="rgb(0, 97, 0)"></option>
+                                <option value="rgb(0, 71, 178)"></option>
+                                <option value="rgb(107, 36, 178)"></option>
+                                <option value="rgb(68, 68, 68)"></option>
+                                <option value="rgb(92, 0, 0)"></option>
+                                <option value="rgb(102, 61, 0)"></option>
+                                <option value="rgb(102, 102, 0)"></option>
+                                <option value="rgb(0, 55, 0)"></option>
+                                <option value="rgb(0, 41, 102)"></option>
+                                <option value="rgb(61, 20, 102)"></option>
+                            </select><span class="ql-format-separator"></span>
+                            
+                        </span><span class="ql-format-group"><span title="List" class="ql-format-button ql-list"></span>
+                                   <span class="ql-format-separator"></span>
+                                   <span title="Bullet" class="ql-format-button ql-bullet"></span>
+                                   <span class="ql-format-separator"></span>
+                                   <select title="Text Alignment" class="ql-align">
+                                       <option value="left" selected></option>
+                                       <option value="center"></option>
+                                       <option value="right"></option>
+                                       <option value="justify"></option>
+                                   </select>
+                        </span>
+                    </div>
+                    <div class="editor-container"></div>
+                </div>
+                    <a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>
+                </div>
 
             <!--div to show Ask to Answer module-->
             <div class="well panel panel-default col-md-12" id="userToAnswer" style="margin-top:30px;">
