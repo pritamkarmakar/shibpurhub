@@ -348,7 +348,8 @@
                         if (!result) {
                             return;
                         }
-
+                        // hide the loading message
+                        $('#loadingasktoanswer').hide();
                         if (result.length == 0)
                             $('#userToAnswer').append("<span>Sorry no matching profile available</span>");
                         else {
@@ -359,11 +360,21 @@
                                     "url": "asktoanswer/GetAskToAnswer",
                                     "data": { "questionId": questionID, "userId": val.userInfo.userId },
                                     "success": function (result) {
-                                        if (result == null) {
-                                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
-                                        }
-                                        else
-                                            $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
+                                        //get the response rate for each user
+                                        var responseRate;
+                                        scAjax({
+                                            "url": "asktoanswer/GetResponseRate",
+                                            "data": { "userId": val.userInfo.userId },
+                                            "success": function (rRate) {
+                                                responseRate = rRate;
+
+                                                if (result == null) {
+                                                    $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
+                                                }
+                                                else
+                                                    $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
+                                            }
+                                        });                                        
                                     }
                                 });
                                 
@@ -782,27 +793,7 @@
 
 
 
-<div class="container">
-    @*@if (User.Identity.IsAuthenticated)
-    {
-
-        <div class="container">
-            <div class="col-md-6 col-md-offset-4" id="toolbar" role="toolbar">
-                @{
-        var routeAction = TempData["SelectedPage"];
-                }
-                <ul class="nav nav-pills">
-                    <li id="li_discussion" class="@(routeAction == "Threads" ? "active" : "")"><a href="\Feed\Index"><i class="fa fa-rss"></i>  Discussions</a></li>
-                    <li class="@(routeAction == "Categories" ? "active" : "")"><a href="\Feed\Categories"><i class="fa fa-tags"></i>  Categories</a></li>
-                    <li class="@(routeAction == "Users" ? "active" : "")"><a href="\Feed\Users"><i class="fa fa-users"></i>  Users</a></li>
-                    <li class="@(routeAction == "StartDiscussion" ? "active" : "")"><a href="\Feed\StartDiscussion"><i class="fa fa-question"></i>    Start Discussion</a></li>
-                </ul>
-            </div>
-        </div>
-
-        @Html.Hidden("hdnUserID", User.Identity.Name)
-    }*@
-    
+<div class="container">       
     <div class="col-md-8">
         <div class="header col-md-12">
             <h2 style="font-size:32px;"></h2><hr />
@@ -991,37 +982,13 @@
             <!--div to show Ask to Answer module-->
             <div class="well panel panel-default col-md-12" id="userToAnswer" style="margin-top:30px;">
                 <h4>Ask to Answer</h4><hr id="bigseparator" />
+                <!--div for loading message for the ask to answer module-->
+                <div id="loadingasktoanswer">
+                    <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+                </div>
             </div>
         </div>
-        @*<div class="column block left">
-                <section>
-                    <react render="commentCollection" context="context" post="post">
-                        <section>
-                            <aside class="comment-form">
-                                <div class="user">
-                                    <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                                    <span class="userName"></span>
-                                </div>
-                                <div class="col-md-10">
-                                    <form class="form-horizontal" role="form">
-                                        <div class="form-group">
-                                            <div class="col-md-8">
-                                                <textarea id="answerTextArea" class="form-control" required="" placeholder="Write an answer..." maxlength="6000"></textarea>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <input type="submit" value="Answer Question" onclick="saveAnswer();return false;">
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </aside>
-                        </section>
-                    </react>
-                </section>
-            </div>*@
-
-
- 
+       
         </div>
     <div class="col-md-4">
         <div class="tagCloud" style="margin-bottom:40px;">
@@ -1059,5 +1026,6 @@
             </div>
         </div>
         </div>
-    </div>
+      
+</div>
 

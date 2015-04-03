@@ -511,6 +511,14 @@
             <param name="userId">User to whom we have asked to answer the question</param>
             <returns>AskToAnswer object; if not found then null</returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.GetResponseRate(System.String)">
+            <summary>
+            Get the response rate for a user. We will calculate this based on how many request for answer he/she has received 
+            and how many he/she responded
+            </summary>
+            <param name="userId">user id</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.PostAskToAnswer(ShibpurConnectWebApp.Models.WebAPI.AskToAnswer)">
             <summary>
             API to save the Ask to answer request 

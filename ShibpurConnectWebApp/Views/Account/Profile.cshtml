@@ -4,10 +4,10 @@
 
 @section Scripts {
     <style type="text/css">
-        span#department
-        {
-            font-size:15px;
+        span#department {
+            font-size: 15px;
         }
+
         #companyname {
             font-size: 20px;
         }
@@ -25,16 +25,16 @@
         }
 
         #collegeName h4, #department span {
-    display: inline;
-    vertical-align: top;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 16px;
-    line-height: 28px;    
-}
-#collegeName h4 {
-    font-weight: bold;
-}
+            display: inline;
+            vertical-align: top;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+            line-height: 28px;
+        }
 
+        #collegeName h4 {
+            font-weight: bold;
+        }
     </style>
     <script type="text/javascript">
         // get the user profile for this user
@@ -78,21 +78,27 @@
                     $("#userName").text(result.userInfo.firstName + " " + result.userInfo.lastName);
 
                     // iterate over all the educational histories
-                    jQuery.each(result.educationalHistories, function(i, val) {
-                        $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
-                    });
+                    if(result.educationalHistories != null)
+                    {
+                        jQuery.each(result.educationalHistories, function(i, val) {
+                            $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
+                        });
+                    }
 
                     // iterate over all the employment histories
-                    jQuery.each(result.employmentHistories, function(i, val) {
-                        //var eduDiv = document.getElementById('educationalList');
-                        var toDate;
-                        if (val.to != null)
-                            toDate = val.to.toString('dd/mm/yyyy');
-                        else {
-                            toDate = "Present";
-                        }
-                        $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-" + toDate + "</span></div><hr id='dotted'/>");
-                    });
+                    if(result.employmentHistories != null)
+                    {
+                        jQuery.each(result.employmentHistories, function(i, val) {
+                            //var eduDiv = document.getElementById('educationalList');
+                            var toDate;
+                            if (val.to != null)
+                                toDate = val.to.toString('dd/mm/yyyy');
+                            else {
+                                toDate = "Present";
+                            }
+                            $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-" + toDate + "</span></div><hr id='dotted'/>");
+                        });
+                    }
                 }
             });
         });
@@ -170,7 +176,7 @@
                     //$("#errorLabel").text(errorText);
                     $('#failuremessage').css('display', 'block');
                     $('#failuremessage').text(errorText);
-                   
+
                     // toggle the 'Add education' button, so that the form will get close
                     $("#educationContent").slideToggle();
                     // remove the loading class from save button
@@ -302,7 +308,7 @@
         }
 
         function updateReputation(userId)
-        {            
+        {
             if(!userId)
             {
                 return;
@@ -348,8 +354,8 @@
 </div>
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-12 col-xs-10">
+    <div class="col-md-8">
+        <div class=" col-md-12 col-xs-10">
             <div class="well panel panel-default">
                 <div class="panel-body">
                     <div class="row">
@@ -432,16 +438,22 @@
                     <button class="btn btn-primary btn-xs" id="newPosition">Add experience</button><br /><br />
                 </div>
             </div>
-            </div>
-            <!--Add new experience div-->
-            <div class="col-md-12 col-xs-10" id="employmentContent" style="display:none">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        @Html.Partial("../PartialViews/_EmploymentHistory")
-                    </div>
+        </div>
+        <!--Add new experience div-->
+        <div class="col-md-12 col-xs-10" id="employmentContent" style="display:none">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Partial("../PartialViews/_EmploymentHistory")
                 </div>
             </div>
         </div>
-        <!--/row-->
     </div>
+
+    <div class="col-md-4">
+        <div class="recentactivity">
+            <h3>Recent Activity</h3><hr />
+        </div>
+    </div>
+    <!--/row-->
+</div>
 <!--/container-->

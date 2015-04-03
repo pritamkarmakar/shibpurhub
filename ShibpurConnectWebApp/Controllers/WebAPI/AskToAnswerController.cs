@@ -44,10 +44,41 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return result[0];
         }
 
-        // GET api/asktoanswer/5
-        public string Get(int id)
+        /// <summary>
+        /// Get the response rate for a user. We will calculate this based on how many request for answer he/she has received 
+        /// and how many he/she responded
+        /// </summary>
+        /// <param name="userId">user id</param>
+        /// <returns></returns>
+        public string GetResponseRate(string userId)
         {
-            return "value";
+            // total response received
+            int responseReceived = 0;
+            var result = (from e in _mongoHelper.Collection.AsQueryable<AskToAnswer>()
+                          where e.AskedTo == userId 
+                          select e).ToList();
+
+            if (result.Count > 0)
+                responseReceived = result.Count;
+            else
+                return "NA";
+              
+
+            // response given
+            var responseGiven = (from e in _mongoHelper.Collection.AsQueryable<AskToAnswer>()
+                          where e.AskedTo == userId && e.HasAnswered == true
+                          select e).ToList();
+
+            if (responseGiven.Count == 0)
+                return "0%";
+            else
+            {
+                // calculate response rate
+                double rRate = ((double)responseGiven.Count / (double)responseReceived) * 100;
+
+                return Convert.ToInt32(rRate).ToString() + "%";
+            }
+           
         }
 
         /// <summary>
