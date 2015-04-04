@@ -3,13 +3,34 @@
     ViewBag.Title = "Feed";
 }
 
+<style type="text/css">
+    .moduleheader
+    {
+        font-size:18px;
+    }
+</style>
+
    <div>
        <div class="col-md-8">
+           <div class="row subheader" style="border-bottom-style:dotted">
+               <h2 class="moduleheader" style="float:left;">All Questions</h2>
+               <div id="tabs" style="float:right">
+                   <ul class="nav nav-pills" role="tablist">
+                       <li role="presentation" class="active"><a href="#">newest <span class="badge">42</span></a></li>
+                       <li role="presentation"><a href="#">most active</a></li>
+                       <li role="presentation"><a href="#">unanswered <span class="badge">3</span></a></li>
+                   </ul>
+               </div>
+           </div>
            @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
        </div>
        <div class="col-md-4">
-           <div class="tagCloud">
-               <h3>Tags</h3><hr/>
+           <div class="module" id="questions-count">
+               <div class="questioncount" style="font-size:30px">4010</div>
+               <p>questions</p>
+           </div>
+           <div class="row tagCloud" >
+               <h2 class="moduleheader">Trending</h2><hr/>
            </div>
        </div>
    </div>

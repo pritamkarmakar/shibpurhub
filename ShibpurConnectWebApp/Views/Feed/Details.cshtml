@@ -348,10 +348,12 @@
                         if (!result) {
                             return;
                         }
-                        // hide the loading message
-                        $('#loadingasktoanswer').hide();
-                        if (result.length == 0)
+                       
+                        if (result.length == 0) {
                             $('#userToAnswer').append("<span>Sorry no matching profile available</span>");
+                            // hide the loading message
+                            $('#loadingasktoanswer').hide();
+                        }
                         else {
                             // uodate the div with the user data received from the API
                             jQuery.each(result, function (i, val) {
@@ -366,18 +368,21 @@
                                             "url": "asktoanswer/GetResponseRate",
                                             "data": { "userId": val.userInfo.userId },
                                             "success": function (rRate) {
-                                                responseRate = rRate;
 
+                                                responseRate = rRate;
                                                 if (result == null) {
                                                     $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
                                                 }
                                                 else
                                                     $('#userToAnswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.userId + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
+
+                                                // hide the loading message
+                                                $('#loadingasktoanswer').hide();
                                             }
-                                        });                                        
+                                        });
                                     }
                                 });
-                                
+
                             });
                         }
                     },
@@ -386,6 +391,9 @@
                         //$("#errorLabel").text(errorText);
                         $('#failuremessage').css('display', 'block');
                         $('#failuremessage').text(errorText);
+
+                        // hide the loading message
+                        $('#loadingasktoanswer').hide();
                     }
                 });
             }
@@ -796,7 +804,7 @@
 <div class="container">       
     <div class="col-md-8">
         <div class="header col-md-12">
-            <h2 style="font-size:32px;"></h2><hr />
+            <h2 style="font-size:22px;"></h2><hr />
         </div>
     </div>
     <div class="col-md-8">

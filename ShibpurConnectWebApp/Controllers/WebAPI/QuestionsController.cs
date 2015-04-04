@@ -291,7 +291,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                   IHttpActionResult actionResult = await profileController.GetProfileByUserId((string)userData["userId"]);
                   var userProfile = actionResult as OkNegotiatedContentResult<UserProfile>;
 
-                  userProfileList.Add(userProfile.Content);
+                  if (userProfile != null)
+                  {
+                      userProfileList.Add(userProfile.Content);
+                  }
                 }
             }
 
