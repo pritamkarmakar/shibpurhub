@@ -259,6 +259,7 @@
                         </li>
                     }
                     <li>@Html.ActionLink("Questions", "Index", "Feed")</li>
+                    <li>@Html.ActionLink("Users", "Index", "Users")</li>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li>
@@ -266,7 +267,7 @@
                         </li>
                     }
                 </ul>
-                <div class="col-sm-4 col-md-4">
+                @*<div class="col-sm-4 col-md-4">
                     <form class="navbar-form" role="search">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search" name="q">
@@ -275,7 +276,7 @@
                             </div>
                         </div>
                     </form>
-                </div>
+                </div>*@
 
                 @Html.Partial("_LoginPartial")
             </div>

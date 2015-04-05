@@ -90,13 +90,21 @@
                     {
                         jQuery.each(result.employmentHistories, function(i, val) {
                             //var eduDiv = document.getElementById('educationalList');
+                            var months = ["January", "February", "March", "April", "May", "June", "July",
+         "August", "September", "October", "November", "December"];
+                            var utcDate = new Date(val.from);
+                            var fromDate = months[utcDate.getMonth()] + " " + utcDate.getFullYear();
+
                             var toDate;
                             if (val.to != null)
-                                toDate = val.to.toString('dd/mm/yyyy');
+                            {
+                                var utcDateTo = new Date(val.to);
+                                toDate = months[utcDateTo.getMonth()] + " " + utcDateTo.getFullYear();
+                            }
                             else {
                                 toDate = "Present";
                             }
-                            $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-" + toDate + "</span></div><hr id='dotted'/>");
+                            $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div><hr id='dotted'/>");
                         });
                     }
                 }
@@ -243,13 +251,22 @@
 
                                 // iterate over all the employment histories
                                 jQuery.each(result, function(i, val) {
+                                    var months = ["January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"];
+                                    var utcDate = new Date(val.from);
+                                    var fromDate = months[utcDate.getMonth()] + " " + utcDate.getFullYear();
+
                                     var toDate;
                                     if (val.to != null)
-                                        toDate = val.to.toString('dd/mm/yyyy');
+                                    {
+                                        var utcDateTo = new Date(val.to);
+                                        toDate = months[utcDateTo.getMonth()] + " " + utcDateTo.getFullYear();
+                                    }
                                     else {
                                         toDate = "Present";
                                     }
-                                    $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + val.from + "-" + toDate + "</span></div><br/>");
+                                    $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div><hr id='dotted'/>");
+
                                 });
 
                                 // toggle the 'Add position' button, so that the form will get close
