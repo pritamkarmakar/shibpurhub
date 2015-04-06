@@ -154,11 +154,15 @@
 
     // Method to search a user by name/email
     var lastentry = "";
+    var xhrCount = 0;
     $(function () {
         $('#usernametext').keyup(function (event) {
             if ($('#usernametext').val() != lastentry) {
                 //$('div').append('TEST' + $(this).val() + "<br>");
             }
+
+            // sequence number for the current invocation of function
+            var seqNumber = ++xhrCount;
 
             jQuery.support.cors = true;
             var SERVER = "/api/";
@@ -174,22 +178,24 @@
                         if (!result) {
                             return;
                         }
+                        if (seqNumber === xhrCount) {
 
-                        // clear the users
-                        $('#userlist').empty();
+                            // clear the users
+                            $('#userlist').empty();
 
-                        // hide the loading
-                        $('#loadingusers').hide();
+                            // hide the loading
+                            $('#loadingusers').hide();
 
-                        // if no user found then show this message
-                        if (result.length == 0) {
-                            $('#userlist').append("<span>No user found</span>");
-                            return;
+                            // if no user found then show this message
+                            if (result.length == 0) {
+                                $('#userlist').append("<span>No user found</span>");
+                                return;
+                            }
+
+                            $(result).each(function (i, val) {
+                                $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + 2521 + "</span></div></div>")
+                            });
                         }
-
-                        $(result).each(function (i, val) {
-                            $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + 2521 + "</span></div></div>")
-                        });
                     }
                 });
             }
@@ -201,16 +207,17 @@
                         if (!result) {
                             return;
                         }
+                        if (seqNumber === xhrCount) {
+                            // clear the users
+                            $('#userlist').empty();
 
-                        // clear the users
-                        $('#userlist').empty();
+                            // hide the loading div
+                            $('#loadingusers').hide();
 
-                        // hide the loading div
-                        $('#loadingusers').hide();
-
-                        $(result).each(function (i, userinfo) {
-                            $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + userinfo.email + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + 2521 + "</span></div></div>")
-                        });
+                            $(result).each(function (i, userinfo) {
+                                $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + userinfo.email + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + 2521 + "</span></div></div>")
+                            });
+                        }
                     }
                 });
             }
