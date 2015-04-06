@@ -76,6 +76,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(userProfile);
         }
 
+        /// <summary>
+        /// Get all users by reputation
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IHttpActionResult> GetUsersByReputation()
+        {
+            return null;
+        }
 
         // GET: api/Profile/5
         public string Get(int id)

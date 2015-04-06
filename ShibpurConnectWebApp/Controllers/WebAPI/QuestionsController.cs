@@ -23,12 +23,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class QuestionsController : ApiController
     {
         private MongoHelper<QuestionsDTO> _mongoHelper;
-        private ElasticSearchHelper _elasticSearchHealer;
 
         public QuestionsController()
         {
             _mongoHelper = new MongoHelper<QuestionsDTO>();
-            _elasticSearchHealer = new ElasticSearchHelper();
         }
 
         // GET: api/Questions
@@ -254,52 +252,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         //    //return Ok(questions);
         //}
 
-        public async Task<IHttpActionResult> GetSuggestedUserProfiles(string categories)
-        {
-            // validate categories is not empty
-            if (string.IsNullOrEmpty(categories))
-            {
-                return null;
-            }
-
-            // convert the comma(,) separated categories into space separeted single string. We will use this string as search text in elastic search
-            StringBuilder sb = new StringBuilder();
-
-            foreach (string str in categories.Split(','))
-            {
-                sb.Append(str.Trim() + " ");
-            }
-
-            var client = _elasticSearchHealer.ElasticClient();
-            var result = client.Search<object>(s => s.AllIndices().AllTypes().Query(query => query
-        .QueryString(qs => qs.Query(sb.ToString().TrimEnd()))));
-
-                   
-            // retrieve the unique user info from the result
-            HashSet<string> hash = new HashSet<string>();
-            List<UserProfile> userProfileList = new List<UserProfile>();
-            
-            foreach (object obj in result.Documents)
-            {
-                var userData = JObject.Parse(obj.ToString());
-                if (!hash.Contains((string)userData["userId"]))
-                {
-                  hash.Add((string)userData["userId"]);
-
-                    // retrieve the userInfo
-                  ProfileController profileController = new ProfileController();
-                  IHttpActionResult actionResult = await profileController.GetProfileByUserId((string)userData["userId"]);
-                  var userProfile = actionResult as OkNegotiatedContentResult<UserProfile>;
-
-                  if (userProfile != null)
-                  {
-                      userProfileList.Add(userProfile.Content);
-                  }
-                }
-            }
-
-
-            return Ok(userProfileList);
-        }
+       
     }
 }

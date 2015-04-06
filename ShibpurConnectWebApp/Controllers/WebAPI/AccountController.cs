@@ -6,6 +6,8 @@ using Microsoft.AspNet.Identity;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using ShibpurConnectWebApp.Providers;
+using System;
+using ShibpurConnectWebApp.Helper;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -13,7 +15,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class AccountController : ApiController
     {
-        private AuthRepository _repo = null;
+        private AuthRepository _repo = null;       
 
         public AccountController()
         {
@@ -35,15 +37,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ModelState);
             }
 
-            IdentityResult result = await _repo.RegisterUser(userModel);
-            
-
+            IdentityResult result = await _repo.RegisterUser(userModel);         
             IHttpActionResult errorResult = GetErrorResult(result);
 
             if (errorResult != null)
             {
                 return errorResult;
-            }
+            }          
 
             return Ok();
         }

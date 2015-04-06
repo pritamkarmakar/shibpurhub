@@ -580,6 +580,26 @@
             <param name="password">password</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchAllTypes(System.String)">
+            <summary>
+            Method to search across all documents of all types
+            </summary>
+            <param name="searchTerm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetAllUsers">
+            <summary>
+            Get all system users
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetUsersByTerm(System.String)">
+            <summary>
+            Search users by name, email, company name, location etc
+            </summary>
+            <param name="searchTerm">search term (can be location/company name/ user name/email etc)</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Helper.ElasticSearchHelper.ElasticClient">
             <summary>
             Method to create the Elastic Search client instance
@@ -646,6 +666,12 @@
             API to get user info using user id
             </summary>
             <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUsersByReputation">
+            <summary>
+            Get all users by reputation
+            </summary>
             <returns></returns>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionsDTO">

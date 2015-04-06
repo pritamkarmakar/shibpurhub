@@ -102,8 +102,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             // add the guid id for this record
-            //employmentHistory.Id = Guid.NewGuid().ToString();
+            employmentHistory.Id = ObjectId.GenerateNewId();
 
+            // save the entry in database
             var result = _mongoHelper.Collection.Save(employmentHistory);
 
             // if mongo failed to save the data then send error
@@ -114,6 +115,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var client = _elasticSearchHelper.ElasticClient();
             client.Index(new EmploymentHistories()
                 {
+                    Id = employmentHistory.Id,
                     CompanyName = employmentHistory.CompanyName,
                     Location = employmentHistory.Location,
                     Title = employmentHistory.Title,

@@ -28,6 +28,9 @@ namespace ShibpurConnectWebApp
             bundles.Add(new ScriptBundle("~/bundles/tokeninput").Include(
                       "~/Scripts/jquery.tokeninput.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/typehead").Include(
+                     "~/Scripts/typehead/typeahead.bundle.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",

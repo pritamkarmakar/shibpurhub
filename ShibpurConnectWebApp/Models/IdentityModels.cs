@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AspNet.Identity.MongoDB;
 using Microsoft.AspNet.Identity;
+using System;
 
 namespace ShibpurConnectWebApp.Models
 {
@@ -13,6 +14,8 @@ namespace ShibpurConnectWebApp.Models
         public string Location { get; set; }
         // to indicate whether its a student, alumni or authority profile
         public int ProfileType { get; set; }
+        // when user registered first time in the website        
+        public DateTime RegisteredOn { get; set; }
 
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)

@@ -9,6 +9,7 @@ using Microsoft.Owin.Security.OAuth;
 using MongoDB.Driver;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Models.WebAPI;
 
 namespace ShibpurConnectWebApp.Providers
 {
@@ -47,7 +48,7 @@ namespace ShibpurConnectWebApp.Providers
     public class AuthRepository : IDisposable
     {
         private ApplicationIdentityContext _ctx;
-
+        private ElasticSearchHelper _elasticSearchHelper;
 
         private UserManager<ApplicationUser> _userManager;
 
@@ -67,10 +68,26 @@ namespace ShibpurConnectWebApp.Providers
                 UserName = userModel.Email.ToLower(),
                 Email = userModel.Email.ToLower(),
                 FirstName = userModel.FirstName,
-                LastName = userModel.LastName
+                LastName = userModel.LastName,
+                Location = userModel.Location,
+                RegisteredOn = DateTime.UtcNow
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);
+
+            // add the new user in the elastic search index
+            if (result.Succeeded)
+            {
+                var client = _elasticSearchHelper.ElasticClient();
+                var index = client.Index(new CustomUserInfo
+                {
+                    Email = user.Email,
+                    UserId = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Location = user.Location
+                });
+            }
 
             return result;
         }

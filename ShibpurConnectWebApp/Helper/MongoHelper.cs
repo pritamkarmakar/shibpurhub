@@ -19,4 +19,16 @@ namespace ShibpurConnectWebApp.Helper
             Collection = db.GetCollection<T>(typeof(T).Name.ToLower());
         }
     }
+
+    public class MongoHelper
+    {
+        public MongoCollection Collection { get; private set; }
+
+        public MongoHelper(string collectionName)
+        {
+            var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
+            var db = client.GetServer().GetDatabase("shibpurconnect");
+            Collection = db.GetCollection(collectionName);
+        }
+    }
 }

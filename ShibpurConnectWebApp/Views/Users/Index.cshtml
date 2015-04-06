@@ -1,0 +1,261 @@
+﻿@model ShibpurConnectWebApp.Models.WebAPI.UserProfile
+
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/typehead")
+}
+
+
+<style type="text/css">
+    .user
+    {
+        margin-bottom:20px;
+    }
+
+    #userlist
+    {
+        margin-top:40px;
+    }
+
+    .moduleheader {
+        font-size: 18px;
+    }
+
+    .input-group {
+        width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /*align loading div centered*/
+    #loadingusers {
+        width: 200px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+   /*typehead css*/
+
+    .tt-query {
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+
+    .tt-hint {
+        color: #999;
+    }
+
+    .tt-dropdown-menu {
+        width: 422px;
+        margin-top: 4px;
+        padding: 4px 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    }
+
+    .tt-suggestion {
+        padding: 3px 20px;
+        line-height: 24px;
+    }
+
+        .tt-suggestion.tt-cursor {
+            color: #fff;
+            background-color: #0097cf;
+        }
+
+        .tt-suggestion p {
+            margin: 0;
+        }
+
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        //$('#select_categories').tokenInput("/api/categories/GetCategories");       
+
+        scAjax({
+            "url": "users/GetAllUsers",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                // hide the loading div
+                $('#loadingusers').hide();
+
+                $(result).each(function (i, userinfo) {
+                    $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + userinfo.email + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + 2521 + "</span></div></div>")
+                });
+            }
+        });
+
+
+        var substringMatcher = function (strs) {
+            return function findMatches(q, cb) {
+                var matches, substrRegex;
+
+                // an array that will be populated with substring matches
+                matches = [];
+
+                // regex used to determine if a string contains the substring `q`
+                substrRegex = new RegExp(q, 'i');
+
+                // iterate through the pool of strings and for any string that
+                // contains the substring `q`, add it to the `matches` array
+                $.each(strs, function (i, str) {
+                    if (substrRegex.test(str)) {
+                        // the typeahead jQuery plugin expects suggestions to a
+                        // JavaScript object, refer to typeahead docs for more info
+                        matches.push({ value: str });
+                    }
+                });
+
+                cb(matches);
+            };
+        };
+
+        var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
+          'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
+          'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+          'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+          'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+          'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+          'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+          'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+          'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+        ];
+
+        $('.typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        },
+        {
+            name: 'states',
+            displayKey: 'value',
+            source: substringMatcher(states)
+        });
+    });
+
+    // Method to search a user by name/email
+    var lastentry = "";
+    $(function () {
+        $('#usernametext').keyup(function (event) {
+            if ($('#usernametext').val() != lastentry) {
+                //$('div').append('TEST' + $(this).val() + "<br>");
+            }
+
+            jQuery.support.cors = true;
+            var SERVER = "/api/";
+            // enable loading div
+            $('#loadingusers').show();
+
+            if ($('#usernametext').val() != "")
+                {
+                scAjax({
+                    "url": "search/SearchAllTypes",
+                    "data": { "searchTerm": $('#usernametext').val() },
+                    "success": function (result) {
+                        if (!result) {
+                            return;
+                        }
+
+                        // clear the users
+                        $('#userlist').empty();
+
+                        // hide the loading
+                        $('#loadingusers').hide();
+
+                        // if no user found then show this message
+                        if (result.length == 0) {
+                            $('#userlist').append("<span>No user found</span>");
+                            return;
+                        }
+
+                        $(result).each(function (i, val) {
+                            $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + 2521 + "</span></div></div>")
+                        });
+                    }
+                });
+            }
+            else
+            {
+                scAjax({
+                    "url": "users/GetAllUsers",
+                    "success": function (result) {
+                        if (!result) {
+                            return;
+                        }
+
+                        // clear the users
+                        $('#userlist').empty();
+
+                        // hide the loading div
+                        $('#loadingusers').hide();
+
+                        $(result).each(function (i, userinfo) {
+                            $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + userinfo.email + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + 2521 + "</span></div></div>")
+                        });
+                    }
+                });
+            }
+        });
+    });
+    
+</script>
+
+<style type="text/css">
+    
+</style>
+
+<div>
+    <div class="col-md-12">
+        <div class="row subheader" style="border-bottom-style:dotted">
+            <h2 class="moduleheader" style="float:left;">Users</h2>
+            <div id="tabs" style="float:right">
+                <ul class="nav nav-pills" role="tablist">
+                    <li role="presentation"><a href="#">reputation</a></li>
+                    <li role="presentation"><a href="#">new users</a></li>
+                    <li role="presentation"><a href="#">admins</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <form role="search" style="margin-top:20px;">                  
+                    <div class="input-group input-group-sm" id="the-basics">
+                        <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company etc (sample search string - 'satinath anirban tcs')" aria-describedby="sizing-addon3">
+                        @*<div class="input-group-btn">
+                            <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>*@
+                    </div>
+                </form>
+                @*<div id="the-basics">
+                    <input class="typeahead" type="text" placeholder="States of USA">
+                </div>*@
+            </div>
+        </div>
+        <div id="userlist">
+            
+        </div>
+        <div id="loadingusers">
+            <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+        </div>
+    </div>
+</div>
+

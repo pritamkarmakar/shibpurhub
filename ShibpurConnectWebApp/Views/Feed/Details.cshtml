@@ -342,8 +342,8 @@
 
                 // show the suggested user who can answer this question using elastic search
                 scAjax({
-                    "url": "questions/GetSuggestedUserProfiles",
-                    "data": { "categories": result.categories.toString() },
+                    "url": "search/SearchAllTypes",
+                    "data": { "searchTerm": result.categories.toString() },
                     "success": function (result) {
                         if (!result) {
                             return;
@@ -355,7 +355,7 @@
                             $('#loadingasktoanswer').hide();
                         }
                         else {
-                            // uodate the div with the user data received from the API
+                            // update the div with the user data received from the API
                             jQuery.each(result, function (i, val) {
                                 // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
                                 scAjax({

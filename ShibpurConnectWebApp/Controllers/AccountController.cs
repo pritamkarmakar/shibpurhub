@@ -15,6 +15,7 @@ using ShibpurConnectWebApp.Controllers.WebAPI;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System;
 
 namespace ShibpurConnectWebApp.Controllers
 {
@@ -250,7 +251,7 @@ namespace ShibpurConnectWebApp.Controllers
                 var userInfo = await UserManager.FindByNameAsync(model.Email.ToLower());
 
                 // if we are here that means user hasn't been created before. So add a new account
-                var user = new ApplicationUser { UserName = model.Email.ToLower(), Email = model.Email.ToLower(), FirstName = model.FirstName, LastName = model.LastName };
+                var user = new ApplicationUser { UserName = model.Email.ToLower(), Email = model.Email.ToLower(), FirstName = model.FirstName, LastName = model.LastName, Location = model.Location, RegisteredOn = DateTime.UtcNow };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -480,7 +481,7 @@ namespace ShibpurConnectWebApp.Controllers
                         string lastName =
                             loginInfo.ExternalIdentity.Name.Split(' ')[
                                 loginInfo.ExternalIdentity.Name.Split(' ').Length - 1];
-                        var user = new ApplicationUser { UserName = loginInfo.Email, Email = loginInfo.Email, FirstName = firstName, LastName = lastName };
+                        var user = new ApplicationUser { UserName = loginInfo.Email, Email = loginInfo.Email, FirstName = firstName, LastName = lastName, RegisteredOn = DateTime.UtcNow };
                         //await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                         var result3 = await UserManager.CreateAsync(user);
                         if (result3.Succeeded)
