@@ -520,7 +520,8 @@
             return;
         }
         //var answer = $('.textarea')[0].value;
-        var answer = advancedEditor.getHTML();
+        var answer = advancedEditor.getHTML();      
+
         if (!answer || answer == "")
         {
             return;
@@ -727,7 +728,7 @@
                     event.preventDefault();
                     var anchor = $(this);
                     var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
-                    $(commentBox).removeClass('hide');
+                    $(commentBox).slideToggle();
                 });
 
                 $('.btn-save-comment').click(function () {
@@ -859,7 +860,7 @@
                             </span>
                         </div>
 
-                        <div class="answer-comments hide col-md-10 no-right-padding">
+                        <div class="answer-comments col-md-10 no-right-padding">
                             <div class="comment-list hide">
                                 <span class="comment-user"></span>
                                 <span class="comment-date"></span>
