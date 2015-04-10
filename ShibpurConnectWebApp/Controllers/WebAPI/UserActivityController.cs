@@ -67,25 +67,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        //public int GetUserReputation(string userId)
-        //{
-        //    if(string.IsNullOrEmpty(userId))
-        //    {
-        //        return 0;
-        //    }
-
-        //    var count = 0;
-        //    var activities = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).ToList();
-        //    foreach(var activity in activities)
-        //    {
-        //        count += activity.PointsEarned;
-        //    }
-        //    var mongoAnswerHelper = new MongoHelper<Answer>();
-        //    var answersByUser = mongoAnswerHelper.Collection.AsQueryable().Where(a => a.UserId == userId).ToList();
-        //    count += answersByUser.Where(a => a.MarkedAsAnswer).Count() * 50;
-        //    count += answersByUser.Sum(a => a.UpVoteCount) * 20;
-        //    return count;
-        //}
+        public async Task<int> GetUserReputation(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return 0;
+            }
+            var helper = new Helper.Helper();
+            Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+            var userInfo = await actionResult;
+            
+            return userInfo.ReputationCount;
+        }
 
         private int GetRepCountByActivity(int activity)
         {
