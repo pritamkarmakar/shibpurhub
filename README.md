@@ -21,14 +21,24 @@ Update-Package -Reinstall
 ```
 
 ### Setup a local mongodb
-1. Install mongodb from https://www.mongodb.org/downloads, by default it will install here "C:\Program Files\MongoDB\Server\3.0"
-2. Create a new folder 'data' inside C:\Program Files\MongoDB\Server\3.0
-3. Open command prompt as admin and run below command
+1.Install mongodb from https://www.mongodb.org/downloads, by default it will install here "C:\Program Files\MongoDB\Server\3.0"
+
+2.Create a new folder 'data' inside C:\Program Files\MongoDB\Server\3.0
+
+3.Open command prompt as admin and run below command
 ```
 cd "C:\Program Files\MongoDB\Server\3.0\bin"
 mongod --dbpath "C:\Program Files\MongoDB\Server\3.0\data"
 ```
-3. Say yes to the firewall dialog
+4.Say yes to the firewall dialog
+
+5.Your mongodb will be starting at http://localhost:27017
+
+6.Go to our application web.config and update the connection string to this -
+```
+<add name="MongoDB" connectionString="mongodb://localhost/shibpurconnect" />
+```
+Mongodb will automatically create the database. And all collection will be created once you run the application
 
 
 ## Do you want to get rid of password ask from gitbucket for each pull/push then follow below steps ->
