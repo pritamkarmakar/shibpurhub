@@ -32,7 +32,7 @@ mongod --dbpath "C:\Program Files\MongoDB\Server\3.0\data"
 ```
 4.Say yes to the firewall dialog
 
-5.Your mongodb will be starting at http://localhost:27017
+5.Your mongodb will be starting at http://localhost:27017. If you try to browse this url it will give you this messahe 'It looks like you are trying to access MongoDB over HTTP on the native driver port'.
 
 6.Go to our application web.config and update the connection string to this -
 ```
