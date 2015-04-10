@@ -23,7 +23,7 @@ Update-Package -Reinstall
 
 ## Do you want to get rid of password ask from gitbucket for each pull/push then follow below steps ->
  
-1.Generate a new SSH key
+1.Open Git-bash (search in windows all programs) and generate a new SSH key using below command
 ```
 ssh-keygen -t rsa -C "youremail"
 ```
