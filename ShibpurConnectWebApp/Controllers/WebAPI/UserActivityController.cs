@@ -11,6 +11,7 @@ using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System.Threading.Tasks;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -54,28 +55,29 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             log.HappenedAtUTC = DateTime.UtcNow;
-            log.PointsEarned = GetRepCountByActivity(log.Activity);
             _mongoHelper.Collection.Save(log);
+
+            var pointsEarned = GetRepCountByActivity(log.Activity);
+            var helper = new Helper.Helper();
+            helper.UpdateReputationCount(log.UserId, pointsEarned, true);
+            if(log.Activity == 3 || log.Activity == 5)
+            {
+                var points = log.Activity == 3 ? 20 : 50;
+                helper.UpdateReputationCount(log.ActedOnUserId, points, true);
+            }
         }
 
-        public int GetUserReputation(string userId)
+        public async Task<int> GetUserReputation(string userId)
         {
-            if(string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(userId))
             {
                 return 0;
             }
-
-            var count = 0;
-            var activities = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).ToList();
-            foreach(var activity in activities)
-            {
-                count += activity.PointsEarned;
-            }
-            var mongoAnswerHelper = new MongoHelper<Answer>();
-            var answersByUser = mongoAnswerHelper.Collection.AsQueryable().Where(a => a.UserId == userId).ToList();
-            count += answersByUser.Where(a => a.MarkedAsAnswer).Count() * 50;
-            count += answersByUser.Sum(a => a.UpVoteCount) * 20;
-            return count;
+            var helper = new Helper.Helper();
+            Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+            var userInfo = await actionResult;
+            
+            return userInfo.ReputationCount;
         }
 
         private int GetRepCountByActivity(int activity)

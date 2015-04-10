@@ -17,6 +17,8 @@ namespace ShibpurConnectWebApp.Models
         // when user registered first time in the website        
         public DateTime RegisteredOn { get; set; }
 
+        public int ReputationCount { get; set; }
+
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

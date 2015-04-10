@@ -26,8 +26,12 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public string ActedOnObjectId { get; set; }
 
+        //In case of 3: Upvote, 5: Mark as Answer > UserID of Answer
         [DataMember]
-        public int PointsEarned { get; set; }
+        public string ActedOnUserId { get; set; }
+
+        //[DataMember]
+        //public int PointsEarned { get; set; }
 
         [DataMember]
         public DateTime HappenedAtUTC { get; set; }

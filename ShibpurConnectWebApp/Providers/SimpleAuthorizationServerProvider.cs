@@ -74,7 +74,7 @@ namespace ShibpurConnectWebApp.Providers
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);
-
+            
             // add the new user in the elastic search index
             if (result.Succeeded)
             {
@@ -110,6 +110,16 @@ namespace ShibpurConnectWebApp.Providers
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
 
+            return user;
+        }
+
+        public ApplicationUser UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
+        {
+            ApplicationUser user = _userManager.FindById(userId);
+            var userReputaion = user.ReputationCount;
+            userReputaion = addReputaion ? (userReputaion + deltaReputation) : (userReputaion - deltaReputation);
+            user.ReputationCount = userReputaion;
+            var updatedUser = _userManager.Update(user);
             return user;
         }
 
