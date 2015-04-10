@@ -635,7 +635,7 @@
                             $(commentBlock).find('.comment-text').text(e.description);
                             $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
                             $(commentBlock).find('.comment-user').text(e.displayName);
-                            $(answerBlock).find('.answer-comments').prepend(commentBlock);
+                            $(answerBlock).find('.answer-comments').prepend(commentBlock);                            
                         });
                     }
                 });
@@ -676,6 +676,8 @@
                         $(answerBlock).find('.upvote-span').addClass('disabled');
                     }
                     //$(answerBlock).find('.userName').text(answer.displayName);
+
+                    $(answerBlock).find('.answer-comments .comment-box').hide();
 
                     var userNameAnchor = $(answerBlock).find('div.user a.userName');
                     $(userNameAnchor).text(answer.displayName);
@@ -734,18 +736,19 @@
 
                 $('.anchor-add-comment').click(function (event) {
                     event.preventDefault();
-                    var anchor = $(this);
-                    if ($(anchor).hasClass('add'))
-                    {
+                    var anchor = $(this);                   
+
+                    var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
+                    $(commentBox).slideToggle();
+
+                    if ($(anchor).hasClass('add')) {
                         $(anchor).removeClass('add').addClass('cancel').text('Cancel');
+                        return;
                     }
 
                     if ($(anchor).hasClass('cancel')) {
                         $(anchor).removeClass('cancel').addClass('add').text('Add Comment');
                     }
-
-                    var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
-                    $(commentBox).slideToggle();
                 });
 
                 $('.btn-save-comment').click(function () {
@@ -887,7 +890,7 @@
                             <div class="add-comment right">
                                 <a href="#" class="anchor-add-comment add">Add Comment</a>
                             </div>
-                            <div class="comment-box hide">
+                            <div class="comment-box">
                                 <a class="commentor" href="#">
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
                                 </a>
