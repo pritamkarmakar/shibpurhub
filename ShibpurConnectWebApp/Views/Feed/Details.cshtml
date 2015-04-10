@@ -732,6 +732,22 @@
                     $(commentBox).slideToggle();
                 });
 
+                $('.anchor-add-comment').click(function (event) {
+                    event.preventDefault();
+                    var anchor = $(this);
+                    if ($(anchor).hasClass('add'))
+                    {
+                        $(anchor).removeClass('add').addClass('cancel').text('Cancel');
+                    }
+
+                    if ($(anchor).hasClass('cancel')) {
+                        $(anchor).removeClass('cancel').addClass('add').text('Add Comment');
+                    }
+
+                    var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
+                    $(commentBox).slideToggle();
+                });
+
                 $('.btn-save-comment').click(function () {
                     var button = $(this);
                     var commentBox = $(button).closest('.comment-box');
@@ -868,7 +884,10 @@
                                 <span class="comment-date"></span>
                                 <span class="comment-text"></span>
                             </div>
-                            <div class="comment-box">
+                            <div class="add-comment right">
+                                <a href="#" class="anchor-add-comment add">Add Comment</a>
+                            </div>
+                            <div class="comment-box hide">
                                 <a class="commentor" href="#">
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
                                 </a>
