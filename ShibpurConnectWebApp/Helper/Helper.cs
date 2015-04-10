@@ -138,7 +138,8 @@ namespace ShibpurConnectWebApp.Helper
                         UserId = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Location = user.Location
+                        Location = user.Location,
+                        ReputationCount = user.ReputationCount
                     };
 
                 }
@@ -163,7 +164,34 @@ namespace ShibpurConnectWebApp.Helper
                         UserId = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Location = user.Location
+                        Location = user.Location,
+                        ReputationCount = user.ReputationCount
+                    };
+
+                }
+            }
+        }
+
+        public CustomUserInfo UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
+        {
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                ApplicationUser user = _repo.UpdateReputationCount(userId, deltaReputation, addReputaion);
+
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new CustomUserInfo()
+                    {
+                        Email = user.Email,
+                        UserId = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Location = user.Location,
+                        ReputationCount = user.ReputationCount
                     };
 
                 }

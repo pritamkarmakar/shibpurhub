@@ -574,7 +574,7 @@
                 });
                 
                 var utcDate = new Date(result.postedOnUtc);
-                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
 
                 var answerBlock = $('#answerlist li.answer.hide').clone();
                 $(answerBlock).removeClass('hide');
@@ -669,7 +669,7 @@
 
                 $(result).each(function (index, answer) {
                     var answerBlock = $('#answerlist li.answer.hide').clone();
-                    $(answerBlock).removeClass('hide').attr('data-answerid', answer.answerId);
+                    $(answerBlock).removeClass('hide').attr({'data-answerid': answer.answerId, 'data-answerBy': answer.userId});
                     $(answerBlock).find('.text').html(answer.answerText);
                     $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
                     if (answer.upvotedBy && answer.upvotedBy.indexOf(userInfo.email) >= 0) {
@@ -685,7 +685,7 @@
                     }
 
                     var utcDate = new Date(answer.postedOnUtc);
-                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
                     $(answerBlock).find('.date').text(dateString);
 
                     if (answer.markedAsAnswer) {
@@ -702,6 +702,7 @@
                             }
 
                             var answerId = $(span).closest('li.answer').attr('data-answerid');
+                            var answerBy = $(span).closest('li.answer').attr('data-answerBy');
                             var answers = [];
                             answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
                             $('.mark-answer.btn-success').each(function (i, e) {
@@ -711,7 +712,7 @@
                             });
 
                             $(span).addClass('btn-success');
-                            logActivity(5, answerId);
+                            logActivity(5, answerId, answerBy);
                             
                             scAjax({
                                 "url": "answers/UpdateMarkAsAnswer",
@@ -779,7 +780,8 @@
                         return false;
                     }
                     var answerId = $(anchor).closest('li.answer').attr('data-answerid');
-                    logActivity(3, answerId);                    
+                    var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
+                    logActivity(3, answerId, answerBy);                    
 
                     scAjax({
                         "url": "answers/UpdateUpVoteCount",

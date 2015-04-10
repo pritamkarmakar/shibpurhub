@@ -16,6 +16,7 @@ using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System;
+using System.IO;
 
 namespace ShibpurConnectWebApp.Controllers
 {
@@ -499,6 +500,34 @@ namespace ShibpurConnectWebApp.Controllers
                     // If we are here then something is wrong, send back to the login screen
                     return View("Register");
             }
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult Upload(HttpPostedFileBase photo)
+        {
+            if (photo != null && photo.ContentLength > 0)
+            {
+                string directory = @"~\ProfileImages\";
+
+                if (photo.ContentLength > 102400)
+                {
+                    ModelState.AddModelError("photo", "The size of the file should not exceed 100 KB");
+                    return View();
+                }
+
+                var supportedTypes = new[] { "jpg", "jpeg", "png" };
+                var fileExt = System.IO.Path.GetExtension(photo.FileName).Substring(1);
+                if (!supportedTypes.Contains(fileExt))
+                {
+                    ModelState.AddModelError("photo", "Invalid type. Only the following types (jpg, jpeg, png) are supported.");
+                    return View();
+                }
+
+                var fileName = Path.GetFileName(photo.FileName);
+                photo.SaveAs(Path.Combine(directory, fileName));
+            }
+
+            return RedirectToAction("Index");
         }
 
         //

@@ -113,11 +113,11 @@ function scAjax(options)
 function getDateFormatted(date)
 {
     var utcDate = new Date(date);
-    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
     return dateString;
 }
 
-function logActivity(activity, objectId) {
+function logActivity(activity, objectId, objectUserId) {
     var userDetails = localStorage.getItem("SC_Session_UserDetails");
     if (!userDetails) {
         return;
@@ -127,7 +127,8 @@ function logActivity(activity, objectId) {
     var data = {
         "UserId": userInfo.userId,
         "Activity": activity,
-        "ActedOnObjectId": objectId
+        "ActedOnObjectId": objectId,
+        "ActedOnUserId": objectUserId || ""
     };
 
 

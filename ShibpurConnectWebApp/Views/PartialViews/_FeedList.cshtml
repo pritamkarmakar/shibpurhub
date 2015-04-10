@@ -183,7 +183,7 @@
         $(questions).each(function (index, question) {
             var thread = $('div.thread.hide').clone();
             var utcDate = new Date(question.postedOnUtc);
-            var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + " '" + utcDate.getFullYear().toString().substr(2, 2);
+            var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
 
             $(thread).removeClass('hide');
             var userNameAnchor = $(thread).find('div.user a.userName');
