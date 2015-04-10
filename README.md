@@ -51,6 +51,6 @@ ssh-keygen -t rsa -C "youremail"
 
 3.after this process you will get a private and public key in C:\Users\<username>\.ssh folder. 'id_rsa' is the private key and id_rsa.pub is your public key. **Never share your private key to anyone**.
 
-4.Now open the .pub file in notepad copy the content go to this page [https://bitbucket.org/pritam83/shibpurconnect/admin/deploy-keys] and create a ney key using the .pub file content 
+4.Now open the .pub file in notepad copy the content go to gitbucket account  > click on the avatar image (top right corner) > account setting > SSH Keys > and create a ney key using the .pub file content 
 
 Do git pull/push, you shouldn't be asked for the password anymore.
