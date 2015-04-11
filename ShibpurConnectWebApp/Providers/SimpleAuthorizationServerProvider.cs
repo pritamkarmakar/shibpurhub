@@ -116,10 +116,14 @@ namespace ShibpurConnectWebApp.Providers
         public ApplicationUser UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
         {
             ApplicationUser user = _userManager.FindById(userId);
-            var userReputaion = user.ReputationCount;
-            userReputaion = addReputaion ? (userReputaion + deltaReputation) : (userReputaion - deltaReputation);
-            user.ReputationCount = userReputaion;
-            var updatedUser = _userManager.Update(user);
+            if (user != null)
+            {
+                var userReputaion = user.ReputationCount;
+                userReputaion = addReputaion ? (userReputaion + deltaReputation) : (userReputaion - deltaReputation);
+                user.ReputationCount = userReputaion;
+                var updatedUser = _userManager.Update(user);                
+            }
+
             return user;
         }
 

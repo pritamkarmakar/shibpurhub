@@ -42,8 +42,8 @@
             @*<form role="form" action="/Account/Register" id="registerform">*@
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal registerform", role = "form" }))
         {
-     @Html.AntiForgeryToken()
-                <h2>Please Sign Up <small>It's free and always will be.</small></h2>
+     @Html.AntiForgeryToken()                
+    <span style="font-size:22px;">Please Sign Up</span>
                 <hr class="colorgraph">
                 <div class="row">
                     <div class="col-xs-6 col-sm-6 col-md-6">
@@ -82,20 +82,20 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-3 col-sm-3 col-md-3">
+                    @*<div class="col-xs-3 col-sm-3 col-md-3">
                         <span class="button-checkbox">
                             <button type="button" class="btn" data-color="info" tabindex="7">I Agree</button>
-                            <input type="checkbox" name="t_and_c" id="t_and_c" class="hidden" value="1">
+                            <input type="checkbox" name="t_and_c" id="t_and_c" value="1">
                         </span>
-                    </div>
-                    <div class="col-xs-9 col-sm-9 col-md-9">
+                    </div>*@
+                    <div class="col-xs-9 col-sm-9 col-md-12">
                         By clicking <strong class="label label-primary">Register</strong>, you agree to the <a href="#" data-toggle="modal" data-target="#t_and_c_m">Terms and Conditions</a> set out by this site, including our Cookie Use.
                     </div>
                 </div>
                 <hr class="colorgraph">
                 <div class="row">
-                    <div class="col-xs-6 col-md-6"><input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="7"></div>
-                    <div class="col-xs-6 col-md-6"><a href="/Account/Login" class="btn btn-success btn-block btn-lg">Sign In</a></div>
+                    <div class="col-xs-6 col-md-3"><input type="submit" value="Register" class="btn btn-primary btn-block btn-sm" tabindex="7"></div>
+                    <div class="col-xs-6 col-md-3"><a href="/Account/Login" class="btn btn-success btn-block btn-sm">Sign In</a></div>
                 </div>
             @*</form>*@
 }

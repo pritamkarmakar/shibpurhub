@@ -587,6 +587,13 @@
             <param name="searchTerm"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersByNameEmail(System.String)">
+            <summary>
+            Method to search user by email or name
+            </summary>
+            <param name="searchTerm"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetAllUsers">
             <summary>
             Get all system users
