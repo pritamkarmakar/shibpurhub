@@ -609,44 +609,30 @@
         if (!answerBlock) {
             return;
         }
-        //var answerId = $(answerBlock).attr('data-answerid');
-        var answerId = answer.answerId;
 
+        var answerId = answer.answerId;
         scAjax({
-            "url": "comments/GetCommentCountForAnswer",
+            "url": "comments/GetCommentsForAnswer",
             "data": { "answerId": answerId },
             "success": function (result) {
-                if (!result || result == "0") {
+                if (!result) {
                     return;
                 }
 
-                $(answerBlock).find('.comment-count').text(" (" + result + ")").attr('data-commentcount', result);
+                createAnswerHtml(answerBlock, answer, userEmail);
 
-                scAjax({
-                    "url": "comments/GetCommentsForAnswer",
-                    "data": { "answerId": answerId },
-                    "success": function (result) {
-                        if (!result) {
-                            return;
-                        }
+                $(result).each(function (i, e) {
 
-                        createAnswerHtml(answerBlock, answer, userEmail);
-
-                        $(result).each(function (i, e) {
-
-                            var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
-                            $(commentBlock).removeClass('hide');
-                            $(commentBlock).find('.comment-text').text(e.description);
-                            $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
-                            $(commentBlock).find('.comment-user').text(e.displayName);
-                            $(answerBlock).find('.answer-comments').prepend(commentBlock);
-                        });
-                        
-                    }
+                    var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
+                    $(commentBlock).removeClass('hide');
+                    $(commentBlock).find('.comment-text').text(e.description);
+                    $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
+                    $(commentBlock).find('.comment-user').text(e.displayName);
+                    $(answerBlock).find('.answer-comments').prepend(commentBlock);
                 });
+
             }
         });
-
     }
 
     function createAnswerHtml(answerBlock, answer, userEmail)
