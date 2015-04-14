@@ -605,11 +605,12 @@
 
     }
 
-    function getComments(answerBlock) {
+    function getComments(answerBlock, answer, userEmail) {
         if (!answerBlock) {
             return;
         }
-        var answerId = $(answerBlock).attr('data-answerid');
+        //var answerId = $(answerBlock).attr('data-answerid');
+        var answerId = answer.answerId;
 
         scAjax({
             "url": "comments/GetCommentCountForAnswer",
@@ -629,6 +630,8 @@
                             return;
                         }
 
+                        createAnswerHtml(answerBlock, answer, userEmail);
+
                         $(result).each(function (i, e) {
 
                             var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
@@ -638,10 +641,42 @@
                             $(commentBlock).find('.comment-user').text(e.displayName);
                             $(answerBlock).find('.answer-comments').prepend(commentBlock);
                         });
+                        
                     }
                 });
             }
         });
+
+    }
+
+    function createAnswerHtml(answerBlock, answer, userEmail)
+    {
+        $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
+        $(answerBlock).find('.text').html(answer.answerText);
+        $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
+        if (answer.upvotedBy && answer.upvotedBy.indexOf(userEmail) >= 0) {
+            $(answerBlock).find('.upvote-span').addClass('disabled');
+        }
+        //$(answerBlock).find('.userName').text(answer.displayName);
+
+        $(answerBlock).find('.answer-comments .comment-box').hide();
+
+        var userNameAnchor = $(answerBlock).find('div.user a.userName');
+        $(userNameAnchor).text(answer.displayName);
+        if (answer.userEmail != null) {
+            var url = $(userNameAnchor).attr('href') + '?userEmail=' + answer.userEmail;
+            $(userNameAnchor).attr('href', url);
+        }
+
+        var utcDate = new Date(answer.postedOnUtc);
+        var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
+        $(answerBlock).find('.date').text(dateString);
+
+        if (answer.markedAsAnswer) {
+            $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
+        }
+
+        $('#answerlist').prepend(answerBlock);
     }
 
     function getAnswers() {
@@ -669,32 +704,7 @@
 
                 $(result).each(function (index, answer) {
                     var answerBlock = $('#answerlist li.answer.hide').clone();
-                    $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
-                    $(answerBlock).find('.text').html(answer.answerText);
-                    $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
-                    if (answer.upvotedBy && answer.upvotedBy.indexOf(userInfo.email) >= 0) {
-                        $(answerBlock).find('.upvote-span').addClass('disabled');
-                    }
-                    //$(answerBlock).find('.userName').text(answer.displayName);
-
-                    $(answerBlock).find('.answer-comments .comment-box').hide();
-
-                    var userNameAnchor = $(answerBlock).find('div.user a.userName');
-                    $(userNameAnchor).text(answer.displayName);
-                    if (answer.userEmail != null) {
-                        var url = $(userNameAnchor).attr('href') + '?userEmail=' + answer.userEmail;
-                        $(userNameAnchor).attr('href', url);
-                    }
-
-                    var utcDate = new Date(answer.postedOnUtc);
-                    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
-                    $(answerBlock).find('.date').text(dateString);
-
-                    if (answer.markedAsAnswer) {
-                        $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
-                    }
-
-                    $('#answerlist').prepend(answerBlock);
+                    //createAnswerHtml(answerBlock, answer, userInfo.email);
                     if (isAskedByMe) {
                         var markAnswer = $(answerBlock).find('.mark-answer');
                         $(markAnswer).removeClass('hide').click(function () {
@@ -724,7 +734,7 @@
                         });
                     }
 
-                    getComments(answerBlock);
+                    getComments(answerBlock, answer, userInfo.email);
                 });
 
                 $('.comment-anchor').click(function (event) {
