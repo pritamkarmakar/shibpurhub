@@ -445,7 +445,7 @@
 
         // send email notification
         var emaildata = {
-            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer this <a href='" + window.location.href + "'>question</a>",
+            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
             "EmailAddress": elm.attributes["data-email"].value,
             "Subject": "ShibpurConnect: Can you answer this question?"
         };
@@ -459,9 +459,13 @@
         });
 
         // save this request in the Notification collection
+        var notificationContent = {
+            "askedBy": userInfo.email,
+            "questionId": questionID
+        };
         var data = {
             "UserId": elm.attributes["data-id"].value,
-            "NotificationContent": "<div><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a> requested you to answer this <a href='" + window.location.href + "'>question</a></div></div>",
+            "NotificationContent": notificationContent,
             "NotificationType": "AskToAnswer"
         };
 
@@ -473,26 +477,23 @@
                 // disable the Ask button and change the test to Asked
                 $(elm).text("Asked");
                 $(elm).attr("disabled", "disabled");
+
+                // save this 'ask to answer' record in database collection
+                var asktoanswer = {
+                    "AskedTo": elm.attributes["data-id"].value,
+                    "AskedBy": userInfo.userId,
+                    "QuestionId": questionID
+                };
+                scAjax({
+                    "url": "asktoanswer/postasktoanswer",
+                    "type": "POST",
+                    "data": JSON.stringify(asktoanswer, null, 2),
+                    "success": function (result) {
+
+                    }
+                });
             }
-        });
-
-        // save this ask to answer record in database collection
-        var asktoanswer = {
-            "AskedTo": elm.attributes["data-id"].value,
-            "AskedBy": userInfo.userId,
-            "QuestionId": questionID
-        };
-        scAjax({
-            "url": "asktoanswer/postasktoanswer",
-            "type": "POST",
-            "data": JSON.stringify(asktoanswer, null, 2),
-            "success": function (result) {
-
-            }
-        });
-
-
-
+        }); 
     }
 
     function getMonth(month) {
@@ -820,6 +821,9 @@
     var xhrCount = 0;
     $(function () {
         $('#usernametext').keyup(function (event) {
+            // clear the previous users
+            $('#userlistasktoanswer').empty();
+
             // sequence number for the current invocation of function
             var seqNumber = ++xhrCount;
 
@@ -836,16 +840,13 @@
                         if (!result) {
                             return;
                         }
-                        if (seqNumber === xhrCount) {
-                            // clear the previous users
-                            $('#userlistasktoanswer').empty();
-
-                            // hide the loading
-                            $('#loadingasktoanswer').hide();
+                        if (seqNumber === xhrCount) {                                                
 
                             // if no user found then show this message
                             if (result.length == 0) {
                                 $('#userlistasktoanswer').append("<span>No user found</span>");
+                                // hide the loading
+                                $('#loadingasktoanswer').hide();
                                 return;
                             }
                             else {
@@ -934,7 +935,7 @@
 <div class="container">
     <div class="col-md-8">
         <div class="header col-md-12">
-            <h2 style="font-size:22px;"></h2><hr />
+            <h2 style="font-size:22px;" id="questiontitle"></h2><hr />
         </div>
     </div>
     <div class="col-md-8">

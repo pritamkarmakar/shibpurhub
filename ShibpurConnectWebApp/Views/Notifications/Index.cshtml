@@ -5,8 +5,8 @@
 }
 
 <style type="text/css">
-    #askedby{
-        margin-bottom:50px;
+    #askedbyfornotificationpage {
+        margin-bottom: 50px;
     }
 </style>
 
@@ -42,7 +42,7 @@
 
                 // append notifications
                 jQuery.each(result, function (i, val) {
-                    $("#notificationlist").append(val.notificationContent + "<hr/>");
+                    $("#notificationlist").append(val.notificationContent.replace("div id='askedby'", "div id='askedbyfornotificationpage'") + "<hr/>");
                 });
 
             }

@@ -79,7 +79,17 @@
 
                         // append notifications
                         jQuery.each(result, function (i, val) {
-                            $("#notificationsBody").append(val.notificationContent + "<hr/>");
+                            // if user hasn't visited this notification then add a different color
+                            if (val.hasVisited == false)
+                            {
+                                var notificationContentWithColor = val.notificationContent.replace("<div>", "<div class='well' id='lessbottommargin' onclick=\"MarkItRead('" + val.notificationId + "')\">");
+                                $("#notificationsBody").append(notificationContentWithColor + "<hr id='nomarginhr'/>");
+                            }
+                            else
+                            {
+                                var notificationContentWithoutColor = val.notificationContent.replace("<div>", "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead('" + val.notificationId + "')\">");
+                                $("#notificationsBody").append(notificationContentWithoutColor + "<hr id='nomarginhr'/>");
+                            }                            
                         });
 
                     }
@@ -149,14 +159,47 @@
 
                 //Popup on click
                 $("#notificationContainer").click(function () {
-                    window.location.href = "/Notifications";
+                    //window.location.href = "/Notifications";
                 });
             }
 
         });
+
+        // when user will click on any notification we will mark that as visited and next time the background color will change
+        function MarkItRead(notificationId)
+        {
+            var SERVER = "/api/";
+            $.ajax({
+                url: SERVER + "notifications/MarkNotificationsAsVisited?notificationId=" + notificationId,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",                
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                },
+                success: function (result) {
+                    alert('done');
+                }
+            });
+        }
     </script>
 
     <style type="text/css">
+        /*mark visited notification background as white */
+        .whitewell {
+            background: rgba(255,255,255,0.4);
+        }
+
+        #lessbottommargin {
+            margin-bottom: 2px;
+            cursor: pointer;
+        }
+        #nomarginhr
+        {
+            margin-top:0px;
+            margin-bottom:0px;
+        }
+
         #notification_li {
             position: relative;
         }
@@ -205,7 +248,7 @@
             min-height: 300px;
             max-height: 350px;
             overflow: auto;
-            margin-top: 21px;
+            margin-top: 0px;
         }
 
         #notificationFooter {

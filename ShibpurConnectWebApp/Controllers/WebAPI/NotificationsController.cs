@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using MongoDB.Driver.Linq;
+using MongoDB.Bson;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -88,15 +89,39 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // retrieve all the notification those are new
             var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
-                         where e.UserId == userId && e.NewNotification == true
-                         select e).ToList();
+                          where e.UserId == userId && e.NewNotification == true
+                          select e).ToList();
 
             // mark all these as old and save back to database
-            foreach(var notification in result)
+            foreach (var notification in result)
             {
                 notification.NewNotification = false;
                 _mongoHelper.Collection.Save(notification);
             }
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Mark a notification as visited. We use this method in the Notification pane when user click on a particular notification to mark that as visited
+        /// </summary>
+        /// <param name="notificationId">Notification Id</param>
+        /// <returns></returns>
+        public IHttpActionResult MarkNotificationsAsVisited(string notificationId)
+        {
+            if (string.IsNullOrEmpty(notificationId))
+            {
+                return BadRequest(ModelState);
+            }
+
+            // retrieve the notification
+            var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
+                          where e.NotificationId == notificationId
+                          select e).ToList();
+
+            // mark this as visited
+            result[0].HasVisited = true;
+            _mongoHelper.Collection.Save(result[0]);
 
             return Ok();
         }

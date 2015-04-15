@@ -559,6 +559,13 @@
             </summary>
             <param name="notification">Notification object</param>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.MarkNotificationsAsVisited(System.String)">
+            <summary>
+            Mark a notification as visited. We use this method in the Notification pane when user click on a particular notification to mark that as visited
+            </summary>
+            <param name="notificationId">Notification Id</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestions">
             <summary>
             Will return all available questions
@@ -582,14 +589,14 @@
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchAllTypes(System.String)">
             <summary>
-            Method to search across all documents of all types
+            Method to search across all documents of all types.
             </summary>
             <param name="searchTerm"></param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersByNameEmail(System.String)">
             <summary>
-            Method to search user by email or name
+            Method to search user by email or name. We are using this API in 'Ask To Answer' search box
             </summary>
             <param name="searchTerm"></param>
             <returns></returns>
