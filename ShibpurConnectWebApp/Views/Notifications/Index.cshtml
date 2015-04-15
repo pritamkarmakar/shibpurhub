@@ -6,7 +6,7 @@
 
 <style type="text/css">
     #askedbyfornotificationpage {
-        margin-bottom: 50px;
+        min-height:50px;
     }
 </style>
 
@@ -42,7 +42,24 @@
 
                 // append notifications
                 jQuery.each(result, function (i, val) {
-                    $("#notificationlist").append(val.notificationContent.replace("div id='askedby'", "div id='askedbyfornotificationpage'") + "<hr/>");
+                    var notificationContent = $.parseJSON(val.notificationContent);                  
+
+                    if (val.hasVisited == false) {
+                        // if notification type is 'ask to answer' then execute this
+                        if (val.notificationType == 4) {
+                            var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/Feed/Details/" + notificationContent.questionId + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedbyfornotificationpage'><a href='" + window.location.origin + "/Account/Profile?useremail=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
+                            $("#notificationlist").append(notificationContentWithColor);
+                            $("#notificationlist").append("<hr id='nomarginhr'/>");
+                        }
+                    }
+                    else {
+                        // if notification type is 'ask to answer' then execute this
+                        if (val.notificationType == 4) {
+                            var notificationContentWithoutColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/Feed/Details/" + notificationContent.questionId + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedbyfornotificationpage'><a href='" + window.location.origin + "/Account/Profile?useremail=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
+                            $("#notificationlist").append(notificationContentWithoutColor);
+                            $("#notificationlist").append("<hr id='nomarginhr'/>");
+                        }
+                    }
                 });
 
             }
@@ -51,7 +68,7 @@
 </script>
 
 <div class="col-md-8">
-    <h4>Your Notifications</h4><hr />
+    <h4>Your Notifications</h4><hr id='nomarginhr' />
 
     <div id="notificationlist">
 

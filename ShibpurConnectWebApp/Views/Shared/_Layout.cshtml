@@ -79,16 +79,26 @@
 
                         // append notifications
                         jQuery.each(result, function (i, val) {
+                            var notificationContent = $.parseJSON(val.notificationContent);
                             // if user hasn't visited this notification then add a different color
                             if (val.hasVisited == false)
                             {
-                                var notificationContentWithColor = val.notificationContent.replace("<div>", "<div class='well' id='lessbottommargin' onclick=\"MarkItRead('" + val.notificationId + "')\">");
-                                $("#notificationsBody").append(notificationContentWithColor + "<hr id='nomarginhr'/>");
+                                // if notification type is 'ask to answer' then execute this
+                                if (val.notificationType == 4)
+                                {                                   
+                                    var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead("+"'/Feed/Details/" + notificationContent.questionId + "','"+ val.notificationId +"')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
+                                    $("#notificationsBody").append(notificationContentWithColor);
+                                    $("#notificationsBody").append("<hr id='nomarginhr'/>");
+                                }                               
                             }
                             else
                             {
-                                var notificationContentWithoutColor = val.notificationContent.replace("<div>", "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead('" + val.notificationId + "')\">");
-                                $("#notificationsBody").append(notificationContentWithoutColor + "<hr id='nomarginhr'/>");
+                                // if notification type is 'ask to answer' then execute this
+                                if (val.notificationType == 4) {
+                                    var notificationContentWithoutColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/Feed/Details/" + notificationContent.questionId + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
+                                    $("#notificationsBody").append(notificationContentWithoutColor);
+                                    $("#notificationsBody").append("<hr id='nomarginhr'/>");
+                                }
                             }                            
                         });
 
@@ -166,7 +176,7 @@
         });
 
         // when user will click on any notification we will mark that as visited and next time the background color will change
-        function MarkItRead(notificationId)
+        function MarkItRead(url, notificationId)
         {
             var SERVER = "/api/";
             $.ajax({
@@ -181,6 +191,8 @@
                     alert('done');
                 }
             });
+
+            window.location.href = url;
         }
     </script>
 
@@ -299,7 +311,7 @@
                             <div id="notificationContainer">
                                 <div id="notificationTitle">Notifications</div>
                                 <div id="notificationsBody" class="notifications"></div>
-                                <div id="notificationFooter"><a href="#">See All</a></div>
+                                <div id="notificationFooter"><a href="/notifications">See All</a></div>
                             </div>
                         </li>
                     }

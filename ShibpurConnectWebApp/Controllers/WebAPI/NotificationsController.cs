@@ -109,7 +109,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         public IHttpActionResult MarkNotificationsAsVisited(string notificationId)
         {
-            if (string.IsNullOrEmpty(notificationId))
+            if (string.IsNullOrEmpty(notificationId) || notificationId == "undefined")
             {
                 return BadRequest(ModelState);
             }
