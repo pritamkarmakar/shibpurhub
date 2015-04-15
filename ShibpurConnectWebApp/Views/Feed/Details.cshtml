@@ -298,6 +298,11 @@
     var userListAskToAnswer;
 
     $(document).ready(function () {
+        // hide the submit answer rich text control
+        $('.wirte-answer').hide();
+
+        // hide 'ask to answer' module
+        $('#userToAnswer').hide();
 
         advancedEditor = new Quill('.text-wrapper .editor-container', {
             modules: {
@@ -333,6 +338,7 @@
                 var question = result;
 
                 $('.header h2').text(question.title);
+                $('.header h2').append("<hr/>");
                 $('.description').text(question.description);
                 askedBy = question.userEmail;
                 getAnswers();
@@ -622,6 +628,15 @@
                     return;
                 }
 
+                // hide the loading symbol for the answers
+                $('#loadinganswers').hide();
+
+                // show the submit answer rich text control
+                $('.wirte-answer').show();
+
+                // show the 'ask to answer module'
+                $('#userToAnswer').show();
+
                 createAnswerHtml(answerBlock, answer, userEmail);
 
                 $(result).each(function (i, e) {
@@ -766,7 +781,6 @@
             isAskedByMe = askedBy == userInfo.email;
         }
 
-
         jQuery.support.cors = true;
         var SERVER = "/api/";
 
@@ -778,9 +792,10 @@
                     return;
                 }
 
+                $('#answerlist').before("<h4>Answers:</h4><hr/>");
                 var save = $('#answerlist .answer.hide').detach();
                 $('#answerlist').empty().append(save);
-
+                
                 $(result).each(function (index, answer) {
                     var answerBlock = $('#answerlist li.answer.hide').clone();
                     //createAnswerHtml(answerBlock, answer, userInfo.email);
@@ -939,7 +954,7 @@
 <div class="container">
     <div class="col-md-8">
         <div class="header col-md-12">
-            <h2 style="font-size:22px;" id="questiontitle"></h2><hr />
+            <h2 style="font-size:22px;" id="questiontitle"></h2>
         </div>
     </div>
     <div class="col-md-8">
@@ -959,9 +974,12 @@
 
             <br /><br />
             <div id="moduleanswers" class="col-md-12">
-                <h4>Answers:</h4><hr />
+                @*<h4>Answers:</h4><hr />*@
                 <ul id="answerlist">
-
+                    <!--div for loading message for the Answers list-->
+                    <div id="loadinganswers" class="center-block col-md-4" style="float: none;">
+                        <i class="fa fa-spinner fa-spin fa-2x"></i><span> Loading....</span>
+                    </div>
                     @*<div id="answerdiv">*@
                     <li class="hide answer col-md-12">
                         <div class="user">
@@ -1021,7 +1039,7 @@
                 </ul>
             </div>
 
-            <div class="wirte-answer col-md-12" style="margin-top:40px">
+            <div class="wirte-answer col-md-12" style="margin-top:40px; display:none;">
                 @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
                 <div class="text-wrapper col-md-12">
                     <div class="toolbar-container">
@@ -1127,7 +1145,7 @@
             </div>
 
             <!--div to show Ask to Answer module-->
-            <div class="well panel panel-default col-md-12" id="userToAnswer" style="margin-top:30px;padding-left:80px;">
+            <div class="well panel panel-default col-md-12" id="userToAnswer" style="margin-top:30px;padding-left:80px; display:none">
                 <h4>Ask to Answer</h4>
                 <div>
                     <form role="search">
