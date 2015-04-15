@@ -634,7 +634,97 @@
                     $(answerBlock).find('.answer-comments').prepend(commentBlock);
                 });
 
+                setUpAnswerUserActions();
             }
+        });
+    }
+
+    function setUpAnswerUserActions() {
+        $('.comment-anchor').click(function (event) {
+            event.preventDefault();
+            var anchor = $(this);
+            var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
+            $(commentBox).slideToggle();
+        });
+
+        $('.anchor-add-comment').click(function (event) {
+            event.preventDefault();
+            var anchor = $(this);
+
+            var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
+            $(commentBox).slideToggle();
+
+            if ($(anchor).hasClass('add')) {
+                $(anchor).removeClass('add').addClass('cancel').text('Cancel');
+                return;
+            }
+
+            if ($(anchor).hasClass('cancel')) {
+                $(anchor).removeClass('cancel').addClass('add').text('Add Comment');
+            }
+        });
+
+        $('.btn-save-comment').click(function () {
+            var button = $(this);
+            var commentBox = $(button).closest('.comment-box');
+            var input = $(commentBox).find('.txt_comment');
+            var comment = $(input).val();
+            if (!comment) {
+                return;
+            }
+
+            var userDetails = localStorage.getItem("SC_Session_UserDetails");
+            if (!userDetails) {
+                //TO-DO: Handle if userdetail is not available in Session Storage
+                return;
+            }
+            var userInfo = $.parseJSON(userDetails);
+            var userId = userInfo.userId;
+
+            var answerId = $(button).closest('li.answer').attr('data-answerid');
+            var data = { "Description": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
+            $(input).val('');
+            scAjax({
+                "url": "comments/AddComment",
+                "type": "POST",
+                "data": JSON.stringify(data, null, 2),
+                "success": function (result) {
+                    var answerBlock = $(button).closest('li.answer');
+                    var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
+                    $(commentBlock).removeClass('hide');
+                    $(commentBlock).find('.comment-text').text(comment);
+                    $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
+                    $(commentBlock).find('.comment-user').text(result.displayName);
+                    $(answerBlock).find('.answer-comments').prepend(commentBlock);
+
+                    var spanCount = $(answerBlock).find('.comment-count');
+                    var count = $(spanCount).text() == '' ? 1 : parseInt($(spanCount).attr('data-commentcount')) + 1;
+                    $(spanCount).text(" (" + count + ")");
+                }
+            });
+        });
+
+        $('.upvote-anchor').click(function (event) {
+            event.preventDefault();
+            var anchor = $(this);
+            if ($(anchor).parent().hasClass('disabled')) {
+                return false;
+            }
+            var answerId = $(anchor).closest('li.answer').attr('data-answerid');
+            var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
+            logActivity(3, answerId, answerBy);
+
+            scAjax({
+                "url": "answers/UpdateUpVoteCount",
+                "type": "POST",
+                "data": JSON.stringify({
+                    "AnswerID": answerId, "UserEmail": userInfo.email
+                }),
+                "success": function (result) {
+                    $(anchor).find('.count').text(result);
+                    $(anchor).parent().addClass('disabled');
+                }
+            });
         });
     }
 
@@ -725,94 +815,6 @@
 
                     getComments(answerBlock, answer, userInfo.email);
                 });
-
-                $('.comment-anchor').click(function (event) {
-                    event.preventDefault();
-                    var anchor = $(this);
-                    var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
-                    $(commentBox).slideToggle();
-                });
-
-                $('.anchor-add-comment').click(function (event) {
-                    event.preventDefault();
-                    var anchor = $(this);
-
-                    var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
-                    $(commentBox).slideToggle();
-
-                    if ($(anchor).hasClass('add')) {
-                        $(anchor).removeClass('add').addClass('cancel').text('Cancel');
-                        return;
-                    }
-
-                    if ($(anchor).hasClass('cancel')) {
-                        $(anchor).removeClass('cancel').addClass('add').text('Add Comment');
-                    }
-                });
-
-                $('.btn-save-comment').click(function () {
-                    var button = $(this);
-                    var commentBox = $(button).closest('.comment-box');
-                    var input = $(commentBox).find('.txt_comment');
-                    var comment = $(input).val();
-                    if (!comment) {
-                        return;
-                    }
-
-                    var userDetails = localStorage.getItem("SC_Session_UserDetails");
-                    if (!userDetails) {
-                        //TO-DO: Handle if userdetail is not available in Session Storage
-                        return;
-                    }
-                    var userInfo = $.parseJSON(userDetails);
-                    var userId = userInfo.userId;
-
-                    var answerId = $(button).closest('li.answer').attr('data-answerid');
-                    var data = { "Description": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
-                    $(input).val('');
-                    scAjax({
-                        "url": "comments/AddComment",
-                        "type": "POST",
-                        "data": JSON.stringify(data, null, 2),
-                        "success": function (result) {
-                            var answerBlock = $(button).closest('li.answer');
-                            var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
-                            $(commentBlock).removeClass('hide');
-                            $(commentBlock).find('.comment-text').text(comment);
-                            $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
-                            $(commentBlock).find('.comment-user').text(result.displayName);
-                            $(answerBlock).find('.answer-comments').prepend(commentBlock);
-
-                            var spanCount = $(answerBlock).find('.comment-count');
-                            var count = $(spanCount).text() == '' ? 1 : parseInt($(spanCount).attr('data-commentcount')) + 1;
-                            $(spanCount).text(" (" + count + ")");
-                        }
-                    });
-                });
-
-                $('.upvote-anchor').click(function (event) {
-                    event.preventDefault();
-                    var anchor = $(this);
-                    if ($(anchor).parent().hasClass('disabled')) {
-                        return false;
-                    }
-                    var answerId = $(anchor).closest('li.answer').attr('data-answerid');
-                    var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
-                    logActivity(3, answerId, answerBy);
-
-                    scAjax({
-                        "url": "answers/UpdateUpVoteCount",
-                        "type": "POST",
-                        "data": JSON.stringify({
-                            "AnswerID": answerId, "UserEmail": userInfo.email
-                        }),
-                        "success": function (result) {
-                            $(anchor).find('.count').text(result);
-                            $(anchor).parent().addClass('disabled');
-                        }
-                    });
-                });
-
 
             }
         });
