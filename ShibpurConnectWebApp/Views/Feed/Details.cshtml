@@ -8,6 +8,26 @@
 }
 
 <style type="text/css">
+    /*css for questionaskedby*/
+    #questionaskedby {
+        background-color: #e0eaf1;
+    }
+
+    div.stat {
+        color: #808080;
+        font-size: 9pt;
+    }
+
+        div.stat span {
+            display: inline-block;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+    /*Reduce the well sm padding. we are using it to display who asked the question*/
+    .well-sm {
+        padding: 5px;
+    }
     /*CSS form tags*/
     .tags {
         margin-top: 2%;
@@ -278,14 +298,14 @@
         padding: 0 10px;
         word-wrap: break-word;
     }
-    .comment-box .input-div
-    {
-        width:70%;
+
+    .comment-box .input-div {
+        width: 70%;
         float: left;
         padding-left: 10px;
     }
-    .comment-box .buttons
-    {
+
+    .comment-box .buttons {
         padding-left: 10px;
     }
 </style>
@@ -346,10 +366,35 @@
                 }
                 //debugger;
                 var question = result;
-
+                $('#details').show();
                 $('.header h2').text(question.title);
                 $('.header h2').append("<hr/>");
                 $('.description').text(question.description);
+
+                var utcDate = new Date(result.postedOnUtc);
+                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
+
+                // get reputation of the user who asked this question
+                var reputation;
+                $.ajax({
+                    url: SERVER + "profile/getuserreputation",
+                    type: "GET",
+                    dataType: "json",
+                    data: { "userEmail": question.userEmail },
+                    contentType: "application/json",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                    },
+                    success: function (reputation) {
+                        if (!reputation) {
+                            return;
+                        }
+                        $('#questionaskedby').show();
+                        $('#questionaskedby').append("<div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;font-size:13px;' href='/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a></span><br/><span style='margin-left:15px;font-size:10px'>reputation: " + reputation + "</span></div><div class='stat'><span class='date'>asked: " + dateString + "</span></div>");
+                    }
+                });
+                //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
+
                 askedBy = question.userEmail;
                 getAnswers();
                 // attach the categories
@@ -511,7 +556,71 @@
                     }
                 });
             }
-        }); 
+        });
+    }
+
+    function NotificationForNewAnswer(elm) {
+        // retrieve current logged-in user details
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+
+        // send email notification
+        var emaildata = {
+            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+            "EmailAddress": elm.attributes["data-email"].value,
+            "Subject": "ShibpurConnect: Can you answer this question?"
+        };
+
+        scAjax({
+            "url": "emails/sendemail",
+            "type": "POST",
+            "data": JSON.stringify(emaildata, null, 2),
+            "success": function (result) {
+            }
+        });
+
+        // save this request in the Notification collection
+        var notificationContent = {
+            "askedBy": userInfo.email,
+            "displayName": userInfo.firstName + " " + userInfo.lastName,
+            "questionId": questionID,
+            "questionTitle": $('#questiontitle').text()
+        };
+        var data = {
+            "UserId": elm.attributes["data-id"].value,
+            "NotificationContent": JSON.stringify(notificationContent),
+            "NotificationType": "AskToAnswer"
+        };
+
+        scAjax({
+            "url": "notifications/PostNotification",
+            "type": "POST",
+            "data": JSON.stringify(data, null, 2),
+            "success": function (result) {
+                // disable the Ask button and change the test to Asked
+                $(elm).text("Asked");
+                $(elm).attr("disabled", "disabled");
+
+                // save this 'ask to answer' record in database collection
+                var asktoanswer = {
+                    "AskedTo": elm.attributes["data-id"].value,
+                    "AskedBy": userInfo.userId,
+                    "QuestionId": questionID
+                };
+                scAjax({
+                    "url": "asktoanswer/postasktoanswer",
+                    "type": "POST",
+                    "data": JSON.stringify(asktoanswer, null, 2),
+                    "success": function (result) {
+
+                    }
+                });
+            }
+        });
     }
 
     function getMonth(month) {
@@ -654,8 +763,7 @@
 
                 createAnswerHtml(answerBlock, answer, userEmail);
 
-                if (result.length == 0)
-                {
+                if (result.length == 0) {
                     $(answerBlock).find('.answer-comments').hide();
                 }
 
@@ -681,7 +789,7 @@
         var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
         $(commentBox).show();
         $(commentBox).find('input[type=text]').focus();
-        $(anchor).parent().hide();        
+        $(anchor).parent().hide();
     }
 
     function handleCommentLinkClick(event) {
@@ -689,8 +797,7 @@
         var anchor = $(this);
         var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
         $(commentBox).slideToggle();
-        if($(commentBox).find('.comment-list').length == 1)
-        {
+        if ($(commentBox).find('.comment-list').length == 1) {
             $(commentBox).find('.add-comment .anchor-add-comment').hide();
             $(commentBox).find('.comment-box').show();
         }
@@ -759,8 +866,7 @@
         });
     }
 
-    function handleCancelComment(event)
-    {
+    function handleCancelComment(event) {
         event.preventDefault();
         var anchor = $(event.target);
         var commentBox = $(anchor).closest('.comment-box');
@@ -780,8 +886,7 @@
         $('.upvote-anchor').unbind("click").bind("click", handleUpvote);
     }
 
-    function createAnswerHtml(answerBlock, answer, userEmail)
-    {
+    function createAnswerHtml(answerBlock, answer, userEmail) {
         $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
         $(answerBlock).find('.text').html(answer.answerText);
         $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
@@ -832,7 +937,7 @@
                 $('#answerlist').before("<h4>Answers:</h4><hr/>");
                 var save = $('#answerlist .answer.hide').detach();
                 $('#answerlist').empty().append(save);
-                
+
                 $(result).each(function (index, answer) {
                     var answerBlock = $('#answerlist li.answer.hide').clone();
                     //createAnswerHtml(answerBlock, answer, userInfo.email);
@@ -868,6 +973,16 @@
                     getComments(answerBlock, answer, userInfo.email);
                 });
 
+            },
+            "error": function (err) {
+                // hide the loading symbol for the answers
+                $('#loadinganswers').hide();
+
+                // show the submit answer rich text control
+                $('.wirte-answer').show();
+
+                // show the 'ask to answer module'
+                $('#userToAnswer').show();
             }
         });
     }
@@ -896,7 +1011,7 @@
                         if (!result) {
                             return;
                         }
-                        if (seqNumber === xhrCount) {                                                
+                        if (seqNumber === xhrCount) {
 
                             // if no user found then show this message
                             if (result.length == 0) {
@@ -996,7 +1111,7 @@
     </div>
     <div class="col-md-8">
         <div class="row">
-            <div id="details">
+            <div id="details" style="display:none">
                 <div class="col-md-10">
                     <div class="description col-md-12">
                     </div>
@@ -1006,6 +1121,7 @@
                         <span class="date"></span>
                         <span class="answercount"></span>
                     </div>
+                    <div id="questionaskedby" class="well-sm" style="float:right;display:none;"></div>
                 </div>
             </div>
 

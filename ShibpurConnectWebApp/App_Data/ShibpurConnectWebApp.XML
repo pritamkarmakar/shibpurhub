@@ -688,6 +688,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserReputation(System.String)">
+            <summary>
+            Get reputation of a specific user
+            </summary>
+            <param name="userEmail">user email</param>
+            <returns></returns>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionsDTO">
             <summary>
             We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later

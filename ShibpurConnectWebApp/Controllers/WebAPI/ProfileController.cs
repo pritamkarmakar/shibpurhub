@@ -85,6 +85,24 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return null;
         }
 
+        /// <summary>
+        /// Get reputation of a specific user
+        /// </summary>
+        /// <param name="userEmail">user email</param>
+        /// <returns></returns>
+        public async Task<IHttpActionResult> GetUserReputation(string userEmail)
+        {
+            // validate userEmail is valid and get the userid
+            Helper.Helper helper = new Helper.Helper();
+            Task<CustomUserInfo> actionResult = helper.FindUserByEmail(userEmail);
+            var userInfo = await actionResult;
+
+            if (userInfo == null)
+                return NotFound();
+
+            return Ok(userInfo.ReputationCount);
+        }
+
         // GET: api/Profile/5
         public string Get(int id)
         {
