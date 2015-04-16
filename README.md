@@ -55,5 +55,6 @@ ssh-keygen -t rsa -C "youremail"
 
 Do git pull/push, you shouldn't be asked for the password anymore.
 
-## Elastic Search
-Install-Package NEST
+## Nuget Packages
+Elastic Search: Install-Package NEST
+Mongodb Driver: Install-Package mongocsharpdriver
