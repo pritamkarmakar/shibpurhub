@@ -278,6 +278,16 @@
         padding: 0 10px;
         word-wrap: break-word;
     }
+    .comment-box .input-div
+    {
+        width:70%;
+        float: left;
+        padding-left: 10px;
+    }
+    .comment-box .buttons
+    {
+        padding-left: 10px;
+    }
 </style>
 
 <script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/wysihtml5x/dist/wysihtml5x-toolbar.min.js"></script>
@@ -594,6 +604,7 @@
                 $(answerBlock).find('.userName').text(result.displayName);
                 $(answerBlock).find('.date').text(dateString);
                 $(answerBlock).find('.upvote-span').addClass('disabled');
+                $(answerBlock).find('.answer-comments .add-comment').hide();
 
                 var userNameAnchor = $(answerBlock).find('div.user a.userName');
                 $(userNameAnchor).text(result.displayName);
@@ -605,6 +616,10 @@
                 $('#answerlist').prepend(answerBlock);
                 $('.textarea').val('');
                 logActivity(2, result.answerId);
+
+                $('.anchor-add-comment').unbind("click").bind("click", handleAddComment);
+                $('.anchor-cancel-comment').unbind('click').bind('click', handleCancelComment);
+                $('.btn-save-comment').unbind("click").bind("click", handleSaveCooment);
             },
             "error": function (XMLHttpRequest, textStatus, errorThrown) {
                 var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
@@ -639,6 +654,11 @@
 
                 createAnswerHtml(answerBlock, answer, userEmail);
 
+                if (result.length == 0)
+                {
+                    $(answerBlock).find('.answer-comments').hide();
+                }
+
                 $(result).each(function (i, e) {
 
                     var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
@@ -654,93 +674,110 @@
         });
     }
 
+    function handleAddComment(event) {
+        event.preventDefault();
+        var anchor = $(event.target);
+
+        var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
+        $(commentBox).show();
+        $(commentBox).find('input[type=text]').focus();
+        $(anchor).parent().hide();        
+    }
+
+    function handleCommentLinkClick(event) {
+        event.preventDefault();
+        var anchor = $(this);
+        var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
+        $(commentBox).slideToggle();
+        if($(commentBox).find('.comment-list').length == 1)
+        {
+            $(commentBox).find('.add-comment .anchor-add-comment').hide();
+            $(commentBox).find('.comment-box').show();
+        }
+    }
+
+    function handleSaveCooment(event) {
+        var button = $(event.target);
+        var commentBox = $(button).closest('.comment-box');
+        var input = $(commentBox).find('.txt_comment');
+        var comment = $(input).val();
+        if (!comment) {
+            return;
+        }
+
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+        var userId = userInfo.userId;
+
+        var answerId = $(button).closest('li.answer').attr('data-answerid');
+        var data = { "Description": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
+        $(input).val('');
+        scAjax({
+            "url": "comments/AddComment",
+            "type": "POST",
+            "data": JSON.stringify(data, null, 2),
+            "success": function (result) {
+                var answerBlock = $(button).closest('li.answer');
+                var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
+                $(commentBlock).removeClass('hide');
+                $(commentBlock).find('.comment-text').text(comment);
+                $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
+                $(commentBlock).find('.comment-user').text(result.displayName);
+                $(answerBlock).find('.answer-comments').prepend(commentBlock);
+
+                //var spanCount = $(answerBlock).find('.comment-count');
+                //var count = $(spanCount).text() == '' ? 1 : parseInt($(spanCount).attr('data-commentcount')) + 1;
+                //$(spanCount).text(" (" + count + ")");
+            }
+        });
+    }
+
+    function handleUpvote(event) {
+        event.preventDefault();
+        var anchor = $(event.target);
+        if ($(anchor).parent().hasClass('disabled')) {
+            return false;
+        }
+        var answerId = $(anchor).closest('li.answer').attr('data-answerid');
+        var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
+        logActivity(3, answerId, answerBy);
+
+        scAjax({
+            "url": "answers/UpdateUpVoteCount",
+            "type": "POST",
+            "data": JSON.stringify({
+                "AnswerID": answerId, "UserEmail": userInfo.email
+            }),
+            "success": function (result) {
+                $(anchor).find('.count').text(result);
+                $(anchor).parent().addClass('disabled');
+            }
+        });
+    }
+
+    function handleCancelComment(event)
+    {
+        event.preventDefault();
+        var anchor = $(event.target);
+        var commentBox = $(anchor).closest('.comment-box');
+        $(commentBox).hide();
+        $(commentBox).siblings('.add-comment').show();
+    }
+
     function setUpAnswerUserActions() {
-        $('.comment-anchor').click(function (event) {
-            event.preventDefault();
-            var anchor = $(this);
-            var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
-            $(commentBox).slideToggle();
-        });
+        $('.comment-anchor').unbind("click").bind("click", handleCommentLinkClick);
 
-        $('.anchor-add-comment').click(function (event) {
-            event.preventDefault();
-            var anchor = $(this);
+        $('.anchor-add-comment').unbind("click").bind("click", handleAddComment);
 
-            var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
-            $(commentBox).slideToggle();
+        $('.anchor-cancel-comment').unbind('click').bind('click', handleCancelComment);
 
-            if ($(anchor).hasClass('add')) {
-                $(anchor).removeClass('add').addClass('cancel').text('Cancel');
-                return;
-            }
+        $('.btn-save-comment').unbind("click").bind("click", handleSaveCooment);
 
-            if ($(anchor).hasClass('cancel')) {
-                $(anchor).removeClass('cancel').addClass('add').text('Add Comment');
-            }
-        });
-
-        $('.btn-save-comment').click(function () {
-            var button = $(this);
-            var commentBox = $(button).closest('.comment-box');
-            var input = $(commentBox).find('.txt_comment');
-            var comment = $(input).val();
-            if (!comment) {
-                return;
-            }
-
-            var userDetails = localStorage.getItem("SC_Session_UserDetails");
-            if (!userDetails) {
-                //TO-DO: Handle if userdetail is not available in Session Storage
-                return;
-            }
-            var userInfo = $.parseJSON(userDetails);
-            var userId = userInfo.userId;
-
-            var answerId = $(button).closest('li.answer').attr('data-answerid');
-            var data = { "Description": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
-            $(input).val('');
-            scAjax({
-                "url": "comments/AddComment",
-                "type": "POST",
-                "data": JSON.stringify(data, null, 2),
-                "success": function (result) {
-                    var answerBlock = $(button).closest('li.answer');
-                    var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
-                    $(commentBlock).removeClass('hide');
-                    $(commentBlock).find('.comment-text').text(comment);
-                    $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
-                    $(commentBlock).find('.comment-user').text(result.displayName);
-                    $(answerBlock).find('.answer-comments').prepend(commentBlock);
-
-                    var spanCount = $(answerBlock).find('.comment-count');
-                    var count = $(spanCount).text() == '' ? 1 : parseInt($(spanCount).attr('data-commentcount')) + 1;
-                    $(spanCount).text(" (" + count + ")");
-                }
-            });
-        });
-
-        $('.upvote-anchor').click(function (event) {
-            event.preventDefault();
-            var anchor = $(this);
-            if ($(anchor).parent().hasClass('disabled')) {
-                return false;
-            }
-            var answerId = $(anchor).closest('li.answer').attr('data-answerid');
-            var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
-            logActivity(3, answerId, answerBy);
-
-            scAjax({
-                "url": "answers/UpdateUpVoteCount",
-                "type": "POST",
-                "data": JSON.stringify({
-                    "AnswerID": answerId, "UserEmail": userInfo.email
-                }),
-                "success": function (result) {
-                    $(anchor).find('.count').text(result);
-                    $(anchor).parent().addClass('disabled');
-                }
-            });
-        });
+        $('.upvote-anchor').unbind("click").bind("click", handleUpvote);
     }
 
     function createAnswerHtml(answerBlock, answer, userEmail)
@@ -1012,7 +1049,7 @@
                             </span>
                         </div>
 
-                        <div class="answer-comments col-md-10 no-right-padding">
+                        <div class="answer-comments col-md-11 no-right-padding">
                             <div class="comment-list hide">
                                 <span class="comment-user"></span>
                                 <span class="comment-date"></span>
@@ -1025,11 +1062,12 @@
                                 <a class="commentor" href="#">
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
                                 </a>
-                                <div class="col-md-9 no-right-padding">
+                                <div class="input-div no-right-padding">
                                     <input class="form-control input-sm txt_comment" placeholder="Add comment" type="text" required>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3 buttons no-right-padding">
                                     <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">
+                                    <a href="#" class="anchor-cancel-comment">Cancel</a>
                                 </div>
                             </div>
                         </div>
