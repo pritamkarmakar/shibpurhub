@@ -54,3 +54,6 @@ ssh-keygen -t rsa -C "youremail"
 4.Now open the .pub file in notepad copy the content go to gitbucket account  > click on the avatar image (top right corner) > account setting > SSH Keys > and create a ney key using the .pub file content 
 
 Do git pull/push, you shouldn't be asked for the password anymore.
+
+## Elastic Search
+Install-Package NEST
