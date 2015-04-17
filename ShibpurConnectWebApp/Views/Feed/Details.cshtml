@@ -574,7 +574,7 @@
         var emaildata = {
             "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
             "EmailAddress": emailToSend,
-            "Subject": "ShibpurConnect: Can you answer this question?"
+            "Subject": "ShibpurConnect: New answer in your question"
         };
 
         scAjax({
@@ -622,7 +622,7 @@
         var emaildata = {
             "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " posted a comment to your answer in question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
             "EmailAddress": email,
-            "Subject": "ShibpurConnect: Can you answer this question?"
+            "Subject": "ShibpurConnect: New comment to your answer"
         };
 
         scAjax({
