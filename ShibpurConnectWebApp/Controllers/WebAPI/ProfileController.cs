@@ -86,11 +86,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        /// Get reputation of a specific user
+        /// Get details about about an user from only users collection
         /// </summary>
         /// <param name="userEmail">user email</param>
         /// <returns></returns>
-        public async Task<IHttpActionResult> GetUserReputation(string userEmail)
+        public async Task<IHttpActionResult> GetUserInfo(string userEmail)
         {
             // validate userEmail is valid and get the userid
             Helper.Helper helper = new Helper.Helper();
@@ -100,7 +100,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (userInfo == null)
                 return NotFound();
 
-            return Ok(userInfo.ReputationCount);
+            return Ok(userInfo);
         }
 
         // GET: api/Profile/5

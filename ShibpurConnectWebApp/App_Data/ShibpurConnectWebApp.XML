@@ -688,9 +688,9 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserReputation(System.String)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserInfo(System.String)">
             <summary>
-            Get reputation of a specific user
+            Get details about about an user from only users collection
             </summary>
             <param name="userEmail">user email</param>
             <returns></returns>

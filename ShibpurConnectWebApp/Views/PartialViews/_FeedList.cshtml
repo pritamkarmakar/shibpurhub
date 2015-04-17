@@ -165,9 +165,15 @@
                     if (!result) {
                         return;
                     }
-
+                    // hide the loading symbol
+                    $('#loadingquestions').hide();
                     var questions = result;
                     createQuestions(questions);
+                },
+                "error": function(err)
+                {
+                    // hide the loading symbol
+                    $('#loadingquestions').hide();
                 }
             });
         }
@@ -237,9 +243,12 @@
 
 
 
-<div class="main">
+<div class="main">    
     <div id="threads">
-
+        <!--div for loading message for the question list-->
+        <div id="loadingquestions" class="center-block col-md-4" style="float: none;margin-left:300px;margin-top:200px;">
+            <i class="fa fa-spinner fa-spin fa-3x"></i>
+        </div>
         <div class="hide thread col-md-12">
             <div class="user">
                 <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
