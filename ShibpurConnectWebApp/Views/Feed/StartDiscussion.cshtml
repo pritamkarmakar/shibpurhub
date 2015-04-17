@@ -1,4 +1,9 @@
-﻿@{
+﻿@using ShibpurConnectWebApp.Models.WebAPI
+@model Questions
+@{
+    ViewBag.Title = "New Question";
+}
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -6,7 +11,7 @@
     $(document).ready(function () {
         jQuery.support.cors = true;
         var SERVER = "/api/";
-        //$('#select_categories').tokenInput("/api/categories/GetCategories");       
+        //$('#select_categories').tokenInput("/api/categories/GetCategories");
 
         scAjax({
             "url": "categories/GetCategories",
@@ -24,6 +29,10 @@
         });
 
         $('#btn_Save').click(function () {
+            // hide the error div
+            $('#errormessage').empty();
+            $('#errormessage').hide();
+
             var question = $('#txt_question').val();
             var description = $('#txtarea_description').val();
             var categories = $('#select_categories').val();
@@ -37,7 +46,7 @@
                 return;
             }
 
-            var userInfo = $.parseJSON(userDetails);            
+            var userInfo = $.parseJSON(userDetails);
 
             var arrCategories = categories.split(',');
             //$.each(categories.split(','), function () {
@@ -54,7 +63,7 @@
                 "Categories": arrCategories
             };
             //debugger;
-            
+
 
             scAjax({
                 "url": "questions/PostQuestions",
@@ -67,6 +76,18 @@
 
                     document.location.href = "/Feed/Details/" + result.questionId;
                     logActivity(1, result.questionId);
+                },
+                "error": function (err) {
+                    // parse the error json
+                    var errorresponse = jQuery.parseJSON(err.responseText);
+
+                    $('#errormessage').show();
+                    if (errorresponse.modelState['question.Title'] != null)
+                        $('#errormessage').append("<p>"+errorresponse.modelState['question.Title'][0] + "</p>");
+                    if (errorresponse.modelState['question.Description'] != null)
+                        $('#errormessage').append(errorresponse.modelState['question.Description'][0]);
+                    //$('#errormessage').append(errorresponse.modelState['question.Description'][0] + "<br/>" + errorresponse.modelState['question.Title'][0]);
+                    //alert(err.responseText);
                 }
             });
 
@@ -75,59 +96,67 @@
         });
     });
 
-    
-   
+
+
 </script>
 
 
 
 <h4>Details</h4>
 <hr />
-    <div class="panel-body">
-        <form action="#" class="form-horizontal" method="post" role="form">
-            <div class="form-group">
-                <label class="control-label col-md-2" for="Question">Question</label>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <input class="form-control" id="txt_question" placeholder="What is your question?" type="text" required>
-                        </div>
+<div class="panel-body">
+    
+    <form action="#" class="form-horizontal" method="post" role="form">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="alert alert-danger alert-dismissible col-md-6" role="alert" style="display:none" id="errormessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Error!</strong>
+                </div>
+            </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Question">Question</label>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input class="form-control" id="txt_question" placeholder="What is your question?" type="text" required>
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="control-label col-md-2" for="DetailedText">Description</label>
-                <div class="col-md-6">
-                    <textarea class="form-control" id="txtarea_description" placeholder="Description" rows="3" required></textarea>
-                </div>
-            </div>            
-            <div class="form-group">
-                <label class="control-label col-md-2" for="Categories">Categories</label>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <input class="form-control" id="select_categories" placeholder="Add categories (,) separeted" type="text" required>
-                        </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DetailedText">Description</label>
+            <div class="col-md-6">
+                <textarea class="form-control" id="txtarea_description" placeholder="Description" rows="3" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Categories">Categories</label>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input class="form-control" id="select_categories" placeholder="Add categories (,) separeted" type="text" required>
                     </div>
                 </div>
             </div>
-            @*<div class="form-group">
-                <label class="col-md-2 control-label" for="Categories">Categories</label>
-                <div class="col-md-6">
-                    
-                    <div class="form-group">
-                        <div class="col-md-12">                           
-                            <select class="form-control" id="select_categories" multiple></select>
-                        </div>
+        </div>
+        @*<div class="form-group">
+            <label class="col-md-2 control-label" for="Categories">Categories</label>
+            <div class="col-md-6">
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <select class="form-control" id="select_categories" multiple></select>
                     </div>
-                    </div>
-                </div>*@
-            
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="button" class="btn btn-primary" id="btn_Save" value="Save">
-                        </div>
-                    </div>
-</form>
-    </div>
+                </div>
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" class="btn btn-primary" id="btn_Save" value="Save">
+            </div>
+        </div>
+    </form>
+</div>
 

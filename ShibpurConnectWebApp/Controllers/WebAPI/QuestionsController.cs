@@ -175,7 +175,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         //}
 
         // POST: api/Questions
-        [ResponseType(typeof(Questions))]
+        [ResponseType(typeof(QuestionsDTO))]
         public IHttpActionResult PostQuestions(QuestionsDTO question)
         {
             if (!ModelState.IsValid)

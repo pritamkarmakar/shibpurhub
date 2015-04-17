@@ -22,10 +22,15 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         
         [Required]
         [DataMember]
+        //[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [MinLength(20, ErrorMessage="Minimum length of the question title should be more than 20 characters")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters allowed in question title")]
         public string Title { get; set; }
         
         [Required]
         [DataMember]
+        [MinLength(40, ErrorMessage = "Minimum length of description should be more than 40 characters")]
+        [MaxLength(30000, ErrorMessage = "Maximum 30000 characters allowed in description")]
         public string Description { get; set; }
         
         [DataMember]

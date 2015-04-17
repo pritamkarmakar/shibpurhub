@@ -741,7 +741,7 @@
                 });
 
                 var utcDate = new Date(result.postedOnUtc);
-                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
+                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + "at"+ utcDate.getHours() + ":" + utcDate.getMinutes();
 
                 var answerBlock = $('#answerlist li.answer.hide').clone();
                 $(answerBlock).removeClass('hide');
