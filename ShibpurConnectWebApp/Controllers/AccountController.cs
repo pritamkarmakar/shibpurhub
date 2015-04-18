@@ -71,7 +71,7 @@ namespace ShibpurConnectWebApp.Controllers
                 }
             }
 
-            ViewBag.Departments = departmentList;
+            ViewBag.Departments = departmentList.Content;
         }
 
         public AccountController(ApplicationUserManager userManager)

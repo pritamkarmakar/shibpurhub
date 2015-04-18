@@ -56,14 +56,15 @@
         //$(document).ready(function () {
             scAjax({
                 "url": "status/GetDatabaseStatus",
-                 async:false,
-                "success": function (result) {
+                async: false,
+                dataType: 'text',
+                 success: function (result, status) {
                     if (!result) {
                         return;
                     }
 
                 },
-                "error": function (err) {
+                error: function (err) {
                     // send alert to admin team
                     SendNotification(err.responseText);
                     window.location.href = "/home/maintenance";

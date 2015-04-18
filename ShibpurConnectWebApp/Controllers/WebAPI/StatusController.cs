@@ -27,7 +27,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             try
             {
                 var result = _mongoHelper.Collection.FindAll().ToList();
-                return Ok();
+                return Ok("{\"message\": \"database is working\"}");
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
             {
