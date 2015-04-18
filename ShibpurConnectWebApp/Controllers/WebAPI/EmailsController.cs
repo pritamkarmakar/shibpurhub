@@ -53,9 +53,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         private async Task configSendGridasync(Email message)
         {
-            //var myMessage = new MailMessage("pritam83@gmail.com", "metricsqa@gmail.com");
-            var myMessage = new SendGridMessage();
-            myMessage.AddTo(message.EmailAddress);
+            var myMessage = new SendGridMessage(); 
+            // split the email ids, if there are multiples
+            foreach(string email in message.EmailAddress.Split(','))
+            {
+                myMessage.AddTo(email);
+            }           
+           
             myMessage.From = new System.Net.Mail.MailAddress(
                                 "pritam83@gmail.com", "ShibpurConnect");
             myMessage.Subject = message.Subject;

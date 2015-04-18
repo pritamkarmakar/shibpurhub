@@ -22,23 +22,37 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/Notification
-        public IList<Notifications> GetNotifications(string userId)
+        public IHttpActionResult GetNotifications(string userId)
         {
-            var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
-                          where e.UserId == userId
-                          orderby e.PostedOnUtc descending
-                          select e).ToList();
+            try
+            {
+                var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
+                              where e.UserId == userId
+                              orderby e.PostedOnUtc descending
+                              select e).ToList();
 
-            return result;
+                return Ok(result);
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        public IList<Notifications> GetNewNotifications(string userId)
+        public IHttpActionResult GetNewNotifications(string userId)
         {
-            var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
-                          where e.UserId == userId && e.NewNotification == true
-                          select e).ToList();
+            try
+            {
+                var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
+                              where e.UserId == userId && e.NewNotification == true
+                              select e).ToList();
 
-            return result;
+                return Ok(result);
+            }
+            catch(MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Notification/5
@@ -80,26 +94,33 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         public IHttpActionResult MarkAllNewNotificationsAsOld(string userId)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                if (string.IsNullOrEmpty(userId))
+                    return BadRequest("Request body is null. Please send a valid email adress");
+
+                // retrieve all the notification those are new
+                var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
+                              where e.UserId == userId && e.NewNotification == true
+                              select e).ToList();
+
+                // mark all these as old and save back to database
+                foreach (var notification in result)
+                {
+                    notification.NewNotification = false;
+                    _mongoHelper.Collection.Save(notification);
+                }
+
+                return Ok();
             }
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest("Request body is null. Please send a valid email adress");
-
-            // retrieve all the notification those are new
-            var result = (from e in _mongoHelper.Collection.AsQueryable<Notifications>()
-                          where e.UserId == userId && e.NewNotification == true
-                          select e).ToList();
-
-            // mark all these as old and save back to database
-            foreach (var notification in result)
+            catch(MongoDB.Driver.MongoConnectionException ex)
             {
-                notification.NewNotification = false;
-                _mongoHelper.Collection.Save(notification);
+                return BadRequest(ex.Message);
             }
-
-            return Ok();
         }
 
         /// <summary>
@@ -125,7 +146,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return Ok();
         }
-
+        
         // PUT: api/Notification/5
         public void Put(int id, [FromBody]string value)
         {

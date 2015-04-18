@@ -25,9 +25,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/Categories
-        public IList<Categories> GetCategories()
+        public IHttpActionResult GetCategories()
         {
-            return _mongoHelper.Collection.FindAll().ToList();
+            try
+            {
+                return Ok(_mongoHelper.Collection.FindAll().ToList());
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Categories/placement

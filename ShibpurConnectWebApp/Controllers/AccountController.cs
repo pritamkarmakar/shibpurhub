@@ -33,10 +33,11 @@ namespace ShibpurConnectWebApp.Controllers
 
             // get the department list and send it to the view
             DepartmentsController DP = new DepartmentsController();
-            IList<Departments> departmentList = DP.GetDepartments();
+            var actionResult = DP.GetDepartments();
+            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
 
             // if there is no departments in the db then add the default departments
-            if (departmentList.Count == 0)
+            if (departmentList != null && departmentList.Content.Count == 0)
             {
                 var _mongoHelper = new MongoHelper<Departments>();
                 foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
@@ -49,14 +50,16 @@ namespace ShibpurConnectWebApp.Controllers
                 }
 
                 // reset the departmentList
-                departmentList = DP.GetDepartments();
+                var actionResult2 = DP.GetDepartments();
+                departmentList = actionResult2 as OkNegotiatedContentResult<List<Departments>>;
             }
 
             CategoriesController categoriesController = new CategoriesController();
-            IList<Categories> categoryList = categoriesController.GetCategories();
+            var actionResult3 = categoriesController.GetCategories();
+            var categoryList = actionResult3 as OkNegotiatedContentResult<List<Categories>>;
 
             // if there is no categories in the db then add the default categories
-            if (categoryList.Count == 0)
+            if (categoryList!= null && categoryList.Content.Count == 0)
             {
                 var _mongoHelper = new MongoHelper<Categories>();
                 foreach (var category in ConfigurationManager.AppSettings["categories"].Split(','))

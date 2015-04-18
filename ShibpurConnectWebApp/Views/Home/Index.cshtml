@@ -16,6 +16,7 @@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/shibpurconnect.js"></script>
     <style>
         * {
             margin: 0;
@@ -51,6 +52,62 @@
             background-color: transparent;
         }
     </style>
+    <script type="text/javascript">
+        //$(document).ready(function () {
+            scAjax({
+                "url": "status/GetDatabaseStatus",
+                 async:false,
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+
+                },
+                "error": function (err) {
+                    // send alert to admin team
+                    SendNotification(err.responseText);
+                    window.location.href = "/home/maintenance";
+                }
+            });
+
+            function SendNotification(error) {              
+
+                // send email notification
+                var alertdata = {
+                    "Content": error,
+                    "EmailSentTo": "pritam83@gmail.com,monobesu@gmail.com"
+                };               
+
+                // add this record in local log file and send email alert
+                scAjax({
+                    "url": "websitealert/PostAlert",
+                    "type": "POST",
+                    "data": JSON.stringify(alertdata, null, 2),
+                    "success": function (result) {
+                        // disable the Ask button and change the test to Asked
+                        $(elm).text("Asked");
+                        $(elm).attr("disabled", "disabled");
+
+                        // save this 'ask to answer' record in database collection
+                        var asktoanswer = {
+                            "AskedTo": elm.attributes["data-id"].value,
+                            "AskedBy": userInfo.userId,
+                            "QuestionId": questionID
+                        };
+                        scAjax({
+                            "url": "asktoanswer/postasktoanswer",
+                            "type": "POST",
+                            "data": JSON.stringify(asktoanswer, null, 2),
+                            "success": function (result) {
+
+                            }
+                        });
+                    }
+                });
+             
+            }
+        //});
+    </script>
 </head>
 <body>
 

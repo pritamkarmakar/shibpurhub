@@ -601,6 +601,12 @@
             <param name="searchTerm"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.StatusController.GetDatabaseStatus">
+            <summary>
+            API to indicate whether we can connect to database or not
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetAllUsers">
             <summary>
             Get all system users
@@ -613,6 +619,22 @@
             </summary>
             <param name="searchTerm">search term (can be location/company name/ user name/email etc)</param>
             <returns></returns>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Controllers.WebAPI.WebsiteAlertController">
+            <summary>
+            Controller to keep all website maintenance, connectivity issue alerts
+            </summary>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.WebsiteAlertController.GetExistingAlerts">
+            <summary>
+            Method to load local json file
+            </summary>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.WebsiteAlertController.SaveNewAlert(ShibpurConnectWebApp.Models.WebAPI.WebsiteAlert)">
+            <summary>
+            Save new alert
+            </summary>
+            <param name="alert"></param>
         </member>
         <member name="M:ShibpurConnectWebApp.Helper.ElasticSearchHelper.ElasticClient">
             <summary>

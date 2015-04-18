@@ -34,11 +34,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// Will return all available questions
         /// </summary>
         /// <returns></returns>
-        public IList<QuestionsDTO> GetQuestions()
+        public IHttpActionResult GetQuestions()
         {
-            var result = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).ToList();
+            try
+            {
+                var result = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).ToList();
 
-            return result;
+                return Ok(result);
+            }
+            catch(MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         public IList<QuestionsDTO> GetQuestionsByCategory(string category)
@@ -83,7 +90,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(questions.ToList()[0]);
         }
 
-        public int GetAnswersCount(string questionId)
+        public IHttpActionResult GetAnswersCount(string questionId)
         {
             try
             {
@@ -91,12 +98,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
             catch (Exception)
             {
-                return 0;
+                return Ok(0);
             }
 
-            var answerMongoHelper = new MongoHelper<Answer>();
-            var count = answerMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).ToList().Count;
-            return count;
+            try
+            {
+                var answerMongoHelper = new MongoHelper<Answer>();
+                var count = answerMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).ToList().Count;
+                return Ok(count);
+            }
+            catch(MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         public int GetViewCount(string questionId)

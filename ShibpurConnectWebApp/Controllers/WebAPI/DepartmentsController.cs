@@ -22,9 +22,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
 
         // GET: api/Departments
-        public IList<Departments> GetDepartments()
+        public IHttpActionResult GetDepartments()
         {
-            return _mongoHelper.Collection.FindAll().ToList();
+            try
+            {
+                return Ok(_mongoHelper.Collection.FindAll().ToList());
+            }
+            catch(MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Departments/electrical

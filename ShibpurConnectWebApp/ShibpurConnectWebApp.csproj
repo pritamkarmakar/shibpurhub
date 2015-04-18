@@ -249,8 +249,10 @@
     <Compile Include="Controllers\WebAPI\QuestionsController.cs" />
     <Compile Include="Controllers\WebAPI\AccountController.cs" />
     <Compile Include="Controllers\WebAPI\SearchController.cs" />
+    <Compile Include="Controllers\WebAPI\StatusController.cs" />
     <Compile Include="Controllers\WebAPI\UserActivityController.cs" />
     <Compile Include="Controllers\WebAPI\UsersController.cs" />
+    <Compile Include="Controllers\WebAPI\WebsiteAlertController.cs" />
     <Compile Include="Helper\MongoHelper.cs" />
     <Compile Include="Helper\ElasticSearchHelper.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
@@ -294,6 +296,7 @@
     <Compile Include="Controllers\WebAPI\ProfileController.cs" />
     <Compile Include="Models\WebAPI\Questions.cs" />
     <Compile Include="Models\WebAPI\CategoryTagging.cs" />
+    <Compile Include="Models\WebAPI\WebsiteAlert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ShibpurConnectDB.cs" />
     <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
@@ -439,6 +442,7 @@
     <Content Include="Scripts\jquery-2.1.3.min.map" />
     <Content Include="Views\Notifications\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Home\Maintenance.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
