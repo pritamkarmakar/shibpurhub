@@ -676,6 +676,16 @@
     }
 
     function saveAnswer() {
+        // hide the error div
+        $('#errormessage').empty();
+        $('#errormessage').hide();
+
+        // disable the button
+        $('.btn-submit-answer').prop('disabled', true);
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('.btn-submit-answer > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('.btn-submit-answer > span').text(' Saving...');
 
         jQuery.support.cors = true;
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -707,6 +717,13 @@
                 if (!result) {
                     return;
                 }
+
+                // enable the button
+                $('.btn-submit-answer').prop('disabled', false);
+
+                // remove the loading class from save button
+                $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('.btn-submit-answer > span').text('Submit Answer');
 
                 // send notification to the user who asked this question..that there is a new answer for your question
                 NotificationForNewAnswer();
@@ -769,6 +786,18 @@
             "error": function (XMLHttpRequest, textStatus, errorThrown) {
                 var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
                 $("#errorLabel").text(errorText);
+
+                // enable the button
+                $('.btn-submit-answer').prop('disabled', false);
+
+                // remove the loading class from save button
+                $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('.btn-submit-answer > span').text('Submit Answer');
+
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+                $('#errormessage').show();
+                $('#errormessage').append("<p>" + errorresponse.modelState['answer.AnswerText'][0] + "</p>");
             }
         });
 
@@ -805,7 +834,7 @@
 
                     var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
                     $(commentBlock).removeClass('hide');
-                    $(commentBlock).find('.comment-text').text(e.description);
+                    $(commentBlock).find('.comment-text').text(e.commentText);
                     $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
                     $(commentBlock).find('.comment-user').text(e.displayName);
                     $(answerBlock).find('.answer-comments').prepend(commentBlock);
@@ -837,12 +866,38 @@
         }
     }
 
-    function handleSaveComment(event) {
+    function handleSaveComment(event) {      
+
+        // disable the button
+        $('.btn-save-comment').prop('disabled', true);
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('.btn-save-comment > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('.btn-save-comment > span').text(' Saving...');
+
         var button = $(event.target);
         var commentBox = $(button).closest('.comment-box');
         var input = $(commentBox).find('.txt_comment');
+                
+        if (commentBox.hasClass("has-error")) {
+            commentBox.removeClass("has-error");
+        }
         var comment = $(input).val();
+        // take user comment as placeholder text
+        input.attr("placeholder", comment);
         if (!comment) {
+            if (!commentBox.hasClass("has-error")) {
+                commentBox.addClass("has-error");
+            }
+            input.attr("placeholder", "Comment can't be blank");
+            
+            // enable the button 
+            $('.btn-save-comment').prop('disabled', false);
+
+            // remove the loading class from save button
+            $('.btn-save-comment > i').removeClass('fa fa-circle-o-notch fa-spin');
+            $('.btn-save-comment > span').text('Save');
+
             return;
         }
 
@@ -855,13 +910,22 @@
         var userId = userInfo.userId;
 
         var answerId = $(button).closest('li.answer').attr('data-answerid');
-        var data = { "Description": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
+        var data = { "CommentText": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
         $(input).val('');
         scAjax({
             "url": "comments/AddComment",
             "type": "POST",
             "data": JSON.stringify(data, null, 2),
             "success": function (result) {
+                // enable the button
+                $('.btn-save-comment').prop('disabled', false);
+                // remove the loading class from save button
+                $('.btn-save-comment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('.btn-save-comment > span').text('Save');
+
+                // reset commentbox placeholder
+                input.attr("placeholder", "Add Comment");
+
                 var answerBlock = $(button).closest('li.answer');
                 var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
                 $(commentBlock).removeClass('hide');
@@ -870,14 +934,27 @@
                 $(commentBlock).find('.comment-user').text(result.displayName);
                 //$(answerBlock).find('.answer-comments').append(commentBlock);
                 $(commentBlock).insertBefore($(answerBlock).find('.answer-comments .comment-list.hide'));
-
-                //var spanCount = $(answerBlock).find('.comment-count');
-                //var count = $(spanCount).text() == '' ? 1 : parseInt($(spanCount).attr('data-commentcount')) + 1;
-                //$(spanCount).text(" (" + count + ")");
-
+               
                 // retrieve email of the user who posted the answer
                 var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
                 NotificationForNewComment(emailToSend);
+            },
+            "error": function (err) {
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(err.responseText);
+
+                // enable the button 
+                $('.btn-save-comment').prop('disabled', false);
+
+                // remove the loading class from save button
+                $('.btn-save-comment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('.btn-save-comment > span').text('Save');
+
+               // check if comment box has the 'has-error' class or not
+                if (!commentBox.hasClass("has-error")) {
+                    commentBox.addClass("has-error");
+                }
+                input.attr("placeholder", errorresponse.modelState['comment.CommentText'][0]);               
             }
         });
     }
@@ -910,7 +987,7 @@
         var anchor = $(event.target);
         var commentBox = $(anchor).closest('.comment-box');
         $(commentBox).hide();
-        $(commentBox).siblings('.add-comment').show();
+        $(commentBox).siblings('.add-comment').show();       
     }
 
     function setUpAnswerUserActions() {
@@ -1214,17 +1291,21 @@
                             <div class="add-comment right">
                                 <a href="#" class="anchor-add-comment add">Add Comment</a>
                             </div>
-                            <div class="comment-box">
+                            <div class="comment-box">                               
                                 <a class="commentor" href="#">
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
-                                </a>
+                                </a>                                
                                 <div class="input-div no-right-padding">
-                                    <input class="form-control input-sm txt_comment" placeholder="Add comment" type="text" required>
+                                    <input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>
                                 </div>
                                 <div class="col-md-3 buttons no-right-padding">
-                                    <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">
+                                   @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
+                                    <button type="submit" class="btn btn-sm btn-primary btn-save-comment">
+                                        <i></i><span>Save</span>
+                                    </button>
                                     <a href="#" class="anchor-cancel-comment">Cancel</a>
-                                </div>
+                                </div>                            
+                                
                             </div>
                         </div>
                     </li>
@@ -1233,6 +1314,10 @@
                 </ul>
             </div>
 
+            <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none" id="errormessage">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Error!</strong>
+            </div>
             <div class="wirte-answer col-md-12" style="margin-top:40px; display:none;">
                 @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
                 <div class="text-wrapper col-md-12">
@@ -1335,7 +1420,10 @@
                     </div>
                     <div class="editor-container"></div>
                 </div>
-                <a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>
+                @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
+                <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">
+                    <i></i><span>Submit Answer</span>
+                </button>
             </div>
 
             <!--div to show Ask to Answer module-->

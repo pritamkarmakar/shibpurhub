@@ -36,6 +36,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return result.Count();
         }
 
+        /// <summary>
+        /// Add a new comment for a question
+        /// </summary>
+        /// <param name="comment">Comment object</param>
+        /// <returns></returns>
         public IHttpActionResult AddComment(Comment comment)
         {
             if (!ModelState.IsValid)

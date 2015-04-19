@@ -21,9 +21,12 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [BsonRepresentation(BsonType.ObjectId)]
         [JsonProperty(PropertyName = "commentId")]
         public string CommentId { get; set; }
-        
+
+        [Required]
         [DataMember]
-        public string Description { get; set; }
+        [MinLength(15, ErrorMessage = "Minimum length of comment should be more than 15 characters")]
+        [MaxLength(600, ErrorMessage = "Maximum 600 characters allowed in comment")]
+        public string CommentText { get; set; }
         
         [DataMember]
         public DateTime PostedOnUtc { get; set; }

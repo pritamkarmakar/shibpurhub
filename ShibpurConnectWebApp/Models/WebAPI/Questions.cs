@@ -21,8 +21,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string QuestionId { get; set; }
         
         [Required]
-        [DataMember]
-        //[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataMember]        
         [MinLength(20, ErrorMessage="Minimum length of the question title should be more than 20 characters")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters allowed in question title")]
         public string Title { get; set; }
