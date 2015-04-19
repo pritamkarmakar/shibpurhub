@@ -694,12 +694,40 @@
             //TO-DO: Handle if userdetail is not available in Session Storage
             return;
         }
-        //var answer = $('.textarea')[0].value;
+
         var answer = advancedEditor.getHTML();
 
-        if (!answer || answer == "") {
+        // verify if answer text is empty
+        if (!answer || $.trim(advancedEditor.getText()) == "") {
+            // enable the button
+            $('.btn-submit-answer').prop('disabled', false);
+
+            // remove the loading class from save button
+            $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+            $('.btn-submit-answer > span').text('Submit Answer');
+
+            // parse the error json   
+            $('#errormessage').show();
+            $('#errormessage').append("<p>Answer can't be blank</p>");
+
             return;
         }
+        // verify whether length of answer text is less than 30
+        if ($.trim(advancedEditor.getText()).length < 30) {
+            // enable the button
+            $('.btn-submit-answer').prop('disabled', false);
+
+            // remove the loading class from save button
+            $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+            $('.btn-submit-answer > span').text('Submit Answer');
+
+            // parse the error json   
+            $('#errormessage').show();
+            $('#errormessage').append("<p>Answer should be more than 30 characters long</p>");
+
+            return;
+        }
+
         var userInfo = $.parseJSON(userDetails);
 
         //var SERVER = "/api/";
@@ -910,7 +938,7 @@
         var userId = userInfo.userId;
 
         var answerId = $(button).closest('li.answer').attr('data-answerid');
-        var data = { "CommentText": comment, "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
+        var data = { "CommentText": $.trim(comment), "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
         $(input).val('');
         scAjax({
             "url": "comments/AddComment",
