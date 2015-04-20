@@ -609,7 +609,7 @@
     }
 
     // this will trigger when someone will add new comment, to send notification to the user who posted the answer
-    function NotificationForNewComment(email) {
+    function NotificationForNewComment(email, notificationToSend) {
         // retrieve current logged-in user details
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (!userDetails) {
@@ -633,27 +633,27 @@
             }
         });
 
-        // save this request in the Notification collection
-        //var notificationContent = {
-        //    "answeredBy": userInfo.email,
-        //    "displayName": userInfo.firstName + " " + userInfo.lastName,
-        //    "questionId": questionID,
-        //    "questionTitle": $('#questiontitle').text()
-        //};
-        //var data = {
-        //    "UserId": $('.questionaskedbyuser').attr("userId"),
-        //    "NotificationContent": JSON.stringify(notificationContent),
-        //    "NotificationType": "ReceivedAnswer"
-        //};
+        //save this request in the Notification collection
+        var notificationContent = {
+            "commentedBy": userInfo.email,
+            "displayName": userInfo.firstName + " " + userInfo.lastName,
+            "questionId": questionID,
+            "questionTitle": $('#questiontitle').text()
+        };
+        var data = {
+            "UserId": notificationToSend,
+            "NotificationContent": JSON.stringify(notificationContent),
+            "NotificationType": "ReceivedComment"
+        };
 
-        //scAjax({
-        //    "url": "notifications/PostNotification",
-        //    "type": "POST",
-        //    "data": JSON.stringify(data, null, 2),
-        //    "success": function (result) {
+        scAjax({
+            "url": "notifications/PostNotification",
+            "type": "POST",
+            "data": JSON.stringify(data, null, 2),
+            "success": function (result) {
 
-        //    }
-        //});
+            }
+        });
     }
 
     function getMonth(month) {
@@ -965,7 +965,8 @@
                
                 // retrieve email of the user who posted the answer
                 var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
-                NotificationForNewComment(emailToSend);
+                var notificationToSend = $(answerBlock).attr("data-answerby");
+                NotificationForNewComment(emailToSend, notificationToSend);
             },
             "error": function (err) {
                 // parse the error json
