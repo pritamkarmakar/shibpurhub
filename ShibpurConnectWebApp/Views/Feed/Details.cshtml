@@ -865,7 +865,7 @@
                     $(commentBlock).find('.comment-text').text(e.commentText);
                     $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
                     $(commentBlock).find('.comment-user').text(e.displayName);
-                    $(answerBlock).find('.answer-comments').prepend(commentBlock);
+                    $(answerBlock).find('.answer-comments').append(commentBlock);
                 });
 
                 //setUpAnswerUserActions();
