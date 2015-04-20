@@ -26,7 +26,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         public IList<Comment> GetCommentsForAnswer(string answerId)
         {
-            var result = _mongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answerId).OrderBy(a => a.PostedOnUtc).ToList();
+            var result = _mongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answerId).OrderByDescending(a => a.PostedOnUtc).ToList();
             return result;
         }
 

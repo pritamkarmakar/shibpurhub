@@ -113,7 +113,19 @@ function scAjax(options)
 function getDateFormatted(date)
 {
     var utcDate = new Date(date);
-    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
+    var hour = utcDate.getHours();
+    if (hour < 10)
+    {
+        hour = "0" + hour;        
+    }
+
+    var minutes = utcDate.getMinutes();
+    if (minutes < 10)
+    {
+        minutes = "0" + minutes;
+    }
+
+    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + " at " +hour +":" + minutes;
     return dateString;
 }
 
