@@ -1,42 +1,9 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Profile";    
 }
 
-@section Scripts {
-    <style type="text/css">
-        span#department {
-            font-size: 15px;
-        }
-
-        #companyname {
-            font-size: 20px;
-        }
-
-        hr#dotted {
-            border-top: 1px dotted rgb(234, 231, 231);
-            color: #fff;
-            background-color: #fff;
-            margin: 8px 0 8px 0;
-        }
-
-        hr {
-            border-top: 1px solid rgb(234, 231, 231);
-            margin: 8px 0 8px 0;
-        }
-
-        #collegeName h4, #department span {
-            display: inline;
-            vertical-align: top;
-            font-family: 'Open Sans', sans-serif;
-            font-size: 16px;
-            line-height: 28px;
-        }
-
-        #collegeName h4 {
-            font-weight: bold;
-        }
-    </style>
-    <script type="text/javascript">
+<script type="text/javascript">
         // get the user profile for this user
         $(document).ready(function() {
             jQuery.support.cors = true;
@@ -75,13 +42,23 @@
                         return;
                     }
 
-                    $("#userName").text(result.userInfo.firstName + " " + result.userInfo.lastName);
+                    $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
+                    $(".registeredon").after( getDateFormattedByMonthYear(result.userInfo.registeredOn));
+                    $(".reputationcount").after(result.userInfo.reputationCount);
+                    $(".userlocation").after(result.userInfo.location);
+                    $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
+                    $(".aboutmebody").text(result.userInfo.aboutMe);
+                    //$(".registeredon").insertAfter.append("<strong class='registrationdatespan'>Joined</strong>" + getDateFormattedByMonthYear(result.userInfo.registeredOn));
 
                     // iterate over all the educational histories
                     if(result.educationalHistories != null)
                     {
                         jQuery.each(result.educationalHistories, function(i, val) {
-                            $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
+                            $('.educationbody').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div>");
+                            if(i != result.educationalHistories.length - 1)
+                            {
+                                $('.educationbody').append("<hr id='dotted'/>");
+                            }
                         });
                     }
 
@@ -350,127 +327,142 @@
             });
         }
 
-    </script>
-}
+</script>
 
-<h2>@ViewBag.Title</h2>
-<label id="errorLabel" style="color: red;"></label>
 
-<div class="container">
-    <div class="alert alert-success" role="alert" id="successmessage" style="display: none">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        Data saved successfully.
+<div class="container target">
+    <div class="row">
+        <div class="col-sm-10">
+            <h1 class="userdisplayname"></h1>
+
+            <button type="button" class="btn btn-success">Follow</button>  <button type="button" class="btn btn-info">Send me a message</button>
+            <br>
+        </div>
+        <div class="col-sm-2">
+            <a href="/users" class="pull-right"><img title="profile image" class="img-cir img-responsive" src="http://www.rlsandbox.com/img/profile.jpg"></a>
+
+        </div>
     </div>
-</div>
+    <br>
+    <div class="row">
+        <div class="col-sm-3">
+            <!--left col-->
+            <ul class="list-group">
+                <li class="list-group-item text-muted" contenteditable="false">Profile</li>
+                <li class="list-group-item text-right"><span class="pull-left registeredon"><strong class="">Joined</strong></span> </li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Last seen</strong></span> ....</li>                
+                <li class="list-group-item text-right">
+                    <span class="pull-left userlocation"><strong class="">Location </strong></span> 
 
-<div class="container">
-    <div class="alert alert-danger" role="alert" id="failuremessage" style="display: none">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <p>Something went wrong..Please try again.</p>
-    </div>
-</div>
+                </li>
+            </ul>
+            
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Website <i class="fa fa-link fa-1x"></i>
 
-<div class="container">
-    <div class="col-md-8">
-        <div class=" col-md-12 col-xs-10">
-            <div class="well panel panel-default">
+                </div>
+                <div class="panel-body">
+                    <a href="http://bootply.com" class="">...</a>
+
+                </div>
+            </div>
+
+            <ul class="list-group">
+                <li class="list-group-item text-muted">
+                    Activity <i class="fa fa-dashboard fa-1x"></i>
+
+                </li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Shares</strong></span> ...</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Likes</strong></span> ...</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Posts</strong></span> ...</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Followers</strong></span> ...</li>
+                <li class="list-group-item text-right"><span class="pull-left reputationcount"><strong class="">Reputation</strong></span></li>
+            </ul>
+            <div class="panel panel-default">
+                <div class="panel-heading">Social Media</div>
+                <div class="panel-body">
+                    <i class="fa fa-facebook fa-2x"></i>  <i class="fa fa-github fa-2x"></i>
+                    <i class="fa fa-twitter fa-2x"></i> <i class="fa fa-pinterest fa-2x"></i>  <i class="fa fa-google-plus fa-2x"></i>
+
+                </div>
+            </div>
+        </div>
+        <!--/col-3-->
+        <div class="col-sm-9" contenteditable="false" style="">
+            <div class="panel panel-default">
+                <div class="panel-heading aboutmeheading"></div>
+                <div class="panel-body aboutmebody"></div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading educationheading">Education</div>
+                <div class="panel-body educationbody">
+                    
+                </div>
+            </div>
+            <div class="panel panel-default target">
+                <div class="panel-heading" contenteditable="false">Pets I Own</div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-4 text-center">
-                            <img src="/Content/images/profile-image.jpg" width="150" height="150" alt="" class="center-block img-circle img-thumbnail img-responsive">
-                            <ul class="list-inline ratings text-center" title="Ratings">
-                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                            </ul>
+                        <div class="col-md-4">
+                            <div class="thumbnail">
+                                <img alt="300x200" src="http://lorempixel.com/600/200/people">
+                                <div class="caption">
+                                    <h3>
+                                        Rover
+                                    </h3>
+                                    <p>
+                                        Cocker Spaniel who loves treats.
+                                    </p>
+                                    <p>
+
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <!--/col-->
-                        <div class="col-xs-12 col-sm-8">
-                            <h1 id="userName" style="font-weight: 400;"></h1>
-                            <p><strong>About: </strong> Lorem ipsum lorem ipsum</p>
-                            <p><strong>Hobbies: </strong> Lorem, ipsum, lorem, ipsum </p>
-                            <p>
-                                <strong>Skills: </strong>
-                                <span class="label label-success tags">html5</span>
-                                <span class="label label-success tags">css3</span>
-                                <span class="label label-success tags">jquery</span>
-                                <span class="label label-success tags">bootstrap3</span>
-                            </p>
+                        <div class="col-md-4">
+                            <div class="thumbnail">
+                                <img alt="300x200" src="http://lorempixel.com/600/200/city">
+                                <div class="caption">
+                                    <h3>
+                                        Marmaduke
+                                    </h3>
+                                    <p>
+                                        Is just another friendly dog.
+                                    </p>
+                                    <p>
+
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="thumbnail">
+                                <img alt="300x200" src="http://lorempixel.com/600/200/sports">
+                                <div class="caption">
+                                    <h3>
+                                        Rocky
+                                    </h3>
+                                    <p>
+                                        Loves catnip and naps. Not fond of children.
+                                    </p>
+                                    <p>
+
+                                    </p>
+                                </div>
+                            </div>
+
                         </div>
 
-                        <!--/col-->
-                        <div class="clearfix"></div>
-                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
-                            <h2><strong> 20,7K </strong></h2>
-                            <p><small>Followers</small></p>
-                            <button class="btn btn-success"><span class="fa fa-plus-circle"></span> Follow </button>
-                        </div>
-                        <!--/col-->
-                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
-                            <h2><strong>245</strong></h2>
-                            <p><small>Following</small></p>
-                            <button class="btn btn-info"><span class="fa fa-user"></span> View Profile </button>
-                        </div>
-                        <!--/col-->
-                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
-                            <h2 class="repCount"><strong>0</strong></h2>
-                            <p><small>Reps</small></p>
-                            <button type="button" class="btn btn-primary"><span class="fa fa-star-o"></span> Reputation </button>
-                        </div>
-                        <!--/col-->
                     </div>
-                    <!--/row-->
+
                 </div>
-            </div>
-            <!--/panel-->
+
+            </div>            
         </div>
 
-        <!--Div to show all educational histories-->
-        <div class="col-md-12 col-xs-10">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h3 style="margin-top: 1px; font-weight: 400;" class='text-primary'>Education</h3><hr />
-                    <div id="educationdiv"></div>
-                    <button class="btn btn-primary btn-xs" id="newEducation">Add education</button><br /><br />
-                </div>
-            </div>
-        </div>
-        <!--Add new education div -->
-        <div class="col-md-12 col-xs-10" id="educationContent" style="display:none">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    @Html.Partial("../PartialViews/_EducationalHistory")
-                </div>
-            </div>
-        </div>
 
-        <!--Div to show all experiences-->
-        <div class="col-md-12 col-xs-10">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h3 style="margin-top: 1px; font-weight: 400;" class='text-primary'>Experience</h3><hr />
-                    <div id="employmentdiv"></div>
-                    <button class="btn btn-primary btn-xs" id="newPosition">Add experience</button><br /><br />
-                </div>
-            </div>
-        </div>
-        <!--Add new experience div-->
-        <div class="col-md-12 col-xs-10" id="employmentContent" style="display:none">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    @Html.Partial("../PartialViews/_EmploymentHistory")
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="recentactivity">
-            <h3>Recent Activity</h3><hr />
-        </div>
-    </div>
-    <!--/row-->
+        <div id="push"></div>
+    </div>  
 </div>
-<!--/container-->
+

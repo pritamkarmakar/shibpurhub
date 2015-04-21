@@ -447,7 +447,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Account\_ExternalSignUpListPartial.cshtml" />
-    <Content Include="Views\Account\Profile.cshtml" />
+    <Content Include="Views\Account\Profile2.cshtml" />
     <Content Include="Views\Account\Info.cshtml" />
     <Content Include="Views\Feed\Index.cshtml" />
     <Content Include="Views\Feed\Details.cshtml" />
@@ -463,6 +463,7 @@
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Home\Maintenance.cshtml" />
     <Content Include="Scripts\jquery-2.1.3.min.map" />
+    <Content Include="Views\Account\Profile.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

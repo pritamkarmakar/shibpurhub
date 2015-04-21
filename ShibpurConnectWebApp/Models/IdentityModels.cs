@@ -16,9 +16,8 @@ namespace ShibpurConnectWebApp.Models
         public int ProfileType { get; set; }
         // when user registered first time in the website        
         public DateTime RegisteredOn { get; set; }
-
         public int ReputationCount { get; set; }
-
+        public string AboutMe { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

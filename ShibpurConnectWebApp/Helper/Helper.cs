@@ -139,7 +139,9 @@ namespace ShibpurConnectWebApp.Helper
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Location = user.Location,
-                        ReputationCount = user.ReputationCount
+                        ReputationCount = user.ReputationCount,
+                        RegisteredOn = user.RegisteredOn,
+                        AboutMe = user.AboutMe
                     };
 
                 }

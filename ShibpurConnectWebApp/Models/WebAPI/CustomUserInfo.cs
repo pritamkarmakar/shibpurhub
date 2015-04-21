@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+using System;
 using System.Runtime.Serialization;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -17,5 +18,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string Email { get; set; }
         public string Location { get; set; }
         public int ReputationCount { get; set; }
+        public DateTime RegisteredOn { get; set; }
+        public string AboutMe { get; set; }
     }
 }

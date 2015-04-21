@@ -667,26 +667,7 @@
                 }
             });
         }
-    }
-
-    function getMonth(month) {
-        var monthArray = {
-            "0": "Jan",
-            "1": "Feb",
-            "2": "Mar",
-            "3": "Apr",
-            "4": "May",
-            "5": "Jun",
-            "6": "Jul",
-            "7": "Aug",
-            "8": "Sep",
-            "9": "Oct",
-            "10": "Nov",
-            "11": "Dec",
-        }
-
-        return monthArray[month];
-    }
+    }    
 
     function saveAnswer() {
         // hide the error div
@@ -1371,7 +1352,8 @@
                                 <option value="18px">Large</option>
                                 <option value="32px">Huge</option>
                             </select>
-                        </span><span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
+                        </span>
+                        <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
                             <select title="Text Color" class="ql-color">
                                 <option value="rgb(0, 0, 0)" selected></option>
                                 <option value="rgb(230, 0, 0)"></option>
@@ -1458,6 +1440,9 @@
                                 <option value="right"></option>
                                 <option value="justify"></option>
                             </select>
+                        </span>
+                        <span class="ql-format-group">
+                            <span title="Link" class="ql-format-button ql-link"></span>
                         </span>
                     </div>
                     <div class="editor-container"></div>
