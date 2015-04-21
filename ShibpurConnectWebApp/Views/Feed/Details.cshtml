@@ -8,6 +8,11 @@
 }
 
 <style type="text/css">
+    /*wrap the question body*/
+    .detail {
+        word-wrap: break-word;
+    }
+
     /*css for questionaskedby*/
     #questionaskedby {
         background-color: #e0eaf1;
@@ -858,14 +863,14 @@
                     $(answerBlock).find('.answer-comments').hide();
                 }
 
-                $(result).each(function (i, e) {
+                $(result.reverse()).each(function (i, e) {
 
                     var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
                     $(commentBlock).removeClass('hide');
                     $(commentBlock).find('.comment-text').text(e.commentText);
                     $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
                     $(commentBlock).find('.comment-user').text(e.displayName);
-                    $(answerBlock).find('.answer-comments').append(commentBlock);
+                    answerBlock.find('.answer-comments').prepend(commentBlock);
                 });
 
                 //setUpAnswerUserActions();
@@ -961,7 +966,7 @@
                 $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
                 $(commentBlock).find('.comment-user').text(result.displayName);
                 //$(answerBlock).find('.answer-comments').append(commentBlock);
-                $(commentBlock).insertBefore($(answerBlock).find('.answer-comments .comment-list.hide'));
+                commentBlock.insertBefore(answerBlock.find('.answer-comments').find('.comment-box'));
                
                 // retrieve email of the user who posted the answer
                 var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
