@@ -499,7 +499,7 @@
         });
     });
 
-    // function to send notification to the specific user
+    // function to send notification to the specific user from 'Ask to Answer' module
     function SendNotification(elm) {
         // retrieve current logged-in user details
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -564,6 +564,7 @@
         });
     }
 
+    // function to send notification when someone will post a new answer
     function NotificationForNewAnswer() {
         // retrieve current logged-in user details
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -575,42 +576,46 @@
 
         // retrieve email of the user who asked this question
         var emailToSend = $('.questionaskedbyuser').attr("href").substring($('.questionaskedbyuser').attr("href").indexOf("=") + 1);
-        // send email notification
-        var emaildata = {
-            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
-            "EmailAddress": emailToSend,
-            "Subject": "ShibpurConnect: New answer in your question"
-        };
 
-        scAjax({
-            "url": "emails/sendemail",
-            "type": "POST",
-            "data": JSON.stringify(emaildata, null, 2),
-            "success": function (result) {
-            }
-        });
+        // send email notification if the user who posted the answer and user who asked this question are different
+        if (emailToSend.toLowerCase() != userInfo.email.toLowerCase()) {
+            // send email notification
+            var emaildata = {
+                "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+                "EmailAddress": emailToSend,
+                "Subject": "ShibpurConnect: New answer in your question"
+            };
 
-        // save this request in the Notification collection
-        var notificationContent = {
-            "answeredBy": userInfo.email,
-            "displayName": userInfo.firstName + " " + userInfo.lastName,
-            "questionId": questionID,
-            "questionTitle": $('#questiontitle').text()
-        };
-        var data = {
-            "UserId": $('.questionaskedbyuser').attr("userId"),
-            "NotificationContent": JSON.stringify(notificationContent),
-            "NotificationType": "ReceivedAnswer"
-        };
+            scAjax({
+                "url": "emails/sendemail",
+                "type": "POST",
+                "data": JSON.stringify(emaildata, null, 2),
+                "success": function (result) {
+                }
+            });
 
-        scAjax({
-            "url": "notifications/PostNotification",
-            "type": "POST",
-            "data": JSON.stringify(data, null, 2),
-            "success": function (result) {
+            // save this request in the Notification collection
+            var notificationContent = {
+                "answeredBy": userInfo.email,
+                "displayName": userInfo.firstName + " " + userInfo.lastName,
+                "questionId": questionID,
+                "questionTitle": $('#questiontitle').text()
+            };
+            var data = {
+                "UserId": $('.questionaskedbyuser').attr("userId"),
+                "NotificationContent": JSON.stringify(notificationContent),
+                "NotificationType": "ReceivedAnswer"
+            };
 
-            }
-        });
+            scAjax({
+                "url": "notifications/PostNotification",
+                "type": "POST",
+                "data": JSON.stringify(data, null, 2),
+                "success": function (result) {
+
+                }
+            });
+        }
     }
 
     // this will trigger when someone will add new comment, to send notification to the user who posted the answer
@@ -623,42 +628,45 @@
         }
         var userInfo = $.parseJSON(userDetails);
 
-        // send email notification
-        var emaildata = {
-            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " posted a comment to your answer in question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
-            "EmailAddress": email,
-            "Subject": "ShibpurConnect: New comment to your answer"
-        };
+        // send email notification if the user who posted the comment and user who answered it are different
+        if (email.toLowerCase() != userInfo.email.toLowerCase()) {
+            // send email notification
+            var emaildata = {
+                "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " posted a comment to your answer in question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+                "EmailAddress": email,
+                "Subject": "ShibpurConnect: New comment to your answer"
+            };
 
-        scAjax({
-            "url": "emails/sendemail",
-            "type": "POST",
-            "data": JSON.stringify(emaildata, null, 2),
-            "success": function (result) {
-            }
-        });
+            scAjax({
+                "url": "emails/sendemail",
+                "type": "POST",
+                "data": JSON.stringify(emaildata, null, 2),
+                "success": function (result) {
+                }
+            });
 
-        //save this request in the Notification collection
-        var notificationContent = {
-            "commentedBy": userInfo.email,
-            "displayName": userInfo.firstName + " " + userInfo.lastName,
-            "questionId": questionID,
-            "questionTitle": $('#questiontitle').text()
-        };
-        var data = {
-            "UserId": notificationToSend,
-            "NotificationContent": JSON.stringify(notificationContent),
-            "NotificationType": "ReceivedComment"
-        };
+            //save this request in the Notification collection
+            var notificationContent = {
+                "commentedBy": userInfo.email,
+                "displayName": userInfo.firstName + " " + userInfo.lastName,
+                "questionId": questionID,
+                "questionTitle": $('#questiontitle').text()
+            };
+            var data = {
+                "UserId": notificationToSend,
+                "NotificationContent": JSON.stringify(notificationContent),
+                "NotificationType": "ReceivedComment"
+            };
 
-        scAjax({
-            "url": "notifications/PostNotification",
-            "type": "POST",
-            "data": JSON.stringify(data, null, 2),
-            "success": function (result) {
+            scAjax({
+                "url": "notifications/PostNotification",
+                "type": "POST",
+                "data": JSON.stringify(data, null, 2),
+                "success": function (result) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     function getMonth(month) {
