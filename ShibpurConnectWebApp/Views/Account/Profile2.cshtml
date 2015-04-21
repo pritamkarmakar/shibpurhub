@@ -1,0 +1,476 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    <style type="text/css">
+        span#department {
+            font-size: 15px;
+        }
+
+        #companyname {
+            font-size: 20px;
+        }
+
+        hr#dotted {
+            border-top: 1px dotted rgb(234, 231, 231);
+            color: #fff;
+            background-color: #fff;
+            margin: 8px 0 8px 0;
+        }
+
+        hr {
+            border-top: 1px solid rgb(234, 231, 231);
+            margin: 8px 0 8px 0;
+        }
+
+        #collegeName h4, #department span {
+            display: inline;
+            vertical-align: top;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+            line-height: 28px;
+        }
+
+        #collegeName h4 {
+            font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">
+        // get the user profile for this user
+        $(document).ready(function() {
+            jQuery.support.cors = true;
+            var SERVER = "/api/";
+            var profileEmail = @Html.Raw(Json.Encode(ViewData["profileEmail"]));
+
+            // check if this call for a different user or current logged-in user. If there is no data in the TempData["profileEmail"] then consider current session user
+            if (!profileEmail) {
+                // get current user email from session
+                var userDetails = localStorage.getItem("SC_Session_UserDetails");
+                if (!userDetails) {
+                    //TO-DO: Handle if userdetail is not available in Session Storage
+                    return;
+                }
+
+                var userInfo = $.parseJSON(userDetails);
+                profileEmail = userInfo.email;
+            }
+            $.ajax({
+                url: SERVER + "profile/getprofile",
+                type: "GET",
+                dataType: "json",
+                data: { "useremail": profileEmail },
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    //"Access-Control-Allow-Origin": "*"
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                },
+                success: function(result) {
+                    updateReputation(result.userInfo.userId);
+                    if (!result) {
+                        return;
+                    }
+
+                    $("#userName").text(result.userInfo.firstName + " " + result.userInfo.lastName);
+
+                    // iterate over all the educational histories
+                    if(result.educationalHistories != null)
+                    {
+                        jQuery.each(result.educationalHistories, function(i, val) {
+                            $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
+                        });
+                    }
+
+                    // iterate over all the employment histories
+                    if(result.employmentHistories != null)
+                    {
+                        jQuery.each(result.employmentHistories, function(i, val) {
+                            //var eduDiv = document.getElementById('educationalList');
+                            var months = ["January", "February", "March", "April", "May", "June", "July",
+         "August", "September", "October", "November", "December"];
+                            var utcDate = new Date(val.from);
+                            var fromDate = months[utcDate.getMonth()] + " " + utcDate.getFullYear();
+
+                            var toDate;
+                            if (val.to != null)
+                            {
+                                var utcDateTo = new Date(val.to);
+                                toDate = months[utcDateTo.getMonth()] + " " + utcDateTo.getFullYear();
+                            }
+                            else {
+                                toDate = "Present";
+                            }
+                            $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div><hr id='dotted'/>");
+                        });
+                    }
+                }
+            });
+        });
+
+        // method to save new educational history
+        function saveEducationalHistory() {
+
+            jQuery.support.cors = true;
+            var SERVER = "/api/";
+
+            var userDetails = localStorage.getItem("SC_Session_UserDetails");
+            if (!userDetails) {
+                //TO-DO: Handle if userdetail is not available in Session Storage
+                return;
+            }
+
+            var userInfo = $.parseJSON(userDetails);
+            var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+            var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#UniversityName').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + '}';
+
+            // add spinner animation in the save button and change the text to 'Saving..'
+            $('#addNewEducation > i').addClass('fa fa-circle-o-notch fa-spin');
+            $('#addNewEducation > span').text(' Saving...');
+            $.ajax({
+                url: SERVER + "EducationalHistories/PostEducationalHistory",
+                type: "POST",
+                data: educationalHistory,
+                contentType: "application/json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function(data, result) {
+                    if (result) {
+                        // get the educational history from the server and update the div
+                        $.ajax({
+                            url: SERVER + "educationalhistories/geteducationalhistories",
+                            type: "GET",
+                            dataType: "json",
+                            data: { "userEmail": userInfo.email },
+                            contentType: "application/json",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                                //"Access-Control-Allow-Origin": "*"
+                            },
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                            },
+                            success: function(result) {
+                                if (!result) {
+                                    return;
+                                }
+                                // toggle the 'Add education' button, so that the form will get close
+                                $("#educationContent").slideToggle();
+                                // clear div content
+                                $('#educationdiv').empty();
+                                // remove the loading class from save button
+                                $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
+                                $('#addNewEducation > span').text('Save');
+
+                                // remove previous error if there is any
+                                $('#failuremessage').css('display', 'none');
+
+                                // iterate over all the educational histories
+                                jQuery.each(result, function(i, val) {
+                                    //$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + "</h4>, " + "<span id=\"department\">" + val.department + "</span><span id=\"year\">" + val.graduateYear + "</span></div><hr id='dotted'/>");
+                                    $('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
+                                });
+                            }
+                        });
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                    //$("#errorLabel").text(errorText);
+                    $('#failuremessage').css('display', 'block');
+                    $('#failuremessage').text(errorText);
+
+                    // toggle the 'Add education' button, so that the form will get close
+                    $("#educationContent").slideToggle();
+                    // remove the loading class from save button
+                    $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#addNewEducation > span').text('Save');
+                }
+            });
+        }
+
+        // method to save new employment history
+        function saveEmploymentHistory() {
+            jQuery.support.cors = true;
+            var SERVER = "/api/";
+            var userDetails = localStorage.getItem("SC_Session_UserDetails");
+            if (!userDetails) {
+                //TO-DO: Handle if userdetail is not available in Session Storage
+                // show the error dialog
+                return;
+            }
+            var userInfo = $.parseJSON(userDetails);
+            var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+            var employmentHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('input#From').val() + '"' + ',"To":' + '"' + $('#To').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + ',"Title":' + '"' + $('#Title').val() + '"' +
+                ',"Location":' + '"' + $('#Location').val() + '"' + '}';
+
+            // add spinner animation in the save button and change the text to 'Saving..'
+            $('#addNewEmployment > i').addClass('fa fa-circle-o-notch fa-spin');
+            $('#addNewEmployment > span').text(' Saving...');
+
+            $.ajax({
+                url: SERVER + "EmploymentHistories/PostEmploymentHistory",
+                type: "POST",
+                data: employmentHistory,
+                contentType: "application/json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function(data, result) {
+                    if (result) {
+                        // get the latest data from server and update the profile page
+                        $.ajax({
+                            url: SERVER + "employmenthistories/getemploymenthistories",
+                            type: "GET",
+                            dataType: "json",
+                            data: { "userEmail": userInfo.email },
+                            contentType: "application/json",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                                //"Access-Control-Allow-Origin": "*"
+                            },
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                            },
+                            success: function(result) {
+                                if (!result) {
+                                    return;
+                                }
+
+                                // clear div content
+                                $('#employmentdiv').empty();
+                                // remove the loading class from save button
+                                $('#addNewEmployment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                                $('#addNewEmployment > span').text('Save');
+
+                                // iterate over all the employment histories
+                                jQuery.each(result, function(i, val) {
+                                    var months = ["January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"];
+                                    var utcDate = new Date(val.from);
+                                    var fromDate = months[utcDate.getMonth()] + " " + utcDate.getFullYear();
+
+                                    var toDate;
+                                    if (val.to != null)
+                                    {
+                                        var utcDateTo = new Date(val.to);
+                                        toDate = months[utcDateTo.getMonth()] + " " + utcDateTo.getFullYear();
+                                    }
+                                    else {
+                                        toDate = "Present";
+                                    }
+                                    $('#employmentdiv').append("<div id=\"employmentDetails\"><h4 id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></h4><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div><hr id='dotted'/>");
+
+                                });
+
+                                // toggle the 'Add position' button, so that the form will get close
+                                $("#employmentContent").slideToggle();
+
+                                // remove previous error if there is any
+                                $('#failuremessage').css('display', 'none');
+                            }
+                        });
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                    //$("#errorLabel").text(errorText);
+                    $('#failuremessage').css('display', 'block');
+                    $('#failuremessage').text(errorText);
+
+                    // toggle the 'Add education' button, so that the form will get close
+                    $("#employmentContent").slideToggle();
+                    // remove the loading class from save button
+                    $('#addNewEmployment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#addNewEmployment > span').text('Save');
+                }
+            });
+        }
+
+        // expand the new employment div
+        $("#newPosition").click(function() {
+            $("#employmentContent").slideToggle();
+            if ($("#expanderSign").text() == "+") {
+                $("#expanderSign").html("−");
+            } else {
+                $("#expanderSign").text("+");
+            }
+        });
+
+        // expand the new education div
+        $("#newEducation").click(function() {
+            $("#educationContent").slideToggle();
+            if ($("#expanderSign").text() == "+") {
+                $("#expanderSign").html("−");
+            } else {
+                $("#expanderSign").text("+");
+            }
+        });
+
+        // if user click on the Cancel button in the newEmployment div then collapse that div
+        function cancelSaveEmploymentHistory() {
+            $("#employmentContent").slideToggle();
+            $('html, body').animate({ scrollTop:  $("#employmentContent").offset().top - 50 }, 'slow');
+        }
+
+        // if user click on the Cancel button in the newEducation div then collapse that div
+        function cancelSaveEducationalHistory() {
+            $("#educationContent").slideToggle();
+        }
+
+        function updateReputation(userId)
+        {
+            if(!userId)
+            {
+                return;
+            }
+
+            $.ajax({
+                url: "/api/useractivity/GetUserReputation",
+                type: "GET",
+                dataType: "json",
+                data: { "userId": userId },
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                },
+                success: function (result) {
+                    $('.repCount').text(result);
+                }
+            });
+        }
+
+    </script>
+}
+
+<h2>@ViewBag.Title</h2>
+<label id="errorLabel" style="color: red;"></label>
+
+<div class="container">
+    <div class="alert alert-success" role="alert" id="successmessage" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Data saved successfully.
+    </div>
+</div>
+
+<div class="container">
+    <div class="alert alert-danger" role="alert" id="failuremessage" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <p>Something went wrong..Please try again.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-md-8">
+        <div class=" col-md-12 col-xs-10">
+            <div class="well panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 text-center">
+                            <img src="/Content/images/profile-image.jpg" width="150" height="150" alt="" class="center-block img-circle img-thumbnail img-responsive">
+                            <ul class="list-inline ratings text-center" title="Ratings">
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                                <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                            </ul>
+                        </div>
+                        <!--/col-->
+                        <div class="col-xs-12 col-sm-8">
+                            <h1 id="userName" style="font-weight: 400;"></h1>
+                            <p><strong>About: </strong> Lorem ipsum lorem ipsum</p>
+                            <p><strong>Hobbies: </strong> Lorem, ipsum, lorem, ipsum </p>
+                            <p>
+                                <strong>Skills: </strong>
+                                <span class="label label-success tags">html5</span>
+                                <span class="label label-success tags">css3</span>
+                                <span class="label label-success tags">jquery</span>
+                                <span class="label label-success tags">bootstrap3</span>
+                            </p>
+                        </div>
+
+                        <!--/col-->
+                        <div class="clearfix"></div>
+                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
+                            <h2><strong> 20,7K </strong></h2>
+                            <p><small>Followers</small></p>
+                            <button class="btn btn-success"><span class="fa fa-plus-circle"></span> Follow </button>
+                        </div>
+                        <!--/col-->
+                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
+                            <h2><strong>245</strong></h2>
+                            <p><small>Following</small></p>
+                            <button class="btn btn-info"><span class="fa fa-user"></span> View Profile </button>
+                        </div>
+                        <!--/col-->
+                        <div class="col-xs-12 col-sm-4" style="text-align: center;">
+                            <h2 class="repCount"><strong>0</strong></h2>
+                            <p><small>Reps</small></p>
+                            <button type="button" class="btn btn-primary"><span class="fa fa-star-o"></span> Reputation </button>
+                        </div>
+                        <!--/col-->
+                    </div>
+                    <!--/row-->
+                </div>
+            </div>
+            <!--/panel-->
+        </div>
+
+        <!--Div to show all educational histories-->
+        <div class="col-md-12 col-xs-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3 style="margin-top: 1px; font-weight: 400;" class='text-primary'>Education</h3><hr />
+                    <div id="educationdiv"></div>
+                    <button class="btn btn-primary btn-xs" id="newEducation">Add education</button><br /><br />
+                </div>
+            </div>
+        </div>
+        <!--Add new education div -->
+        <div class="col-md-12 col-xs-10" id="educationContent" style="display:none">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Partial("../PartialViews/_EducationalHistory")
+                </div>
+            </div>
+        </div>
+
+        <!--Div to show all experiences-->
+        <div class="col-md-12 col-xs-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3 style="margin-top: 1px; font-weight: 400;" class='text-primary'>Experience</h3><hr />
+                    <div id="employmentdiv"></div>
+                    <button class="btn btn-primary btn-xs" id="newPosition">Add experience</button><br /><br />
+                </div>
+            </div>
+        </div>
+        <!--Add new experience div-->
+        <div class="col-md-12 col-xs-10" id="employmentContent" style="display:none">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.Partial("../PartialViews/_EmploymentHistory")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="recentactivity">
+            <h3>Recent Activity</h3><hr />
+        </div>
+    </div>
+    <!--/row-->
+</div>
+<!--/container-->
