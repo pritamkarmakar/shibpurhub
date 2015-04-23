@@ -81,7 +81,7 @@ function scAjax(options)
             },
             beforeSend: function (xhr) {
                 //TO-DO: Check new token mechanism
-                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                xhr.setRequestHeader("Authorization", "Bearer Cbdt3CSU6G4YFFlCNKUO22sB3ApWs1sntTj--shtvycKTJ-fMWwgpbgirjedZLo56hzgyBi0yhhBKmlDaTpphmcCOfMeaCzl3ec1xLId614deaQFOyqQxEEtDn6m0WVHlbQ6OUMjs45AvGV-7zc9R6zQhzFW9ochE0IdSfvcWZXy3IH8y6nkBPZaMnNK3RuDExZbVEnwUlz-EI-XHuGLVkvUkgRWMOQ54u5lpKuTe1yMJ_Dg-xmaHlIgXKkPfc6g");
             },
             success: function (result) {
                 if(options.success && typeof options.success == "function")
@@ -188,4 +188,24 @@ function logActivity(activity, objectId, objectUserId) {
         }
     });
 }
- 
+
+// method to send email notification to website admins if there is any error
+function SendNotificationForWebSiteError(error) {
+
+    // send email notification
+    var alertdata = {
+        "Content": "<h2 style='color:red;'>ShibpurConnect is down!!!</h2>Detaill Error message: <br>" + error,
+        "EmailSentTo": "pritam83@gmail.com"
+    };
+
+    // add this record in local log file and send email alert
+    scAjax({
+        "url": "websitealert/SendEmailNotificationForOutage",
+        "type": "POST",
+        "data": JSON.stringify(alertdata, null, 2),
+        "success": function (result) {
+            
+        }
+    });
+
+}

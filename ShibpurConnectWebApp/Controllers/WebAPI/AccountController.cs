@@ -8,6 +8,9 @@ using ShibpurConnectWebApp.Models.WebAPI;
 using ShibpurConnectWebApp.Providers;
 using System;
 using ShibpurConnectWebApp.Helper;
+using System.Security.Claims;
+using System.Net.Http;
+using ShibpurConnectWebApp.Helper;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -46,16 +49,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }          
 
             return Ok();
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _repo.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
 
         private IHttpActionResult GetErrorResult(IdentityResult result)
@@ -120,6 +113,44 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     };
                 }
             }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IHttpActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var actionResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await actionResult;
+
+            IdentityResult result = await _repo.ChangePassword(userInfo.UserId, model);
+            IHttpActionResult errorResult = GetErrorResult(result);
+
+            if (errorResult != null)
+            {
+                return errorResult;
+            }     
+        
+
+            return Ok();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _repo.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

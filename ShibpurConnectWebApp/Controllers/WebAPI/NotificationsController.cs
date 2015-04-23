@@ -37,6 +37,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(ex.Message);
             }
+            catch(MongoDB.Driver.MongoQueryException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         public IHttpActionResult GetNewNotifications(string userId)
@@ -50,6 +54,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return Ok(result);
             }
             catch(MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (MongoDB.Driver.MongoQueryException ex)
             {
                 return BadRequest(ex.Message);
             }

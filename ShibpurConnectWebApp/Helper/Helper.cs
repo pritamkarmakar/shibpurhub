@@ -124,7 +124,7 @@ namespace ShibpurConnectWebApp.Helper
         {
             using (AuthRepository _repo = new AuthRepository())
             {
-                ApplicationUser user = await _repo.FindUserByEmail(userEmail);
+                ShibpurConnectWebApp.Models.ApplicationUser user = await _repo.FindUserByEmail(userEmail);
 
                 if (user == null)
                 {

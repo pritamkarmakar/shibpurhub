@@ -33,6 +33,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(ex.Message);
             }
+            catch (MongoDB.Driver.MongoQueryException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
         // GET api/status

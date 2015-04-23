@@ -38,8 +38,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return "value";
         }
 
-        // POST api/websitealert
-        public IHttpActionResult PostAlert(WebsiteAlert alert)
+        /// <summary>
+        /// Send email notification for any outage. This method validate if there is already email sent for the same 
+        /// error in last one hour then don't send again
+        /// </summary>
+        /// <param name="alert"></param>
+        /// <returns></returns>
+        public IHttpActionResult SendEmailNotificationForOutage(WebsiteAlert alert)
         {
             if (!ModelState.IsValid)
             {
@@ -51,12 +56,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 var result = GetExistingAlerts();
 
-                //if there is no existing record then add this one 
+                //if there is no existing record then send alert 
                 if(result == null)
                 {
                     alert.AlertTime = DateTime.UtcNow;
-                    SaveNewAlert(alert);
-
                     EmailsController emailController = new EmailsController();
                     emailController.SendEmail(new Email
                     {
@@ -67,26 +70,55 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     return Ok("sent new email alert");
                 }
-                else if (result[0].AlertTime.Date == DateTime.UtcNow.Date && (DateTime.UtcNow - result[0].AlertTime).TotalMinutes > 60)
+                else 
                 {
-                    alert.AlertTime = DateTime.UtcNow;
-                    SaveNewAlert(alert);                   
-                   
-                    EmailsController emailController = new EmailsController();
-                    emailController.SendEmail(new Email
-                    {
-                        Body = alert.Content,
-                        Subject = "ShibpurConnect: ALERT !!!",
-                        EmailAddress = alert.EmailSentTo
-                    });
+                    // check the latest entry and decide whether we should send a new alert or not
+                    // find the latest record for this type of alert
+                    var latestAlert = (from m in result
+                                      where m.Source == "MongoDB.Driver"
+                                      orderby m.AlertTime descending
+                                      select m).ToList();
 
-                    return Ok("sent new email alert");
-                }
-                else
-                    return Ok("alert already exist, email not sent");
+                    if (latestAlert.Count > 0)
+                    {
+                        if (latestAlert[0].AlertTime.Date == DateTime.UtcNow.Date && (DateTime.UtcNow - latestAlert[0].AlertTime).TotalMinutes > 60)
+                        {
+                            alert.AlertTime = DateTime.UtcNow;        
+
+                            EmailsController emailController = new EmailsController();
+                            emailController.SendEmail(new Email
+                            {
+                                Body = alert.Content,
+                                Subject = "ShibpurConnect: ALERT !!!",
+                                EmailAddress = alert.EmailSentTo
+                            });
+
+                            return Ok("sent new email alert");
+                        }
+                        else
+                        {
+                            return Ok("same alert already sent within last 1 hour");
+                        }
+                    }
+                    else
+                    {
+                        // there is no record for this error, send alert and save it as well
+                        alert.AlertTime = DateTime.UtcNow;
+    
+                        EmailsController emailController = new EmailsController();
+                        emailController.SendEmail(new Email
+                        {
+                            Body = alert.Content,
+                            Subject = "ShibpurConnect: ALERT !!!",
+                            EmailAddress = alert.EmailSentTo
+                        });
+
+                        return Ok("sent new email alert");
+                    }
+                }              
                 
             }
-            catch (MongoDB.Driver.MongoConnectionException ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -115,28 +147,35 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// Save new alert
         /// </summary>
         /// <param name="alert"></param>
-        private void SaveNewAlert(WebsiteAlert websiteAlert)
+        public IHttpActionResult SaveNewAlert(WebsiteAlert websiteAlert)
         {
-            //var items = JsonConvert.DeserializeObject<WebsiteAlert>(websiteAlert);
-
-            Alert alert = new Alert();
-            alert.Lists = new List<WebsiteAlert>();
-            alert.Lists.Add(websiteAlert);
-
-            // get existing alerts
-            var lists = GetExistingAlerts();
-            if(lists != null)
+            try
             {
-                foreach(WebsiteAlert obj in lists)
-                {
-                    alert.Lists.Add(obj);
-                }
-            }
+                Alert alert = new Alert();
+                alert.Lists = new List<WebsiteAlert>();
+                alert.Lists.Add(websiteAlert);
 
-            string json = JsonConvert.SerializeObject(alert);
-           
-            //write string to file
-            System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "websitealerts.json", json);
+                // get existing alerts
+                var lists = GetExistingAlerts();
+                if (lists != null)
+                {
+                    foreach (WebsiteAlert obj in lists)
+                    {
+                        alert.Lists.Add(obj);
+                    }
+                }
+
+                string json = JsonConvert.SerializeObject(alert);
+
+                //write string to file
+                System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "websitealerts.json", json);
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

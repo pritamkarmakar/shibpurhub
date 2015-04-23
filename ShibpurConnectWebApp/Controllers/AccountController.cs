@@ -32,46 +32,46 @@ namespace ShibpurConnectWebApp.Controllers
             _elasticSearchHelper = new ElasticSearchHelper();            
 
             // get the department list and send it to the view
-            DepartmentsController DP = new DepartmentsController();
-            var actionResult = DP.GetDepartments();
-            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
+            //DepartmentsController DP = new DepartmentsController();
+            //var actionResult = DP.GetDepartments();
+            //var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
 
-            // if there is no departments in the db then add the default departments
-            if (departmentList != null && departmentList.Content.Count == 0)
-            {
-                var _mongoHelper = new MongoHelper<Departments>();
-                foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
-                {
-                    Departments obj = new Departments();
-                    obj.DepartmentName = department;
-                    //obj.Id = ObjectId.GenerateNewId();
+            //// if there is no departments in the db then add the default departments
+            //if (departmentList != null && departmentList.Content.Count == 0)
+            //{
+            //    var _mongoHelper = new MongoHelper<Departments>();
+            //    foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
+            //    {
+            //        Departments obj = new Departments();
+            //        obj.DepartmentName = department;
+            //        //obj.Id = ObjectId.GenerateNewId();
 
-                    _mongoHelper.Collection.Save(obj);
-                }
+            //        _mongoHelper.Collection.Save(obj);
+            //    }
 
-                // reset the departmentList
-                var actionResult2 = DP.GetDepartments();
-                departmentList = actionResult2 as OkNegotiatedContentResult<List<Departments>>;
-            }
+            //    // reset the departmentList
+            //    var actionResult2 = DP.GetDepartments();
+            //    departmentList = actionResult2 as OkNegotiatedContentResult<List<Departments>>;
+            //}
 
-            CategoriesController categoriesController = new CategoriesController();
-            var actionResult3 = categoriesController.GetCategories();
-            var categoryList = actionResult3 as OkNegotiatedContentResult<List<Categories>>;
+            //CategoriesController categoriesController = new CategoriesController();
+            //var actionResult3 = categoriesController.GetCategories();
+            //var categoryList = actionResult3 as OkNegotiatedContentResult<List<Categories>>;
 
-            // if there is no categories in the db then add the default categories
-            if (categoryList!= null && categoryList.Content.Count == 0)
-            {
-                var _mongoHelper = new MongoHelper<Categories>();
-                foreach (var category in ConfigurationManager.AppSettings["categories"].Split(','))
-                {
-                    Categories obj = new Categories();
-                    obj.CategoryName = category;
+            //// if there is no categories in the db then add the default categories
+            //if (categoryList!= null && categoryList.Content.Count == 0)
+            //{
+            //    var _mongoHelper = new MongoHelper<Categories>();
+            //    foreach (var category in ConfigurationManager.AppSettings["categories"].Split(','))
+            //    {
+            //        Categories obj = new Categories();
+            //        obj.CategoryName = category;
 
-                    _mongoHelper.Collection.Save(obj);
-                }
-            }
+            //        _mongoHelper.Collection.Save(obj);
+            //    }
+            //}
 
-            ViewBag.Departments = departmentList.Content;
+            //ViewBag.Departments = departmentList.Content;
         }
 
         public AccountController(ApplicationUserManager userManager)

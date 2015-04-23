@@ -10,6 +10,8 @@ using MongoDB.Driver;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System.Web;
+using System.Net.Http;
 
 namespace ShibpurConnectWebApp.Providers
 {
@@ -88,6 +90,19 @@ namespace ShibpurConnectWebApp.Providers
                     Location = user.Location
                 });
             }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Method to change the password for an user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="passwordViewModel"></param>
+        /// <returns></returns>
+        public async Task<IdentityResult> ChangePassword(string userId, ChangePasswordViewModel passwordViewModel)
+        {            
+            var result = await _userManager.ChangePasswordAsync(userId, passwordViewModel.OldPassword, passwordViewModel.NewPassword);
 
             return result;
         }

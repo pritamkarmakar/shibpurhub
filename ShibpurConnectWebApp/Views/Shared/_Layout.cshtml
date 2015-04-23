@@ -23,8 +23,8 @@
                 $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
             }
 
-            // if userinfo is nul then redirect to login page
-            if (typeof userInfo != "undefined") {
+            // if userinfo is null then redirect to login page
+            if (typeof userInfo != "undefined") {             
 
                 // get the new notification count and update notification center
                 jQuery.support.cors = true;
@@ -54,7 +54,11 @@
                         else
                             $("#notification_count").hide();
 
-                    }
+                    },
+                    error: function (err) {
+                         // send alert to admin team
+                      
+                }
                 });
 
                 // get all the notifications
@@ -128,6 +132,9 @@
                             }                            
                         });
 
+                    },
+                    error: function (err) {
+                        
                     }
                 });
 

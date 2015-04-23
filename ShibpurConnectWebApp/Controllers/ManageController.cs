@@ -36,33 +36,33 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Manage/Index
-        public async Task<ActionResult> Index(ManageMessageId? message)
+        public async Task<ActionResult> Index()
         {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess
-                    ? "Your password has been changed."
-                    : message == ManageMessageId.SetPasswordSuccess
-                        ? "Your password has been set."
-                        : message == ManageMessageId.SetTwoFactorSuccess
-                            ? "Your two-factor authentication provider has been set."
-                            : message == ManageMessageId.Error
-                                ? "An error has occurred."
-                                : message == ManageMessageId.AddPhoneSuccess
-                                    ? "Your phone number was added."
-                                    : message == ManageMessageId.RemovePhoneSuccess
-                                        ? "Your phone number was removed."
-                                        : "";
+            //ViewBag.StatusMessage =
+            //    message == ManageMessageId.ChangePasswordSuccess
+            //        ? "Your password has been changed."
+            //        : message == ManageMessageId.SetPasswordSuccess
+            //            ? "Your password has been set."
+            //            : message == ManageMessageId.SetTwoFactorSuccess
+            //                ? "Your two-factor authentication provider has been set."
+            //                : message == ManageMessageId.Error
+            //                    ? "An error has occurred."
+            //                    : message == ManageMessageId.AddPhoneSuccess
+            //                        ? "Your phone number was added."
+            //                        : message == ManageMessageId.RemovePhoneSuccess
+            //                            ? "Your phone number was removed."
+            //                            : "";
 
-            var model = new IndexViewModel
-            {
-                HasPassword = HasPassword(),
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(User.Identity.GetUserId()),
-                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(User.Identity.GetUserId()),
-                Logins = await UserManager.GetLoginsAsync(User.Identity.GetUserId()),
-                BrowserRemembered =
-                    await AuthenticationManager.TwoFactorBrowserRememberedAsync(User.Identity.GetUserId())
-            };
-            return View(model);
+            //var model = new IndexViewModel
+            //{
+            //    HasPassword = HasPassword(),
+            //    PhoneNumber = await UserManager.GetPhoneNumberAsync(User.Identity.GetUserId()),
+            //    TwoFactor = await UserManager.GetTwoFactorEnabledAsync(User.Identity.GetUserId()),
+            //    Logins = await UserManager.GetLoginsAsync(User.Identity.GetUserId()),
+            //    BrowserRemembered =
+            //        await AuthenticationManager.TwoFactorBrowserRememberedAsync(User.Identity.GetUserId())
+            //};
+            return View();
         }
 
         //
@@ -223,7 +223,7 @@ namespace ShibpurConnectWebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return null;
             }
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
             if (result.Succeeded)
@@ -236,7 +236,7 @@ namespace ShibpurConnectWebApp.Controllers
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }
             AddErrors(result);
-            return View(model);
+            return null;
         }
 
         //
@@ -353,10 +353,17 @@ namespace ShibpurConnectWebApp.Controllers
 
         private bool HasPassword()
         {
-            var user = UserManager.FindById(User.Identity.GetUserId());
-            if (user != null)
+            try
             {
-                return user.PasswordHash != null;
+                var user = UserManager.FindById(User.Identity.GetUserId());
+                if (user != null)
+                {
+                    return user.PasswordHash != null;
+                }
+            }
+            catch(MongoDB.Driver.MongoException ex)
+            {
+
             }
             return false;
         }

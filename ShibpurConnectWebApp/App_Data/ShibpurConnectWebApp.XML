@@ -625,6 +625,14 @@
             Controller to keep all website maintenance, connectivity issue alerts
             </summary>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.WebsiteAlertController.SendEmailNotificationForOutage(ShibpurConnectWebApp.Models.WebAPI.WebsiteAlert)">
+            <summary>
+            Send email notification for any outage. This method validate if there is already email sent for the same 
+            error in last one hour then don't send again
+            </summary>
+            <param name="alert"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.WebsiteAlertController.GetExistingAlerts">
             <summary>
             Method to load local json file
@@ -728,6 +736,14 @@
             <summary>
             We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later
             </summary>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.ChangePassword(System.String,ShibpurConnectWebApp.Models.ChangePasswordViewModel)">
+            <summary>
+            Method to change the password for an user
+            </summary>
+            <param name="userId"></param>
+            <param name="passwordViewModel"></param>
+            <returns></returns>
         </member>
     </members>
 </doc>

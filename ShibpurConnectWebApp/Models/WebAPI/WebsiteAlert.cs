@@ -23,6 +23,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string Content { get; set; }
 
         [DataMember]
+        public string Source { get; set; }
+
+        [DataMember]
         public string EmailSentTo { get; set; }
     }
 
