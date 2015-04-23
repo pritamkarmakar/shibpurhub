@@ -21,6 +21,7 @@ $(document).ready(function () {
                 {
                     //alert(result.data);
                 }
+
             }
         });
     }
@@ -65,15 +66,44 @@ $(document).ready(function () {
     //});
 });
 
+function getApiToken()
+{   
+    var token = localStorage.getItem("TOKEN");
+    if (!token) {
+        alert("Hi");
+        $.ajax({
+            url: "http://shibpur.azurewebsites.net/token",
+            type: "POST",
+            data: {
+                "grant_type": "password",
+                "userName": "holbol.msd@gmail.com",
+                "password": "P@ssw0rd"
+            },
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "json",
+            async: false,
+            processData: false,
+            success: function (result) {
+                if (result) {
+                    token = result.access_token;
+                    localStorage.setItem("TOKEN", result.access_token);
+                }
+            }
+        });
+    }
+
+    return token;
+}
+
 function scAjax(options)
 {
     try
     {
-        var token = localStorage.getItem("TOKEN");
-        if (!token) {
+        //var token = getApiToken();
+        //if (!token) {
             //TO-DO: show a user friendly message
-            return;
-        }
+            //return;
+        //}
         var server = "/api/"
         var ajaxOptions = {
             url: server + options.url,
@@ -86,7 +116,7 @@ function scAjax(options)
             },
             beforeSend: function (xhr) {
                 //TO-DO: Check new token mechanism
-                xhr.setRequestHeader("Authorization", "Bearer " + token);
+                xhr.setRequestHeader("Authorization", "Bearer Io3jW1JzoT7LZeyqQxHTs0aA2panG9v41h-YeXpyJq8aiK9gbywJUX3EF2SoIcatHFEg63aao3Gyuuu-tDGP90FCytNkAQymb9u6wL-kSpcSuumLM1xDDDrq1sUfq82txPOozNqZIq0PcHLtnFEy0uaivwGL02mxL9zt_RWgR9D85RxKcXA1aKpgdenC0xz5douIzE3J_QahQmnvXAiSpDkHMEwiF3T4wiVxL8xrF7rR77dfo29ym2C0yp_K5rUr");
             },
             success: function (result) {
                 if(options.success && typeof options.success == "function")
