@@ -30,7 +30,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         public IList<Answer> GetAnswers()
         {
-            var result = _mongoHelper.Collection.FindAll().ToList();
+            var result = _mongoHelper.Collection.FindAll().OrderBy(a => a.PostedOnUtc).ToList();
             return result;
         }
 

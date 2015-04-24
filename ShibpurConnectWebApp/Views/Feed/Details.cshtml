@@ -1044,14 +1044,14 @@
         }
 
         var utcDate = new Date(answer.postedOnUtc);
-        var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
+        var dateString = getDateFormatted(answer.postedOnUtc);
         $(answerBlock).find('.date').text(dateString);
 
         if (answer.markedAsAnswer) {
             $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
         }
 
-        $('#answerlist').prepend(answerBlock);
+        $('#answerlist').append(answerBlock);
     }
 
     function getAnswers() {
@@ -1060,7 +1060,7 @@
         if (userDetails) {
             var userInfo = $.parseJSON(userDetails);
             isAskedByMe = askedBy == userInfo.email;
-        }
+        }        
 
         jQuery.support.cors = true;
         var SERVER = "/api/";
@@ -1285,7 +1285,7 @@
                         <div class="detail col-md-10">
                             <div class="text">
                             </div>
-                            <div class="stat col-md-3">
+                            <div class="stat col-md-4">
                                 <span class="date"></span>
                             </div>
                         </div>
