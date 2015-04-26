@@ -141,7 +141,8 @@ namespace ShibpurConnectWebApp.Helper
                         Location = user.Location,
                         ReputationCount = user.ReputationCount,
                         RegisteredOn = user.RegisteredOn,
-                        AboutMe = user.AboutMe
+                        AboutMe = user.AboutMe,
+                        ProfileImageURL = user.ProfileImageURL
                     };
 
                 }
@@ -167,7 +168,9 @@ namespace ShibpurConnectWebApp.Helper
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Location = user.Location,
-                        ReputationCount = user.ReputationCount
+                        ReputationCount = user.ReputationCount,
+                        AboutMe = user.AboutMe,
+                        ProfileImageURL = user.ProfileImageURL
                     };
 
                 }
@@ -193,7 +196,35 @@ namespace ShibpurConnectWebApp.Helper
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Location = user.Location,
-                        ReputationCount = user.ReputationCount
+                        ReputationCount = user.ReputationCount,
+                        ProfileImageURL = user.ProfileImageURL
+                    };
+
+                }
+            }
+        }
+
+        public CustomUserInfo UpdateProfileImageURL(string userId, string url)
+        {
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                ApplicationUser user = _repo.UpdateProfileImageURL(userId, url);
+
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new CustomUserInfo()
+                    {
+                        Email = user.Email,
+                        UserId = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Location = user.Location,
+                        ReputationCount = user.ReputationCount,
+                        ProfileImageURL = user.ProfileImageURL
                     };
 
                 }

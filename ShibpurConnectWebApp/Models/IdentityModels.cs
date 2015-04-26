@@ -19,6 +19,8 @@ namespace ShibpurConnectWebApp.Models
         public int ReputationCount { get; set; }
         public string AboutMe { get; set; }
 
+        public string ProfileImageURL { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType

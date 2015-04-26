@@ -142,6 +142,18 @@ namespace ShibpurConnectWebApp.Providers
             return user;
         }
 
+        public ApplicationUser UpdateProfileImageURL(string userId, string url)
+        {
+            ApplicationUser user = _userManager.FindById(userId);
+            if (user != null)
+            {
+                user.ProfileImageURL = url;
+                var updatedUser = _userManager.Update(user);
+            }
+
+            return user;
+        }
+
         public void Dispose()
         {
             _ctx.Dispose();

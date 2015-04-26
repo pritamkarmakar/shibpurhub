@@ -17,6 +17,9 @@ using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System;
 using System.IO;
+using System.Xml.Linq;
+using System.Net;
+using System.Collections.Specialized;
 
 namespace ShibpurConnectWebApp.Controllers
 {
@@ -506,11 +509,11 @@ namespace ShibpurConnectWebApp.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult Upload(HttpPostedFileBase photo)
+        public ActionResult UploadImage(HttpPostedFileBase photo)
         {
             if (photo != null && photo.ContentLength > 0)
             {
-                string directory = @"~\ProfileImages\";
+                //string directory = @"~\ProfileImages\";
 
                 if (photo.ContentLength > 102400)
                 {
@@ -526,8 +529,14 @@ namespace ShibpurConnectWebApp.Controllers
                     return View();
                 }
 
-                var fileName = Path.GetFileName(photo.FileName);
-                photo.SaveAs(Path.Combine(directory, fileName));
+                //var fileName = Path.GetFileName(photo.FileName);
+                //photo.SaveAs(Path.Combine(directory, fileName));
+
+                byte[] fileBytes = new byte[photo.InputStream.Length];
+                Int64 byteCount = photo.InputStream.Read(fileBytes, 0, (int)photo.InputStream.Length);
+                photo.InputStream.Close();
+                string fileContent = Convert.ToBase64String(fileBytes, 0, fileBytes.Length);
+                var response = Upload(fileContent);
             }
 
             return RedirectToAction("Index");
@@ -608,6 +617,23 @@ namespace ShibpurConnectWebApp.Controllers
             {
                 ModelState.AddModelError("", error);
             }
+        }
+
+        public XDocument Upload(string imageAsBase64String)
+        {
+            XDocument result = null;
+            using (var webClient = new WebClient())
+            {
+                var values = new NameValueCollection
+                {
+                    { "key", "" },
+                    { "image", imageAsBase64String },
+                    { "type", "base64" },
+                };
+                byte[] response = webClient.UploadValues("https://api.imgur.com/3/image", "POST", values);
+                result = XDocument.Load(new MemoryStream(response));
+            }
+            return result;
         }
 
         private ActionResult RedirectToLocal(string returnUrl)

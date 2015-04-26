@@ -103,6 +103,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(userInfo);
         }
 
+        public void UpdateProfileImage(CustomUserInfo imageInfo)
+        {
+            if (string.IsNullOrEmpty(imageInfo.UserId) || string.IsNullOrEmpty(imageInfo.ProfileImageURL))
+            {
+                return;
+            }
+
+            
+            var helper = new Helper.Helper();
+            helper.UpdateProfileImageURL(imageInfo.UserId, imageInfo.ProfileImageURL);
+        }
+
         // GET: api/Profile/5
         public string Get(int id)
         {

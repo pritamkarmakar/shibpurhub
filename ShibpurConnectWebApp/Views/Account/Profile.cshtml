@@ -32,6 +32,44 @@
     #collegeName {
         font-weight: bold;
     }
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+    .center-block {
+        text-align: center;
+    }
+    .imageDiv
+    {
+        display: none;
+        position: absolute;
+        bottom: 5px;
+        right: 15px;
+        opacity: 0.75;
+    }
+    #imagePreview {
+        width: 100%;
+        height: 140px;
+        background-position: center center;
+        background-size: cover;
+        -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
+        background-image: url('/Content/images/profile-image.jpg');
+    }
 </style>
 
 
@@ -42,6 +80,7 @@
             jQuery.support.cors = true;
             var SERVER = "/api/";
             var profileEmail = @Html.Raw(Json.Encode(ViewData["profileEmail"]));
+            var loggedInUserId = "";
 
             // check if this call for a different user or current logged-in user. If there is no data in the TempData["profileEmail"] then consider current session user
             if (!profileEmail) {
@@ -54,6 +93,7 @@
 
                 var userInfo = $.parseJSON(userDetails);
                 profileEmail = userInfo.email;
+                loggedInUserId = userInfo.userId;
             }
             $.ajax({
                 url: SERVER + "profile/getprofile",
@@ -74,14 +114,29 @@
                         return;
                     }
 
+                    var userDetails = localStorage.getItem("SC_Session_UserDetails");
+                    if (userDetails) {
+                        var userInfo = $.parseJSON(userDetails);
+                        var loggedInUserId = userInfo.userId;
+                    }                    
+
                     $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
                     $(".registeredon").after( getDateFormattedByMonthYear(result.userInfo.registeredOn));
                     $(".reputationcount").after(result.userInfo.reputationCount);
                     $(".userlocation").after(result.userInfo.location);
                     $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
                     $(".aboutmebody").text(result.userInfo.aboutMe);
+                    $("#hdnUserId").val(result.userInfo.userId);
                     //$(".registeredon").insertAfter.append("<strong class='registrationdatespan'>Joined</strong>" + getDateFormattedByMonthYear(result.userInfo.registeredOn));
 
+                    if(result.userInfo.userId == loggedInUserId)
+                    {
+                        $("#imagePreview").siblings('.imageDiv').show();
+                    }
+                    if(result.userInfo.profileImageURL)
+                    {
+                        $("#imagePreview").show().css("background-image", "url("+result.userInfo.profileImageURL+")");
+                    }
                     // iterate over all the educational histories
                     if(result.educationalHistories != null)
                     {
@@ -122,7 +177,52 @@
                     }
                 }
             });
+
+            $('#uploadImg').change(function(){
+                var files = !!this.files ? this.files : [];
+                if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+ 
+                if (/^image/.test( files[0].type)){ // only image file
+                    var reader = new FileReader(); // instance of the FileReader
+                    reader.readAsDataURL(files[0]); // read the local file
+                    
+                    reader.onloadend = function(){ // set image data as background of div
+                        $('#anchorImage').hide();
+                        var image = this.result;
+                        $("#imagePreview").show().css("background-image", "url("+image+")");
+
+                        var imageBase64 = image.replace(/.*,/, '');
+                        imgurUpload(imageBase64);
+                    }
+                }
+            });
         });
+
+    function imgurUpload(imageBase64) {
+
+        var auth = 'Client-ID b079e1d3167ca54';
+        $.ajax({
+            url: 'https://api.imgur.com/3/image',
+            type: 'POST',
+            headers: {
+                Authorization: auth,
+                Accept: 'application/json'
+            },
+            data: {
+                image: imageBase64,
+                type: 'base64'
+            },
+            success: function(result) {
+                var link = result.data.link;
+                var data = {"userId": $("#hdnUserId").val(), "profileImageURL": link};
+                scAjax({
+                    "url": "profile/updateprofileimage",
+                    "type": "POST",
+                    "data": JSON.stringify(data, null, 2)
+                });
+            }
+        });
+    }
 </script>
 
 
@@ -130,13 +230,18 @@
     <div class="row">
         <div class="col-sm-10">
             <h1 class="userdisplayname"></h1>
-
             <button type="button" class="btn btn-success">Follow</button>  <button type="button" class="btn btn-info">Send me a message</button>
             <br>
         </div>
         <div class="col-sm-2">
-            <a href="/users" class="pull-right"><img title="profile image" class="img-cir img-responsive" src="http://www.rlsandbox.com/img/profile.jpg"></a>
-
+            @*<a id="anchorImage" href="/users" class="pull-right">
+                <img title="profile image" class="img-cir img-responsive" src="~/Content/images/profile-image.jpg" /></a>*@
+            <canvas id="imagePreview"></canvas>
+            <div class="center-block imageDiv">
+                <span class="btn btn-info btn-sm btn-file">
+                    <i class="fa fa-camera"></i> <input type="file" id="uploadImg">
+                </span>
+            </div>
         </div>
     </div>
     <br>
@@ -266,5 +371,6 @@
 
         <div id="push"></div>
     </div>  
+    <input type="hidden" id="hdnUserId" value="" />
 </div>
 
