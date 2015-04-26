@@ -195,6 +195,10 @@
 
             $(thread).removeClass('hide');
             var userNameAnchor = $(thread).find('div.user a.userName');
+            if (question.userProfileImage) {
+                var userProfileImage = $(thread).find('div.user img.avatar');
+                $(userProfileImage).attr('src', question.userProfileImage);
+            }
             $(userNameAnchor).text(question.displayName);
             if (question.userEmail != null) {
                 var url = $(userNameAnchor).attr('href') + '?userEmail=' + question.userEmail;
