@@ -110,7 +110,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState
+                return BadRequest(ModelState);
             }
 
             if (educationalHistory == null)
