@@ -6,6 +6,12 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Controllers.WebAPI;
+using System.Web.Http.Results;
+using ShibpurConnectWebApp.Helper;
+using System.Collections.Generic;
+using ShibpurConnectWebApp.Models.WebAPI;
+using System.Configuration;
 
 namespace ShibpurConnectWebApp.Controllers
 {
@@ -14,6 +20,47 @@ namespace ShibpurConnectWebApp.Controllers
     {
         public ManageController()
         {
+            // get the department list and send it to the view
+            DepartmentsController DP = new DepartmentsController();
+            var actionResult = DP.GetDepartments();
+            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
+
+            // if there is no departments in the db then add the default departments
+            if (departmentList != null && departmentList.Content.Count == 0)
+            {
+                var _mongoHelper = new MongoHelper<Departments>();
+                foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
+                {
+                    Departments obj = new Departments();
+                    obj.DepartmentName = department;
+                    //obj.Id = ObjectId.GenerateNewId();
+
+                    _mongoHelper.Collection.Save(obj);
+                }
+
+                // reset the departmentList
+                var actionResult2 = DP.GetDepartments();
+                departmentList = actionResult2 as OkNegotiatedContentResult<List<Departments>>;
+            }
+
+            CategoriesController categoriesController = new CategoriesController();
+            var actionResult3 = categoriesController.GetCategories();
+            var categoryList = actionResult3 as OkNegotiatedContentResult<List<Categories>>;
+
+            // if there is no categories in the db then add the default categories
+            if (categoryList != null && categoryList.Content.Count == 0)
+            {
+                var _mongoHelper = new MongoHelper<Categories>();
+                foreach (var category in ConfigurationManager.AppSettings["categories"].Split(','))
+                {
+                    Categories obj = new Categories();
+                    obj.CategoryName = category;
+
+                    _mongoHelper.Collection.Save(obj);
+                }
+            }
+
+            ViewBag.Departments = departmentList.Content;
         }
 
         public ManageController(ApplicationUserManager userManager)
@@ -37,31 +84,7 @@ namespace ShibpurConnectWebApp.Controllers
         //
         // GET: /Manage/Index
         public async Task<ActionResult> Index()
-        {
-            //ViewBag.StatusMessage =
-            //    message == ManageMessageId.ChangePasswordSuccess
-            //        ? "Your password has been changed."
-            //        : message == ManageMessageId.SetPasswordSuccess
-            //            ? "Your password has been set."
-            //            : message == ManageMessageId.SetTwoFactorSuccess
-            //                ? "Your two-factor authentication provider has been set."
-            //                : message == ManageMessageId.Error
-            //                    ? "An error has occurred."
-            //                    : message == ManageMessageId.AddPhoneSuccess
-            //                        ? "Your phone number was added."
-            //                        : message == ManageMessageId.RemovePhoneSuccess
-            //                            ? "Your phone number was removed."
-            //                            : "";
-
-            //var model = new IndexViewModel
-            //{
-            //    HasPassword = HasPassword(),
-            //    PhoneNumber = await UserManager.GetPhoneNumberAsync(User.Identity.GetUserId()),
-            //    TwoFactor = await UserManager.GetTwoFactorEnabledAsync(User.Identity.GetUserId()),
-            //    Logins = await UserManager.GetLoginsAsync(User.Identity.GetUserId()),
-            //    BrowserRemembered =
-            //        await AuthenticationManager.TwoFactorBrowserRememberedAsync(User.Identity.GetUserId())
-            //};
+        {            
             return View();
         }
 

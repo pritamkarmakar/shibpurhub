@@ -28,14 +28,46 @@
 </style>
 <script type="text/javascript">
     function DisplayDiv(divName) {
-        $('.changepassword').show();
+        $('.bodycontent').children().hide();
+        $('.' + divName).show();
     }
 </script>
 
 <div class="container">
     <div class="row">
         <div class="col-sm-3 col-md-3">
-            <div class="panel-group" id="accordion">             
+            <div class="panel-group" id="accordion">   
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                <span class="glyphicon glyphicon-user">
+                                </span>Profile
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <a href="#" onclick="DisplayDiv('personalinfo')">Personal Info</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#" onclick="DisplayDiv('educationalbackground')">Education</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#">Experience</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>          
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
@@ -64,46 +96,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                <span class="glyphicon glyphicon-user">
-                                </span>Profile
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseTwo" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            <table class="table">
-                                <tr>
-                                    <td>
-                                        <a href="#">Personal Info</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="#">Education</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="#">Experience</a> 
-                                    </td>
-                                </tr>                                                            
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="col-sm-9 col-md-9">
             <div class="panel panel-default">
-                <div class="well">
+                <div class="panel-body bodycontent">
+                    <div class="personalinfo col-md-6 col-md-offset-2">
+                        @{ Html.RenderPartial("_PersonalInfo"); }
+                    </div>
                     <div class="changepassword col-md-6 col-md-offset-2" style="display:none;">
-                        @*@{ Html.RenderPartial("_ChangePassword", (ShibpurConnectWebApp.Models.ChangePasswordViewModel)Model.ChangePasswordViewModel ?? new ShibpurConnectWebApp.Models.ChangePasswordViewModel()); }*@
-                        @*@Html.Action("changepassword", "manage")*@
                         @{ Html.RenderPartial("_ChangePassword"); }
+                    </div>
+                    <div class="educationalbackground col-md-6 col-md-offset-2" style="display:none;">
+                        @{ Html.RenderPartial("_EducationalHistory"); }
                     </div>
                 </div>
             </div>

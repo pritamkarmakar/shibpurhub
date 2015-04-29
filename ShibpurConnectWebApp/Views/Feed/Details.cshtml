@@ -8,6 +8,13 @@
 }
 
 <style type="text/css">
+    /*override css for the answer rich text eitor*/
+    .editor-container {
+        height: 320px !important;
+    }
+    .ql-image-tooltip{
+        top:20px !important;
+    }
     /*wrap the question body*/
     .detail {
         word-wrap: break-word;
@@ -1451,6 +1458,8 @@
                         </span>
                         <span class="ql-format-group">
                             <span title="Link" class="ql-format-button ql-link"></span>
+                            <span class="ql-format-separator"></span>
+                            <span title="Image" class="ql-format-button ql-image"></span>
                         </span>
                     </div>
                     <div class="editor-container"></div>

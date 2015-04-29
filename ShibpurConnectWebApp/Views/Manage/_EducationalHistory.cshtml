@@ -1,0 +1,35 @@
+﻿@model ShibpurConnectWebApp.Models.WebAPI.EducationalHistories
+
+    <form>
+        <div class="form-group">
+            <label for="oldpassword" class="sr-only">UniversityName</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-university"></i></span>
+
+                <input class="form-control universityname" data-val="true" data-val-required="The Password field is required." id="UniversityName" name="Password" placeholder="University Name" type="text" aria-required="true" required>
+            </div>
+        </div>
+       
+
+        @Html.Partial("../PartialViews/_DepartmentDropdown")
+
+        
+        <div class="form-group">
+            <label for="oldpassword" class="sr-only">Passout Year / Expected Passout Year</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
+
+                <input class="form-control GraduateYear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout Year / Expected Passout Year" type="text" aria-required="true" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">                
+                <button type="submit" id="addNewEducation" class="btn btn-primary btn-sm" onclick="saveEducationalHistory(); return false;">
+                    <i></i><span>Save</span> 
+                </button>
+                <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEducationalHistory(); return false;" />
+            </div>
+
+        </div>
+    </form>

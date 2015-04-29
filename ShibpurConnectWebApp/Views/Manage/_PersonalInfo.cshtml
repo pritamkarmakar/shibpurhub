@@ -1,0 +1,66 @@
+﻿@model ShibpurConnectWebApp.Models.ApplicationUser
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+   
+ 
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">           
+            <div class="input-group">
+                @Html.EditorFor(model => model.FirstName)
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+        </div>
+
+        <div class="form-group">           
+            <div class="input-group">
+                @Html.EditorFor(model => model.LastName)
+                @Html.ValidationMessageFor(model => model.LastName)
+            </div>
+        </div>
+
+        <div class="form-group">         
+            <div class="input-group">
+                @Html.EditorFor(model => model.Location)
+                @Html.ValidationMessageFor(model => model.Location)
+            </div>
+        </div>
+
+        <div class="form-group">          
+            <div class="input-group">
+                @Html.EditorFor(model => model.ProfileType)
+                @Html.ValidationMessageFor(model => model.ProfileType)
+            </div>
+        </div>
+
+        <div class="form-group">           
+            <div class="input-group">
+                @Html.EditorFor(model => model.RegisteredOn)
+                @Html.ValidationMessageFor(model => model.RegisteredOn)
+            </div>
+        </div>
+
+        <div class="form-group">           
+            <div class="input-group">
+                @Html.EditorFor(model => model.ReputationCount)
+                @Html.ValidationMessageFor(model => model.ReputationCount)
+            </div>
+        </div>
+
+        <div class="form-group">          
+            <div class="input-group">
+                @Html.EditorFor(model => model.AboutMe)
+                @Html.ValidationMessageFor(model => model.AboutMe)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 input-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+
+}
+
