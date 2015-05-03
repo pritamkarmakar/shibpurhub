@@ -1,0 +1,240 @@
+﻿@model ShibpurConnectWebApp.Models.WebAPI.EmploymentHistories
+
+<style type="text/css">
+     #companyname {
+        font-size: 14px;
+        font-weight:bold;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // date picker control in the text field
+        //$(".date-picker").datepicker();
+        $(".date-picker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1950:2025'
+        });
+
+        $(".date-picker").on("change", function () {
+            var id = $(this).attr("id");
+            var val = $("label[for='" + id + "']").text();
+        });
+
+        // expand the new employment div
+        $("#newExperience").on('click', function (e) {
+            $("#newemploymentdiv").slideToggle();
+        });
+
+        //save new education
+        $('#addNewEmployment').on('click', function (e) {
+            e.preventDefault();
+            if ($(".newemploymentform")[0].checkValidity()) {
+                saveEmploymentHistory();
+            } else Command: toastr["error"]("All form fields are mandatory")
+
+        });
+    });
+
+    // function to load all existing employment histories
+    function loadEmployments() {
+        // disply loading spinner
+        $('#loadingexperience').show();
+
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        // get the latest data from server and update the profile page
+        $.ajax({
+            url: SERVER + "employmenthistories/getemploymenthistories",
+            type: "GET",
+            dataType: "json",
+            data: { "userEmail": userInfo.email },
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                //"Access-Control-Allow-Origin": "*"
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function (result) {
+                if (!result) {
+                    return;
+                }
+
+                // clear div content
+                $('.experiencebody').empty();
+                // remove the loading class from save button
+                $('#addNewEmployment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#addNewEmployment > span').text('Save');
+
+                // iterate over all the employment histories
+                jQuery.each(result, function (i, val) {
+                    var months = ["January", "February", "March", "April", "May", "June", "July",
+"August", "September", "October", "November", "December"];
+                    var utcDate = new Date(val.from);
+                    var fromDate = months[utcDate.getMonth()] + " " + utcDate.getFullYear();
+
+                    var toDate;
+                    if (val.to != null) {
+                        var utcDateTo = new Date(val.to);
+                        toDate = months[utcDateTo.getMonth()] + " " + utcDateTo.getFullYear();
+                    }
+                    else {
+                        toDate = "Present";
+                    }
+                    $('.experiencebody').append("<div id=\"employmentDetails\"><span id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></span><br><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
+                    if (i != result.length - 1) {
+                        $('.experiencebody').append("<hr id='dotted'/>");
+                    }
+
+                });
+
+                // hide the loading spinner
+                $('#loadingexperience').hide();
+            },            
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                Command: toastr["error"](errorText)
+
+                // hide the loading spinner
+                $('#loadingexperience').hide();
+            }
+        });
+    }
+
+    // method to save new employment history
+    function saveEmploymentHistory() {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            // show the error dialog
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+        var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        var employmentHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('input#employmentfromdate').val() + '"' + ',"To":' + '"' + $('#employmenttodate').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + ',"Title":' + '"' + $('#Title').val() + '"' +
+            ',"Location":' + '"' + $('#Location').val() + '"' + '}';
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('#addNewEmployment > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#addNewEmployment > span').text(' Saving...');
+
+        $.ajax({
+            url: SERVER + "EmploymentHistories/PostEmploymentHistory",
+            type: "POST",
+            data: employmentHistory,
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {
+                    // close the new employment form
+                    $("#newemploymentdiv").slideToggle();
+                    // get the latest data from server and update the profile page
+                    loadEmployments();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorMessage = "";
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);                
+                jQuery.each(errorresponse.modelState, function (i, val) {                    
+                    errorMessage += "<li>" + val + "</li>";
+                });
+              
+                Command: toastr["error"]("<ul>" + errorMessage + "</ul>")               
+                // remove the loading class from save button
+                $('#addNewEmployment > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#addNewEmployment > span').text('Save');
+            }
+        });
+    }
+
+
+    // if user click on the Cancel button in the newEmployment div then collapse that div
+    function cancelSaveEmploymentHistory() {
+        $("#newemploymentdiv").slideToggle();
+        $('html, body').animate({ scrollTop: $("#newemploymentdiv").offset().top - 50 }, 'slow');
+    }
+</script>
+
+<!--div for loading spinner-->
+<div id="loadingexperience" class="center-block col-md-4" style="float: none;margin-left:300px;margin-top:150px; display:none; position:fixed;">
+    <i class="fa fa-spinner fa-spin fa-3x"></i>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading experienceheading">Manage Experience</div>
+    <div class="panel-body">
+        <div class="experiencebody"></div>
+        <button class="btn btn-primary btn-xs" id="newExperience" style="margin-top:10px;">Add Experience</button><br /><br />
+    </div>
+</div>
+
+<div id="newemploymentdiv" style="display:none">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form class="newemploymentform form-horizontal" method="post">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyName, "Company Name", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control", @placeholder = "Company Name" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Title, "Job Title", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", @placeholder = "Your job title/designation" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Location, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Location, new { @class = "form-control", @placeholder = "Location of this employment" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="date-picker" class="col-md-2 control-label">Employment start date</label>
+                    <div class="controls col-md-10">
+                        <div class="input-group">
+                            <input id="employmentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)" />
+                            <label for="employmentfromdate" class="input-group-addon btn">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="date-picker" class="col-md-2 control-label">Employment end date</label>
+                    <div class="controls col-md-10">
+                        <div class="input-group">
+                            <input id="employmenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)" />
+                            <label for="employmenttodate" class="input-group-addon btn">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">                     
+                        <button type="submit" id="addNewEmployment" class="btn btn-primary btn-sm">
+                            <i></i><span>Save</span>
+                        </button>                   
+                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEmploymentHistory(); return false;" />
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
