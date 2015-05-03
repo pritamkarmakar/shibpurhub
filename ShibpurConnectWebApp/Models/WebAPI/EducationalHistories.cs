@@ -10,38 +10,27 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
     [BsonIgnoreExtraElements]
-    //[DataContract(IsReference = true)]
-    //[JsonObject(IsReference = false)]
     public class EducationalHistories
     {
-        // Primary key
-        //[BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id { get; set; }
 
         [Required]
         [DataMember]
-        public string UniversityName { get; set; }
-
-        //[Required]
-        //[DataMember]
-        //public string Department { get; set; }
+        public string UniversityName { get; set; }       
 
         [Required]
         [DataMember]
+        [Range(typeof(int), "1950", "2025",
+        ErrorMessage =  "Value for 'Gradutiaon year' must be between {1} and {2}")]
         public int GraduateYear { get; set; }
 
         [Required]
         [DataMember]
         public string UserId { get; set; }
 
-        // Foreign key
-        //[ForeignKey("Departments")]
         [Required]
         [DataMember]
-        public string Department { get; set; }
-
-        //public virtual AspNetUsers AspNetUsers { get; set; }
-        //public virtual Department Departments { get; set; }
+        public string Department { get; set; }       
     }
 }

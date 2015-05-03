@@ -6,13 +6,49 @@ using ShibpurConnectWebApp.Models.WebAPI;
 using ShibpurConnectWebApp.Providers;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Helper;
+using Microsoft.AspNet.Identity;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
     public class ProfileController : ApiController
     {
-        // GET: api/profile/getprofile?useremail=<email>
-        // Get the user profile for a particular user
+        private readonly MongoHelper<EducationalHistories> _mongoHelper;
+        private Helper.Helper helper = new Helper.Helper();
+
+        private IHttpActionResult GetErrorResult(IdentityResult result)
+        {
+            if (result == null)
+            {
+                return InternalServerError();
+            }
+
+            if (!result.Succeeded)
+            {
+                if (result.Errors != null)
+                {
+                    foreach (string error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                }
+
+                if (ModelState.IsValid)
+                {
+                    // No ModelState errors are available to send, so just return an empty BadRequest.
+                    return BadRequest();
+                }
+
+                return BadRequest(ModelState);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get the entire user profile (education, employment etc) for a particular user. Usage GET: api/profile/getprofile?useremail=<email>
+        /// </summary>
+        /// <param name="userEmail">user email</param>
+        /// <returns></returns>
         public async Task<IHttpActionResult> GetProfile(string userEmail)
         {
             // validate userEmail is valid and get the userid
@@ -50,7 +86,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public async Task<IHttpActionResult> GetProfileByUserId(string userId)
         {
             // validate userEmail is valid and get the userid
-            Helper.Helper helper = new Helper.Helper();
             Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
             var userInfo = await actionResult;
 
@@ -121,9 +156,45 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return "value";
         }
 
-        // POST: api/Profile
-        public void Post([FromBody]string value)
-        {
+        /// <summary>
+        /// API to update user personal profile info
+        /// </summary>
+        /// <param name="userInfo">CustomUserInfo object</param>
+        [HttpPost]
+        [Authorize]
+        public async Task<IHttpActionResult> UpdateProfile(string firstName, string lastName, string location, string aboutMe)
+        {       
+           using (AuthRepository _repo = new AuthRepository())
+            {
+                ApplicationUser user = await _repo.FindUserById("550aa72668fe6a96e01f54b2");
+
+                if (!string.IsNullOrEmpty(firstName))
+                    user.FirstName = firstName;
+                if (!string.IsNullOrEmpty(lastName))
+                    user.LastName = lastName;
+                if (!string.IsNullOrEmpty(location))
+                    user.Location = location;
+                if (!string.IsNullOrEmpty(aboutMe))
+                    user.AboutMe = aboutMe;
+                IdentityResult result = await _repo.UpdateUser(user);
+                IHttpActionResult errorResult = GetErrorResult(result);
+                if (errorResult != null)
+                {
+                    return errorResult;
+                }
+
+                return Ok(new CustomUserInfo
+                    {
+                        Email = user.Email,
+                        UserId = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Location = user.Location,
+                        ReputationCount = user.ReputationCount,
+                        AboutMe = user.AboutMe,
+                        ProfileImageURL = user.ProfileImageURL
+                    });
+            }           
         }
 
         // PUT: api/Profile/5

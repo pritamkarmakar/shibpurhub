@@ -44,6 +44,12 @@
             var description = $('#txtarea_description').val();
             var categories = $('#select_categories').val();
             if (!question || !description || !categories) {
+                Command: toastr["error"]("All form fields are mandatory")
+                // enable the button 
+                $('#btn_Save').prop('disabled', false);
+                // remove the loading class from save button
+                $('#btn_Save > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#btn_Save > span').text('Save');
                 return;
             }
 
@@ -86,6 +92,14 @@
                     logActivity(1, result.questionId);
                 },
                 "error": function (err) {
+                    var errorMessage = "";
+                    // parse the error json
+                    var errorresponse = jQuery.parseJSON(err.responseText);
+                    jQuery.each(errorresponse.modelState, function (i, val) {
+                        errorMessage += "<li>" + val + "</li>";
+                    });
+
+                    Command: toastr["error"]("<ul>" + errorMessage + "</ul>")
                     // parse the error json
                     var errorresponse = jQuery.parseJSON(err.responseText);
 
@@ -96,23 +110,18 @@
                     $('#btn_Save > i').removeClass('fa fa-circle-o-notch fa-spin');
                     $('#btn_Save > span').text('Save');
 
-                    $('#errormessage').show();
-                    if (errorresponse.modelState['question.Title'] != null)
-                        $('#errormessage').append("<p>"+errorresponse.modelState['question.Title'][0] + "</p>");
-                    if (errorresponse.modelState['question.Description'] != null)
-                        $('#errormessage').append(errorresponse.modelState['question.Description'][0]);
+                    //$('#errormessage').show();
+                    //if (errorresponse.modelState['question.Title'] != null)
+                    //    $('#errormessage').append("<p>"+errorresponse.modelState['question.Title'][0] + "</p>");
+                    //if (errorresponse.modelState['question.Description'] != null)
+                    //    $('#errormessage').append(errorresponse.modelState['question.Description'][0]);
                     //$('#errormessage').append(errorresponse.modelState['question.Description'][0] + "<br/>" + errorresponse.modelState['question.Title'][0]);
                     //alert(err.responseText);
                 }
             });
-
             return false;
-
         });
     });
-
-
-
 </script>
 
 

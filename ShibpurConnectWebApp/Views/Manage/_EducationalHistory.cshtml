@@ -1,35 +1,257 @@
 ﻿@model ShibpurConnectWebApp.Models.WebAPI.EducationalHistories
 
-    <form>
-        <div class="form-group">
-            <label for="oldpassword" class="sr-only">UniversityName</label>
-            <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-university"></i></span>
+<style type="text/css">
+     span#department {
+        font-size: 15px;
+    }
+     hr#dotted {
+        border-top: 1px dotted rgb(234, 231, 231);
+        color: #fff;
+        background-color: #fff;
+        margin: 8px 0 8px 0;
+    }
 
-                <input class="form-control universityname" data-val="true" data-val-required="The Password field is required." id="UniversityName" name="Password" placeholder="University Name" type="text" aria-required="true" required>
-            </div>
-        </div>
-       
+    hr {
+        border-top: 1px solid rgb(234, 231, 231);
+        margin: 8px 0 8px 0;
+    }
 
-        @Html.Partial("../PartialViews/_DepartmentDropdown")
+    #collegeName span, #department span {
+        font-size: 15px;
+    }
 
+    #collegeName {
+        font-weight: bold;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
         
-        <div class="form-group">
-            <label for="oldpassword" class="sr-only">Passout Year / Expected Passout Year</label>
-            <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        // get current user email from session
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }       
 
-                <input class="form-control GraduateYear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout Year / Expected Passout Year" type="text" aria-required="true" required>
-            </div>
+        var userInfo = $.parseJSON(userDetails);
+        profileEmail = userInfo.email;        
+
+        //save new education
+        $('#addNewEducation').on('click', function (e) {
+            e.preventDefault();
+            if ($(".educationform")[0].checkValidity()) {
+                saveEducationalHistory();
+            } else Command: toastr["error"]("All form fields are mandatory")
+
+        });
+
+        // expand the new education form on click of ' Add education' button
+        $("#newEducation").on('click', function (e) {
+            $("#neweducationdiv").slideToggle();
+        });
+    });
+
+
+    // method to save new educational history
+    function saveEducationalHistory() {
+
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }
+
+        var userInfo = $.parseJSON(userDetails);
+        var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#universityname').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + '}';
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('#addNewEducation > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#addNewEducation > span').text(' Saving...');
+        $.ajax({
+            url: SERVER + "EducationalHistories/PostEducationalHistory",
+            type: "POST",
+            data: educationalHistory,
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {
+                    // display success message
+                    Command: toastr["success"]("Saved educational data")
+                    // disply loading spinner
+                    $('#loadingeducations').show();
+                    // get the educational history from the server and update the div
+                    $.ajax({
+                        url: SERVER + "educationalhistories/geteducationalhistories",
+                        type: "GET",
+                        dataType: "json",
+                        data: { "userEmail": userInfo.email },
+                        contentType: "application/json",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                            //"Access-Control-Allow-Origin": "*"
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+                        },
+                        success: function (result) {
+                            if (!result) {
+                                return;
+                            }
+                            // toggle the 'Add education' button, so that the form will get close
+                            $("#neweducationdiv").slideToggle();
+                            // clear div content
+                            $('.educationbody').empty();
+                            // remove the loading class from save button
+                            $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
+                            $('#addNewEducation > span').text('Save');                          
+
+                            // iterate over all the educational histories
+                            jQuery.each(result, function (i, val) {
+                                ////$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + "</h4>, " + "<span id=\"department\">" + val.department + "</span><span id=\"year\">" + val.graduateYear + "</span></div><hr id='dotted'/>");
+                                //$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
+                                $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
+                                if (i != result.length - 1) {
+                                    $('.educationbody').append("<hr id='dotted'/>");
+                                }
+                            });
+
+                            // stop the spinner
+                            $('#loadingeducations').hide();
+                        },
+                        error: function()
+                        {
+                            $('#loadingeducations').hide();
+                        }
+                    });
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorMessage = "";
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+                jQuery.each(errorresponse.modelState, function (i, val) {
+                    errorMessage += "<li>" + val + "</li>";
+                });
+                // toastr notification
+                Command: toastr["error"]("<ul>" + errorMessage + "</ul>")
+              
+                // remove the loading class from save button
+                $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#addNewEducation > span').text('Save');
+            }
+        });        
+    }    
+
+    // get the existing education details, when user load this partial view
+    function loadEducations() {     
+
+        // disply loading spinner
+        $('#loadingeducations').show();
+
+        $.ajax({
+            url: SERVER + "educationalhistories/GetEducationalHistories",
+            type: "GET",
+            dataType: "json",
+            data: { "userEmail": profileEmail },
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function (result) {
+                if (!result) {
+                    return;
+                }
+
+                // clear div content
+                $('.educationbody').empty();
+
+                // iterate over all the educational histories
+                if (result != null) {
+                    jQuery.each(result, function (i, val) {
+                        $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
+                        if (i != result.length - 1) {
+                            $('.educationbody').append("<hr id='dotted'/>");
+                        }
+                    });
+                }
+
+                // hide the loading spinner
+                $('#loadingeducations').hide();
+            },           
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
+                Command: toastr["error"](errorText)
+
+                // hide the loading spinner
+                $('#loadingeducations').hide();
+            }
+        });
+    }
+
+    // if user click on the Cancel button in the newEducation div then collapse that div
+    function cancelSaveEducationalHistory() {
+        $("#neweducationdiv").slideToggle();
+    }
+</script>
+
+<!--div for loading spinner-->
+<div id="loadingeducations" class="center-block col-md-4" style="float: none;margin-left:300px;margin-top:150px; display:none; position:fixed;">
+    <i class="fa fa-spinner fa-spin fa-3x"></i>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading educationheading">Manage Education</div>
+    <div class="panel-body">
+        <div class="educationbody"></div>
+        <button class="btn btn-primary btn-xs" id="newEducation">Add Education</button><br /><br />       
+    </div>
+</div>
+
+ <!--Add new education div -->
+<div id="neweducationdiv" style="display:none">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form class="educationform top-buffer2 form-horizontal" method="post">
+                <div class="form-group">
+                    <label for="universityname" class="col-md-3 control-label">University name</label>
+                    <div class="col-md-9">
+                        <input class="form-control universityname" data-val="true" data-val-required="The Password field is required." id="universityname" name="UniversityName" placeholder="University Name" type="text" aria-required="true" required>
+                    </div>
+                </div>
+
+                @Html.Partial("../PartialViews/_DepartmentDropdown")
+
+                <div class="form-group">
+                    <label for="GraduateYear" class="col-md-3 control-label">Graduation year</label>
+                    <div class="col-md-9">
+                        <input class="form-control GraduateYear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout Year/Expected Passout Year" type="text" aria-required="true" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-3 col-md-10">
+                        <button type="submit" id="addNewEducation" class="btn btn-primary btn-sm">
+                            <i></i><span>Save</span>
+                        </button>
+                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEducationalHistory(); return false;" />
+                    </div>
+                    </div>
+            </form>
         </div>
+    </div>
+</div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">                
-                <button type="submit" id="addNewEducation" class="btn btn-primary btn-sm" onclick="saveEducationalHistory(); return false;">
-                    <i></i><span>Save</span> 
-                </button>
-                <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEducationalHistory(); return false;" />
-            </div>
-
-        </div>
-    </form>

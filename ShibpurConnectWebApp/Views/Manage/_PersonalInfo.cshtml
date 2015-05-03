@@ -1,66 +1,84 @@
 ﻿@model ShibpurConnectWebApp.Models.ApplicationUser
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-   
- 
-        @Html.ValidationSummary(true)
 
-        <div class="form-group">           
-            <div class="input-group">
-                @Html.EditorFor(model => model.FirstName)
-                @Html.ValidationMessageFor(model => model.FirstName)
+<script type="text/javascript">
+    $(document).ready(function () {
+        // prefill the values from local storage
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }       
+
+        var userInfo = $.parseJSON(userDetails);
+        $('#firstname').val(userInfo.firstName);
+        $('#lastname').val(userInfo.lastName);
+        $('#location').val(userInfo.location);
+        $('#aboutme').val(userInfo.aboutMe);
+
+        $('#submitpersonalinfo').on('click', function (e) {
+            e.preventDefault();
+            if ($(".personalinfoform")[0].checkValidity()) {
+                var firstName = $('#firstname').val();
+                var lastName = $('#lastname').val();
+                var location = $('#location').val();
+                var aboutme = $('#aboutme').val();               
+
+                $.ajax({
+                    url: "/api/profile/UpdateProfile?firstName=" + firstName + "&lastName=" + lastName + "&location=" + location + "&aboutMe=" + aboutme,
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (result) {
+                        // update userinfo in the local storage
+                        localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
+                        // display success message
+                        Command: toastr["success"]("Saved profile data")
+                    },
+                    error: function (err) {
+                        if (err.status == "401") {
+                            $('#personalinfofailuremessage').css('display', 'block');
+                            Command: toastr["error"]("Sorry, failed to save your data. Please login again and try")
+                        }
+                        else
+                            Command: toastr["error"](err.responseText)
+                    }
+                });
+            } else Command: toastr["error"]("All form fields are mandatory")
+
+        });
+    });
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading changepasswordheading">Personal Info</div>
+    <div class="panel-body changepasswordbody">
+        <form class="personalinfoform top-buffer2 col-md-offset-2 col-md-8" method="post">
+            <div class="form-group">
+                <label for="firstname" class="control-label">FirstName</label>
+                <input class="form-control firstname" data-val="true" data-val-required="The FirstName field is required." id="firstname" name="firstname" placeholder="First Name" type="text" aria-required="true" required>
             </div>
-        </div>
 
-        <div class="form-group">           
-            <div class="input-group">
-                @Html.EditorFor(model => model.LastName)
-                @Html.ValidationMessageFor(model => model.LastName)
+            <div class="form-group">
+                <label for="lastname" class="control-label">LastName</label>
+                <input class="form-control lastName" data-val="true" data-val-required="The LastName field is required." id="lastname" name="lastname" placeholder="Last Name" type="text" aria-required="true" required>
             </div>
-        </div>
 
-        <div class="form-group">         
-            <div class="input-group">
-                @Html.EditorFor(model => model.Location)
-                @Html.ValidationMessageFor(model => model.Location)
+            <div class="form-group">
+                <label for="location" class="control-label">Location</label>
+                <input class="form-control location" data-val="true" data-val-required="The Location field is required." id="location" name="location" placeholder="Current Location" type="text" aria-required="true" required>
             </div>
-        </div>
 
-        <div class="form-group">          
-            <div class="input-group">
-                @Html.EditorFor(model => model.ProfileType)
-                @Html.ValidationMessageFor(model => model.ProfileType)
+            <div class="form-group">
+                <label for="aboutme" class="control-label">AboutMe</label>
+                <textarea class="form-control" rows="5" id="aboutme" name="aboutme" placeholder="Abount me" aria-required="true" required></textarea>
             </div>
-        </div>
 
-        <div class="form-group">           
-            <div class="input-group">
-                @Html.EditorFor(model => model.RegisteredOn)
-                @Html.ValidationMessageFor(model => model.RegisteredOn)
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="submit" value="Update" id="submitpersonalinfo" class="btn btn-primary btn-sm" />
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">           
-            <div class="input-group">
-                @Html.EditorFor(model => model.ReputationCount)
-                @Html.ValidationMessageFor(model => model.ReputationCount)
-            </div>
-        </div>
-
-        <div class="form-group">          
-            <div class="input-group">
-                @Html.EditorFor(model => model.AboutMe)
-                @Html.ValidationMessageFor(model => model.AboutMe)
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 input-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-
-}
+        </form>
+    </div>
+</div>
 

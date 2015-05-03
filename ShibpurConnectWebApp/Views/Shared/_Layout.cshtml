@@ -9,10 +9,12 @@
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico">
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/content/themes/base/jquery")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/jquery.tokeninput.js"></script>
+    <script src="~/Scripts/shibpurconnect.js"></script>
 
     <script type="text/javascript">
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -23,8 +25,27 @@
                 $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
             }
 
+            // toast notification configuration
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "3000",
+                "hideDuration": "1000",
+                "timeOut": "8000",
+                "extendedTimeOut": "6000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
             // if userinfo is null then redirect to login page
-            if (typeof userInfo != "undefined") {             
+            if (typeof userInfo != "undefined") {
 
                 // get the new notification count and update notification center
                 jQuery.support.cors = true;
@@ -57,7 +78,7 @@
                     },
                     error: function (err) {
                          // send alert to admin team
-                      
+
                 }
                 });
 
@@ -89,7 +110,7 @@
                             {
                                 // if notification type is 'ask to answer' then execute this
                                 if (val.notificationType == 4)
-                                {                                   
+                                {
                                     var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead("+"'/Feed/Details/" + notificationContent.questionId + "','"+ val.notificationId +"')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?useremail=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
                                     $("#notificationsBody").append(notificationContentWithColor);
                                     $("#notificationsBody").append("<hr id='nomarginhr'/>");
@@ -129,12 +150,12 @@
                                     $("#notificationsBody").append(notificationContentWithColor);
                                     $("#notificationsBody").append("<hr id='nomarginhr'/>");
                                 }
-                            }                            
+                            }
                         });
 
                     },
                     error: function (err) {
-                        
+
                     }
                 });
 
@@ -216,7 +237,7 @@
                 url: SERVER + "notifications/MarkNotificationsAsVisited?notificationId=" + notificationId,
                 type: "POST",
                 dataType: "json",
-                contentType: "application/json",                
+                contentType: "application/json",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
                 },
@@ -230,164 +251,209 @@
     </script>
 
     <style type="text/css">
-        /*mark visited notification background as white */
-        .whitewell {
-            background: rgba(255,255,255,0.4);
-        }
+                /* positioning toast notification*/
+                #toast-container > div {
+                    opacity: .8;
+                    margin-top: 50px;
+                }
 
-        #lessbottommargin {
-            margin-bottom: 2px;
-            cursor: pointer;
-        }
-        #nomarginhr
-        {
-            margin-top:0px;
-            margin-bottom:0px;
-        }
+                /* Sticky footer styles
+        -------------------------------------------------- */
 
-        #notification_li {
-            position: relative;
-        }
+                html,
+                body {
+                    height: 100%;
+                    /* The html and body elements cannot have any padding or margin. */
+                }
 
-        #notificationContainer {
-            background-color: #fff;
-            border: 1px solid rgba(100, 100, 100, .4);
-            -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
-            overflow: visible;
-            position: absolute;
-            top: 50px;
-            margin-left: -176px;
-            width: 400px;
-            z-index: -1;
-            display: none;
-            /*Enable this after jquery implementation;*/
-        }
+                /* Wrapper for page content to push down footer */
+                #wrap {
+                    min-height: 100%;
+                    height: auto !important;
+                    height: 100%;
+                    /* Negative indent footer by its height */
+                    margin: 0 auto -60px;
+                    /* Pad bottom by footer height */
+                    padding: 0 0 60px;
+                }
 
-            /*Popup Arrow*/
-            #notificationContainer:before {
-                content: '';
-                display: block;
-                position: absolute;
-                width: 0;
-                height: 0;
-                color: transparent;
-                border: 10px solid black;
-                border-color: transparent transparent white;
-                margin-top: -20px;
-                margin-left: 188px;
-            }
+                /* Set the fixed height of the footer here */
+                #footer {
+                    height: 60px;
+                    background-color: #f5f5f5;
+                }
 
-        #notificationTitle {
-            font-weight: bold;
-            padding: 8px;
-            font-size: 13px;
-            background-color: #ffffff;
-            position: fixed;
-            z-index: 1000;
-            width: 384px;
-            border-bottom: 1px solid #dddddd;
-        }
+                .container .credit {
+                    margin: 20px 0;
+                }
 
-        #notificationsBody {
-            padding: 33px 0px 0px 0px !important;
-            min-height: 300px;
-            max-height: 350px;
-            overflow: auto;
-            margin-top: 0px;
-        }
+                #footer > .container {
+                    padding-left: 15px;
+                    padding-right: 15px;
+                }
 
-        #notificationFooter {
-            background-color: #e9eaed;
-            text-align: center;
-            font-weight: bold;
-            padding: 8px;
-            font-size: 12px;
-            border-top: 1px solid #dddddd;
-        }
+                /*mark visited notification background as white */
+                .whitewell {
+                    background: rgba(255,255,255,0.4);
+                }
 
-        #notification_count {
-            padding: 3px 7px 3px 7px;
-            background: #cc0000;
-            color: #ffffff;
-            font-weight: bold;
-            margin-left: 77px;
-            border-radius: 9px;
-            -moz-border-radius: 9px;
-            -webkit-border-radius: 9px;
-            position: absolute;
-            font-size: 11px;
-        }
+                #lessbottommargin {
+                    margin-bottom: 2px;
+                    cursor: pointer;
+                }
+
+                #nomarginhr {
+                    margin-top: 0px;
+                    margin-bottom: 0px;
+                }
+
+                #notification_li {
+                    position: relative;
+                }
+
+                #notificationContainer {
+                    background-color: #fff;
+                    border: 1px solid rgba(100, 100, 100, .4);
+                    -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+                    overflow: visible;
+                    position: absolute;
+                    top: 50px;
+                    margin-left: -176px;
+                    width: 400px;
+                    z-index: -1;
+                    display: none;
+                    /*Enable this after jquery implementation;*/
+                }
+
+                    /*Popup Arrow*/
+                    #notificationContainer:before {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        width: 0;
+                        height: 0;
+                        color: transparent;
+                        border: 10px solid black;
+                        border-color: transparent transparent white;
+                        margin-top: -20px;
+                        margin-left: 188px;
+                    }
+
+                #notificationTitle {
+                    font-weight: bold;
+                    padding: 8px;
+                    font-size: 13px;
+                    background-color: #ffffff;
+                    position: fixed;
+                    z-index: 1000;
+                    width: 384px;
+                    border-bottom: 1px solid #dddddd;
+                }
+
+                #notificationsBody {
+                    padding: 33px 0px 0px 0px !important;
+                    min-height: 300px;
+                    max-height: 350px;
+                    overflow: auto;
+                    margin-top: 0px;
+                }
+
+                #notificationFooter {
+                    background-color: #e9eaed;
+                    text-align: center;
+                    font-weight: bold;
+                    padding: 8px;
+                    font-size: 12px;
+                    border-top: 1px solid #dddddd;
+                }
+
+                #notification_count {
+                    padding: 3px 7px 3px 7px;
+                    background: #cc0000;
+                    color: #ffffff;
+                    font-weight: bold;
+                    margin-left: 77px;
+                    border-radius: 9px;
+                    -moz-border-radius: 9px;
+                    -webkit-border-radius: 9px;
+                    position: absolute;
+                    font-size: 11px;
+                }
     </style>
 </head>
 <body>
-    <div class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("ShibpurConnect", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        @*<li>@Html.ActionLink("Profile", "Profile", "Account")</li>*@
+    <div id="wrap">
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("ShibpurConnect", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @*<li>@Html.ActionLink("Profile", "Profile", "Account")</li>*@
 
                         <!-- Notification center-->
-                        <li id="notification_li">
-                            <span id="notification_count" style="display:none;"></span>
-                            <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
+                            <li id="notification_li">
+                                <span id="notification_count" style="display:none;"></span>
+                                <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
 
-                            <div id="notificationContainer">
-                                <div id="notificationTitle">Notifications</div>
-                                <div id="notificationsBody" class="notifications"></div>
-                                <div id="notificationFooter"><a href="/notifications">See All</a></div>
-                            </div>
-                        </li>
-                    }
-                    <li>@Html.ActionLink("Questions", "Index", "Feed")</li>
-                    <li>@Html.ActionLink("Users", "Index", "Users")</li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li>
-                            <a href="/Feed/StartDiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
-                        </li>
-                    }
-                </ul>               
+                                <div id="notificationContainer">
+                                    <div id="notificationTitle">Notifications</div>
+                                    <div id="notificationsBody" class="notifications"></div>
+                                    <div id="notificationFooter"><a href="/notifications">See All</a></div>
+                                </div>
+                            </li>
+                        }
+                        <li>@Html.ActionLink("Questions", "Index", "Feed")</li>
+                        <li>@Html.ActionLink("Users", "Index", "Users")</li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li>
+                                <a href="/Feed/StartDiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
+                            </li>
+                        }
+                    </ul>
 
-                @Html.Partial("_LoginPartial")
+                    @Html.Partial("_LoginPartial")
+                </div>
             </div>
         </div>
+        @*<div class="navbar">
+                <div class="container">
+                    <div class="navbar-inner">
+                        <ul class="nav navbar-nav">
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>*@
+        <div class="container" style="margin-top:20px;">
+            @RenderSection("emailconfirmalert", required: false)
+        </div>
+
+        @RenderSection("jambo", required: false)
+        <div class="container body-content">
+            @RenderBody()
+            @*<footer>
+                    <p>&copy; @DateTime.Now.Year - ShibpurConnect</p>
+                </footer>*@
+        </div>
+        @RenderSection("scripts", required: false)
     </div>
-    @*<div class="navbar">
+    <div id="footer">
         <div class="container">
-            <div class="navbar-inner">
-                <ul class="nav navbar-nav">
-                    <li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>
-                </ul>
-            </div>
+            <p class="text-muted credit">&copy; @DateTime.Now.Year - ShibpurConnect</p>
         </div>
-    </div>*@
-    <div class="container" style="margin-top:20px;">
-        @RenderSection("emailconfirmalert", required: false)
     </div>
-
-    @RenderSection("jambo", required: false)
-    <div class="container body-content">
-        @RenderBody()
-        <footer>
-            <p>&copy; @DateTime.Now.Year - ShibpurConnect</p>
-        </footer>
-    </div>
-    <script src="~/Scripts/shibpurconnect.js"></script>
-
-    @RenderSection("scripts", required: false)
-
 </body>
 </html>

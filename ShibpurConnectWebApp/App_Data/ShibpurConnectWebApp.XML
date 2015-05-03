@@ -712,6 +712,7 @@
             Use this model for populating the user profile page with educational history and employment history
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfile(System.String)" -->
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfileByUserId(System.String)">
             <summary>
             API to get user info using user id
@@ -732,6 +733,12 @@
             <param name="userEmail">user email</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UpdateProfile(System.String,System.String,System.String,System.String)">
+            <summary>
+            API to update user personal profile info
+            </summary>
+            <param name="userInfo">CustomUserInfo object</param>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionsDTO">
             <summary>
             We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later
@@ -743,6 +750,13 @@
             </summary>
             <param name="userId"></param>
             <param name="passwordViewModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.UpdateUser(ShibpurConnectWebApp.Models.ApplicationUser)">
+            <summary>
+            Method to update a user profile data
+            </summary>
+            <param name="applicationUser">ApplicationUser object</param>
             <returns></returns>
         </member>
     </members>

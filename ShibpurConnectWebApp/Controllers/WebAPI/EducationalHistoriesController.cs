@@ -55,11 +55,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (userInfo == null)
                 return NotFound();
 
-            var educationalHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userInfo.UserId).ToList();
-            if (educationalHistory.Count == 0)
-            {
-                return null;
-            }
+            var educationalHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userInfo.UserId).ToList();           
 
             return Ok(educationalHistory);
         }

@@ -5,26 +5,32 @@
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 
-<style type="text/css">
-    body {
-        margin-top: 50px;
+<style type="text/css">   
+
+    #error-container {
+        margin-top: 10px;
+        position: fixed;
+    }
+
+    .top-buffer {
+        margin-top: 30px;
+    }
+
+    .top-buffer2 {
+        margin-top: 15px;
     }
 
     .glyphicon {
         margin-right: 10px;
     }
 
-    .panel-body {
-        padding: 0px;
+    .panel-body table tr td {
+        padding-left: 15px;
     }
 
-        .panel-body table tr td {
-            padding-left: 15px;
-        }
-
-        .panel-body .table {
-            margin-bottom: 0px;
-        }
+    .panel-body .table {
+        margin-bottom: 0px;
+    }
 </style>
 <script type="text/javascript">
     function DisplayDiv(divName) {
@@ -34,15 +40,14 @@
 </script>
 
 <div class="container">
-    <div class="row">
+    <div class="row top-buffer">
         <div class="col-sm-3 col-md-3">
-            <div class="panel-group" id="accordion">   
+            <div class="panel-group" id="accordion">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                <span class="glyphicon glyphicon-user">
-                                </span>Profile
+                                Profile
                             </a>
                         </h4>
                     </div>
@@ -56,24 +61,23 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="#" onclick="DisplayDiv('educationalbackground')">Education</a>
+                                        <a href="#" onclick="DisplayDiv('educationalbackground');loadEducations();">Manage Education</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="#">Experience</a>
+                                        <a href="#" onclick="DisplayDiv('experiencebackground');loadEmployments();">Manage Experience</a>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
-                </div>          
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                <span class="glyphicon glyphicon-user">
-                                </span>Account
+                                Account
                             </a>
                         </h4>
                     </div>
@@ -82,9 +86,9 @@
                             <table class="table">
                                 <tr>
                                     <td>
-                                        <a href="#" onclick="DisplayDiv('changepassword')">Change Password</a>
+                                        <a href="#" onclick="DisplayDiv('changepassword');">Change Password</a>
                                     </td>
-                                </tr>                               
+                                </tr>
                                 <tr>
                                     <td>
                                         <span class="glyphicon glyphicon-trash text-danger"></span><a href="#" class="text-danger">
@@ -99,22 +103,24 @@
             </div>
         </div>
         <div class="col-sm-9 col-md-9">
-            <div class="panel panel-default">
-                <div class="panel-body bodycontent">
-                    <div class="personalinfo col-md-6 col-md-offset-2">
-                        @{ Html.RenderPartial("_PersonalInfo"); }
-                    </div>
-                    <div class="changepassword col-md-6 col-md-offset-2" style="display:none;">
-                        @{ Html.RenderPartial("_ChangePassword"); }
-                    </div>
-                    <div class="educationalbackground col-md-6 col-md-offset-2" style="display:none;">
-                        @{ Html.RenderPartial("_EducationalHistory"); }
-                    </div>
+            <div class="bodycontent">
+                <div class="personalinfo">
+                    @{ Html.RenderPartial("_PersonalInfo"); }
+                </div>
+                <div class="changepassword" style="display:none;">
+                    @{ Html.RenderPartial("_ChangePassword"); }
+                </div>
+                <div class="educationalbackground" style="display:none;">
+                    @{ Html.RenderPartial("_EducationalHistory"); }
+                </div>
+                <div class="experiencebackground" style="display:none;">
+                    @{ Html.RenderPartial("_EmploymentHistory"); }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 

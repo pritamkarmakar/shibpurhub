@@ -128,6 +128,18 @@ namespace ShibpurConnectWebApp.Providers
             return user;
         }
 
+        /// <summary>
+        /// Method to update a user profile data
+        /// </summary>
+        /// <param name="applicationUser">ApplicationUser object</param>
+        /// <returns></returns>
+        public async Task<IdentityResult> UpdateUser(ApplicationUser applicationUser)
+        {
+            var result = await _userManager.UpdateAsync(applicationUser);
+
+            return result;
+        }
+
         public ApplicationUser UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
         {
             ApplicationUser user = _userManager.FindById(userId);

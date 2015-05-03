@@ -19,19 +19,19 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [BsonId]
         public ObjectId Id { get; set; }
 
-        [Required]
-        [DataMember]
+        [Required (ErrorMessage = "Company Name field is mandatory")]
+        [DataMember]        
         public string CompanyName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Job Title field is mandatory")]
         [DataMember]
         public string Title { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Location field is mandatory")]
         [DataMember]
         public string Location { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Employment start date field is mandatory")]
         [DataMember]
         public DateTime? From { get; set; }
 
