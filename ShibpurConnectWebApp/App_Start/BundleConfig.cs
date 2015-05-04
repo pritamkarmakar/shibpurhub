@@ -22,6 +22,7 @@ namespace ShibpurConnectWebApp
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/date.js",
                       "~/Scripts/toastr.js",
+                      "~/Scripts/quill.min.js",
                       "~/Scripts/jquery-ui-1.11.4.min.js",
                       "~/Scripts/respond.js"));
 
@@ -51,7 +52,8 @@ namespace ShibpurConnectWebApp
            "~/Content/themes/base/tabs.css",
            "~/Content/themes/base/datepicker.css",
            "~/Content/themes/base/progressbar.css",
-           "~/Content/themes/base/theme.css"));
+           "~/Content/themes/base/theme.css",
+           "~/Content/quill.snow.css"));
 
             // Set EnableOptimizations to false for debugging. For more information,
             // visit http://go.microsoft.com/fwlink/?LinkId=301862

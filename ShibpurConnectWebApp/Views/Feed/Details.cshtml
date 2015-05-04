@@ -7,14 +7,7 @@
     ViewBag.Title = "Feed Details";
 }
 
-<style type="text/css">
-    /*override css for the answer rich text eitor*/
-    .editor-container {
-        height: 320px !important;
-    }
-    .ql-image-tooltip{
-        top:20px !important;
-    }
+<style type="text/css">    
     /*wrap the question body*/
     .detail {
         word-wrap: break-word;
@@ -322,16 +315,6 @@
     }
 </style>
 
-<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/wysihtml5x/dist/wysihtml5x-toolbar.min.js"></script>
-<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/handlebars/handlebars.runtime.min.js"></script>
-<script src="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.js"></script>
-<script src="~/Scripts/quill.min.js"></script>
-
-<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/components/components-font-awesome/css/font-awesome.min.css" />
-<link rel="stylesheet" type="text/css" href="http://waxolunist.github.io/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.css" />
-@*<link rel="stylesheet" type="text/css" href="~/Content/quill.base.css" />*@
-<link rel="stylesheet" type="text/css" href="~/Content/quill.snow.css" />
-
 <script type="text/javascript">
     var questionID = '';
     var askedBy = '';
@@ -381,7 +364,7 @@
                 $('#details').show();
                 $('.header h2').text(question.title);
                 $('.header h2').append("<hr/>");
-                $('.description').text(question.description);
+                $('.description').html(question.description.replace("<img", "<img style='max-width:730px;'"));
 
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
@@ -722,10 +705,8 @@
             $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
             $('.btn-submit-answer > span').text('Submit Answer');
 
-            // parse the error json   
-            $('#errormessage').show();
-            $('#errormessage').append("<p>Answer should be more than 30 characters long</p>");
-
+            // toastr error notification
+            Command: toastr["error"]("Answer should be more than 30 characters long")           
             return;
         }
 
@@ -791,7 +772,8 @@
 
                 var answerBlock = $('#answerlist li.answer.hide').clone();
                 $(answerBlock).removeClass('hide');
-                $(answerBlock).find('.text').html(result.answerText);
+                // add fixed width if user add any image as part of the answer
+                $(answerBlock).find('.text').html(result.answerText.replace("<img", "<img style='max-width:530px;'"));
                 $(answerBlock).find('.userName').text(result.displayName);
                 $(answerBlock).find('.date').text(dateString);
                 $(answerBlock).find('.upvote-span').addClass('disabled');
@@ -1038,7 +1020,8 @@
 
     function createAnswerHtml(answerBlock, answer, userEmail) {
         $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
-        $(answerBlock).find('.text').html(answer.answerText);
+        // set a max width for any image that is part of the answer
+        $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'"));
         $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
         if (answer.upvotedBy && answer.upvotedBy.indexOf(userEmail) >= 0) {
             $(answerBlock).find('.upvote-span').addClass('disabled');
@@ -1268,7 +1251,7 @@
         <div class="row">
             <div id="details" style="display:none">
                 <div class="col-md-10">
-                    <div class="description col-md-12">
+                    <div class="description col-md-12">                        
                     </div>
                     <div class="tags col-md-10">
                     </div>

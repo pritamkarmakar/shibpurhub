@@ -104,6 +104,7 @@ function scAjax(options)
             //TO-DO: show a user friendly message
             //return;
         //}
+        var token = $.parseJSON(localStorage.getItem("TOKEN"));
         var server = "/api/"
         var ajaxOptions = {
             url: server + options.url,
@@ -116,7 +117,7 @@ function scAjax(options)
             },
             beforeSend: function (xhr) {
                 //TO-DO: Check new token mechanism
-                xhr.setRequestHeader("Authorization", "Bearer Io3jW1JzoT7LZeyqQxHTs0aA2panG9v41h-YeXpyJq8aiK9gbywJUX3EF2SoIcatHFEg63aao3Gyuuu-tDGP90FCytNkAQymb9u6wL-kSpcSuumLM1xDDDrq1sUfq82txPOozNqZIq0PcHLtnFEy0uaivwGL02mxL9zt_RWgR9D85RxKcXA1aKpgdenC0xz5douIzE3J_QahQmnvXAiSpDkHMEwiF3T4wiVxL8xrF7rR77dfo29ym2C0yp_K5rUr");
+                xhr.setRequestHeader("Authorization", "Bearer " + token.access_token);
             },
             success: function (result) {
                 if(options.success && typeof options.success == "function")

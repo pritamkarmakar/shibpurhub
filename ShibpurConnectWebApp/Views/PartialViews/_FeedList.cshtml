@@ -207,7 +207,9 @@
             //$(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
             $(thread).find('div.detail h3 a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
             $(thread).find('div.detail h3 a').attr('class', 'question-hyperlink');
-            $(thread).find('div.detail .excerpt').text(question.description.substring(0,250));
+            // extract only text from the question description, if user has image in the question description we will be able to remove those
+            var tempdescription = '<p>' + question.description + '</p>';
+            $(thread).find('div.detail .excerpt').append($(tempdescription).text().substring(0, 250));
             $(thread).find('div.stat span.date').text(dateString);
             updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));
             if (question.viewCount > 1)

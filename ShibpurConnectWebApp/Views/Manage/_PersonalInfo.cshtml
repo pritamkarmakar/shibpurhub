@@ -23,11 +23,15 @@
                 var lastName = $('#lastname').val();
                 var location = $('#location').val();
                 var aboutme = $('#aboutme').val();               
-
+                // read the token from local storage
+                var token = $.parseJSON(localStorage.getItem("TOKEN"));
                 $.ajax({
                     url: "/api/profile/UpdateProfile?firstName=" + firstName + "&lastName=" + lastName + "&location=" + location + "&aboutMe=" + aboutme,
                     type: "POST",
                     contentType: 'application/json; charset=utf-8',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + token.access_token);
+                    },
                     success: function (result) {
                         // update userinfo in the local storage
                         localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));

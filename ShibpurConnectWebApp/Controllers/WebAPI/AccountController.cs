@@ -142,7 +142,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }     
         
 
-            return Ok();
+            return Ok("{'status': 'successfullychangedpassword'}");
         }
 
         protected override void Dispose(bool disposing)

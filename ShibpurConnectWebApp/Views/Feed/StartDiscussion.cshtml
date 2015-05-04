@@ -9,6 +9,24 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // rich text editor for question description
+        advancedEditor = new Quill('.text-wrapper .editor-container', {
+            modules: {
+                'authorship': {
+                    authorId: 'advanced',
+                    enabled: true
+                },
+                'toolbar': {
+                    container: '.text-wrapper .toolbar-container'
+                },
+                'link-tooltip': true,
+                'image-tooltip': true,
+                'multi-cursor': true
+            },
+            styles: false,
+            theme: 'snow'
+        });
+
         jQuery.support.cors = true;
         var SERVER = "/api/";
         //$('#select_categories').tokenInput("/api/categories/GetCategories");
@@ -28,119 +46,114 @@
             }
         });
 
-        $('#btn_Save').click(function () {
-            // hide the error div
-            $('#errormessage').empty();
-            $('#errormessage').hide();
-
-            // disable the save button
-            $('#btn_Save').prop('disabled', true);
-
-            // add spinner animation in the save button and change the text to 'Saving..'
-            $('#btn_Save > i').addClass('fa fa-circle-o-notch fa-spin');
-            $('#btn_Save > span').text(' Saving...');
-
-            var question = $('#txt_question').val();
-            var description = $('#txtarea_description').val();
-            var categories = $('#select_categories').val();
-            if (!question || !description || !categories) {
-                Command: toastr["error"]("All form fields are mandatory")
-                // enable the button 
-                $('#btn_Save').prop('disabled', false);
-                // remove the loading class from save button
-                $('#btn_Save > i').removeClass('fa fa-circle-o-notch fa-spin');
-                $('#btn_Save > span').text('Save');
-                return;
-            }
-
-            var userDetails = localStorage.getItem("SC_Session_UserDetails");
-            if (!userDetails) {
-                //TO-DO: Handle if userdetail is not available in Session Storage
-                return;
-            }
-
-            var userInfo = $.parseJSON(userDetails);
-
-            var arrCategories = categories.split(',');
-            //$.each(categories.split(','), function () {
-            //    arrCategories.push($(this).text());
-            //});
-
-            var userID = $('#hdnUserID').val();
-            var data = {
-                "Title": question,
-                "Description": description,
-                "HasAnswered": 0,
-                "UserEmail": userInfo.email,
-                "DisplayName": userInfo.firstName + " " + userInfo.lastName,
-                "Categories": arrCategories,
-                "UserProfileImage": userInfo.profileImageURL
-            };
-            //debugger;
-
-
-            scAjax({
-                "url": "questions/PostQuestions",
-                "type": "POST",
-                "data": JSON.stringify(data, null, 2),
-                "success": function (result) {
-                    if (!result) {
-                        return;
-                    }
-
-                    document.location.href = "/Feed/Details/" + result.questionId;
-                    logActivity(1, result.questionId);
-                },
-                "error": function (err) {
-                    var errorMessage = "";
-                    // parse the error json
-                    var errorresponse = jQuery.parseJSON(err.responseText);
-                    jQuery.each(errorresponse.modelState, function (i, val) {
-                        errorMessage += "<li>" + val + "</li>";
-                    });
-
-                    Command: toastr["error"]("<ul>" + errorMessage + "</ul>")
-                    // parse the error json
-                    var errorresponse = jQuery.parseJSON(err.responseText);
-
-                    // enable the button 
-                    $('#btn_Save').prop('disabled', false);
+        $('#btn_Save_Question').on('click', function (e) {
+            e.preventDefault();
+            if ($("#newquestionform")[0].checkValidity()) {
+                // validate question description rich text is not empty and has minimum no of characters
+                var questiondescription = advancedEditor.getHTML();
+                // verify if question description is empty
+                if (!questiondescription || $.trim(advancedEditor.getText()) == "") {
+                    // enable the button
+                    $('#btn_Save_Question').prop('disabled', false);
 
                     // remove the loading class from save button
-                    $('#btn_Save > i').removeClass('fa fa-circle-o-notch fa-spin');
-                    $('#btn_Save > span').text('Save');
+                    $('#btn_Save_Question > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#btn_Save_Question > span').text('Save');
 
-                    //$('#errormessage').show();
-                    //if (errorresponse.modelState['question.Title'] != null)
-                    //    $('#errormessage').append("<p>"+errorresponse.modelState['question.Title'][0] + "</p>");
-                    //if (errorresponse.modelState['question.Description'] != null)
-                    //    $('#errormessage').append(errorresponse.modelState['question.Description'][0]);
-                    //$('#errormessage').append(errorresponse.modelState['question.Description'][0] + "<br/>" + errorresponse.modelState['question.Title'][0]);
-                    //alert(err.responseText);
+                    // show toast error
+                    Command: toastr["error"]("Question description can't be empty")
+                    return;
                 }
-            });
-            return false;
+                // verify whether length of question description is less than 40
+                if ($.trim(advancedEditor.getText()).length < 40) {
+                    // enable the button
+                    $('#btn_Save_Question').prop('disabled', false);
+
+                    // remove the loading class from save button
+                    $('#btn_Save_Question > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#btn_Save_Question > span').text('Save');
+
+                    // show toast error
+                    Command: toastr["error"]("Question description should be more than 40 characters long")
+                    return;
+                }
+                // disable the save button
+                $('#btn_Save_Question').prop('disabled', true);
+                // add spinner animation in the save button and change the text to 'Saving..'
+                $('#btn_Save_Question > i').addClass('fa fa-circle-o-notch fa-spin');
+                $('#btn_Save_Question > span').text(' Saving...');
+
+                var question = $('#txt_question').val();
+                var categories = $('#select_categories').val();               
+
+                var userDetails = localStorage.getItem("SC_Session_UserDetails");
+                if (!userDetails) {
+                    //TO-DO: Handle if userdetail is not available in Session Storage
+                    return;
+                }
+                var userInfo = $.parseJSON(userDetails);
+                var arrCategories = categories.split(',');              
+
+
+                var userID = $('#hdnUserID').val();
+                var data = {
+                    "Title": question,
+                    "Description": questiondescription,
+                    "HasAnswered": 0,
+                    "UserEmail": userInfo.email,
+                    "DisplayName": userInfo.firstName + " " + userInfo.lastName,
+                    "Categories": arrCategories,
+                    "UserProfileImage": userInfo.profileImageURL
+                };
+
+                scAjax({
+                    "url": "questions/PostQuestions",
+                    "type": "POST",
+                    "data": JSON.stringify(data, null, 2),
+                    "success": function (result) {
+                        if (!result) {
+                            return;
+                        }
+
+                        document.location.href = "/Feed/Details/" + result.questionId;
+                        logActivity(1, result.questionId);
+                    },
+                    "error": function (err) {
+                        var errorMessage = "";
+                        // parse the error json
+                        var errorresponse = jQuery.parseJSON(err.responseText);
+                        jQuery.each(errorresponse.modelState, function (i, val) {
+                            errorMessage += "<li>" + val + "</li>";
+                        });
+
+                        Command: toastr["error"]("<ul>" + errorMessage + "</ul>")
+                        // parse the error json
+                        var errorresponse = jQuery.parseJSON(err.responseText);
+
+                        // enable the button
+                        $('#btn_Save_Question').prop('disabled', false);
+
+                        // remove the loading class from save button
+                        $('#btn_Save_Question > i').removeClass('fa fa-circle-o-notch fa-spin');
+                        $('#btn_Save_Question > span').text('Save');                      
+                    }
+                });
+                return false;
+            } else Command: toastr["error"]("All fields are mandatory")
         });
     });
 </script>
 
 
 
-<h4>Details</h4>
+<h3>Question details</h3>
 <hr />
 <div class="panel-body">
-    
-    <form action="#" class="form-horizontal" method="post" role="form">
-        <div class="row">
-            @*<div class="col-md-2"></div>*@
-            <div class="alert alert-danger alert-dismissible col-md-6 col-md-offset-2" role="alert" style="display:none" id="errormessage">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <strong>Error!</strong>
-            </div>
-            </div>
+
+    <form action="#" class="form-horizontal" method="post" role="form" id="newquestionform">
         <div class="form-group">
-            <label class="control-label col-md-2" for="Question">Question</label>
-            <div class="col-md-6">
+            <label class="control-label col-md-3" for="Question">Question title</label>
+            <div class="col-md-9">
                 <div class="form-group">
                     <div class="col-md-12">
                         <input class="form-control" id="txt_question" placeholder="What is your question?" type="text" required>
@@ -149,14 +162,123 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2" for="DetailedText">Description</label>
-            <div class="col-md-6">
-                <textarea class="form-control" id="txtarea_description" placeholder="Description" rows="3" required></textarea>
+            <label class="control-label col-md-3" for="DetailedText">Question description</label>
+            <div class="col-md-9">
+                @*<textarea class="form-control" id="txtarea_description" placeholder="Please provide details about your question" rows="3" required></textarea>*@
+                <div class="wirte-answer col-md-12" style="margin-top:40px;">
+                    @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
+                    <div class="text-wrapper col-md-12">
+                        <div class="toolbar-container">
+                            <span class="ql-format-group">
+                                <select title="Size" class="ql-size">
+                                    <option value="10px">Small</option>
+                                    <option value="13px" selected>Normal</option>
+                                    <option value="18px">Large</option>
+                                    <option value="32px">Huge</option>
+                                </select>
+                            </span>
+                            <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
+                                <select title="Text Color" class="ql-color">
+                                    <option value="rgb(0, 0, 0)" selected></option>
+                                    <option value="rgb(230, 0, 0)"></option>
+                                    <option value="rgb(255, 153, 0)"></option>
+                                    <option value="rgb(255, 255, 0)"></option>
+                                    <option value="rgb(0, 138, 0)"></option>
+                                    <option value="rgb(0, 102, 204)"></option>
+                                    <option value="rgb(153, 51, 255)"></option>
+                                    <option value="rgb(255, 255, 255)"></option>
+                                    <option value="rgb(250, 204, 204)"></option>
+                                    <option value="rgb(255, 235, 204)"></option>
+                                    <option value="rgb(255, 255, 204)"></option>
+                                    <option value="rgb(204, 232, 204)"></option>
+                                    <option value="rgb(204, 224, 245)"></option>
+                                    <option value="rgb(235, 214, 255)"></option>
+                                    <option value="rgb(187, 187, 187)"></option>
+                                    <option value="rgb(240, 102, 102)"></option>
+                                    <option value="rgb(255, 194, 102)"></option>
+                                    <option value="rgb(255, 255, 102)"></option>
+                                    <option value="rgb(102, 185, 102)"></option>
+                                    <option value="rgb(102, 163, 224)"></option>
+                                    <option value="rgb(194, 133, 255)"></option>
+                                    <option value="rgb(136, 136, 136)"></option>
+                                    <option value="rgb(161, 0, 0)"></option>
+                                    <option value="rgb(178, 107, 0)"></option>
+                                    <option value="rgb(178, 178, 0)"></option>
+                                    <option value="rgb(0, 97, 0)"></option>
+                                    <option value="rgb(0, 71, 178)"></option>
+                                    <option value="rgb(107, 36, 178)"></option>
+                                    <option value="rgb(68, 68, 68)"></option>
+                                    <option value="rgb(92, 0, 0)"></option>
+                                    <option value="rgb(102, 61, 0)"></option>
+                                    <option value="rgb(102, 102, 0)"></option>
+                                    <option value="rgb(0, 55, 0)"></option>
+                                    <option value="rgb(0, 41, 102)"></option>
+                                    <option value="rgb(61, 20, 102)"></option>
+                                </select><span class="ql-format-separator"></span>
+                                <select title="Background Color" class="ql-background">
+                                    <option value="rgb(0, 0, 0)"></option>
+                                    <option value="rgb(230, 0, 0)"></option>
+                                    <option value="rgb(255, 153, 0)"></option>
+                                    <option value="rgb(255, 255, 0)"></option>
+                                    <option value="rgb(0, 138, 0)"></option>
+                                    <option value="rgb(0, 102, 204)"></option>
+                                    <option value="rgb(153, 51, 255)"></option>
+                                    <option value="rgb(255, 255, 255)" selected></option>
+                                    <option value="rgb(250, 204, 204)"></option>
+                                    <option value="rgb(255, 235, 204)"></option>
+                                    <option value="rgb(255, 255, 204)"></option>
+                                    <option value="rgb(204, 232, 204)"></option>
+                                    <option value="rgb(204, 224, 245)"></option>
+                                    <option value="rgb(235, 214, 255)"></option>
+                                    <option value="rgb(187, 187, 187)"></option>
+                                    <option value="rgb(240, 102, 102)"></option>
+                                    <option value="rgb(255, 194, 102)"></option>
+                                    <option value="rgb(255, 255, 102)"></option>
+                                    <option value="rgb(102, 185, 102)"></option>
+                                    <option value="rgb(102, 163, 224)"></option>
+                                    <option value="rgb(194, 133, 255)"></option>
+                                    <option value="rgb(136, 136, 136)"></option>
+                                    <option value="rgb(161, 0, 0)"></option>
+                                    <option value="rgb(178, 107, 0)"></option>
+                                    <option value="rgb(178, 178, 0)"></option>
+                                    <option value="rgb(0, 97, 0)"></option>
+                                    <option value="rgb(0, 71, 178)"></option>
+                                    <option value="rgb(107, 36, 178)"></option>
+                                    <option value="rgb(68, 68, 68)"></option>
+                                    <option value="rgb(92, 0, 0)"></option>
+                                    <option value="rgb(102, 61, 0)"></option>
+                                    <option value="rgb(102, 102, 0)"></option>
+                                    <option value="rgb(0, 55, 0)"></option>
+                                    <option value="rgb(0, 41, 102)"></option>
+                                    <option value="rgb(61, 20, 102)"></option>
+                                </select><span class="ql-format-separator"></span>
+
+                            </span><span class="ql-format-group">
+                                <span title="List" class="ql-format-button ql-list"></span>
+                                <span class="ql-format-separator"></span>
+                                <span title="Bullet" class="ql-format-button ql-bullet"></span>
+                                <span class="ql-format-separator"></span>
+                                <select title="Text Alignment" class="ql-align">
+                                    <option value="left" selected></option>
+                                    <option value="center"></option>
+                                    <option value="right"></option>
+                                    <option value="justify"></option>
+                                </select>
+                            </span>
+                            <span class="ql-format-group">
+                                <span title="Link" class="ql-format-button ql-link"></span>
+                                <span class="ql-format-separator"></span>
+                                <span title="Image" class="ql-format-button ql-image"></span>
+                            </span>
+                        </div>
+                        <div class="editor-container"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2" for="Categories">Categories</label>
-            <div class="col-md-6">
+            <label class="control-label col-md-3" for="Categories">Question categories</label>
+            <div class="col-md-9">
                 <div class="form-group">
                     <div class="col-md-12">
                         <input class="form-control" id="select_categories" placeholder="Add categories (,) separeted" type="text" required>
@@ -164,23 +286,9 @@
                 </div>
             </div>
         </div>
-        @*<div class="form-group">
-            <label class="col-md-2 control-label" for="Categories">Categories</label>
-            <div class="col-md-6">
-
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <select class="form-control" id="select_categories" multiple></select>
-                    </div>
-                </div>
-                </div>
-            </div>*@
-
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                @*<input type="button" class="btn btn-primary" id="btn_Save" value="Save"><i></i><span>Save</span> </input>*@
-
-                <button type="submit" id="btn_Save" class="btn btn-primary">
+            <div class="col-md-offset-3 col-md-10">
+                <button type="submit" id="btn_Save_Question" class="btn btn-primary">
                     <i></i><span>Save</span>
                 </button>
             </div>
