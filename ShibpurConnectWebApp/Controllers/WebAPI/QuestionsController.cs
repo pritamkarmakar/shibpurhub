@@ -69,25 +69,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [ResponseType(typeof(QuestionsDTO))]
         public IHttpActionResult GetQuestion(string questionId)
         {
-            // validate questionId is valid hex string
-
             try
             {
-                ObjectId.Parse(questionId);
-            }
-            catch (Exception)
-            {
-                return BadRequest(String.Format("Supplied questionId: {0} is not a valid object id", questionId));
-            }
+                var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId);
+                if (questions.Count() == 0)
+                {
+                    return NotFound();
+                }
 
-
-            var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId);
-            if (questions.Count() == 0)
+                return Ok(questions.ToList()[0]);
+            }
+            catch(FormatException fe)
             {
                 return NotFound();
-            }
-
-            return Ok(questions.ToList()[0]);
+            }          
         }
 
         public IHttpActionResult GetAnswersCount(string questionId)

@@ -448,14 +448,26 @@
                     },
                     "error": function (XMLHttpRequest, textStatus, errorThrown) {
                         var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
-                        //$("#errorLabel").text(errorText);
-                        $('#failuremessage').css('display', 'block');
-                        $('#failuremessage').text(errorText);
-
+                        // toastr notification
+                        Command: toastr["error"](errorText)
                         // hide the loading message
+                        $('#loadinganswers').hide();
+
+                        // hide the loading message in ask to answer module
                         $('#loadingasktoanswer').hide();
                     }
                 });
+            },
+            "error": function (XMLHttpRequest, textStatus, errorThrown) {
+                // if it is 404 response then redirect to 404 page
+                if (XMLHttpRequest.status = "404")
+                {
+                    window.location.href = "/errors/Http404";
+                }                        
+                // toastr notification
+                Command: toastr["error"]("Failed to load the question")
+                // hide the loading message
+                $('#loadinganswers').hide();
             }
         });
 
@@ -479,14 +491,7 @@
             var parentDiv = $(textarea).parent();
             $(parentDiv).removeClass("col-md-8").addClass("col-md-12");
             //$(parentDiv).next().addClass("col-md-offset-9");
-        });
-
-        // add the rich text answer plugin
-        $('.textarea').wysihtml5({
-            toolbar: {
-                "image": false
-            }
-        });
+        });       
     });
 
     // function to send notification to the specific user from 'Ask to Answer' module
