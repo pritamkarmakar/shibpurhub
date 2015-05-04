@@ -136,6 +136,12 @@
                 if (result) {
                     // close the new employment form
                     $("#newemploymentdiv").slideToggle();
+                    // clear the previous values
+                    $('#CompanyName').val("");
+                    $('input#employmentfromdate').val("");
+                    $('#employmenttodate').val("");
+                    $('#Title').val("");
+                    $('#Location').val("");
                     // get the latest data from server and update the profile page
                     loadEmployments();
                 }

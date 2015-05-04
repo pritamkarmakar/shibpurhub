@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNet.Identity;
+using ShibpurConnectWebApp.Helper;
+using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Models.WebAPI;
+using ShibpurConnectWebApp.Providers;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
-using ShibpurConnectWebApp.Models.WebAPI;
-using ShibpurConnectWebApp.Providers;
-using ShibpurConnectWebApp.Models;
-using ShibpurConnectWebApp.Helper;
-using Microsoft.AspNet.Identity;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -166,7 +168,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {       
            using (AuthRepository _repo = new AuthRepository())
             {
-                ApplicationUser user = await _repo.FindUserById("550aa72668fe6a96e01f54b2");
+               // get user identity
+                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                var claim = principal.FindFirst("sub");
+
+                ApplicationUser user = await _repo.FindUserByEmail(claim.Value);
 
                 if (!string.IsNullOrEmpty(firstName))
                     user.FirstName = firstName;

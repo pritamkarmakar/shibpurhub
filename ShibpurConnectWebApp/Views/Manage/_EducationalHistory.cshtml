@@ -89,6 +89,10 @@
                     Command: toastr["success"]("Saved educational data")
                     // disply loading spinner
                     $('#loadingeducations').show();
+                    // clear form values
+                    $('#universityname').val("");
+                    $('#GraduateYear').val("");
+                    $('#DepartmentDropdown').val($('#DepartmentDropdown').find('option').first().val());
                     // get the educational history from the server and update the div
                     $.ajax({
                         url: SERVER + "educationalhistories/geteducationalhistories",
