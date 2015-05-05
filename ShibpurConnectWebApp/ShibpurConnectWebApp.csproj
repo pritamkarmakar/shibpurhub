@@ -311,6 +311,7 @@
     <Compile Include="Models\WebAPI\Email.cs" />
     <Compile Include="Models\WebAPI\EmploymentHistories.cs" />
     <Compile Include="Models\WebAPI\AskToAnswer.cs" />
+    <Compile Include="Models\WebAPI\ImageInfo.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
     <Compile Include="Models\WebAPI\UserActivityLog.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />

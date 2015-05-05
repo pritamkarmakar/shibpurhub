@@ -135,7 +135,7 @@
                     }
                     if(result.userInfo.profileImageURL)
                     {
-                        $("#imagePreview").show().css("background-image", "url("+result.userInfo.profileImageURL+")");
+                        $("#imagePreview").show().css("background-image", "url("+ IMGURPATH + result.userInfo.profileImageURL+")");
                     }
                     // iterate over all the educational histories
                     if(result.educationalHistories != null)
@@ -200,27 +200,34 @@
 
     function imgurUpload(imageBase64) {
 
-        var auth = 'Client-ID b079e1d3167ca54';
-        $.ajax({
-            url: 'https://api.imgur.com/3/image',
-            type: 'POST',
-            headers: {
-                Authorization: auth,
-                Accept: 'application/json'
-            },
-            data: {
-                image: imageBase64,
-                type: 'base64'
-            },
-            success: function(result) {
-                var link = result.data.link;
-                var data = {"userId": $("#hdnUserId").val(), "profileImageURL": link};
-                scAjax({
-                    "url": "profile/updateprofileimage",
-                    "type": "POST",
-                    "data": JSON.stringify(data, null, 2)
-                });
-            }
+        //var auth = 'Client-ID b079e1d3167ca54';
+        //$.ajax({
+        //    url: 'https://api.imgur.com/3/image',
+        //    type: 'POST',
+        //    headers: {
+        //        Authorization: auth,
+        //        Accept: 'application/json'
+        //    },
+        //    data: {
+        //        image: imageBase64,
+        //        type: 'base64'
+        //    },
+        //    success: function(result) {
+        //        var link = result.data.link;
+        //        var data = {"userId": $("#hdnUserId").val(), "profileImageURL": link};
+        //        scAjax({
+        //            "url": "profile/updateprofileimage",
+        //            "type": "POST",
+        //            "data": JSON.stringify(data, null, 2)
+        //        });
+        //    }
+        //});
+
+        var data = {"userId": $("#hdnUserId").val(), "imageBase64": imageBase64};
+        scAjax({
+            "url": "profile/updateprofileimage",
+            "type": "POST",
+            "data": JSON.stringify(data, null, 2)
         });
     }
 </script>

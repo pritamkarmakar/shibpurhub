@@ -4,8 +4,12 @@ using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using ShibpurConnectWebApp.Providers;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -140,16 +144,51 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(userInfo);
         }
 
-        public void UpdateProfileImage(CustomUserInfo imageInfo)
+        public async void UpdateProfileImage(ImageInfo imageInfo)
         {
-            if (string.IsNullOrEmpty(imageInfo.UserId) || string.IsNullOrEmpty(imageInfo.ProfileImageURL))
+            if (string.IsNullOrEmpty(imageInfo.UserId) || string.IsNullOrEmpty(imageInfo.ImageBase64))
             {
                 return;
             }
 
-            
-            var helper = new Helper.Helper();
-            helper.UpdateProfileImageURL(imageInfo.UserId, imageInfo.ProfileImageURL);
+            using (var webClient = new WebClient())
+            {
+                webClient.Headers.Add("Authorization", "Client-ID b079e1d3167ca54");
+                //webClient.ResponseHeaders.Add("Content-Type", "application/json");
+                var values = new NameValueCollection
+                {
+                    //{ "key", "Client-ID b079e1d3167ca54" },
+                    { "image", imageInfo.ImageBase64 }
+                    //{ "type", "base64" },
+                };
+                byte[] response = webClient.UploadValues("https://api.imgur.com/3/image", "POST", values);
+                dynamic result = Encoding.ASCII.GetString(response);
+
+                Regex reg = new Regex("link\":\"(.*?)\"");
+                Match match = reg.Match(result);
+                string url = match.ToString().Replace("link\":\"", "").Replace("\"", "").Replace("\\/", "/");
+                var imageName = url.Substring(url.LastIndexOf('/') + 1, url.Length - (url.LastIndexOf('/') + 1));
+
+                reg = new Regex("deletehash\":\"(.*?)\"");
+                match = reg.Match(result);
+                string deleteHash = match.ToString().Replace("deletehash\":\"", "").Replace("\"", "").Replace("\\/", "/");
+
+                var helper = new Helper.Helper();
+
+                Task<CustomUserInfo> actionResult = helper.FindUserById(imageInfo.UserId);
+                var userInfo = await actionResult;
+                if (!string.IsNullOrEmpty(userInfo.ProfileImageURL) && userInfo.ProfileImageURL.IndexOf('#') > 0)
+                {
+
+                    deleteHash = userInfo.ProfileImageURL.Substring(userInfo.ProfileImageURL.IndexOf('#') + 1);
+                    using (var httpClient = new HttpClient())
+                    {
+                        await httpClient.DeleteAsync("https://api.imgur.com/3/image/" + deleteHash);
+                    }
+                }
+
+                helper.UpdateProfileImageURL(imageInfo.UserId, imageName + "#" + deleteHash);
+            }
         }
 
         // GET: api/Profile/5
