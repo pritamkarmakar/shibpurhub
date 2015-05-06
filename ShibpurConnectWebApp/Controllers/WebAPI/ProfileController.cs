@@ -131,11 +131,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="userEmail">user email</param>
         /// <returns></returns>
-        public async Task<IHttpActionResult> GetUserInfo(string userEmail)
+        public async Task<IHttpActionResult> GetUserInfo(string userId)
         {
             // validate userEmail is valid and get the userid
             Helper.Helper helper = new Helper.Helper();
-            Task<CustomUserInfo> actionResult = helper.FindUserByEmail(userEmail);
+            Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
             var userInfo = await actionResult;
 
             if (userInfo == null)

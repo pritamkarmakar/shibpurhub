@@ -74,7 +74,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             QuestionsController questionsController = new QuestionsController();
 
             var actionResult = questionsController.GetQuestion(answer.QuestionId);
-            var contentResult = actionResult as OkNegotiatedContentResult<QuestionViewModel>;
+            var contentResult = actionResult as OkNegotiatedContentResult<Question>;
             if (contentResult.Content == null)
                 return BadRequest("Supplied questionid is invalid");
 
