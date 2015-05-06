@@ -45,7 +45,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var userIds = questions.Select(a => a.UserId).Distinct();
                 var userDetails = new Dictionary<string, CustomUserInfo>();
                 var helper = new Helper.Helper();
-                foreach(var userId in userIds)
+                foreach (var userId in userIds)
                 {
                     Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
                     var userDetail = await actionResult;
@@ -62,7 +62,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 return Ok(result);
             }
-            catch(MongoDB.Driver.MongoConnectionException ex)
+            catch (MongoDB.Driver.MongoConnectionException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -126,10 +126,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 return Ok(questions.ToList()[0]);
             }
-            catch(FormatException fe)
+            catch (FormatException fe)
             {
                 return NotFound();
-            }          
+            }
         }
 
         public IHttpActionResult GetAnswersCount(string questionId)
@@ -149,7 +149,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var count = answerMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).ToList().Count;
                 return Ok(count);
             }
-            catch(MongoDB.Driver.MongoConnectionException ex)
+            catch (MongoDB.Driver.MongoConnectionException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -195,41 +195,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return 0;
         }
 
-        // PUT: api/Questions/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutQuestions(string id, Question questions)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != questions.QuestionId)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    db.Entry(questions).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!QuestionsExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
         // POST: api/Questions
         [ResponseType(typeof(Question))]
         public async Task<IHttpActionResult> PostQuestions(Question question)
@@ -252,7 +217,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var userResult = helper.FindUserByEmail(claim.Value);
             var userInfo = await userResult;
 
-            if(userInfo == null)
+            if (userInfo == null)
             {
                 return BadRequest("No UserId is found");
             }
@@ -288,9 +253,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         categoryTaggingController.PostCategoryTagging(ct);
                     }
                     else
-                        return InternalServerError(new Exception()); 
-                }               
-            }          
+                        return InternalServerError(new Exception());
+                }
+            }
 
             // add the datetime stamp for this question
             question.PostedOnUtc = DateTime.UtcNow;
@@ -301,28 +266,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // if mongo failed to save the data then send error
             if (!result.Ok)
-                return InternalServerError();     
+                return InternalServerError();
 
             return CreatedAtRoute("DefaultApi", new { id = question.QuestionId }, question);
         }
-
-        //// DELETE: api/Questions/5
-        //[ResponseType(typeof(Question))]
-        //public IHttpActionResult DeleteQuestions(string id)
-        //{
-        //    //Question questions = db.Questions.Find(id);
-        //    //if (questions == null)
-        //    //{
-        //    //    return NotFound();
-        //    //}
-
-        //    //db.Questions.Remove(questions);
-        //    //db.SaveChanges();
-
-        //    //return Ok(questions);
-        //}
-
-       private QuestionViewModel GetQuestionViewModel(Question question, CustomUserInfo userData)
+        
+        private QuestionViewModel GetQuestionViewModel(Question question, CustomUserInfo userData)
         {
             return new QuestionViewModel
             {

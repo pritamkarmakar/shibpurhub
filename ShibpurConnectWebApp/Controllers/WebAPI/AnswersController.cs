@@ -60,7 +60,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // POST: api/Questions
-        [ResponseType(typeof (Answer))]
+        [ResponseType(typeof(Answer))]
         public IHttpActionResult PostAnswer(Answer answer)
         {
             if (!ModelState.IsValid)
@@ -69,26 +69,37 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
             if (answer == null)
                 return BadRequest("Request body is null. Please send a valid Questions object");
+            try
+            {
+                // validate given questionid, userid are valid
+                var questionMongoHelper = new MongoHelper<Question>();
+                var question = questionMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == answer.QuestionId).ToList().FirstOrDefault();
+                if (question == null)
+                    return BadRequest("Supplied questionid is invalid");
 
-            // validate given questionid, userid are valid
-            QuestionsController questionsController = new QuestionsController();
+                // add the datetime stamp for this question
+                answer.PostedOnUtc = DateTime.UtcNow;
 
-            var actionResult = questionsController.GetQuestion(answer.QuestionId);
-            var contentResult = actionResult as OkNegotiatedContentResult<Question>;
-            if (contentResult.Content == null)
-                return BadRequest("Supplied questionid is invalid");
+                // save the answer to the database
+                var result = _mongoHelper.Collection.Save(answer);
 
-            // add the datetime stamp for this question
-            answer.PostedOnUtc = DateTime.UtcNow;
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    return InternalServerError();
 
-            // save the question to the database
-            var result = _mongoHelper.Collection.Save(answer);
+                // change the "HasAnswered' column of the question. If it is false then change to true
+                if (question.HasAnswered == false)
+                {
+                    question.HasAnswered = true;
+                    questionMongoHelper.Collection.Save(question);
+                }
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            // if mongo failed to save the data then send error
-            if (!result.Ok)
-                return InternalServerError();
-
-            return CreatedAtRoute("DefaultApi", new {id = answer.QuestionId}, answer);
+            return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
         }
 
         public int UpdateUpVoteCount(Answer answer)
@@ -105,15 +116,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
             if (answerInDB != null)
             {
-                    var upCount = answerInDB.UpVoteCount + 1;
-                    answerInDB.UpVoteCount = upCount;
-                    if(answerInDB.UpvotedBy == null)
-                    {
-                        answerInDB.UpvotedBy = new List<string> { answer.UserEmail };
-                    }
-                    answerInDB.UpvotedBy.Add(answer.UserEmail);
-                    _mongoHelper.Collection.Save(answerInDB);
-                    return upCount;                
+                var upCount = answerInDB.UpVoteCount + 1;
+                answerInDB.UpVoteCount = upCount;
+                if (answerInDB.UpvotedBy == null)
+                {
+                    answerInDB.UpvotedBy = new List<string> { answer.UserEmail };
+                }
+                answerInDB.UpvotedBy.Add(answer.UserEmail);
+                _mongoHelper.Collection.Save(answerInDB);
+                return upCount;
             }
 
             return 0;
@@ -132,11 +143,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
             if (answerInDB != null)
-            {                
-                    var downCount = answerInDB.DownVoteCount + 1;
-                    answerInDB.DownVoteCount = downCount;
-                    _mongoHelper.Collection.Save(answerInDB);
-                    return downCount;
+            {
+                var downCount = answerInDB.DownVoteCount + 1;
+                answerInDB.DownVoteCount = downCount;
+                _mongoHelper.Collection.Save(answerInDB);
+                return downCount;
             }
 
             return 0;
@@ -144,15 +155,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         public bool UpdateMarkAsAnswer(List<Answer> answers)
         {
-            if(answers == null || answers.Count == 0)
+            if (answers == null || answers.Count == 0)
             {
                 return false;
             }
 
-            foreach(var answer in answers)
+            foreach (var answer in answers)
             {
                 var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
-                if(answerInDB != null)
+                if (answerInDB != null)
                 {
                     answerInDB.MarkedAsAnswer = answer.MarkedAsAnswer;
                 }
@@ -161,22 +172,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return true;
         }
-
-        //// DELETE: api/Questions/5
-        //[ResponseType(typeof(Question))]
-        //public IHttpActionResult DeleteQuestions(string id)
-        //{
-        //    //Question questions = db.Questions.Find(id);
-        //    //if (questions == null)
-        //    //{
-        //    //    return NotFound();
-        //    //}
-
-        //    //db.Questions.Remove(questions);
-        //    //db.SaveChanges();
-
-        //    //return Ok(questions);
-        //}
     }
 }
 

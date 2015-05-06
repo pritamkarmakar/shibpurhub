@@ -8,21 +8,37 @@
         if (!userDetails) {
             //TO-DO: Handle if userdetail is not available in Session Storage
             return;
-        }       
+        }
 
         var userInfo = $.parseJSON(userDetails);
+        // update
         $('#firstname').val(userInfo.firstName);
         $('#lastname').val(userInfo.lastName);
         $('#location').val(userInfo.location);
         $('#aboutme').val(userInfo.aboutMe);
 
+        // add values in the model labels
+        $('#firstnamelabel').append(userInfo.firstName);
+        $('#lastnamelabel').append(userInfo.lastName);
+        $('#locationlabel').append(userInfo.location);
+        $('#aboutmelabel').append(userInfo.aboutMe);
+
+        // expand the editpersonalinfo div
+        $("#editpersonalinfobutton").on('click', function (e) {
+            $("#editpersonalinfo").slideToggle();
+        });
+
         $('#submitpersonalinfo').on('click', function (e) {
             e.preventDefault();
             if ($(".personalinfoform")[0].checkValidity()) {
+                // add spinner animation in the save button and change the text to 'Saving..'
+                $('#submitpersonalinfo > i').addClass('fa fa-circle-o-notch fa-spin');
+                $('#submitpersonalinfo > span').text(' Saving...');
+
                 var firstName = $('#firstname').val();
                 var lastName = $('#lastname').val();
                 var location = $('#location').val();
-                var aboutme = $('#aboutme').val();               
+                var aboutme = $('#aboutme').val();
                 // read the token from local storage
                 var token = $.parseJSON(localStorage.getItem("TOKEN"));
                 $.ajax({
@@ -37,6 +53,19 @@
                         localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
                         // display success message
                         Command: toastr["success"]("Saved profile data")
+
+                        // remove the loading class from save button
+                        $('#submitpersonalinfo > i').removeClass('fa fa-circle-o-notch fa-spin');
+                        $('#submitpersonalinfo > span').text('Save');
+
+                        // close the edit form
+                        $("#editpersonalinfo").slideToggle();
+
+                        // update the display labels
+                        $('#firstnamelabel').text(firstName);
+                        $('#lastnamelabel').text(lastName);
+                        $('#locationlabel').text(location);
+                        $('#aboutmelabel').text(aboutme);
                     },
                     error: function (err) {
                         if (err.status == "401") {
@@ -44,7 +73,11 @@
                             Command: toastr["error"]("Sorry, failed to save your data. Please login again and try")
                         }
                         else
-                            Command: toastr["error"](err.responseText)
+                            Command: toastr["error"](err.responseText)                      
+
+                        // remove the loading class from save button
+                        $('#submitpersonalinfo > i').removeClass('fa fa-circle-o-notch fa-spin');
+                        $('#submitpersonalinfo > span').text('Save');
                     }
                 });
             } else Command: toastr["error"]("All form fields are mandatory")
@@ -54,35 +87,55 @@
 </script>
 
 <div class="panel panel-default">
-    <div class="panel-heading changepasswordheading">Personal Info</div>
-    <div class="panel-body changepasswordbody">
-        <form class="personalinfoform top-buffer2 col-md-offset-2 col-md-8" method="post">
-            <div class="form-group">
-                <label for="firstname" class="control-label">FirstName</label>
-                <input class="form-control firstname" data-val="true" data-val-required="The FirstName field is required." id="firstname" name="firstname" placeholder="First Name" type="text" aria-required="true" required>
-            </div>
+    <div class="panel-heading personalinfoheading">Personal Info</div>
+    <div class="panel-body">
+        <label>First Name:&nbsp;</label><span id="firstnamelabel"></span><br />
+        <label>Last Name:&nbsp;</label><span id="lastnamelabel"></span><br />
+        <label>Location:&nbsp;</label><span id="locationlabel"></span><br />
+        <label>AboutMe:&nbsp;</label><span id="aboutmelabel"></span><br />
 
-            <div class="form-group">
-                <label for="lastname" class="control-label">LastName</label>
-                <input class="form-control lastName" data-val="true" data-val-required="The LastName field is required." id="lastname" name="lastname" placeholder="Last Name" type="text" aria-required="true" required>
-            </div>
+        <button class="btn btn-primary btn-xs" id="editpersonalinfobutton" style="margin-top:10px;">Edit</button><br />
+    </div>
+</div>
 
-            <div class="form-group">
-                <label for="location" class="control-label">Location</label>
-                <input class="form-control location" data-val="true" data-val-required="The Location field is required." id="location" name="location" placeholder="Current Location" type="text" aria-required="true" required>
-            </div>
-
-            <div class="form-group">
-                <label for="aboutme" class="control-label">AboutMe</label>
-                <textarea class="form-control" rows="5" id="aboutme" name="aboutme" placeholder="Abount me" aria-required="true" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <div class="input-group">
-                    <input type="submit" value="Update" id="submitpersonalinfo" class="btn btn-primary btn-sm" />
+<div id="editpersonalinfo" style="display:none;">
+    <div class="panel panel-default">
+        <div class="panel-body changepasswordbody">
+            <form class="personalinfoform top-buffer2 form-horizontal" method="post">
+                <div class="form-group">
+                    <label for="firstname" class="col-md-2 control-label">First Name</label>
+                    <div class="col-md-10">
+                        <input class="form-control firstname" data-val="true" data-val-required="The FirstName field is required." id="firstname" name="firstname" placeholder="First Name" type="text" aria-required="true" required>
+                    </div>
                 </div>
-            </div>
-        </form>
+                <div class="form-group">
+                    <label for="lastname" class="col-md-2 control-label">Last Name</label>
+                    <div class="col-md-10">
+                        <input class="form-control lastName" data-val="true" data-val-required="The LastName field is required." id="lastname" name="lastname" placeholder="Last Name" type="text" aria-required="true" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="location" class="col-md-2 control-label">Location</label>
+                    <div class="col-md-10">
+                        <input class="form-control location" data-val="true" data-val-required="The Location field is required." id="location" name="location" placeholder="Current Location" type="text" aria-required="true" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="aboutme" class="col-md-2 control-label">AboutMe</label>
+                    <div class="col-md-10">
+                        <textarea class="form-control" rows="5" id="aboutme" name="aboutme" placeholder="Abount me" aria-required="true" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 input-group">
+                        <button type="submit" id="submitpersonalinfo" class="btn btn-primary btn-sm">
+                            <i></i><span>Update</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
