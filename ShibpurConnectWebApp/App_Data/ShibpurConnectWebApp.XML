@@ -566,7 +566,7 @@
             <param name="notificationId">Notification Id</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestions">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestions(System.Int32)">
             <summary>
             Will return all available questions
             </summary>
@@ -739,7 +739,7 @@
             </summary>
             <param name="userInfo">CustomUserInfo object</param>
         </member>
-        <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionsDTO">
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionViewModel">
             <summary>
             We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later
             </summary>

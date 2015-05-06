@@ -12,7 +12,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [Serializable]
     [DataContract(IsReference = true)]
     [BsonIgnoreExtraElements]
-    public class Questions
+    public class Question
     {
         // Primary key
         [BsonId]
@@ -31,6 +31,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [MinLength(40, ErrorMessage = "Minimum length of description should be more than 40 characters")]
         [MaxLength(30000, ErrorMessage = "Maximum 30000 characters allowed in description")]
         public string Description { get; set; }
+
+        [DataMember]
+        public string UserId { get; set; }
         
         [DataMember]
         public bool HasAnswered { get; set; }
@@ -38,11 +41,15 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public DateTime? PostedOnUtc { get; set; }
 
-        // Foreign key
-        //[ForeignKey("AspNetUsers")]
         [Required]
         [DataMember]
-        public string UserEmail { get; set; }
+        public string[] Categories { get; set; }
+
+        // Foreign key
+        //[ForeignKey("AspNetUsers")]
+        //[Required]
+        //[DataMember]
+        //public string UserEmail { get; set; }
 
         [DataMember]
         public int ViewCount { get; set; }
@@ -51,19 +58,19 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// <summary>
     /// We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later
     /// </summary>
-    [Serializable]
-    [BsonIgnoreExtraElements]
-    public class QuestionsDTO : Questions
+    //[Serializable]
+    //[BsonIgnoreExtraElements]
+    public class QuestionViewModel : Question
     {
-        [Required]
         [DataMember]
-        public string[] Categories { get; set; }
+        public string UserEmail { get; set; }
 
         [DataMember]
         public string DisplayName { get; set; }
 
-        [Required]
         [DataMember]
         public string UserProfileImage { get; set; }
+
+        
     }
 }

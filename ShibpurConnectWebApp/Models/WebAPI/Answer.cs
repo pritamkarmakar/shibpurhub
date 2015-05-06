@@ -52,4 +52,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public List<string> UpvotedBy { get; set; }
     }
+
+    public class AnswerViewModel
+    {
+
+    }
 }

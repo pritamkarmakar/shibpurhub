@@ -39,14 +39,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 _mongoHelper.Collection.AsQueryable()
                     .Where(m => m.CategoryId == contentResult.Content.CategoryId)
                     .ToList();
-            IList<Questions> questionList = new List<Questions>();
+            IList<Question> questionList = new List<Question>();
             QuestionsController questionsController = new QuestionsController();
 
             // form the question list
             foreach (var question in questions)
             {
                 IHttpActionResult actionResult2 = questionsController.GetQuestion(question.QuestionId.ToString());
-                var contentResult2 = actionResult2 as OkNegotiatedContentResult<Questions>;
+                var contentResult2 = actionResult2 as OkNegotiatedContentResult<Question>;
                 questionList.Add(contentResult2.Content);
             }
 

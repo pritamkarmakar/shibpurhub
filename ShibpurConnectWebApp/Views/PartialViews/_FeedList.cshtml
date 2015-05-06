@@ -142,11 +142,21 @@
         if (url.indexOf("FeedByCategory") > 1) {
             var splitArr = url.split('/');
             var category = splitArr[splitArr.length - 1];
-            category = decodeURIComponent(category);           
+            category = decodeURIComponent(category);
+
+            var url = window.location.href;
+            var splitArr = url.split('/');
+            var pageNumber = splitArr[splitArr.length - 1];
+            
+            if (!pageNumber || pageNumber == NaN)
+            {
+                pageNumber = 0;
+            }
+
 
             scAjax({
                 "url": "questions/GetQuestionsByCategory",
-                "data": { "category": category },
+                "data": { "category": category, "page": pageNumber },
                 "success": function (result) {
                     if (!result) {
                         return;
@@ -160,6 +170,7 @@
         else {
             scAjax({
                 "url": "questions/GetQuestions",
+                "data": { "page": pageNumber },
                 "success": function (result) {
                     if (!result) {
                         return;
@@ -197,7 +208,7 @@
             var userNameAnchor = $(thread).find('div.user a.userName');
             if (question.userProfileImage) {
                 var userProfileImage = $(thread).find('div.user img.avatar');
-                $(userProfileImage).attr('src', question.userProfileImage);
+                $(userProfileImage).attr('src', IMGURPATH + question.userProfileImage);
             }
             $(userNameAnchor).text(question.displayName);
             if (question.userEmail != null) {

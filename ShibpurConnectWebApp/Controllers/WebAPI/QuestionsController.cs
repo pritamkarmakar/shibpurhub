@@ -16,17 +16,20 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Security.Claims;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class QuestionsController : ApiController
     {
-        private MongoHelper<QuestionsDTO> _mongoHelper;
+        private const int PAGESIZE = 20;
+
+        private MongoHelper<Question> _mongoHelper;
 
         public QuestionsController()
         {
-            _mongoHelper = new MongoHelper<QuestionsDTO>();
+            _mongoHelper = new MongoHelper<Question>();
         }
 
         // GET: api/Questions
@@ -34,11 +37,28 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// Will return all available questions
         /// </summary>
         /// <returns></returns>
-        public IHttpActionResult GetQuestions()
+        public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
             {
-                var result = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).ToList();
+                var questions = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
+                var userIds = questions.Select(a => a.UserId).Distinct();
+                var userDetails = new Dictionary<string, CustomUserInfo>();
+                var helper = new Helper.Helper();
+                foreach(var userId in userIds)
+                {
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                    var userDetail = await actionResult;
+                    userDetails.Add(userId, userDetail);
+                }
+
+                var result = new List<QuestionViewModel>();
+                foreach (var question in questions)
+                {
+                    var userData = userDetails[question.UserId];
+                    var questionVM = GetQuestionViewModel(question, userData);
+                    result.Add(questionVM);
+                }
 
                 return Ok(result);
             }
@@ -48,25 +68,52 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        public IList<QuestionsDTO> GetQuestionsByCategory(string category)
+        public async Task<IHttpActionResult> GetQuestionsByCategory(string category, int page)
         {
-            var result = new List<QuestionsDTO>();
-            var allQuestions = _mongoHelper.Collection.FindAll().ToList();
-            foreach (var question in allQuestions)
+            try
             {
-                var searchedCategory = question.Categories.Where(a => a.ToLower().Trim() == category.ToLower().Trim()).FirstOrDefault();
-                if (!string.IsNullOrEmpty(searchedCategory))
+                var result = new List<QuestionViewModel>();
+                var allQuestions = _mongoHelper.Collection.FindAll().ToList();
+                var matchedQuestions = new List<Question>();
+                foreach (var question in allQuestions)
                 {
-                    result.Add(question);
+                    var searchedCategory = question.Categories.Where(a => a.ToLower().Trim() == category.ToLower().Trim()).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(searchedCategory))
+                    {
+                        matchedQuestions.Add(question);
+                    }
                 }
-            }
 
-            return result;
+                var questions = matchedQuestions.OrderByDescending(a => a.PostedOnUtc).Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
+
+                var userIds = questions.Select(a => a.UserId).Distinct();
+                var userDetails = new Dictionary<string, CustomUserInfo>();
+                var helper = new Helper.Helper();
+                foreach (var userId in userIds)
+                {
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                    var userDetail = await actionResult;
+                    userDetails.Add(userId, userDetail);
+                }
+
+                foreach (var question in questions)
+                {
+                    var userData = userDetails[question.UserId];
+                    var questionVM = GetQuestionViewModel(question, userData);
+                    result.Add(questionVM);
+                }
+
+                return Ok(result);
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Questions/5
         // Will return a specific question with comments
-        [ResponseType(typeof(QuestionsDTO))]
+        [ResponseType(typeof(Question))]
         public IHttpActionResult GetQuestion(string questionId)
         {
             try
@@ -125,7 +172,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         [ResponseType(typeof(int))]
         [ActionName("IncrementViewCount")]
-        public int IncrementViewCount(QuestionsDTO question)
+        public int IncrementViewCount(Question question)
         {
             try
             {
@@ -184,8 +231,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         //}
 
         // POST: api/Questions
-        [ResponseType(typeof(QuestionsDTO))]
-        public IHttpActionResult PostQuestions(QuestionsDTO question)
+        [ResponseType(typeof(Question))]
+        public async Task<IHttpActionResult> PostQuestions(Question question)
         {
             if (!ModelState.IsValid)
             {
@@ -197,6 +244,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if Question doesn't have any category tagging then its a bad request
             if (question.Categories == null || question.Categories.Length == 0)
                 return BadRequest("Question must have a category association");
+
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+
+            if(userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            question.UserId = userInfo.UserId;
 
             // create the new categories            
             List<Categories> categoryList = new List<Categories>();
@@ -261,6 +322,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         //    //return Ok(questions);
         //}
 
-       
+       private QuestionViewModel GetQuestionViewModel(Question question, CustomUserInfo userData)
+        {
+            return new QuestionViewModel
+            {
+                QuestionId = question.QuestionId,
+                Title = question.Title,
+                Description = question.Description,
+                UserId = question.UserId,
+                HasAnswered = question.HasAnswered,
+                PostedOnUtc = question.PostedOnUtc,
+                Categories = question.Categories,
+                ViewCount = question.ViewCount,
+                UserEmail = userData.Email,
+                UserProfileImage = userData.ProfileImageURL,
+                DisplayName = userData.FirstName
+            };
+        }
     }
 }
