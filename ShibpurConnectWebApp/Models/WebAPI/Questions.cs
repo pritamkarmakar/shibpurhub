@@ -71,6 +71,25 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public string UserProfileImage { get; set; }
 
-        
+        [DataMember]
+        public bool IsAskedByMe { get; set; }
+
+        [DataMember]
+        public List<AnswerViewModel> Answers { get; set; }
+
+        public QuestionViewModel Copy(Question question)
+        {
+            return new QuestionViewModel
+            {
+                QuestionId = question.QuestionId,
+                Title = question.Title,
+                Description = question.Description,
+                UserId = question.UserId,
+                HasAnswered = question.HasAnswered,
+                PostedOnUtc = question.PostedOnUtc,
+                Categories = question.Categories,
+                ViewCount = question.ViewCount
+            };
+        }
     }
 }

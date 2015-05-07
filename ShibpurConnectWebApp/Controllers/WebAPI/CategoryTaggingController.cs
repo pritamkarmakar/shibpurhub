@@ -20,39 +20,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<CategoryTagging>();
         }
 
-        // GET: api/CategoryTagging
-        public IHttpActionResult QuestionsForACategory(string categoryName)
-        {
-            // check if supplied category is valid or not
-            CategoriesController categoriesController = new CategoriesController();
-            IHttpActionResult actionResult = categoriesController.GetCategory(categoryName);
-            var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
-            
-            //var category = _mongoHelper.Collection.AsQueryable().Where(m => m. == categoryName).ToList().Count == 0 ? null : db.Categories.Where(m => m.Name == categoryName).ToList()[0];
-            if (contentResult == null)
-            {
-                return BadRequest("Invalid category name");
-            }
-
-            // Get the associated questions for this category
-            var questions =
-                _mongoHelper.Collection.AsQueryable()
-                    .Where(m => m.CategoryId == contentResult.Content.CategoryId)
-                    .ToList();
-            IList<Question> questionList = new List<Question>();
-            QuestionsController questionsController = new QuestionsController();
-
-            // form the question list
-            foreach (var question in questions)
-            {
-                IHttpActionResult actionResult2 = questionsController.GetQuestion(question.QuestionId.ToString());
-                var contentResult2 = actionResult2 as OkNegotiatedContentResult<Question>;
-                questionList.Add(contentResult2.Content);
-            }
-
-            return Ok(questionList);
-        }
-
+        
         // GET: api/CategoryTagging/5
         public string Get(int id)
         {

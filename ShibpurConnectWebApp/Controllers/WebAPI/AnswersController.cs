@@ -118,11 +118,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 var upCount = answerInDB.UpVoteCount + 1;
                 answerInDB.UpVoteCount = upCount;
-                if (answerInDB.UpvotedBy == null)
+                if (answerInDB.UpvotedByUserIds == null)
                 {
-                    answerInDB.UpvotedBy = new List<string> { answer.UserEmail };
+                    answerInDB.UpvotedByUserIds = new List<string>();
                 }
-                answerInDB.UpvotedBy.Add(answer.UserEmail);
+                answerInDB.UpvotedByUserIds.Add(answer.UserId);
                 _mongoHelper.Collection.Save(answerInDB);
                 return upCount;
             }

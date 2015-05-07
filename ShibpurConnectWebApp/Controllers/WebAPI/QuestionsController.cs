@@ -113,18 +113,87 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         // GET: api/Questions/5
         // Will return a specific question with comments
-        [ResponseType(typeof(Question))]
-        public IHttpActionResult GetQuestion(string questionId)
+        public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
             {
-                var questions = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId);
-                if (questions.Count() == 0)
+                var question = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).FirstOrDefault();
+                if (question == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(questions.ToList()[0]);
+                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                var claim = principal.FindFirst("sub");
+
+                Helper.Helper helper = new Helper.Helper();
+                var userResult = helper.FindUserByEmail(claim.Value);
+                var userInfo = await userResult;
+
+                if(userInfo == null)
+                {
+                    return BadRequest("No UserId is found");
+                }
+
+                var questionVM = new QuestionViewModel().Copy(question);
+                questionVM.IsAskedByMe = question.UserId == userInfo.UserId;
+
+                var _answerMongoHelper = new MongoHelper<Answer>();
+                var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderBy(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();
+                var userDetails = new Dictionary<string, CustomUserInfo>();
+                
+                Task<CustomUserInfo> actionResult1 = helper.FindUserById(question.UserId);
+                var questionUserDetail = await actionResult1;
+                userDetails.Add(question.UserId, questionUserDetail);
+                questionVM.UserEmail = questionUserDetail.Email;
+                questionVM.DisplayName = questionUserDetail.FirstName;
+                questionVM.UserProfileImage = questionUserDetail.ProfileImageURL;
+
+                if(answers.Count() == 0)
+                {
+                    return Ok(questionVM);
+                }                
+                
+                var answerVMs = new List<AnswerViewModel>();
+                var _commentsMongoHelper = new MongoHelper<Comment>();
+                var allUserIds = new List<string>();
+                var allComments = new List<Comment>();
+                foreach(var answer in answers)
+                {
+                    var comments = _commentsMongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answer.AnswerId).OrderBy(a => a.PostedOnUtc).ToList();
+                    allComments.AddRange(comments);
+                    var answervm = new AnswerViewModel().Copy(answer);
+                    answervm.Comments = comments;
+                    answerVMs.Add(answervm);
+                }
+
+                allUserIds.Add(question.UserId);
+                allUserIds.AddRange(answers.Select(a => a.UserId));
+                allUserIds.AddRange(allComments.Select(c => c.UserId));
+
+                var uniqueUserIds = new List<string>(allUserIds.Distinct());
+
+                    
+                foreach (var userId in uniqueUserIds)
+                {
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                    var userDetail = await actionResult;
+                    if (!userDetails.ContainsKey(userId))
+                    {
+                        userDetails.Add(userId, userDetail);
+                    }
+                }
+
+                foreach(var answerVM in answerVMs)
+                {
+                    var userData = userDetails[answerVM.UserId];
+                    answerVM.UserEmail = userData.Email;
+                    answerVM.DisplayName = userData.FirstName;
+                    answerVM.UserProfileImage = userData.ProfileImageURL;
+                }
+
+                questionVM.Answers = answerVMs;
+                return Ok(questionVM);
             }
             catch (FormatException fe)
             {

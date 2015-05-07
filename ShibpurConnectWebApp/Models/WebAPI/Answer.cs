@@ -17,16 +17,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string AnswerId { get; set; }
 
         [DataMember]
-        public string UserId { get; set; }
-
-        [DataMember]
-        public string UserEmail { get; set; }
-
-        [DataMember]
-        public string DisplayName { get; set; }
-
-        [DataMember]
-        public string UserProfileImage { get; set; }
+        public string UserId { get; set; }        
 
         [DataMember]
         public string QuestionId { get; set; }
@@ -50,11 +41,43 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public DateTime PostedOnUtc { get; set; }
 
         [DataMember]
-        public List<string> UpvotedBy { get; set; }
+        public List<string> UpvotedByUserIds { get; set; }
     }
 
-    public class AnswerViewModel
+    public class AnswerViewModel : Answer
     {
+        [DataMember]
+        public string UserEmail { get; set; }
 
+        [DataMember]
+        public string DisplayName { get; set; }
+
+        [DataMember]
+        public string UserProfileImage { get; set; }
+
+        [DataMember]
+        public List<Comment> Comments { get; set; }        
+
+        [DataMember]
+        public bool IsUpvotedByMe { get; set; }
+
+        [DataMember]
+        public List<CustomUserInfo> UpvotedByUsers { get; set; }
+
+        public AnswerViewModel Copy(Answer answer)
+        {
+            return new AnswerViewModel
+            {
+                AnswerId = answer.AnswerId,
+                UserId = answer.UserId,
+                QuestionId = answer.QuestionId,
+                AnswerText = answer.AnswerText,
+                DownVoteCount = answer.DownVoteCount,
+                MarkedAsAnswer = answer.MarkedAsAnswer,
+                PostedOnUtc = answer.PostedOnUtc,
+                UpVoteCount = answer.UpVoteCount,
+                UpvotedByUserIds = answer.UpvotedByUserIds
+            };
+        }
     }
 }

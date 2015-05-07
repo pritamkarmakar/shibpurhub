@@ -385,13 +385,13 @@
                             return;
                         }
                         $('#questionaskedby').show();
-                        $('#questionaskedby').append("<div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + question.userProfileImage + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='questionaskedbyuser' style='margin-left:15px;font-size:13px;' userid='" + userinfo.userId + "'href='/Account/Profile?useremail=" + question.userEmail + "'>" + userinfo.firstName + "</a></span><br/><span style='margin-left:15px;font-size:10px'>reputation: " + userinfo.reputationCount + "</span></div><div class='stat'><span class='date'>asked: " + dateString + "</span></div>");
+                        $('#questionaskedby').append("<div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + question.userProfileImage + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='questionaskedbyuser' style='margin-left:15px;font-size:13px;' userid='" + userinfo.userId + "'href='/Account/Profile?useremail=" + question.userEmail + "'>" + userinfo.firstName + "</a></span><br/><span style='margin-left:15px;font-size:10px'>reputation: " + userinfo.reputationCount + "</span></div><div class='stat'><span class='date'>asked: " + dateString + "</span></div>");
                     }
                 });
                 //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
 
                 askedBy = question.userEmail;
-                getAnswers();
+                getAnswers(question.answers);
                 // attach the categories
                 $(question.categories).each(function (i, category) {
                     var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory/" + category);
@@ -1039,7 +1039,7 @@
         $(userNameAnchor).text(answer.displayName);
         if (answer.userProfileImage) {
             var userProfileImage = $(answerBlock).find('div.user img.avatar');
-            $(userProfileImage).attr('src', answer.userProfileImage);
+            $(userProfileImage).attr('src', IMGURPATH + answer.userProfileImage);
         }
         if (answer.userEmail != null) {
             var url = $(userNameAnchor).attr('href') + '?userEmail=' + answer.userEmail;
@@ -1057,7 +1057,7 @@
         $('#answerlist').append(answerBlock);
     }
 
-    function getAnswers() {
+    function getAnswers(result) {
         var isAskedByMe = false;
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (userDetails) {
@@ -1068,11 +1068,19 @@
         jQuery.support.cors = true;
         var SERVER = "/api/";
 
-        scAjax({
-            "url": "answers/GetAnswers",
-            "data": { "questionId": questionID },
-            "success": function (result) {
-                if (!result) {
+        //scAjax({
+        //    "url": "answers/GetAnswers",
+        //    "data": { "questionId": questionID },
+        //    "success": function (result) {
+        if (!result) {
+                // hide the loading symbol for the answers
+                $('#loadinganswers').hide();
+
+                // show the submit answer rich text control
+                $('.wirte-answer').show();
+
+                // show the 'ask to answer module'
+                $('#userToAnswer').show();
                     return;
                 }
 
@@ -1116,18 +1124,18 @@
                     setUpAnswerUserActions();
                 });
 
-            },
-            "error": function (err) {
-                // hide the loading symbol for the answers
-                $('#loadinganswers').hide();
+            //},
+            //"error": function (err) {
+            //    // hide the loading symbol for the answers
+            //    $('#loadinganswers').hide();
 
-                // show the submit answer rich text control
-                $('.wirte-answer').show();
+            //    // show the submit answer rich text control
+            //    $('.wirte-answer').show();
 
-                // show the 'ask to answer module'
-                $('#userToAnswer').show();
-            }
-        });
+            //    // show the 'ask to answer module'
+            //    $('#userToAnswer').show();
+            //}
+        //});
     }
 
     // This method will execute when user will type user details in the 'Ask To Answer' serach box
