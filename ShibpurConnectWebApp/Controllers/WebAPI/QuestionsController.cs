@@ -17,13 +17,14 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Security.Claims;
+using ShibpurConnectWebApp.Providers;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class QuestionsController : ApiController
     {
-        private const int PAGESIZE = 20;
+        private const int PAGESIZE = 30;
 
         private MongoHelper<Question> _mongoHelper;
 
@@ -139,7 +140,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 questionVM.IsAskedByMe = question.UserId == userInfo.UserId;
 
                 var _answerMongoHelper = new MongoHelper<Answer>();
-                var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderBy(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();
+                var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderByDescending(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();
                 var userDetails = new Dictionary<string, CustomUserInfo>();
                 
                 Task<CustomUserInfo> actionResult1 = helper.FindUserById(question.UserId);
@@ -164,6 +165,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     allComments.AddRange(comments);
                     var answervm = new AnswerViewModel().Copy(answer);
                     answervm.Comments = comments;
+                    answervm.IsUpvotedByMe = answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.UserId);
                     answerVMs.Add(answervm);
                 }
 
@@ -188,7 +190,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     var userData = userDetails[answerVM.UserId];
                     answerVM.UserEmail = userData.Email;
-                    answerVM.DisplayName = userData.FirstName;
+                    answerVM.DisplayName = userData.FirstName + " " + userData.LastName;
                     answerVM.UserProfileImage = userData.ProfileImageURL;
                 }
 
@@ -354,7 +356,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 ViewCount = question.ViewCount,
                 UserEmail = userData.Email,
                 UserProfileImage = userData.ProfileImageURL,
-                DisplayName = userData.FirstName
+                DisplayName = userData.FirstName + " " + userData.LastName
             };
         }
     }

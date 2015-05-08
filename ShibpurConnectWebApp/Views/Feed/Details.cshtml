@@ -317,7 +317,6 @@
 
 <script type="text/javascript">
     var questionID = '';
-    var askedBy = '';
     var advancedEditor;
     // we will keep the default users that can answer this question and we will retrieve it during page load
     var userListAskToAnswer;
@@ -390,7 +389,7 @@
                 });
                 //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
 
-                askedBy = question.userEmail;
+                isAskedByMe = question.isAskedByMe;
                 getAnswers(question.answers);
                 // attach the categories
                 $(question.categories).each(function (i, category) {
@@ -785,11 +784,9 @@
                 $(answerBlock).find('.answer-comments .add-comment').hide();
 
                 var userNameAnchor = $(answerBlock).find('div.user a.userName');
-                $(userNameAnchor).text(result.displayName);
-                if (result.userProfileImage) {
-                    var userProfileImage = $(answerBlock).find('div.user img.avatar');
-                    $(userProfileImage).attr('src', IMGURPATH +  result.userProfileImage);
-                }
+                $(userNameAnchor).text(userInfo.firstName + " " + userInfo.lastName);
+                var userProfileImage = $(answerBlock).find('div.user img.avatar');
+                $(userProfileImage).attr('src', IMGURPATH + userInfo.profileImageURL);
                 if (result.userEmail != null) {
                     var url = $(userNameAnchor).attr('href') + '?userEmail=' + result.userEmail;
                     $(userNameAnchor).attr('href', url);
@@ -823,47 +820,40 @@
 
     }
 
-    function getComments(answerBlock, answer, userEmail) {
+    function getComments(answerBlock, answer) {
         if (!answerBlock) {
             return;
         }
 
-        var answerId = answer.answerId;
-        scAjax({
-            "url": "comments/GetCommentsForAnswer",
-            "data": { "answerId": answerId },
-            "success": function (result) {
-                if (!result) {
-                    return;
-                }
+        var result = answer.comments;        
+        if (!result) {
+            return;
+        }
 
-                // hide the loading symbol for the answers
-                $('#loadinganswers').hide();
+        // hide the loading symbol for the answers
+        $('#loadinganswers').hide();
 
-                // show the submit answer rich text control
-                $('.wirte-answer').show();
+        // show the submit answer rich text control
+        $('.wirte-answer').show();
 
-                // show the 'ask to answer module'
-                $('#userToAnswer').show();                
+        // show the 'ask to answer module'
+        $('#userToAnswer').show();                
 
-                if (result.length == 0) {
-                    $(answerBlock).find('.answer-comments').hide();
-                }
+        if (result.length == 0) {
+            $(answerBlock).find('.answer-comments').hide();
+        }
 
-                $(result.reverse()).each(function (i, e) {
+        $(result.reverse()).each(function (i, e) {
 
-                    var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
-                    $(commentBlock).removeClass('hide');
-                    $(commentBlock).find('.comment-text').text(e.commentText);
-                    $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
-                    $(commentBlock).find('.comment-user').text(e.displayName);
-                    answerBlock.find('.answer-comments').prepend(commentBlock);
-                });
-
-                //setUpAnswerUserActions();
-            }
+            var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
+            $(commentBlock).removeClass('hide');
+            $(commentBlock).find('.comment-text').text(e.commentText);
+            $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
+            $(commentBlock).find('.comment-user').text(e.displayName);
+            answerBlock.find('.answer-comments').prepend(commentBlock);
         });
     }
+        
 
     function handleAddComment(event) {
         event.preventDefault();
@@ -994,7 +984,7 @@
             "url": "answers/UpdateUpVoteCount",
             "type": "POST",
             "data": JSON.stringify({
-                "AnswerID": answerId, "UserEmail": userInfo.email
+                "AnswerID": answerId
             }),
             "success": function (result) {
                 $(anchor).find('.count').text(result);
@@ -1023,12 +1013,12 @@
         $('.upvote-anchor').unbind("click").bind("click", handleUpvote);
     }
 
-    function createAnswerHtml(answerBlock, answer, userEmail) {
+    function createAnswerHtml(answerBlock, answer) {
         $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
         // set a max width for any image that is part of the answer
         $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'"));
         $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
-        if (answer.upvotedBy && answer.upvotedBy.indexOf(userEmail) >= 0) {
+        if (answer.isUpvotedByMe) {
             $(answerBlock).find('.upvote-span').addClass('disabled');
         }
         //$(answerBlock).find('.userName').text(answer.displayName);
@@ -1057,85 +1047,60 @@
         $('#answerlist').append(answerBlock);
     }
 
+    var isAskedByMe = false;
     function getAnswers(result) {
-        var isAskedByMe = false;
-        var userDetails = localStorage.getItem("SC_Session_UserDetails");
-        if (userDetails) {
-            var userInfo = $.parseJSON(userDetails);
-            isAskedByMe = askedBy == userInfo.email;
-        }        
-
-        jQuery.support.cors = true;
-        var SERVER = "/api/";
-
-        //scAjax({
-        //    "url": "answers/GetAnswers",
-        //    "data": { "questionId": questionID },
-        //    "success": function (result) {
+        
         if (!result) {
-                // hide the loading symbol for the answers
-                $('#loadinganswers').hide();
+            // hide the loading symbol for the answers
+            $('#loadinganswers').hide();
 
-                // show the submit answer rich text control
-                $('.wirte-answer').show();
+            // show the submit answer rich text control
+            $('.wirte-answer').show();
 
-                // show the 'ask to answer module'
-                $('#userToAnswer').show();
-                    return;
+            // show the 'ask to answer module'
+            $('#userToAnswer').show();
+                return;
+            }
+
+            $('#answerlist').before("<h4>Answers:</h4><hr/>");
+            var save = $('#answerlist .answer.hide').detach();
+            $('#answerlist').empty().append(save);
+
+            $(result).each(function (index, answer) {
+                var answerBlock = $('#answerlist li.answer.hide').clone();
+                createAnswerHtml(answerBlock, answer);
+                if (isAskedByMe) {
+                    var markAnswer = $(answerBlock).find('.mark-answer');
+                    $(markAnswer).removeClass('hide').click(function () {
+                        var span = $(this);
+                        if ($(span).hasClass('btn-success')) {
+                            return;
+                        }
+
+                        var answerId = $(span).closest('li.answer').attr('data-answerid');
+                        var answerBy = $(span).closest('li.answer').attr('data-answerBy');
+                        var answers = [];
+                        answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
+                        $('.mark-answer.btn-success').each(function (i, e) {
+                            $(e).removeClass('btn-success');
+                            var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
+                            answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
+                        });
+
+                        $(span).addClass('btn-success');
+                        logActivity(5, answerId, answerBy);
+
+                        scAjax({
+                            "url": "answers/UpdateMarkAsAnswer",
+                            "type": "POST",
+                            "data": JSON.stringify(answers)
+                        });
+                    });
                 }
 
-                $('#answerlist').before("<h4>Answers:</h4><hr/>");
-                var save = $('#answerlist .answer.hide').detach();
-                $('#answerlist').empty().append(save);
-
-                $(result).each(function (index, answer) {
-                    var answerBlock = $('#answerlist li.answer.hide').clone();
-                    createAnswerHtml(answerBlock, answer, userInfo.email);
-                    if (isAskedByMe) {
-                        var markAnswer = $(answerBlock).find('.mark-answer');
-                        $(markAnswer).removeClass('hide').click(function () {
-                            var span = $(this);
-                            if ($(span).hasClass('btn-success')) {
-                                return;
-                            }
-
-                            var answerId = $(span).closest('li.answer').attr('data-answerid');
-                            var answerBy = $(span).closest('li.answer').attr('data-answerBy');
-                            var answers = [];
-                            answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
-                            $('.mark-answer.btn-success').each(function (i, e) {
-                                $(e).removeClass('btn-success');
-                                var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
-                                answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
-                            });
-
-                            $(span).addClass('btn-success');
-                            logActivity(5, answerId, answerBy);
-
-                            scAjax({
-                                "url": "answers/UpdateMarkAsAnswer",
-                                "type": "POST",
-                                "data": JSON.stringify(answers)
-                            });
-                        });
-                    }
-
-                    getComments(answerBlock, answer, userInfo.email);
-                    setUpAnswerUserActions();
-                });
-
-            //},
-            //"error": function (err) {
-            //    // hide the loading symbol for the answers
-            //    $('#loadinganswers').hide();
-
-            //    // show the submit answer rich text control
-            //    $('.wirte-answer').show();
-
-            //    // show the 'ask to answer module'
-            //    $('#userToAnswer').show();
-            //}
-        //});
+                getComments(answerBlock, answer);
+                setUpAnswerUserActions();
+            });            
     }
 
     // This method will execute when user will type user details in the 'Ask To Answer' serach box

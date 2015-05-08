@@ -11,6 +11,8 @@ using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -102,13 +104,25 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
         }
 
-        public int UpdateUpVoteCount(Answer answer)
+        public async Task<int> UpdateUpVoteCount(Answer answer)
         {
             try
             {
                 ObjectId.Parse(answer.AnswerId);
             }
             catch (Exception)
+            {
+                return 0;
+            }
+
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+
+            if (userInfo == null)
             {
                 return 0;
             }
@@ -122,7 +136,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     answerInDB.UpvotedByUserIds = new List<string>();
                 }
-                answerInDB.UpvotedByUserIds.Add(answer.UserId);
+                answerInDB.UpvotedByUserIds.Add(userInfo.UserId);
                 _mongoHelper.Collection.Save(answerInDB);
                 return upCount;
             }
