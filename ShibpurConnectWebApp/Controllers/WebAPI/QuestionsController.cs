@@ -37,6 +37,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <summary>
         /// Will return all available questions
         /// </summary>
+        /// <param name="page">provide the page index</param>
         /// <returns></returns>
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
@@ -69,6 +70,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        /// <summary>
+        /// qquestions for a particular category/tag
+        /// </summary>
+        /// <param name="category">category/tag name</param>
+        /// <param name="page">page index</param>
+        /// <returns></returns>
         public async Task<IHttpActionResult> GetQuestionsByCategory(string category, int page)
         {
             try
@@ -112,8 +119,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        // GET: api/Questions/5
-        // Will return a specific question with comments
+        /// <summary>
+        /// Will return a specific question with comments
+        /// </summary>
+        /// <param name="questionId">question id</param>
+        /// <returns></returns>
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
@@ -203,6 +213,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        /// <summary>
+        /// Get the answer count for a particular question
+        /// </summary>
+        /// <param name="questionId">question id</param>
+        /// <returns></returns>
         public IHttpActionResult GetAnswersCount(string questionId)
         {
             try
@@ -226,6 +241,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        /// <summary>
+        /// Get total user view count for a particular question
+        /// </summary>
+        /// <param name="questionId">question id</param>
+        /// <returns></returns>
         public int GetViewCount(string questionId)
         {
             try
@@ -241,6 +261,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return question == null ? 0 : question.ViewCount;
         }
 
+        /// <summary>
+        /// Increment view count for a question
+        /// </summary>
+        /// <param name="question"></param>
+        /// <returns></returns>
         [ResponseType(typeof(int))]
         [ActionName("IncrementViewCount")]
         public int IncrementViewCount(Question question)
@@ -266,41 +291,62 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return 0;
         }
 
-        // POST: api/Questions
+        /// <summary>
+        /// API to post a new question
+        /// </summary>
+        /// <param name="question">QuestionDTO object</param>
+        /// <returns></returns>
+        [Authorize]
         [ResponseType(typeof(Question))]
-        public async Task<IHttpActionResult> PostQuestions(Question question)
+        public async Task<IHttpActionResult> PostQuestions(QuestionDTO question)
         {
+            // validate title
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             if (question == null)
-                return BadRequest("Request body is null. Please send a valid Questions object");
-
-            // if Question doesn't have any category tagging then its a bad request
-            if (question.Categories == null || question.Categories.Length == 0)
-                return BadRequest("Question must have a category association");
-
+                return BadRequest("Request body is null. Please send a valid QuestionDTO object"); 
+         
+            // validate if incase any category is just space
+            foreach(string cat in question.Categories)
+            {
+                if(string.IsNullOrWhiteSpace(cat))
+                {
+                    ModelState.AddModelError("", "One of the question category is empty string or contains only whitespace");
+                    return BadRequest(ModelState); 
+                }                
+            }
+         
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var claim = principal.FindFirst("sub");
 
             Helper.Helper helper = new Helper.Helper();
             var userResult = helper.FindUserByEmail(claim.Value);
             var userInfo = await userResult;
-
             if (userInfo == null)
             {
                 return BadRequest("No UserId is found");
             }
 
-            question.UserId = userInfo.UserId;
+            // new question object that we will save in the database
+            Question questionToPost = new Question()
+            {
+                Title = question.Title,
+                UserId = userInfo.UserId,
+                Description = question.Description,
+                Categories = question.Categories.Select(c => c.Trim()).ToArray(),
+                QuestionId = ObjectId.GenerateNewId().ToString(),
+                PostedOnUtc = DateTime.UtcNow
+            };
 
+           
             // create the new categories            
             List<Categories> categoryList = new List<Categories>();
             CategoriesController categoriesController = new CategoriesController();
             foreach (string category in question.Categories)
             {
-                var actionResult = categoriesController.GetCategory(category);
+                var actionResult = categoriesController.GetCategory(category.Trim());
                 var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
                 if (contentResult == null)
                 {
@@ -320,26 +366,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         CategoryTagging ct = new CategoryTagging();
                         ct.Id = ObjectId.GenerateNewId();
                         ct.CategoryId = catg.CategoryId;
-                        ct.QuestionId = question.QuestionId;
+                        ct.QuestionId = questionToPost.QuestionId;
                         categoryTaggingController.PostCategoryTagging(ct);
                     }
                     else
                         return InternalServerError(new Exception());
                 }
-            }
-
-            // add the datetime stamp for this question
-            question.PostedOnUtc = DateTime.UtcNow;
-            // create the question id
-            question.QuestionId = ObjectId.GenerateNewId().ToString();
+            }  
+      
             // save the question to the database
-            var result = _mongoHelper.Collection.Save(question);
+            var result = _mongoHelper.Collection.Save(questionToPost);
 
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
 
-            return CreatedAtRoute("DefaultApi", new { id = question.QuestionId }, question);
+            return CreatedAtRoute("DefaultApi", new { id = questionToPost.QuestionId }, questionToPost);
         }
         
         private QuestionViewModel GetQuestionViewModel(Question question, CustomUserInfo userData)

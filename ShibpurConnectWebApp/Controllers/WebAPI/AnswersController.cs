@@ -70,7 +70,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ModelState);
             }
             if (answer == null)
-                return BadRequest("Request body is null. Please send a valid Questions object");
+                return BadRequest("Request body is null. Please send a valid Answer object");
             try
             {
                 // validate given questionid, userid are valid

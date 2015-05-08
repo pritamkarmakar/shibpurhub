@@ -47,6 +47,17 @@
         });
 
         $('#btn_Save_Question').on('click', function (e) {
+            // remove the errors class if there is any
+            if ($('#questiontitlediv').hasClass("has-error")) {
+                $('#questiontitlediv').removeClass("has-error");
+            }
+            if ($('.editor-container').hasClass("has-error")) {
+                $('.editor-container').removeClass("has-error");
+            }
+            if ($('#questiontagsdiv').hasClass("has-error")) {
+                $('#questiontagsdiv').removeClass("has-error");
+            }
+
             e.preventDefault();
             if ($("#newquestionform")[0].checkValidity()) {
                 // validate question description rich text is not empty and has minimum no of characters
@@ -61,7 +72,7 @@
                     $('#btn_Save_Question > span').text('Save');
 
                     // show toast error
-                    Command: toastr["error"]("Question description can't be empty")
+                    Command: toastr["error"]("Question body can't be empty")
                     return;
                 }
                 // verify whether length of question description is less than 40
@@ -74,7 +85,7 @@
                     $('#btn_Save_Question > span').text('Save');
 
                     // show toast error
-                    Command: toastr["error"]("Question description should be more than 40 characters long")
+                    Command: toastr["error"]("Question body should be more than 40 characters long")
                     return;
                 }
                 // disable the save button
@@ -84,26 +95,13 @@
                 $('#btn_Save_Question > span').text(' Saving...');
 
                 var question = $('#txt_question').val();
-                var categories = $('#select_categories').val();               
-
-                var userDetails = localStorage.getItem("SC_Session_UserDetails");
-                if (!userDetails) {
-                    //TO-DO: Handle if userdetail is not available in Session Storage
-                    return;
-                }
-                var userInfo = $.parseJSON(userDetails);
-                var arrCategories = categories.split(',');              
-
-
-                var userID = $('#hdnUserID').val();
+                var categories = $('#select_categories').val();
+                var arrCategories = categories.split(',');
+                
                 var data = {
-                    "Title": question,
-                    "Description": questiondescription,
-                    "HasAnswered": 0,
-                    "UserEmail": userInfo.email,
-                    "DisplayName": userInfo.firstName + " " + userInfo.lastName,
-                    "Categories": arrCategories,
-                    "UserProfileImage": userInfo.profileImageURL
+                    "title": question,
+                    "description": questiondescription,
+                    "categories": arrCategories
                 };
 
                 scAjax({
@@ -127,19 +125,38 @@
                         });
 
                         Command: toastr["error"]("<ul>" + errorMessage + "</ul>")
-                        // parse the error json
-                        var errorresponse = jQuery.parseJSON(err.responseText);
 
                         // enable the button
                         $('#btn_Save_Question').prop('disabled', false);
-
                         // remove the loading class from save button
                         $('#btn_Save_Question > i').removeClass('fa fa-circle-o-notch fa-spin');
-                        $('#btn_Save_Question > span').text('Save');                      
+                        $('#btn_Save_Question > span').text('Save');
                     }
                 });
-                return false;
-            } else Command: toastr["error"]("All fields are mandatory")
+            } else {
+                if ($('#txt_question').val() == "") {
+                    // check if question title is empty
+                    if (!$('#questiontitlediv').hasClass("has-error")) {
+                        $('#questiontitlediv').addClass("has-error");
+                        Command: toastr["error"]("Question title can't blank")
+                    }
+                }
+                if ($.trim(advancedEditor.getText()).length == 0) {
+                    // check if question title is empty
+                    if (!$('.editor-container').hasClass("has-error")) {
+                        $('.editor-container').addClass("has-error");
+                        Command: toastr["error"]("Question body can't blank")
+                    }
+                }
+                if ($('#select_categories').val() == "") {
+                    // check if question title is empty
+                    if (!$('#questiontagsdiv').hasClass("has-error")) {
+                        $('#questiontagsdiv').addClass("has-error");
+                        Command: toastr["error"]("You have to add minimum one tag")
+                    }
+                }
+
+            }
         });
     });
 </script>
@@ -153,7 +170,7 @@
     <form action="#" class="form-horizontal" method="post" role="form" id="newquestionform">
         <div class="form-group">
             <label class="control-label col-md-3" for="Question">Question title</label>
-            <div class="col-md-9">
+            <div class="col-md-9" id="questiontitlediv">
                 <div class="form-group">
                     <div class="col-md-12">
                         <input class="form-control" id="txt_question" placeholder="What is your question?" type="text" required>
@@ -162,7 +179,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-3" for="DetailedText">Question description</label>
+            <label class="control-label col-md-3" for="DetailedText">Question body</label>
             <div class="col-md-9">
                 @*<textarea class="form-control" id="txtarea_description" placeholder="Please provide details about your question" rows="3" required></textarea>*@
                 <div class="wirte-answer col-md-12" style="margin-top:40px;">
@@ -277,11 +294,11 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-3" for="Categories">Question categories</label>
-            <div class="col-md-9">
+            <label class="control-label col-md-3" for="Categories">Question tagging</label>
+            <div class="col-md-9" id="questiontagsdiv">
                 <div class="form-group">
                     <div class="col-md-12">
-                        <input class="form-control" id="select_categories" placeholder="Add categories (,) separeted" type="text" required>
+                        <input class="form-control" id="select_categories" placeholder="You can add multiple tags comma(,) separeted" type="text" required>
                     </div>
                 </div>
             </div>

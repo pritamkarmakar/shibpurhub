@@ -572,6 +572,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.PostQuestions(ShibpurConnectWebApp.Models.WebAPI.QuestionDTO)">
+            <summary>
+            API to post a new question
+            </summary>
+            <param name="question">QuestionDTO object</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AccountController.Register(ShibpurConnectWebApp.Models.RegisterViewModel)">
             <summary>
             POST: Register a new user
@@ -739,9 +746,19 @@
             </summary>
             <param name="userInfo">CustomUserInfo object</param>
         </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionDTO">
+            <summary>
+            Object to be used in the PostQuestions controller. Idea is to create a simple request object for post question
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.Question">
+            <summary>
+            Object to be saved in the database
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionViewModel">
             <summary>
-            We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later
+            We will use this to send data from the API. This has a new property UserName. We will add firstname, lastname as well later
             </summary>
         </member>
         <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.ChangePassword(System.String,ShibpurConnectWebApp.Models.ChangePasswordViewModel)">

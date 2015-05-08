@@ -9,57 +9,55 @@ using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
+    /// <summary>
+    /// Object to be used in the PostQuestions controller. Idea is to create a simple request object for post question
+    /// </summary>
     [Serializable]
-    [DataContract(IsReference = true)]
-    [BsonIgnoreExtraElements]
-    public class Question
+    public class QuestionDTO
+    {
+        [Required]
+        [MinLength(20, ErrorMessage = "Minimum length of the question title should be more than 20 characters")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters allowed in question title")]
+        public string Title { get; set; }
+
+        [Required]
+        [MinLength(40, ErrorMessage = "Minimum length of body should be more than 40 characters")]
+        [MaxLength(30000, ErrorMessage = "Maximum 30000 characters allowed in body")]
+        public string Description { get; set; }
+
+        [Required]
+        [DataMember]
+        public string[] Categories { get; set; }  
+    }
+
+    /// <summary>
+    /// Object to be saved in the database
+    /// </summary>
+    [Serializable]
+    public class Question : QuestionDTO
     {
         // Primary key
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         [JsonProperty(PropertyName = "questionId")]
         public string QuestionId { get; set; }
-        
-        [Required]
-        [DataMember]        
-        [MinLength(20, ErrorMessage="Minimum length of the question title should be more than 20 characters")]
-        [MaxLength(150, ErrorMessage = "Maximum 150 characters allowed in question title")]
-        public string Title { get; set; }
-        
-        [Required]
-        [DataMember]
-        [MinLength(40, ErrorMessage = "Minimum length of description should be more than 40 characters")]
-        [MaxLength(30000, ErrorMessage = "Maximum 30000 characters allowed in description")]
-        public string Description { get; set; }
-
+       
         [DataMember]
         public string UserId { get; set; }
-        
+
         [DataMember]
         public bool HasAnswered { get; set; }
 
         [DataMember]
-        public DateTime? PostedOnUtc { get; set; }
-
-        [Required]
-        [DataMember]
-        public string[] Categories { get; set; }
-
-        // Foreign key
-        //[ForeignKey("AspNetUsers")]
-        //[Required]
-        //[DataMember]
-        //public string UserEmail { get; set; }
+        public DateTime? PostedOnUtc { get; set; }       
 
         [DataMember]
         public int ViewCount { get; set; }
     }
 
     /// <summary>
-    /// We will use this to send data from the API. Thi has a new property UserName. We will add firstname, lastname as well later
+    /// We will use this to send data from the API. This has a new property UserName. We will add firstname, lastname as well later
     /// </summary>
-    //[Serializable]
-    //[BsonIgnoreExtraElements]
     public class QuestionViewModel : Question
     {
         [DataMember]

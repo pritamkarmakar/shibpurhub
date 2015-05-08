@@ -921,12 +921,13 @@
 
         var answerId = $(button).closest('li.answer').attr('data-answerid');
         var data = { "CommentText": $.trim(comment), "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
-        $(input).val('');
         scAjax({
             "url": "comments/AddComment",
             "type": "POST",
             "data": JSON.stringify(data, null, 2),
             "success": function (result) {
+                // clear the previous comment text
+                $(input).val('');
                 // enable the button
                 $('.btn-save-comment').prop('disabled', false);
                 // remove the loading class from save button
@@ -961,11 +962,13 @@
                 $('.btn-save-comment > i').removeClass('fa fa-circle-o-notch fa-spin');
                 $('.btn-save-comment > span').text('Save');
 
-               // check if comment box has the 'has-error' class or not
+                // check if comment box has the 'has-error' class or not
                 if (!commentBox.hasClass("has-error")) {
                     commentBox.addClass("has-error");
                 }
-                input.attr("placeholder", errorresponse.modelState['comment.CommentText'][0]);               
+
+                // toastr notification
+                Command: toastr["error"](errorresponse.modelState['comment.CommentText'][0])                              
             }
         });
     }
@@ -1295,7 +1298,8 @@
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
                                 </a>                                
                                 <div class="input-div no-right-padding">
-                                    <input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>
+                                    <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
+                                    @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
                                 </div>
                                 <div class="col-md-3 buttons no-right-padding">
                                    @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
