@@ -60,4 +60,4 @@ Do git pull/push, you shouldn't be asked for the password anymore.
 2. Mongodb Driver: Install-Package mongocsharpdriver. Details [here](https://www.nuget.org/packages/mongocsharpdriver/)
 
 ## To see all the documents in Elastic Search?
-https://shibpurconnect.east-us.azr.facetflow.io/my_index/_search?
+https://shibpurconnect.east-us.azr.facetflow.io/my_index/_search/?size=1000&pretty=1
