@@ -231,7 +231,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return Ok(new CustomUserInfo
                     {
                         Email = user.Email,
-                        UserId = user.Id,
+                        Id = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Location = user.Location,

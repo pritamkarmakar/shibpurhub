@@ -136,7 +136,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     answerInDB.UpvotedByUserIds = new List<string>();
                 }
-                answerInDB.UpvotedByUserIds.Add(userInfo.UserId);
+                answerInDB.UpvotedByUserIds.Add(userInfo.Id);
                 _mongoHelper.Collection.Save(answerInDB);
                 return upCount;
             }

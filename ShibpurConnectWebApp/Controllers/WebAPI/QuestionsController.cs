@@ -61,10 +61,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 foreach (var question in questions)
                 {
                     var userData = userDetails[question.UserId];
-                    var questionVM = GetQuestionViewModel(question, userData);
-                    questionVM.AnswerCount = answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == question.QuestionId).Count();
-                    questionVM.TotalPages = totalPages;
-                    result.Add(questionVM);
+                    // userdata can be null, for example -> one user posted a question and later on deleted his account
+                    if (userData != null)
+                    {
+                        var questionVM = GetQuestionViewModel(question, userData);
+                        questionVM.AnswerCount = answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == question.QuestionId).Count();
+                        questionVM.TotalPages = totalPages;
+                        result.Add(questionVM);
+                    }
                 }
 
                 return Ok(result);
@@ -153,7 +157,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 var questionVM = new QuestionViewModel().Copy(question);
-                questionVM.IsAskedByMe = question.UserId == userInfo.UserId;
+                questionVM.IsAskedByMe = question.UserId == userInfo.Id;
 
                 var _answerMongoHelper = new MongoHelper<Answer>();
                 var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderByDescending(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();
@@ -181,7 +185,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     allComments.AddRange(comments);
                     var answervm = new AnswerViewModel().Copy(answer);
                     answervm.Comments = comments;
-                    answervm.IsUpvotedByMe = answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.UserId);
+                    answervm.IsUpvotedByMe = answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.Id);
                     answerVMs.Add(answervm);
                 }
 
@@ -196,7 +200,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
                     var userDetail = await actionResult;
-                    if (!userDetails.ContainsKey(userId))
+                    if (!userDetails.ContainsKey(userId) && userDetail !=null)
                     {
                         userDetails.Add(userId, userDetail);
                     }
@@ -204,13 +208,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 foreach(var answerVM in answerVMs)
                 {
-                    var userData = userDetails[answerVM.UserId];
-                    answerVM.UserEmail = userData.Email;
-                    answerVM.DisplayName = userData.FirstName + " " + userData.LastName;
-                    answerVM.UserProfileImage = userData.ProfileImageURL;
-                }
+                    if (userDetails.ContainsKey(answerVM.UserId))
+                    {
+                        var userData = userDetails[answerVM.UserId];
+                        answerVM.UserEmail = userData.Email;
+                        answerVM.DisplayName = userData.FirstName + " " + userData.LastName;
+                        answerVM.UserProfileImage = userData.ProfileImageURL;
+                    }                    
+                }            
 
-                questionVM.Answers = answerVMs;
+                // remove the answers where there is no user information
+                questionVM.Answers = answerVMs.Where(m => m.UserEmail != null).ToList();
+                
                 return Ok(questionVM);
             }
             catch (FormatException fe)
@@ -339,7 +348,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             Question questionToPost = new Question()
             {
                 Title = question.Title,
-                UserId = userInfo.UserId,
+                UserId = userInfo.Id,
                 Description = question.Description,
                 Categories = question.Categories.Select(c => c.Trim()).ToArray(),
                 QuestionId = ObjectId.GenerateNewId().ToString(),

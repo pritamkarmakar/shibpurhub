@@ -105,7 +105,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     return new CustomUserInfo
                     {
                         Email = user.Email,
-                        UserId = user.Id,
+                        Id = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Location = user.Location,
@@ -134,7 +134,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var actionResult = helper.FindUserByEmail(claim.Value);
             var userInfo = await actionResult;
 
-            IdentityResult result = await _repo.ChangePassword(userInfo.UserId, model);
+            IdentityResult result = await _repo.ChangePassword(userInfo.Id, model);
             IHttpActionResult errorResult = GetErrorResult(result);
 
             if (errorResult != null)

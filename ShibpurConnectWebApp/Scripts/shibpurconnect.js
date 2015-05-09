@@ -201,7 +201,7 @@ function logActivity(activity, objectId, objectUserId) {
 
     var userInfo = $.parseJSON(userDetails);
     var data = {
-        "UserId": userInfo.userId,
+        "UserId": userInfo.id,
         "Activity": activity,
         "ActedOnObjectId": objectId,
         "ActedOnUserId": objectUserId || ""

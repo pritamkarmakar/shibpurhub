@@ -117,7 +117,7 @@
         }
         var userInfo = $.parseJSON(userDetails);
         var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var employmentHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('input#employmentfromdate').val() + '"' + ',"To":' + '"' + $('#employmenttodate').val() + '"' + ',"UserId":' + '"' + userInfo.userId + '"' + ',"Title":' + '"' + $('#Title').val() + '"' +
+        var employmentHistory = '{"CompanyName":' + '"' + $('#CompanyName').val() + '"' + ',"From":' + '"' + $('input#employmentfromdate').val() + '"' + ',"To":' + '"' + $('#employmenttodate').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + ',"Title":' + '"' + $('#Title').val() + '"' +
             ',"Location":' + '"' + $('#Location').val() + '"' + '}';
 
         // add spinner animation in the save button and change the text to 'Saving..'

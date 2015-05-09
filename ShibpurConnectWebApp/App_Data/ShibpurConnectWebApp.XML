@@ -818,9 +818,18 @@
             Method to update user reputation
             This will update both in mongo and elastic search
             </summary>
-            <param name="userId"></param>
-            <param name="deltaReputation"></param>
-            <param name="addReputaion"></param>
+            <param name="userId">userid</param>
+            <param name="deltaReputation">reputation change amount</param>
+            <param name="addReputaion">add/subtract reputation</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.UpdateProfileImageURL(System.String,System.String)">
+            <summary>
+            Method to update user profile image
+            This method will update both in Mongodb and ES
+            </summary>
+            <param name="userId">user userid</param>
+            <param name="url">profile image url</param>
             <returns></returns>
         </member>
     </members>

@@ -93,7 +93,7 @@
 
                 var userInfo = $.parseJSON(userDetails);
                 profileEmail = userInfo.email;
-                loggedInUserId = userInfo.userId;
+                loggedInUserId = userInfo.id;
             }
             $.ajax({
                 url: SERVER + "profile/getprofile",
@@ -117,7 +117,7 @@
                     var userDetails = localStorage.getItem("SC_Session_UserDetails");
                     if (userDetails) {
                         var userInfo = $.parseJSON(userDetails);
-                        var loggedInUserId = userInfo.userId;
+                        var loggedInUserId = userInfo.id;
                     }                    
 
                     $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
@@ -126,10 +126,10 @@
                     $(".userlocation").after(result.userInfo.location);
                     $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
                     $(".aboutmebody").text(result.userInfo.aboutMe);
-                    $("#hdnUserId").val(result.userInfo.userId);
+                    $("#hdnUserId").val(result.userInfo.id);
                     //$(".registeredon").insertAfter.append("<strong class='registrationdatespan'>Joined</strong>" + getDateFormattedByMonthYear(result.userInfo.registeredOn));
 
-                    if(result.userInfo.userId == loggedInUserId)
+                    if(result.userInfo.id == loggedInUserId)
                     {
                         $("#imagePreview").siblings('.imageDiv').show();
                     }
