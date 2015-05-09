@@ -111,7 +111,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         Location = user.Location,
                         ReputationCount = user.ReputationCount,
                         AboutMe = user.AboutMe,
-                        ProfileImageURL = user.ProfileImageURL
+                        ProfileImageURL = user.ProfileImageURL,
+                        RegisteredOn = user.RegisteredOn
                     };
                 }
             }

@@ -99,7 +99,10 @@
                 $('#loadingusers').hide();
 
                 $(result).each(function (i, userinfo) {
-                    $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + userinfo.email + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                    if (userinfo.profileImageURL == null)
+                        $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + userinfo.email + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                    else
+                        $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + userinfo.email + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
                 });
             }
         });

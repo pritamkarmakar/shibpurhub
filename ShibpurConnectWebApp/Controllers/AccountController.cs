@@ -230,7 +230,11 @@ namespace ShibpurConnectWebApp.Controllers
                         UserId = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Location = user.Location
+                        Location = user.Location,
+                        RegisteredOn = user.RegisteredOn,
+                        ReputationCount = user.ReputationCount,
+                        ProfileImageURL = user.ProfileImageURL,
+                        AboutMe = user.AboutMe                        
                     });
 
 

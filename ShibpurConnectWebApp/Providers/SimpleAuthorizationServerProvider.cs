@@ -57,6 +57,7 @@ namespace ShibpurConnectWebApp.Providers
         public AuthRepository()
         {
             var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
+            _elasticSearchHelper = new ElasticSearchHelper();
             var db = client.GetServer().GetDatabase("shibpurconnect");
 
             _ctx = new ApplicationIdentityContext(db.GetCollection<IdentityUser>("users"), db.GetCollection<IdentityUser>("roles"));
@@ -140,6 +141,14 @@ namespace ShibpurConnectWebApp.Providers
             return result;
         }
 
+        /// <summary>
+        /// Method to update user reputation
+        /// This will update both in mongo and elastic search
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="deltaReputation"></param>
+        /// <param name="addReputaion"></param>
+        /// <returns></returns>
         public ApplicationUser UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
         {
             ApplicationUser user = _userManager.FindById(userId);
@@ -148,7 +157,30 @@ namespace ShibpurConnectWebApp.Providers
                 var userReputaion = user.ReputationCount;
                 userReputaion = addReputaion ? (userReputaion + deltaReputation) : (userReputaion - deltaReputation);
                 user.ReputationCount = userReputaion;
-                var updatedUser = _userManager.Update(user);                
+                var updatedUser = _userManager.Update(user);    
+            
+                // update same reputation in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+                // search the specific user
+                var userES = client.Search<CustomUserInfo>(v => v
+                    .Index("my_index")
+                    .Type("customuserinfo")
+                    .Query(l => l.Term("userId", user.Id)));
+
+                // read the _id from the elastic search hits, we will use this id for final update
+                string docIdES = string.Empty;
+                foreach(var hit in userES.Hits)
+                {
+                    docIdES = hit.Id;
+                    break;
+                }
+                var response = client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(docIdES)
+                    .Type("customuserinfo")                    
+                    .Doc(new { ReputationCount = userReputaion }));
             }
 
             return user;
@@ -161,6 +193,29 @@ namespace ShibpurConnectWebApp.Providers
             {
                 user.ProfileImageURL = url;
                 var updatedUser = _userManager.Update(user);
+
+                // update same profile image in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+                // search the specific user
+                var userES = client.Search<CustomUserInfo>(v => v
+                    .Index("my_index")
+                    .Type("customuserinfo")
+                    .Query(l => l.Term("userId", user.Id)));
+
+                // read the _id from the elastic search hits, we will use this id for final update
+                string docIdES = string.Empty;
+                foreach (var hit in userES.Hits)
+                {
+                    docIdES = hit.Id;
+                    break;
+                }
+                var response = client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(docIdES)
+                    .Type("customuserinfo")
+                    .Doc(new { ProfileImageURL = url }));
             }
 
             return user;

@@ -570,6 +570,43 @@
             <summary>
             Will return all available questions
             </summary>
+            <param name="page">provide the page index</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestionsByCategory(System.String,System.Int32)">
+            <summary>
+            qquestions for a particular category/tag
+            </summary>
+            <param name="category">category/tag name</param>
+            <param name="page">page index</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestion(System.String)">
+            <summary>
+            Will return a specific question with comments
+            </summary>
+            <param name="questionId">question id</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetAnswersCount(System.String)">
+            <summary>
+            Get the answer count for a particular question
+            </summary>
+            <param name="questionId">question id</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetViewCount(System.String)">
+            <summary>
+            Get total user view count for a particular question
+            </summary>
+            <param name="questionId">question id</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.IncrementViewCount(ShibpurConnectWebApp.Models.WebAPI.Question)">
+            <summary>
+            Increment view count for a question
+            </summary>
+            <param name="question"></param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.PostQuestions(ShibpurConnectWebApp.Models.WebAPI.QuestionDTO)">
@@ -774,6 +811,16 @@
             Method to update a user profile data
             </summary>
             <param name="applicationUser">ApplicationUser object</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.UpdateReputationCount(System.String,System.Int32,System.Boolean)">
+            <summary>
+            Method to update user reputation
+            This will update both in mongo and elastic search
+            </summary>
+            <param name="userId"></param>
+            <param name="deltaReputation"></param>
+            <param name="addReputaion"></param>
             <returns></returns>
         </member>
     </members>
