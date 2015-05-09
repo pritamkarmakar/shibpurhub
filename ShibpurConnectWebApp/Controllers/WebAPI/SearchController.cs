@@ -73,16 +73,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             foreach (object obj in result)
             {
                 var userData = JObject.Parse(obj.ToString());
-                if (!hash.Contains((string)userData["userId"]))
+                if (!hash.Contains((string)userData["id"]))
                 {
                     // retrieve the userInfo
                     ProfileController profileController = new ProfileController();
-                    IHttpActionResult actionResult = await profileController.GetProfileByUserId((string)userData["userId"]);
+                    IHttpActionResult actionResult = await profileController.GetProfileByUserId((string)userData["id"]);
                     var userProfile = actionResult as OkNegotiatedContentResult<UserProfile>;
 
                     if (userProfile != null)
                     {
-                        hash.Add((string)userData["userId"]);
+                        hash.Add((string)userData["id"]);
                         userProfileList.Add(userProfile.Content);
                     }
                 }

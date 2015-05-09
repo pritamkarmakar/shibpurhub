@@ -91,6 +91,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         public async Task<IHttpActionResult> GetProfileByUserId(string userId)
         {
+            if(string.IsNullOrEmpty(userId))
+            {
+                ModelState.AddModelError("","userId can't be null or empty string");
+                return BadRequest(ModelState);
+            }
+
             // validate userEmail is valid and get the userid
             Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
             var userInfo = await actionResult;
