@@ -110,6 +110,10 @@
         float: left;
         clear: both;
     }
+    .pagination
+    {
+        display: none;
+    }
 </style>
 
 <script type="text/javascript">
@@ -134,25 +138,28 @@
     }
 
     $(document).ready(function () {
-        jQuery.support.cors = true;
-        var SERVER = "/api/";
-        var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
 
+        loadQuestions(0);
+        $('.pagination li a').click(function () {
+            var anchor = $(this);
+            $('.pagination').hide();
+            $('#threads .thread:not(.hide)').remove();
+            $('#loadingquestions').show();
+            var page = parseInt($(anchor).text());
+            loadQuestions(page - 1);
+            $('.pagination li.disabled').removeClass('disabled');
+            $(anchor).parent().addClass('disabled');
+            return false;
+        });
+    });
+
+    function loadQuestions(pageNumber)
+    {
         var url = window.location.href;
         if (url.indexOf("FeedByCategory") > 1) {
             var splitArr = url.split('/');
             var category = splitArr[splitArr.length - 1];
             category = decodeURIComponent(category);
-
-            var url = window.location.href;
-            var splitArr = url.split('/');
-            var pageNumber = splitArr[splitArr.length - 1];
-            
-            if (!pageNumber || pageNumber == NaN)
-            {
-                pageNumber = 0;
-            }
-
 
             scAjax({
                 "url": "questions/GetQuestionsByCategory",
@@ -162,8 +169,12 @@
                         return;
                     }
 
+                    $('#loadingquestions').hide();
                     var questions = result;
-                    createQuestions(questions);
+                    var totalPages = questions[0].totalPages || 0;
+                    buildPagination(totalPages);
+                    createQuestions(questions);                    
+                    $('.pagination').show();
                 }
             });
         }
@@ -178,10 +189,15 @@
                     // hide the loading symbol
                     $('#loadingquestions').hide();
                     var questions = result;
+                    if (pageNumber == 0)
+                    {
+                        var totalPages = questions[0].totalPages || 0;
+                        buildPagination(totalPages);
+                    }
                     createQuestions(questions);
+                    $('.pagination').show();
                 },
-                "error": function(err)
-                {
+                "error": function (err) {
                     // hide the loading symbol
                     $('#loadingquestions').hide();
 
@@ -190,7 +206,33 @@
                 }
             });
         }
-    });
+    }
+
+    function buildPagination(pages)
+    {
+        //$('.pagination li').remove();
+        for(var i = 1; i <= pages; i++)
+        {
+            var anchor = $('<a>').text(i).attr('href', '#');
+            var li = $('<li>').append(anchor);
+            if (i == 1)
+            {
+                $(li).addClass('disabled');
+            }
+            $('.pagination').append(li);
+            $(anchor).click(function () {
+                var link = $(this);
+                $('.pagination').hide();
+                $('#threads .thread:not(.hide)').remove();
+                $('#loadingquestions').show();
+                var page = parseInt($(link).text());
+                loadQuestions(page - 1);
+                $('.pagination li.disabled').removeClass('disabled');
+                $(link).parent().addClass('disabled');
+                return false;
+            });
+        }
+    }
 
     function createQuestions(questions)
     {
@@ -222,7 +264,17 @@
             var tempdescription = '<p>' + question.description + '</p>';
             $(thread).find('div.detail .excerpt').append($(tempdescription).text().substring(0, 250));
             $(thread).find('div.stat span.date').text(dateString);
-            updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));
+            //updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));
+            var answerCount = question.answerCount || 0;
+            var answerCountSpan = $(thread).find('div.stat span.answercount');
+            if (answerCount > 1)
+            {
+                $(answerCountSpan).html("<b>" + answerCount + "</b>" + " answers");
+            }
+            else
+            {
+                $(answerCountSpan).html("<b>" + answerCount + "</b>" + " answer");
+            }
             if (question.viewCount > 1)
                 $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " views");
             else
@@ -292,4 +344,23 @@
             </div>
         </div>
     </div>
+    <nav>
+        <ul class="pagination">
+            @*<li class="disabled">
+                <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>*@
+            @*<li class="disabled"><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>*@
+            @*<li>
+                <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>*@
+        </ul>
+    </nav>  
 </div>

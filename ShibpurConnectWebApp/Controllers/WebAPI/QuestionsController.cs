@@ -24,7 +24,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class QuestionsController : ApiController
     {
-        private const int PAGESIZE = 30;
+        private const int PAGESIZE = 20;
 
         private MongoHelper<Question> _mongoHelper;
 
@@ -55,10 +55,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 var result = new List<QuestionViewModel>();
+                var answerMongoHelper = new MongoHelper<Answer>();
+                var totalQuestions = _mongoHelper.Collection.FindAll().Count();
+                var totalPages = totalQuestions % PAGESIZE == 0 ? totalQuestions / PAGESIZE : (totalQuestions / PAGESIZE) + 1;
                 foreach (var question in questions)
                 {
                     var userData = userDetails[question.UserId];
                     var questionVM = GetQuestionViewModel(question, userData);
+                    questionVM.AnswerCount = answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == question.QuestionId).Count();
+                    questionVM.TotalPages = totalPages;
                     result.Add(questionVM);
                 }
 
@@ -108,6 +113,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     var userData = userDetails[question.UserId];
                     var questionVM = GetQuestionViewModel(question, userData);
+                    questionVM.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
                     result.Add(questionVM);
                 }
 

@@ -246,3 +246,22 @@ function SendNotificationForWebSiteError(error) {
     });
 
 }
+
+function getQueryStringParam(name) {
+    try {
+        if (!name || name == "") {
+            return "";
+        }
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name.toLowerCase() + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var url = window.location.href;
+        var results = regex.exec(url.toLowerCase());
+        if (results == null)
+            return null;
+        else
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+    catch (result) {
+    }
+}

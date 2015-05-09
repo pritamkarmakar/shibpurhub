@@ -75,6 +75,12 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public List<AnswerViewModel> Answers { get; set; }
 
+        [DataMember]
+        public int AnswerCount{ get; set; }
+        
+        [DataMember]
+        public long TotalPages { get; set; }
+
         public QuestionViewModel Copy(Question question)
         {
             return new QuestionViewModel
