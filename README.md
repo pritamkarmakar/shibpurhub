@@ -61,3 +61,9 @@ Do git pull/push, you shouldn't be asked for the password anymore.
 
 ## To see all the documents in Elastic Search?
 https://shibpurconnect.east-us.azr.facetflow.io/my_index/_search/?size=1000&pretty=1
+
+* Sample elastic search operation
+ var userES = client.Search<CustomUserInfo>(v => v
+                    .Index("my_index")
+                    .Type("customuserinfo")
+                    .Query(l => l.Term("userId", user.Id)));
