@@ -505,7 +505,7 @@
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.GetAskToAnswer(System.String,System.String)">
             <summary>
-             API to search AskToAnswer collection for a specific question and specific user
+             API to check if we have asked a user to answer a question
             </summary>
             <param name="questionId">question id</param>
             <param name="userId">User to whom we have asked to answer the question</param>
@@ -631,11 +631,19 @@
             <param name="password">password</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchAllTypes(System.String)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersWithCompleteProfile(System.String)">
             <summary>
-            Method to search across all documents of all types.
+            API to search users from all documents for mathing search term
             </summary>
-            <param name="searchTerm"></param>
+            <param name="searchTerm">comma separeted search term</param>
+            <returns>UserProfile list</returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsers(System.String)">
+            <summary>
+            API to search users with only personal profile information, this is a faster API and data retrieved from elastic search only
+            If you need complete user profile (personal profile, educational, employment) then use SearchUsersWithCompleteProfile method
+            </summary>
+            <param name="searchTerm">comma (,) separeted search term</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersByNameEmail(System.String)">
@@ -759,7 +767,7 @@
         <!-- Badly formed XML comment ignored for member "M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfile(System.String)" -->
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfileByUserId(System.String)">
             <summary>
-            API to get user info using user id
+            API to get complete user profile (including educational and employment background) using user id
             </summary>
             <param name="userId"></param>
             <returns></returns>

@@ -175,7 +175,7 @@
             if ($('#usernametext').val() != "")
                 {
                 scAjax({
-                    "url": "search/SearchAllTypes",
+                    "url": "search/SearchUsersWithCompleteProfile",
                     "data": { "searchTerm": $('#usernametext').val() },
                     "success": function (result) {
                         if (!result) {

@@ -19,16 +19,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public UsersController()
         {
             _elasticSearchHealer = new ElasticSearchHelper();
-        }
-
-        // GET api/users
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        }      
 
         /// <summary>
-        /// Get all system users
+        /// Get all system users, this will give result order by (descending) user reputation
         /// </summary>
         /// <returns></returns>
         public object GetAllUsers()
@@ -54,9 +48,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     result.Add(doc);
                 }                
-            }            
+            }
 
-            return result;
+            return result.OrderByDescending(m => m.ReputationCount).ToList();
         }
 
         /// <summary>
@@ -76,22 +70,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return result;
         }
-
-
-
-        // POST api/users
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/users/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/users/5
-        public void Delete(int id)
-        {
-        }
+               
     }
 }

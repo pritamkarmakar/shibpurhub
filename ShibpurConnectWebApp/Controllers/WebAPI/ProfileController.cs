@@ -51,7 +51,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        /// Get the entire user profile (education, employment etc) for a particular user. Usage GET: api/profile/getprofile?useremail=<email>
+        /// Get the entire user profile (education, employment etc) for a particular user using user email. Usage GET: api/profile/getprofile?useremail=<email>
         /// </summary>
         /// <param name="userEmail">user email</param>
         /// <returns></returns>
@@ -85,7 +85,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        /// API to get user info using user id
+        /// API to get complete user profile (including educational and employment background) using user id
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>

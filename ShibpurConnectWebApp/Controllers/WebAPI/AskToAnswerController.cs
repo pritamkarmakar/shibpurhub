@@ -27,7 +27,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        ///  API to search AskToAnswer collection for a specific question and specific user
+        ///  API to check if we have asked a user to answer a question
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <param name="userId">User to whom we have asked to answer the question</param>
