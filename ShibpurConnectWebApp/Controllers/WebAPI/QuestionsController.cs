@@ -116,14 +116,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 foreach (var question in questions)
                 {
                     var userData = userDetails[question.UserId];
-                    var questionVM = GetQuestionViewModel(question, userData);
-                    questionVM.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
-                    result.Add(questionVM);
+                    if (userData != null)
+                    {
+                        var questionVM = GetQuestionViewModel(question, userData);
+                        questionVM.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
+                        result.Add(questionVM);
+                    }
                 }
 
                 return Ok(result);
             }
-            catch (MongoDB.Driver.MongoConnectionException ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
