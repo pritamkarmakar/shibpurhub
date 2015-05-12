@@ -70,6 +70,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string UserProfileImage { get; set; }
 
         [DataMember]
+        public bool IsAnonymous { get; set; }
+
+        [DataMember]
         public bool IsAskedByMe { get; set; }
 
         [DataMember]

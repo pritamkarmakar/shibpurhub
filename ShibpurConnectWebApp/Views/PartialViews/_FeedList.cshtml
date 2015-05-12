@@ -210,7 +210,12 @@
 
     function buildPagination(pages)
     {
-        //$('.pagination li').remove();
+        $('.pagination li').remove();
+
+        if (pages == 1)
+        {
+            return;
+        }
         for(var i = 1; i <= pages; i++)
         {
             var anchor = $('<a>').text(i).attr('href', '#');

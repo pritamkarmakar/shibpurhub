@@ -950,7 +950,7 @@
                 $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
                 $(commentBlock).find('.comment-user').text(result.displayName);
                 //$(answerBlock).find('.answer-comments').append(commentBlock);
-                commentBlock.insertBefore(answerBlock.find('.answer-comments').find('.comment-box'));
+                $(commentBlock).insertBefore($(answerBlock).find('.answer-comments .comment-list.hide'));
                
                 // retrieve email of the user who posted the answer
                 var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
