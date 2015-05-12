@@ -152,15 +152,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 Helper.Helper helper = new Helper.Helper();
                 var userResult = helper.FindUserByEmail(claim.Value);
-                var userInfo = await userResult;
-
-                if(userInfo == null)
-                {
-                    return BadRequest("No UserId is found");
-                }
+                var userInfo = await userResult;              
+               
 
                 var questionVM = new QuestionViewModel().Copy(question);
-                questionVM.IsAskedByMe = question.UserId == userInfo.Id;
+                questionVM.IsAnonymous = userInfo == null;
+                questionVM.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
 
                 var _answerMongoHelper = new MongoHelper<Answer>();
                 var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderByDescending(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();
@@ -188,7 +185,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     allComments.AddRange(comments);
                     var answervm = new AnswerViewModel().Copy(answer);
                     answervm.Comments = comments;
-                    answervm.IsUpvotedByMe = answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.Id);
+                    answervm.IsUpvotedByMe = userInfo != null && answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.Id);
                     answerVMs.Add(answervm);
                 }
 
