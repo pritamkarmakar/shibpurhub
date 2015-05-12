@@ -661,7 +661,7 @@
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetAllUsers">
             <summary>
-            Get all system users
+            Get all system users, this will give result order by (descending) user reputation
             </summary>
             <returns></returns>
         </member>

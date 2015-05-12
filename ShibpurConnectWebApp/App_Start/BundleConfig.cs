@@ -24,20 +24,23 @@ namespace ShibpurConnectWebApp
                       "~/Scripts/toastr.js",
                       "~/Scripts/quill.min.js",
                       "~/Scripts/jquery-ui-1.11.4.min.js",
-                      "~/Scripts/respond.js"));
+                      "~/Scripts/jquery.tokeninput.js",
+                      "~/Scripts/respond.js"));   
+          
 
-            bundles.Add(new ScriptBundle("~/bundles/tokeninput").Include(
-                      "~/Scripts/jquery.tokeninput.js"));
+            bundles.Add(new ScriptBundle("~/bundles/select2").Include(
+                     "~/Scripts/select2.min.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/typehead").Include(
-                     "~/Scripts/typehead/typeahead.bundle.js"));
+            bundles.Add(new ScriptBundle("~/bundles/shibpurconnect").Include(
+                    "~/Scripts/shibpurconnect.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Content/font-awesome.css",
                       "~/Content/social-button.css",
-                      "~/Content/toastr.min.css",                      
+                      "~/Content/toastr.min.css",
+                      "~/Content/select2.min.css",  
                       "~/Content/token-input.css"));
 
             bundles.Add(new StyleBundle("~/content/themes/base/jquery").Include(

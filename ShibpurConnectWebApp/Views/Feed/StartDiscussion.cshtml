@@ -3,9 +3,6 @@
 @{
     ViewBag.Title = "New Question";
 }
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -44,6 +41,15 @@
                     $('#select_categories').append(option);
                 });
             }
+        });
+
+        // enable select2 in the categories dropdown
+        $('#select_categories').select2({
+            placeholder: "Tags",
+            maximumSelectionLength: 5,
+            tags: true,
+            tokenSeparators: [',', ' ']
+           
         });
 
         $('#btn_Save_Question').on('click', function (e) {
@@ -95,13 +101,17 @@
                 $('#btn_Save_Question > span').text(' Saving...');
 
                 var question = $('#txt_question').val();
-                var categories = $('#select_categories').val();
-                var arrCategories = categories.split(',');
+                var categories = $('#select_categories').select2('data');
+                // form the categories array
+                var categoryArr = [];
+                jQuery.each(categories, function (index, value) {
+                    categoryArr.push(categories[index].text);
+                });               
                 
                 var data = {
                     "title": question,
                     "description": questiondescription,
-                    "categories": arrCategories
+                    "categories": categoryArr
                 };
 
                 scAjax({
@@ -160,6 +170,19 @@
         });
     });
 </script>
+<style type="text/css">
+    /*set the css in the tagging select control to look like a bootstrap control*/
+    .select2-search__field
+    {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        border: 1px solid #dce4ec;
+    }
+    .select2-container--default .select2-selection--multiple
+    {
+        border:2px solid #dce4ec;
+    }
+</style>
 
 
 
@@ -298,7 +321,7 @@
             <div class="col-md-9" id="questiontagsdiv">
                 <div class="form-group">
                     <div class="col-md-12">
-                        <input class="form-control" id="select_categories" placeholder="You can add multiple tags comma(,) separeted" type="text" required>
+                        <select class="form-control" multiple="multiple" id="select_categories" placeholder="You can add multiple tags comma(,) separeted" type="text" required ></select>
                     </div>
                 </div>
             </div>
@@ -306,7 +329,7 @@
         <div class="form-group">
             <div class="col-md-offset-3 col-md-10">
                 <button type="submit" id="btn_Save_Question" class="btn btn-primary">
-                    <i></i><span>Save</span>
+                    <i></i><span>Post question</span>
                 </button>
             </div>
         </div>

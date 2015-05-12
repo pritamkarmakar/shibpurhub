@@ -328,9 +328,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 if(string.IsNullOrWhiteSpace(cat))
                 {
-                    ModelState.AddModelError("", "One of the question category is empty string or contains only whitespace");
+                    ModelState.AddModelError("", "One of the question tag is empty string or contains only whitespace");
                     return BadRequest(ModelState); 
-                }                
+                }
+                if(cat.Length > 20)
+                {
+                    ModelState.AddModelError("", "One of the tag  is too long. Max 20 characters allowed per tag");
+                    return BadRequest(ModelState); 
+                }
             }
          
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;

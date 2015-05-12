@@ -340,6 +340,7 @@
     <Content Include="Content\quill.base.css" />
     <Content Include="Content\quill.snow.css" />
     <Content Include="Content\richtextform\bootstrap3-wysihtml5.min.css" />
+    <Content Include="Content\select2.min.css" />
     <Content Include="Content\social-button.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -445,6 +446,7 @@
     <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.all.min.js" />
     <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.min.js" />
     <Content Include="Scripts\richtextform\wysihtml5x-toolbar.min.js" />
+    <Content Include="Scripts\select2.min.js" />
     <Content Include="Scripts\shibpurconnect.js" />
     <Content Include="Scripts\toastr.js" />
     <Content Include="Scripts\toastr.min.js" />
