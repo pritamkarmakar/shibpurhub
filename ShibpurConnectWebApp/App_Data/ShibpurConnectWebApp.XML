@@ -526,6 +526,46 @@
             <param name="askToAnswer"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetCategories">
+            <summary>
+            Get all existing categories
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetCategory(System.String)">
+            <summary>
+            Get details about a specific category
+            </summary>
+            <param name="categoryName">category name</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetTop20CategoriesWithQuestionCount">
+            <summary>
+            Get top 20 list of categories with question count
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.PostCategories(ShibpurConnectWebApp.Models.WebAPI.Categories)">
+            <summary>
+            Add a new category
+            </summary>
+            <param name="category">Categories object</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.DeleteCategories(System.String)">
+            <summary>
+            Delete a category
+            </summary>
+            <param name="categoryName">category name</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoryTaggingController.GetQuestionCount(System.String)">
+            <summary>
+            Get the total question tagged with the specific category
+            </summary>
+            <param name="categoryId">category id</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.GetEducationalHistory">
             <summary>
             Get education histories for all users
@@ -727,6 +767,11 @@
             <param name="loginViewModel"></param>
             <returns></returns>
         </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.CategoryCloud">
+            <summary>
+            Will use this model in the tag cloud
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.Comment">
             <summary>
             Model for the comment table
@@ -772,15 +817,9 @@
             <param name="userId"></param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUsersByReputation">
-            <summary>
-            Get all users by reputation
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserInfo(System.String)">
             <summary>
-            Get details about about an user from only users collection
+            Get details about an user from only users collection
             </summary>
             <param name="userEmail">user email</param>
             <returns></returns>

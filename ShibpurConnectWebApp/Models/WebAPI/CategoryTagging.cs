@@ -10,11 +10,12 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         // Primary key
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
         // Foreign keys
         public string QuestionId { get; set; }
-        public ObjectId CategoryId { get; set; }
+        public string CategoryId { get; set; }
 
         //public virtual Questions Question { get; set; }
         // One question can be part of many Categories

@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -55,6 +56,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="userEmail">user email</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetProfile(string userEmail)
         {
             // validate userEmail is valid and get the userid
@@ -89,6 +91,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetProfileByUserId(string userId)
         {
             if(string.IsNullOrEmpty(userId))
@@ -124,19 +127,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        /// Get all users by reputation
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IHttpActionResult> GetUsersByReputation()
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Get details about about an user from only users collection
+        /// Get details about an user from only users collection
         /// </summary>
         /// <param name="userEmail">user email</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetUserInfo(string userId)
         {
             // validate userEmail is valid and get the userid
@@ -197,18 +192,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        // GET: api/Profile/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         /// <summary>
         /// API to update user personal profile info
         /// </summary>
         /// <param name="userInfo">CustomUserInfo object</param>
         [HttpPost]
         [Authorize]
+        [InvalidateCacheOutput("GetProfile")]
+        [InvalidateCacheOutput("GetProfileByUserId")]
+        [InvalidateCacheOutput("GetUserInfo")]
+        [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
         public async Task<IHttpActionResult> UpdateProfile(string firstName, string lastName, string location, string aboutMe)
         {       
            using (AuthRepository _repo = new AuthRepository())
@@ -246,16 +239,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         ProfileImageURL = user.ProfileImageURL
                     });
             }           
-        }
-
-        // PUT: api/Profile/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Profile/5
-        public void Delete(int id)
-        {
-        }
+        }        
     }
 }

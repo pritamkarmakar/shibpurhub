@@ -12,6 +12,7 @@ using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -102,6 +103,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="educationalHistory"></param>
         /// <returns></returns>
         [ResponseType(typeof(EducationalHistories))]
+        [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
         public IHttpActionResult PostEducationalHistory(EducationalHistories educationalHistory)
         {
             if (!ModelState.IsValid)

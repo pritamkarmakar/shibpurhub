@@ -9,15 +9,21 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         // Primary key
         [BsonId]
-        public ObjectId CategoryId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string CategoryId { get; set; }
 
         [Required]
         public string CategoryName { get; set; }
 
         [Required]
-        public bool HasPublished { get; set; }
+        public bool HasPublished { get; set; }       
+    }
 
-        // One category can be used in multiple question. There is a many to many relation between Questions and Category tables
-        //public virtual IEnumerable<Questions> Questions { get; set; } 
+    /// <summary>
+    /// Will use this model in the tag cloud
+    /// </summary>
+    public class CategoryCloud: Categories
+    {
+        public int QuestionCount { get; set; }
     }
 }

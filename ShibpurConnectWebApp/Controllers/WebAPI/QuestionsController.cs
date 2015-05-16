@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Security.Claims;
 using ShibpurConnectWebApp.Providers;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -39,6 +40,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
@@ -137,6 +139,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
@@ -233,6 +236,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public IHttpActionResult GetAnswersCount(string questionId)
         {
             try
@@ -261,6 +265,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public int GetViewCount(string questionId)
         {
             try
@@ -283,6 +288,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [ResponseType(typeof(int))]
         [ActionName("IncrementViewCount")]
+        [InvalidateCacheOutput("GetViewCount")]
         public int IncrementViewCount(Question question)
         {
             try
@@ -313,6 +319,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [Authorize]
         [ResponseType(typeof(Question))]
+        [InvalidateCacheOutput("GetQuestions")]
+        [InvalidateCacheOutput("GetTop20CategoriesWithQuestionCount", typeof(CategoriesController))]
         public async Task<IHttpActionResult> PostQuestions(QuestionDTO question)
         {
             // validate title
@@ -372,7 +380,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     Categories catg = new Categories()
                     {
-                        CategoryId = ObjectId.GenerateNewId(),
+                        CategoryId = ObjectId.GenerateNewId().ToString(),
                         CategoryName = category.Trim().ToLower(),
                         HasPublished = false
                     };
@@ -384,7 +392,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         CategoryTaggingController categoryTaggingController = new CategoryTaggingController();
 
                         CategoryTagging ct = new CategoryTagging();
-                        ct.Id = ObjectId.GenerateNewId();
+                        ct.Id = ObjectId.GenerateNewId().ToString();
                         ct.CategoryId = catg.CategoryId;
                         ct.QuestionId = questionToPost.QuestionId;
                         categoryTaggingController.PostCategoryTagging(ct);

@@ -13,6 +13,7 @@ using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -39,6 +40,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // GET: api/Questions/5
         // Will return all the answers for a specific question
         [ResponseType(typeof(Answer))]
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public IHttpActionResult GetAnswers(string questionId)
         {
             // validate questionId is valid hex string
@@ -63,6 +65,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         // POST: api/Questions
         [ResponseType(typeof(Answer))]
+        [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
+        [InvalidateCacheOutput("GetQuestions", typeof(QuestionsController))]
+        [InvalidateCacheOutput("GetAnswersCount", typeof(QuestionsController))]
+        [InvalidateCacheOutput("GetResponseRate", typeof(AskToAnswerController))]
+        [InvalidateCacheOutput("GetAnswers")]
         public IHttpActionResult PostAnswer(Answer answer)
         {
             if (!ModelState.IsValid)
@@ -100,6 +107,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(ex.Message);
             }
+            
 
             return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
         }

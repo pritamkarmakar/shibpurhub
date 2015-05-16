@@ -128,6 +128,10 @@ function scAjax(options)
             },
             error: function (XMLHttpRequest, textStatus, errorThrown)
             {
+                // if the request become unauthorize then redirect user 
+                // to login page (this will happen once token will get expire)
+                if (XMLHttpRequest.status == "401")
+                    window.location.href = "/account/login";
                 if (options.error && typeof options.error == "function") {
                     options.error(XMLHttpRequest, textStatus, errorThrown);
                 }

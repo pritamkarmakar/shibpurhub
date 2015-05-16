@@ -9,6 +9,23 @@
     }
 </style>
 
+<script type="text/javascript">
+    $(document).ready(function () {
+        scAjax({
+            "url": "categories/gettop20categorieswithquestioncount",           
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+                
+                $.each(result, function (key, value) {
+                    $('.tagcloud').append(value.categoryName);
+                });
+            }
+        });
+    });
+</script>
+
 <div class="container">
     <div class="col-md-8">
         <div class="row subheader" style="border-bottom-style:dotted">
@@ -28,8 +45,8 @@
             <div class="questioncount" style="font-size:30px">4010</div>
             <p>questions</p>
         </div>
-        <div class="row tagCloud">
-            <h2 class="moduleheader">Trending</h2><hr />
+        <div class="row tagcloud">
+            <h2 class="moduleheader">Tags</h2><hr />
         </div>
     </div>
 </div>

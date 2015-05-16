@@ -59,7 +59,15 @@ namespace ShibpurConnectWebApp.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl;
+            //So that the user can be referred back to where they were when they click logon
+            if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
+                returnUrl = Request.UrlReferrer.PathAndQuery;
+
+            if (Url.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
+            {
+                ViewBag.ReturnURL = returnUrl;
+            }
+
             return View();
         }
 
@@ -88,7 +96,6 @@ namespace ShibpurConnectWebApp.Controllers
             {
                 return View(model);
             }
-
 
             var user = await UserManager.FindByNameAsync(model.Email.ToLower());
 
@@ -125,6 +132,11 @@ namespace ShibpurConnectWebApp.Controllers
                     if (education == null)
                     {
                         return RedirectToAction("Profile", "Account");
+                    }
+
+                    if (Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
                     }
 
                     return RedirectToAction("Index", "Feed");

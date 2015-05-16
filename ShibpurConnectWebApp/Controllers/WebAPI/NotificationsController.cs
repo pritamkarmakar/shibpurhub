@@ -9,6 +9,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using MongoDB.Driver.Linq;
 using MongoDB.Bson;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -22,6 +23,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/Notification
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public IHttpActionResult GetNotifications(string userId)
         {
             try
@@ -43,6 +45,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public IHttpActionResult GetNewNotifications(string userId)
         {
             try
@@ -75,6 +78,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="notification">Notification object</param>
         [ResponseType(typeof(Notifications))]
+        [InvalidateCacheOutput("GetNotifications")]
+        [InvalidateCacheOutput("GetNewNotifications")]
         public IHttpActionResult PostNotification(Notifications notification)
         {
             if (!ModelState.IsValid)
@@ -136,6 +141,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="notificationId">Notification Id</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [InvalidateCacheOutput("GetNotifications")]
         public IHttpActionResult MarkNotificationsAsVisited(string notificationId)
         {
             if (string.IsNullOrEmpty(notificationId) || notificationId == "undefined")

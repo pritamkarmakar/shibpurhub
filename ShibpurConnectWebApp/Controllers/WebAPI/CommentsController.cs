@@ -11,6 +11,7 @@ using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {    
@@ -24,6 +25,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<Comment>();
         }
 
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public IList<Comment> GetCommentsForAnswer(string answerId)
         {
             var result = _mongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answerId).OrderBy(a => a.PostedOnUtc).ToList();
@@ -41,6 +43,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="comment">Comment object</param>
         /// <returns></returns>
+        [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
+        [InvalidateCacheOutput("GetCommentsForAnswer")]
         public IHttpActionResult AddComment(Comment comment)
         {
             if (!ModelState.IsValid)

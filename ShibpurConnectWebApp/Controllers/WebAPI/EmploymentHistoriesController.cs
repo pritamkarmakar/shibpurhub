@@ -11,6 +11,7 @@ using ShibpurConnectWebApp.Models.WebAPI;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -86,6 +87,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         // POST: api/EmploymentHistories
         [ResponseType(typeof(EmploymentHistories))]
+        [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
         public IHttpActionResult PostEmploymentHistory(EmploymentHistories employmentHistory)
         {
             if (!ModelState.IsValid)

@@ -20,7 +20,26 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<CategoryTagging>();
         }
 
-        
+        /// <summary>
+        /// Get the total question tagged with the specific category
+        /// </summary>
+        /// <param name="categoryId">category id</param>
+        /// <returns></returns>
+        public IHttpActionResult GetQuestionCount(string categoryId)
+        {
+
+            try
+            {
+                var result = _mongoHelper.Collection.AsQueryable().Where(m => m.CategoryId == categoryId).ToList().Count;
+               
+                return Ok(result);
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // GET: api/CategoryTagging/5
         public string Get(int id)
         {

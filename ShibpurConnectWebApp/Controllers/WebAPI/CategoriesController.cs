@@ -11,6 +11,8 @@ using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System.Web.Http.Results;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -24,7 +26,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<Categories>();
         }
 
-        // GET: api/Categories
+        /// <summary>
+        /// Get all existing categories
+        /// </summary>
+        /// <returns></returns>
         public IHttpActionResult GetCategories()
         {
             try
@@ -37,8 +42,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        // GET: api/Categories/placement
+        /// <summary>
+        /// Get details about a specific category
+        /// </summary>
+        /// <param name="categoryName">category name</param>
+        /// <returns></returns>
         [ResponseType(typeof(Categories))]
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public IHttpActionResult GetCategory(string categoryName)
         {
             Categories category = null;
@@ -59,43 +69,40 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return Ok(category);
         }
+       
+        /// <summary>
+        /// Get top 20 list of categories with question count
+        /// </summary>
+        /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        public IHttpActionResult GetTop20CategoriesWithQuestionCount()
+        {
+            List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
+            
+            foreach(Categories catg in _mongoHelper.Collection.FindAll())
+            {
+                // retrieve the total questions tagged with this category
+                CategoryTaggingController ctc = new CategoryTaggingController();
+                IHttpActionResult actionResult = ctc.GetQuestionCount(catg.CategoryId.ToString());
+                var count = actionResult as OkNegotiatedContentResult<int>;
 
-        //// PUT: api/Categories/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutCategories(string id, Category categories)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+                categoryCloud.Add(new CategoryCloud
+                    {
+                        CategoryId = catg.CategoryId,
+                        CategoryName = catg.CategoryName,
+                        HasPublished = catg.HasPublished,
+                        QuestionCount = count.Content
+                    });
+            }
 
-        //    if (id != categories.CategoryId)
-        //    {
-        //        return BadRequest();
-        //    }
+            return Ok(categoryCloud.OrderByDescending(m => m.QuestionCount).ToList().Take(20));
+        }
 
-        //    db.Entry(categories).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!CategoriesExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        // POST: api/Categories
+        /// <summary>
+        /// Add a new category
+        /// </summary>
+        /// <param name="category">Categories object</param>
+        /// <returns></returns>
         [ResponseType(typeof(Categories))]
         public IHttpActionResult PostCategories(Categories category)
         {
@@ -113,7 +120,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
            return CreatedAtRoute("DefaultApi", new { id = category.CategoryId }, category);
         }
 
-        // DELETE: api/Categories/5
+        /// <summary>
+        /// Delete a category
+        /// </summary>
+        /// <param name="categoryName">category name</param>
+        /// <returns></returns>
         [ResponseType(typeof(Categories))]
         public IHttpActionResult DeleteCategories(string categoryName)
         {

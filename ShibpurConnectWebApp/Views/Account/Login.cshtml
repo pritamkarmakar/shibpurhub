@@ -71,10 +71,11 @@
         <div class="panel panel-default">
             <div class="panel-body">
 
-                @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "loginform" }))
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "loginform" }))
                 {
                    <span style="font-size:18px;">@ViewBag.Title</span><hr style="margin-top:10px;margin-bottom:10px;" />
                     @Html.AntiForgeryToken()
+                    @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
                     <div class="form-group">
                         <label for="exampleInputEmail1" class="sr-only">Email address</label>
                         <div class="input-group">

@@ -30,5 +30,10 @@ namespace ShibpurConnectWebApp.Controllers
         {
             return View();
         }
+
+        public ActionResult LearnMore()
+        {
+            return View();
+        }
     }
 }

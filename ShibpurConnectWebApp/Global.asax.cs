@@ -69,11 +69,11 @@ namespace ShibpurConnectWebApp
             routeData.Values["action"] = "General";
 
             routeData.Values["exception"] = exception;
-            Response.StatusCode = 500;
+            int statusCode = 500;
             if (httpException != null)
             {
-                Response.StatusCode = httpException.GetHttpCode();
-                switch (Response.StatusCode)
+                statusCode = httpException.GetHttpCode();
+                switch (statusCode)
                 {
                     case 403:
                         routeData.Values["action"] = "Http403";
@@ -100,11 +100,11 @@ namespace ShibpurConnectWebApp
             alertController.SaveNewAlert(webSiteAlert);
 
             // Avoid IIS7 getting in the middle
-            Response.TrySkipIisCustomErrors = true;
-            IController errorsController = new ErrorsController();
-            HttpContextWrapper wrapper = new HttpContextWrapper(Context);
-            var rc = new RequestContext(wrapper, routeData);
-            errorsController.Execute(rc);
+            //Response.TrySkipIisCustomErrors = true;
+            //IController errorsController = new ErrorsController();
+            //HttpContextWrapper wrapper = new HttpContextWrapper(Context);
+            //var rc = new RequestContext(wrapper, routeData);
+            //errorsController.Execute(rc);
         }
     }
 }

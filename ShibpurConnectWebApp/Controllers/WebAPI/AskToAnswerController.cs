@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using MongoDB.Driver.Linq;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -50,6 +51,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="userId">user id</param>
         /// <returns></returns>
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public string GetResponseRate(string userId)
         {
             // total response received
@@ -108,16 +110,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return InternalServerError();
 
             return CreatedAtRoute("DefaultApi", new { id = askToAnswer.Id }, askToAnswer);
-        }
-
-        // PUT api/asktoanswer/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/asktoanswer/5
-        public void Delete(int id)
-        {
-        }
+        }    
     }
 }

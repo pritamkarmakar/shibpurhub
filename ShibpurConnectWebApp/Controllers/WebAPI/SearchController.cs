@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -107,6 +108,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="searchTerm">comma (,) separeted search term</param>
         /// <returns></returns>
         [HttpGet]
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> SearchUsers(string searchTerm)
         {
             int from = 0;
@@ -238,33 +240,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return Ok(result);
-        }
-
-        // GET api/search
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/search/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/search
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/search/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/search/5
-        public void Delete(int id)
-        {
-        }
+        }       
     }
 }
