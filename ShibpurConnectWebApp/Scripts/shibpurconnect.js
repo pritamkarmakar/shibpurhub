@@ -26,45 +26,6 @@ $(document).ready(function () {
             }
         });
     }
-
-    var token = localStorage.getItem("TOKEN");
-    if(!token)
-    {
-        $.ajax({
-            url: "http://shibpur.azurewebsites.net/token",
-            type: "POST",
-            data: {
-                "grant_type": "password",
-                "userName": "Taiseer@gmail.com",
-                "password": "SuperPass"
-            },
-            contentType: "application/x-www-form-urlencoded",
-            dataType: "json",
-            processData: false,
-            success: function (result) {
-                if (result) {
-                    localStorage.setItem("TOKEN", result.access_token);
-                }
-            }
-        });
-    }
-
-    //$('#li_discussion').click(function () {
-    //    $.ajax({
-    //        url: SERVER + "questions/GetQuestions",
-    //        type: "GET",            
-    //        dataType: "json",
-    //        contentType: "application/json; charset=utf-8",
-    //        processData: false,
-    //        success: function (result) {
-    //            if (!result) {
-    //                return;
-    //            }
-
-    //            alert($.parseJSON(result));
-    //        }
-    //    });
-    //});
 });
 
 function getApiToken()
@@ -100,11 +61,6 @@ function scAjax(options)
 {
     try
     {
-        //var token = getApiToken();
-        //if (!token) {
-            //TO-DO: show a user friendly message
-            //return;
-        //}
         var token = $.parseJSON(localStorage.getItem("TOKEN"));
         var server = "/api/"
         var ajaxOptions = {
@@ -117,8 +73,9 @@ function scAjax(options)
                 "Content-Type": "application/json",
             },
             beforeSend: function (xhr) {
-                //TO-DO: Check new token mechanism
-                xhr.setRequestHeader("Authorization", "Bearer " + token.access_token);
+                // check if there is no token in browser local storage
+                if (token != null)
+                    xhr.setRequestHeader("Authorization", "Bearer " + token.access_token);
             },
             success: function (result) {
                 if(options.success && typeof options.success == "function")

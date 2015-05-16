@@ -152,11 +152,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
                 var claim = principal.FindFirst("sub");
-
+                
                 Helper.Helper helper = new Helper.Helper();
-                var userResult = helper.FindUserByEmail(claim.Value);
-                var userInfo = await userResult;              
-               
+                var userInfo = (CustomUserInfo)null;
+                // check if claim is null (this can happen if user don't have any valid token)
+                if (claim != null)
+                {
+                    var userResult = helper.FindUserByEmail(claim.Value);
+                    userInfo = await userResult;
+                }
 
                 var questionVM = new QuestionViewModel().Copy(question);
                 questionVM.IsAnonymous = userInfo == null;
