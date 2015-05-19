@@ -539,10 +539,11 @@
             <param name="categoryName">category name</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetTop20CategoriesWithQuestionCount">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetPopularCategories(System.Int32)">
             <summary>
-            Get top 20 list of categories with question count
+            Get popular categories
             </summary>
+            <param name="count">no of categories that we want</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.PostCategories(ShibpurConnectWebApp.Models.WebAPI.Categories)">

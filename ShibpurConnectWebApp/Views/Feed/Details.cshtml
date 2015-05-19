@@ -7,13 +7,13 @@
     ViewBag.Title = "Feed Details";
 }
 
-<style type="text/css">    
+<style type="text/css">   
     /*wrap the question body*/
     .detail {
         word-wrap: break-word;
     }
 
-     #details {
+    #details {
         word-wrap: break-word;
     }
 
@@ -29,7 +29,7 @@
 
         div.stat span {
             display: inline-block;
-            width: 100%;
+            /*width: 100%;*/
             margin-top: 5px;
         }
 
@@ -62,34 +62,35 @@
         border: 1px solid #e4edf4;
     }
 
-    /*CSS form the toolbas to create question*/
+    /*CSS for the toolbas to create question*/
     #toolbar {
         height: 70px;
         margin-top: 40px;
     }
 
-    .block {
+    /*.block {
         border-top: 1px solid #d3d4cf;
         padding-top: 20px;
         margin-bottom: 29px;
-    }
+    }*/
 
-    .column {
+    /*.column {
         float: left;
         width: calc(85% - 20px);
         margin-right: 20px;
-    }
+    }*/
 
     div.detail {
-        min-height: 65px;
+        /*min-height: 40px;*/
     }
 
     div.user {
-        width: 60px;
+        /*width: 60px;*/
         text-align: center;
-        height: 60px;
+        /*height: 60px;*/
         display: block;
         float: left;
+        font-size:12px;
     }
 
         div.user a.mark-answer {
@@ -99,8 +100,8 @@
 
     .avatar {
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        /*width: 40px;
+        height: 40px;*/
         background-color: #CCCCCA;
         cursor: pointer;
         -webkit-transition: opacity ease-in-out .25s 0s;
@@ -161,8 +162,8 @@
 
     li.answer {
         padding-bottom: 15px;
-        padding-top: 15px;
-        border-bottom: 1px solid #e0e0e0;
+        /*padding-top: 15px;
+        border-bottom: 1px solid #e0e0e0;*/
     }
 
         li.answer:nth-last-child(2), li.answer:last-child {
@@ -188,7 +189,7 @@
         }
 
     div.answer-links {
-        margin-left: 60px;
+        margin-top:20px;
         font-size: 10pt;
     }
 
@@ -237,12 +238,14 @@
     }
 
     div.answer-comments {
-        font-size: 13px;
-        margin-left: 75px;
-        margin-top: 8px;
-        background: #f6f6f6;
+        font-size: 13px;        
+        margin-top: 12px;
+        /*margin-bottom: 30px;*/
+        /*background: #f6f6f6;
         border: 1px solid #e2e2e2;
-        border-radius: 2px;
+        border-radius: 2px;*/
+        padding-top:2px;
+        padding-bottom:2px;
     }
 
     div.comment-box {
@@ -255,21 +258,6 @@
     }
 
     /* CSS for Ask to Answer*/
-    hr#bigseparator {
-        border-top: 3px double white;
-        color: #fff;
-        background-color: #fff;
-        margin: 8px 0 8px 0;
-        width: 90%;
-    }
-
-    hr#smallseparator {
-        border-top: 1px double white;
-        color: #fff;
-        background-color: #fff;
-        margin: 8px 0 8px 0;
-        width: 90%;
-    }
 
     .wantedanswersuggestion {
         float: left;
@@ -304,15 +292,15 @@
     .comment-text {
         display: inline-block;
         width: 100%;
-        padding: 0 10px;
+        /*padding: 0 10px;*/
         word-wrap: break-word;
     }
 
-    .comment-box .input-div {
+    /*.comment-box .input-div {
         width: 70%;
         float: left;
         padding-left: 10px;
-    }
+    }*/
 
     .comment-box .buttons {
         padding-left: 10px;
@@ -388,7 +376,7 @@
                             return;
                         }
                         $('#questionaskedby').show();
-                        $('#questionaskedby').append("<div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + question.userProfileImage + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='questionaskedbyuser' style='margin-left:15px;font-size:13px;' userid='" + userinfo.id + "'href='/Account/Profile?useremail=" + question.userEmail + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:10px'>reputation: " + userinfo.reputationCount + "</span></div><div class='stat'><span class='date'>asked: " + dateString + "</span></div>");
+                        $('#questionaskedby').append("<div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + question.userProfileImage + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='questionaskedbyuser' style='margin-left:15px;font-size:13px;' userid='" + userinfo.id + "'href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:10px'>reputation: " + userinfo.reputationCount + "</span></div><div class='stat'><span class='date'>asked: " + dateString + "</span></div>");
                     }
                 });
                 //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
@@ -421,15 +409,15 @@
                             // update the div with the user data received from the API
                             jQuery.each(result, function (i, val) {
                                 if (val.profileImageURL != null)
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.email + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                                 else
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.email + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                                 // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
                                 scAjax({
                                     "url": "asktoanswer/GetAskToAnswer",
                                     "data": { "questionId": questionID, "userId": val.id },
                                     "success": function (result) {
-                                        if (result != null) {                                           
+                                        if (result != null) {
                                             $('a[id$="' + val.id + '"]:first').text("Already Asked");
                                             $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
                                         }
@@ -441,7 +429,7 @@
                                             "success": function (rRate) {
                                                 //wantedanswersuggestion
                                                 responseRate = rRate;
-                                                $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);                                                
+                                                $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);
 
                                                 // hide the loading message
                                                 $('#loadingasktoanswer').hide();
@@ -472,7 +460,7 @@
                 if (XMLHttpRequest.status == "404")
                 {
                     window.location.href = "/errors/Http404";
-                }                        
+                }
                 // toastr notification
                 Command: toastr["error"]("Failed to load the question")
                 // hide the loading message
@@ -500,7 +488,7 @@
             var parentDiv = $(textarea).parent();
             $(parentDiv).removeClass("col-md-8").addClass("col-md-12");
             //$(parentDiv).next().addClass("col-md-offset-9");
-        });       
+        });
     });
 
     // function to send notification to the specific user from 'Ask to Answer' module
@@ -515,7 +503,7 @@
 
         // send email notification
         var emaildata = {
-            "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+            "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
             "EmailAddress": elm.attributes["data-email"].value,
             "Subject": "ShibpurConnect: Can you answer this question?"
         };
@@ -585,7 +573,7 @@
         if (emailToSend.toLowerCase() != userInfo.email.toLowerCase()) {
             // send email notification
             var emaildata = {
-                "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+                "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
                 "EmailAddress": emailToSend,
                 "Subject": "ShibpurConnect: New answer in your question"
             };
@@ -636,7 +624,7 @@
         if (email.toLowerCase() != userInfo.email.toLowerCase()) {
             // send email notification
             var emaildata = {
-                "Body": "<a href='" + window.location.origin + "/Account/Profile?useremail=" + userInfo.email + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " posted a comment to your answer in question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+                "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " posted a comment to your answer in question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
                 "EmailAddress": email,
                 "Subject": "ShibpurConnect: New comment to your answer"
             };
@@ -671,7 +659,7 @@
                 }
             });
         }
-    }    
+    }
 
     function saveAnswer() {
         // hide the error div
@@ -704,7 +692,7 @@
             $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
             $('.btn-submit-answer > span').text('Submit Answer');
 
-            // parse the error json   
+            // parse the error json
             $('#errormessage').show();
             $('#errormessage').append("<p>Answer can't be blank</p>");
 
@@ -720,7 +708,7 @@
             $('.btn-submit-answer > span').text('Submit Answer');
 
             // toastr error notification
-            Command: toastr["error"]("Answer should be more than 30 characters long")           
+            Command: toastr["error"]("Answer should be more than 30 characters long")
             return;
         }
 
@@ -798,7 +786,7 @@
                 var userProfileImage = $(answerBlock).find('div.user img.avatar');
                 $(userProfileImage).attr('src', IMGURPATH + userInfo.profileImageURL);
                 if (result.userEmail != null) {
-                    var url = $(userNameAnchor).attr('href') + '?userEmail=' + result.userEmail;
+                    var url = $(userNameAnchor).attr('href') + '?userId=' + result.userId;
                     $(userNameAnchor).attr('href', url);
                 }
 
@@ -835,7 +823,7 @@
             return;
         }
 
-        var result = answer.comments;        
+        var result = answer.comments;
         if (!result) {
             return;
         }
@@ -847,7 +835,7 @@
         $('.wirte-answer').show();
 
         // show the 'ask to answer module'
-        $('#userToAnswer').show();                
+        $('#userToAnswer').show();
 
         if (result.length == 0) {
             $(answerBlock).find('.answer-comments').hide();
@@ -860,10 +848,11 @@
             $(commentBlock).find('.comment-text').text(e.commentText);
             $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
             $(commentBlock).find('.comment-user').text(e.displayName);
+            $(commentBlock).find('.comment-user').attr("href", "/Account/Profile?userId=" + e.userId);
             answerBlock.find('.answer-comments').prepend(commentBlock);
         });
     }
-        
+
 
     function handleAddComment(event) {
         event.preventDefault();
@@ -886,7 +875,7 @@
         }
     }
 
-    function handleSaveComment(event) {      
+    function handleSaveComment(event) {
 
         // disable the button
         $('.btn-save-comment').prop('disabled', true);
@@ -898,7 +887,7 @@
         var button = $(event.target);
         var commentBox = $(button).closest('.comment-box');
         var input = $(commentBox).find('.txt_comment');
-                
+
         if (commentBox.hasClass("has-error")) {
             commentBox.removeClass("has-error");
         }
@@ -910,8 +899,8 @@
                 commentBox.addClass("has-error");
             }
             input.attr("placeholder", "Comment can't be blank");
-            
-            // enable the button 
+
+            // enable the button
             $('.btn-save-comment').prop('disabled', false);
 
             // remove the loading class from save button
@@ -955,7 +944,7 @@
                 $(commentBlock).find('.comment-user').text(result.displayName);
                 //$(answerBlock).find('.answer-comments').append(commentBlock);
                 $(commentBlock).insertBefore($(answerBlock).find('.answer-comments .comment-list.hide'));
-               
+
                 // retrieve email of the user who posted the answer
                 var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
                 var notificationToSend = $(answerBlock).attr("data-answerby");
@@ -965,7 +954,7 @@
                 // parse the error json
                 var errorresponse = jQuery.parseJSON(err.responseText);
 
-                // enable the button 
+                // enable the button
                 $('.btn-save-comment').prop('disabled', false);
 
                 // remove the loading class from save button
@@ -978,7 +967,7 @@
                 }
 
                 // toastr notification
-                Command: toastr["error"](errorresponse.modelState['comment.CommentText'][0])                              
+                Command: toastr["error"](errorresponse.modelState['comment.CommentText'][0])
             }
         });
     }
@@ -1011,7 +1000,7 @@
         var anchor = $(event.target);
         var commentBox = $(anchor).closest('.comment-box');
         $(commentBox).hide();
-        $(commentBox).siblings('.add-comment').show();       
+        $(commentBox).siblings('.add-comment').show();
     }
 
     function setUpAnswerUserActions() {
@@ -1045,7 +1034,7 @@
             $(userProfileImage).attr('src', IMGURPATH + answer.userProfileImage);
         }
         if (answer.userEmail != null) {
-            var url = $(userNameAnchor).attr('href') + '?userEmail=' + answer.userEmail;
+            var url = $(userNameAnchor).attr('href') + '?userId=' + answer.userId;
             $(userNameAnchor).attr('href', url);
         }
 
@@ -1062,7 +1051,7 @@
 
     var isAskedByMe = false;
     function getAnswers(result) {
-        
+
         if (!result) {
             // hide the loading symbol for the answers
             $('#loadinganswers').hide();
@@ -1075,7 +1064,7 @@
                 return;
             }
 
-            $('#answerlist').before("<h4>Answers:</h4><hr/>");
+        $('#answerlist').before("<div class='col-md-12'><h4>Answers:</h4><hr/></div>");
             var save = $('#answerlist .answer.hide').detach();
             $('#answerlist').empty().append(save);
 
@@ -1113,7 +1102,7 @@
 
                 getComments(answerBlock, answer);
                 setUpAnswerUserActions();
-            });            
+            });
     }
 
     // This method will execute when user will type user details in the 'Ask To Answer' serach box
@@ -1166,10 +1155,10 @@
 
                                                     responseRate = rRate;
                                                     if (result == null) {
-                                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.email + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userId + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
+                                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userId + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
                                                     }
                                                     else
-                                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.email + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userId + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
+                                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userId + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
 
                                                     // hide the loading message
                                                     $('#loadingasktoanswer').hide();
@@ -1211,10 +1200,10 @@
 
                                         responseRate = rRate;
                                         if (result == null) {
-                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.id + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
+                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.userInfo.id + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.id + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>")
                                         }
                                         else
-                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?useremail=" + val.userInfo.email + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.id + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
+                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.userInfo.id + "'>" + val.userInfo.firstName + " " + val.userInfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.userInfo.id + "' data-email='" + val.userInfo.email + "' class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>")
 
                                         // hide the loading message
                                         $('#loadingasktoanswer').hide();
@@ -1230,100 +1219,85 @@
     });
 </script>
 
-
-
-<div class="container">
-    <div class="col-md-8">
-        <div class="header col-md-12">
-            <h2 style="font-size:22px;" id="questiontitle"></h2>
-        </div>
-    </div>
-    <div class="col-md-8">
-        <div class="row">
-            <div id="details" style="display:none">
-                <div class="col-md-10">
-                    <div class="description col-md-12">                        
-                    </div>
-                    <div class="tags col-md-10">
-                    </div>
-                    <div class="stat col-md-2">
-                        <span class="date"></span>
-                        <span class="answercount"></span>
-                    </div>
-                    <div id="questionaskedby" class="well-sm" style="float:right;display:none;"></div>
-                </div>
+<div class="container">   
+    <div class="col-md-9">
+        <div>
+            <div class="header col-md-12">
+                <h2 style="font-size:22px;" id="questiontitle"></h2>
             </div>
-
+            <div id="details" style="display:none">
+                <div class="description col-md-12"></div>
+                <div class="tags col-md-9"></div>
+                @*<div class="stat col-md-2">
+                    <span class="date"></span>
+                    <span class="answercount"></span>
+                </div>*@
+                <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
+            </div>
             <br /><br />
-            <div id="moduleanswers" class="col-md-12">
+            <div id="moduleanswers">
                 @*<h4>Answers:</h4><hr />*@
-                <ul id="answerlist">
+                <ul id="answerlist" class="list-group">
                     <!--div for loading message for the Answers list-->
                     <div id="loadinganswers" class="center-block col-md-4" style="float:none;margin-left:300px;margin-top:200px;">
                         <i class="fa fa-spinner fa-spin fa-3x"></i>
                     </div>
-                    @*<div id="answerdiv">*@
-                    <li class="hide answer col-md-12">
-                        <div class="user">
-                            <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                            <a class="userName" href="\Account\Profile"></a>
-                            <a class="btn btn-default btn-sm mark-answer hide" title="Mark as answer">
-                                <i class="fa fa-check-square-o fa-lg"></i>
-                            </a>
-                        </div>
-                        <div class="detail col-md-10">
-                            <div class="text">
-                            </div>
-                            <div class="stat col-md-4">
-                                <span class="date"></span>
-                            </div>
-                        </div>
-                        <div class="answer-links col-md-10">
-                            <span class="link upvote-span">
-                                <a class="upvote-anchor" href="#">
-                                    Upvote
-                                    <span class="count">0</span>
+                    <li class="hide answer">
+                        <div class="col-md-12" style="margin-top:30px;">
+                            <div class="user col-md-2">
+                                <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+                                <a class="userName col-md-12" href="\Account\Profile"></a>
+                                <a class="btn btn-default btn-sm mark-answer hide col-md-4 col-md-offset-4" title="Mark as answer">
+                                    <i class="fa fa-check-square-o fa-lg"></i>
                                 </a>
-                            </span>
-                            @*<span class="link">
-                                    <a class="downvote-anchor" href="#">Downvote</a>
-                                </span>*@
-                            <span class="link comment-span">
-                                <a class="comment-anchor" href="#">Comment</a>
-                                <span class="comment-count"></span>
-                            </span>
-                        </div>
-
-                        <div class="answer-comments col-md-11 no-right-padding">
+                            </div>
+                            <div class="detail col-md-10">
+                                <div class="text"></div> 
+                                <div class="answer-links">
+                                    <span class="link upvote-span">
+                                        <a class="upvote-anchor" href="#">
+                                            Upvote
+                                            <span class="count">0</span>
+                                        </a>
+                                    </span>
+                                    <span class="link comment-span">
+                                        <a class="comment-anchor" href="#">Comment</a>
+                                        <span class="comment-count"></span>
+                                    </span>
+                                    <div class="stat">
+                                        <span class="date"></span>
+                                    </div>
+                                </div>                               
+                            </div>                      
+                        </div>                  
+                        <div class="well answer-comments col-md-10 col-md-offset-2">
                             <div class="comment-list hide">
-                                <span class="comment-user"></span>
+                                <a class="comment-user"></a>
                                 <span class="comment-date"></span>
                                 <span class="comment-text"></span>
                             </div>
-                            <div class="add-comment right">
+                            <div class="add-comment twelvepxfont">
                                 <a href="#" class="anchor-add-comment add">Add Comment</a>
                             </div>
-                            <div class="comment-box">                               
-                                <a class="commentor" href="#">
+                            <div class="comment-box">
+                                @*<a class="commentor col-md-1" href="#">
                                     <img height="25" width="25" src="/Content/images/profile-image.jpg">
-                                </a>                                
-                                <div class="input-div no-right-padding">
+                                </a>*@
+                                <div class="input-div col-md-9">
                                     <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
                                     @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
                                 </div>
-                                <div class="col-md-3 buttons no-right-padding">
-                                   @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
+                                <div class="col-md-3">
+                                    @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
                                     <button type="submit" class="btn btn-sm btn-primary btn-save-comment">
                                         <i></i><span>Save</span>
                                     </button>
-                                    <a href="#" class="anchor-cancel-comment">Cancel</a>
-                                </div>                            
-                                
-                            </div>
-                        </div>
-                    </li>
-                    @*</div>*@
+                                    <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
+                                </div>
 
+                            </div>
+                        </div>                                           
+                    </li>
                 </ul>
             </div>
 
@@ -1467,41 +1441,8 @@
         </div>
 
     </div>
-    <div class="col-md-4">
-        <div class="tagCloud" style="margin-bottom:40px;">
-            <h4>Related Questions</h4>
-            <div class="list-group">
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-            </div>
-        </div>
-        <div class="tagCloud" style="margin-bottom:40px;">
-            <h4>Hot Questions</h4>
-            <div class="list-group">
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-                <a href="#" class="list-group">
-                    <p class="list-group-item-heading">List group item heading</p>
-                </a>
-            </div>
-        </div>
+    <div class="col-md-3">
+        @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
     </div>
 
 </div>

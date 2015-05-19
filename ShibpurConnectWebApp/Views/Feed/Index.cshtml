@@ -3,31 +3,14 @@
     ViewBag.Title = "Feed";
 }
 
-<style type="text/css">
+<style type="text/css">   
     .moduleheader {
         font-size: 18px;
-    }
+    }    
 </style>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        scAjax({
-            "url": "categories/gettop20categorieswithquestioncount",           
-            "success": function (result) {
-                if (!result) {
-                    return;
-                }
-                
-                $.each(result, function (key, value) {
-                    $('.tagcloud').append(value.categoryName);
-                });
-            }
-        });
-    });
-</script>
-
 <div class="container">
-    <div class="col-md-8">
+    <div class="col-md-9">
         <div class="row subheader" style="border-bottom-style:dotted">
             <h2 class="moduleheader" style="float:left;">All Questions</h2>
             <div id="tabs" style="float:right">
@@ -40,13 +23,17 @@
         </div>
         @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="module" id="questions-count">
             <div class="questioncount" style="font-size:30px">4010</div>
             <p>questions</p>
-        </div>
-        <div class="row tagcloud">
-            <h2 class="moduleheader">Tags</h2><hr />
-        </div>
+        </div> 
+        @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")       
+        @*<div class="well panel panel-default col-md-12" id="userToAnswer">
+            <h4>Popular Tags</h4>            
+            <hr id="bigseparator" />
+            <div id="tagcloud">
+            </div>            
+        </div>*@
     </div>
 </div>

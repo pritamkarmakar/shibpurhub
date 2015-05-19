@@ -71,11 +71,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
        
         /// <summary>
-        /// Get top 20 list of categories with question count
+        /// Get popular categories
         /// </summary>
+        /// <param name="count">no of categories that we want</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
-        public IHttpActionResult GetTop20CategoriesWithQuestionCount()
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        public IHttpActionResult GetPopularCategories(int count)
         {
             List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
             
@@ -84,18 +85,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // retrieve the total questions tagged with this category
                 CategoryTaggingController ctc = new CategoryTaggingController();
                 IHttpActionResult actionResult = ctc.GetQuestionCount(catg.CategoryId.ToString());
-                var count = actionResult as OkNegotiatedContentResult<int>;
+                var result = actionResult as OkNegotiatedContentResult<int>;
 
                 categoryCloud.Add(new CategoryCloud
                     {
                         CategoryId = catg.CategoryId,
                         CategoryName = catg.CategoryName,
                         HasPublished = catg.HasPublished,
-                        QuestionCount = count.Content
+                        QuestionCount = result.Content
                     });
             }
 
-            return Ok(categoryCloud.OrderByDescending(m => m.QuestionCount).ToList().Take(20));
+            return Ok(categoryCloud.OrderByDescending(m => m.QuestionCount).ToList().Take(count));
         }
 
         /// <summary>

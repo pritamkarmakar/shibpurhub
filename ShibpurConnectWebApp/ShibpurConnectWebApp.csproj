@@ -523,6 +523,7 @@
     <Content Include="Views\Errors\Http404.cshtml" />
     <Content Include="Views\Manage\_PersonalInfo.cshtml" />
     <Content Include="Views\Home\LearnMore.cshtml" />
+    <Content Include="Views\PartialViews\_PopularTags.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

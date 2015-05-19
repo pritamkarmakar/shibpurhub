@@ -208,11 +208,10 @@ namespace ShibpurConnectWebApp.Controllers
             return View();
         }
 
-        public ActionResult Profile(string userEmail)
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult Profile(string userId)
         {
-            // var userId = User.Identity.GetUserId();
-            //return View(new ProfileViewModel(userId));
-            ViewData["profileEmail"] = userEmail;
+            ViewData["userId"] = userId;
             TempData["SelectedPage"] = "Users";
             return View();
         }

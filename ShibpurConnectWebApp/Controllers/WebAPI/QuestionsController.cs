@@ -40,7 +40,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
@@ -87,6 +87,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="category">category/tag name</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false)]
         public async Task<IHttpActionResult> GetQuestionsByCategory(string category, int page)
         {
             try
@@ -139,7 +140,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan=1)]
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
@@ -324,7 +325,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [ResponseType(typeof(Question))]
         [InvalidateCacheOutput("GetQuestions")]
-        [InvalidateCacheOutput("GetTop20CategoriesWithQuestionCount", typeof(CategoriesController))]
+        [InvalidateCacheOutput("GetPopularCategories", typeof(CategoriesController))]
         public async Task<IHttpActionResult> PostQuestions(QuestionDTO question)
         {
             // validate title
@@ -373,7 +374,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             };
 
            
-            // create the new categories            
+            // create the new categories if those don't exist            
             List<Categories> categoryList = new List<Categories>();
             CategoriesController categoriesController = new CategoriesController();
             foreach (string category in question.Categories)
@@ -403,6 +404,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     }
                     else
                         return InternalServerError(new Exception());
+                }
+                else
+                {
+                    // update the CategoryTagging collection
+                    CategoryTaggingController categoryTaggingController = new CategoryTaggingController();
+
+                    CategoryTagging ct = new CategoryTagging();
+                    ct.Id = ObjectId.GenerateNewId().ToString();
+                    ct.CategoryId = contentResult.Content.CategoryId;
+                    ct.QuestionId = questionToPost.QuestionId;
+                    categoryTaggingController.PostCategoryTagging(ct);
                 }
             }  
       

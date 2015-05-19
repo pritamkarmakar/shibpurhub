@@ -79,11 +79,11 @@
         $(document).ready(function() {
             jQuery.support.cors = true;
             var SERVER = "/api/";
-            var profileEmail = @Html.Raw(Json.Encode(ViewData["profileEmail"]));
+            var profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
             var loggedInUserId = "";
 
             // check if this call for a different user or current logged-in user. If there is no data in the TempData["profileEmail"] then consider current session user
-            if (!profileEmail) {
+            if (!profileId) {
                 // get current user email from session
                 var userDetails = localStorage.getItem("SC_Session_UserDetails");
                 if (!userDetails) {
@@ -92,14 +92,14 @@
                 }
 
                 var userInfo = $.parseJSON(userDetails);
-                profileEmail = userInfo.email;
+                //profileEmail = userInfo.email;
                 loggedInUserId = userInfo.id;
             }
             $.ajax({
-                url: SERVER + "profile/getprofile",
+                url: SERVER + "profile/GetProfileByUserId",
                 type: "GET",
                 dataType: "json",
-                data: { "useremail": profileEmail },
+                data: { "userId": profileId },
                 contentType: "application/json",
                 headers: {
                     Accept: "application/json",

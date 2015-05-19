@@ -23,7 +23,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/Notification
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 86400)]
         public IHttpActionResult GetNotifications(string userId)
         {
             try
@@ -45,7 +45,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 86400)]
         public IHttpActionResult GetNewNotifications(string userId)
         {
             try
@@ -105,6 +105,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = notification.NotificationId }, notification);
         }
 
+        [InvalidateCacheOutput("GetNotifications")]
+        [InvalidateCacheOutput("GetNewNotifications")]
         public IHttpActionResult MarkAllNewNotificationsAsOld(string userId)
         {
             try
@@ -141,7 +143,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="notificationId">Notification Id</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         [InvalidateCacheOutput("GetNotifications")]
         public IHttpActionResult MarkNotificationsAsVisited(string notificationId)
         {

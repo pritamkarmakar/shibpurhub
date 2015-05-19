@@ -1,0 +1,48 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        scAjax({
+            "url": "categories/GetPopularCategories?count=10",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                $.each(result, function (key, value) {
+                    if (value.questionCount > 0)
+                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
+                    else
+                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " question</span></div>");
+                });
+            }
+        });
+    });
+</script>
+
+<style type="text/css">
+    .tagcontainermaindiv
+    {
+        padding-top: 3px;
+    }
+
+    /*tag container div padding*/
+    #tagcontainerdiv
+    {
+        padding:4px;
+    }     
+     /*word break for all tags*/
+    .thumbnail{
+        word-break:break-all;
+    }
+    /*question count font size in each tag*/
+    #tagquestioncount
+    {
+        font-size: 10px;
+    }
+</style>
+
+<div class="well tagcontainermaindiv">
+    <h4>Popular Tags</h4>
+    <hr id="bigseparator" />
+    <div id="tagcloud">
+    </div>
+</div>

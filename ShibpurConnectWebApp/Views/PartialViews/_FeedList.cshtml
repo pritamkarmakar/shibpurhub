@@ -2,7 +2,7 @@
 
     /*question title font-face size*/
     .question-hyperlink{
-        font-size:22px;
+        font-size:20px;
     }
     /*CSS form the toolbas to create question*/
     #toolbar
@@ -261,7 +261,7 @@
             }
             $(userNameAnchor).text(question.displayName);
             if (question.userEmail != null) {
-                var url = $(userNameAnchor).attr('href') + '?userEmail=' + question.userEmail;
+                var url = $(userNameAnchor).attr('href') + '?userId=' + question.userId;
                 $(userNameAnchor).attr('href', url);
             }
             //$(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
@@ -330,7 +330,7 @@
         <div class="hide thread col-md-12">
             <div class="user">
                 <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                <a class="userName" href="\Account\Profile"></a>
+                <a class="userName twelvepxfont" href="\Account\Profile"></a>
             </div>
             <div class="detail col-md-10">
                 <h3>
