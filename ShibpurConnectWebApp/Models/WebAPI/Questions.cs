@@ -99,4 +99,12 @@ namespace ShibpurConnectWebApp.Models.WebAPI
             };
         }
     }    
+
+    /// <summary>
+    /// We will use this model in the most popular question model
+    /// </summary>
+    public class PopularQuestionModel : Question
+    {
+        public int AnswerCount { get; set; }
+    }
 }

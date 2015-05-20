@@ -1,0 +1,45 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        scAjax({
+            "url": "users/GetLeaderBoard?count=10",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                // hide the loading div
+                $('#loadingusers').hide();
+
+                $(result).each(function (i, userinfo) {
+                    if (userinfo.profileImageURL == null)
+                        //$('#popularusers').append("<div class='media'><div class='media-left'><a href='#'><img class='media-object' src='http://i.imgur.com/WHFstjs.jpg'></a></div><div class='media-body'><h4 class='media-heading'>Media heading</h4></div></div>");
+                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4'><img class='avatar' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
+                    else
+                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4'><img class='avatar' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
+                });
+            }
+        });
+    });
+</script>
+
+<style type="text/css">
+    .popularuserscontainerdiv {
+        padding: 2px;
+    }
+
+    /*question count font size in each tag*/
+    #answercount {
+        font-size: 10px;
+    }
+</style>
+
+
+
+<div class="well popularuserscontainerdiv">
+    <h5>Leaderboard</h5>
+    <hr id="bigseparator" />
+    <div id="popularusers">
+    </div>
+</div>
+
+

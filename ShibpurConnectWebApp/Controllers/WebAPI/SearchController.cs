@@ -102,8 +102,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        /// API to search users with only personal profile information, this is a faster API and data retrieved from elastic search only
-        /// If you need complete user profile (personal profile, educational, employment) then use SearchUsersWithCompleteProfile method
+        /// API to search users across personal profile, educational and employment background but return only personal profile 
+        /// information in the return object, this is a faster API and data retrieved from elastic search only.
+        /// If you need complete user profile (personal profile, educational, employment) in the return object then use SearchUsersWithCompleteProfile method
         /// </summary>
         /// <param name="searchTerm">comma (,) separeted search term</param>
         /// <returns></returns>
@@ -239,7 +240,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
             }
 
-            return Ok(result);
+            return Ok(result.OrderByDescending(m => m.ReputationCount).ToList());
         }       
     }
 }

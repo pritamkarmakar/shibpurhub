@@ -9,9 +9,9 @@
 
                 $.each(result, function (key, value) {
                     if (value.questionCount > 0)
-                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
+                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
                     else
-                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " question</span></div>");
+                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " question</span></div>");
                 });
             }
         });
@@ -19,6 +19,11 @@
 </script>
 
 <style type="text/css">
+    /*popular tag name font size*/
+    .populartagname
+    {
+        font-size:13px;
+    }
     .tagcontainermaindiv
     {
         padding-top: 3px;
@@ -41,7 +46,7 @@
 </style>
 
 <div class="well tagcontainermaindiv">
-    <h4>Popular Tags</h4>
+    <h5>Popular Tags</h5>
     <hr id="bigseparator" />
     <div id="tagcloud">
     </div>

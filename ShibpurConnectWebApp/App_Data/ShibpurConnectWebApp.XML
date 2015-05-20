@@ -607,6 +607,12 @@
             <param name="notificationId">Notification Id</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetTotalQuestionCount">
+            <summary>
+            Get total question count
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestions(System.Int32)">
             <summary>
             Will return all available questions
@@ -634,6 +640,13 @@
             Get the answer count for a particular question
             </summary>
             <param name="questionId">question id</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetPopularQuestions(System.Int32)">
+            <summary>
+            Get popular questions by total answer count
+            </summary>
+            <param name="count">no of questions to retrieve</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetViewCount(System.String)">
@@ -681,8 +694,9 @@
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsers(System.String)">
             <summary>
-            API to search users with only personal profile information, this is a faster API and data retrieved from elastic search only
-            If you need complete user profile (personal profile, educational, employment) then use SearchUsersWithCompleteProfile method
+            API to search users across personal profile, educational and employment background but return only personal profile 
+            information in the return object, this is a faster API and data retrieved from elastic search only.
+            If you need complete user profile (personal profile, educational, employment) in the return object then use SearchUsersWithCompleteProfile method
             </summary>
             <param name="searchTerm">comma (,) separeted search term</param>
             <returns></returns>
@@ -704,6 +718,13 @@
             <summary>
             Get all system users, this will give result order by (descending) user reputation
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetLeaderBoard(System.Int32)">
+            <summary>
+            Get specific no of users who has highest reputation
+            </summary>
+            <param name="count">total user to return</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetUsersByTerm(System.String)">
@@ -844,6 +865,11 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionViewModel">
             <summary>
             We will use this to send data from the API. This has a new property UserName. We will add firstname, lastname as well later
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.PopularQuestionModel">
+            <summary>
+            We will use this model in the most popular question model
             </summary>
         </member>
         <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.ChangePassword(System.String,ShibpurConnectWebApp.Models.ChangePasswordViewModel)">

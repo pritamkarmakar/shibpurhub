@@ -1,0 +1,48 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        scAjax({
+            "url": "questions/GetPopularQuestions?count=10",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                $.each(result, function (key, value) {
+                    if (value.answerCount > 0)
+                        $('#popularquestioncloud').append("<div id='popularquestiondiv'><a class='popularquestiontitle' href='/Feed/Details/" + value.questionId + "'> " + value.title + "..</a></div>");
+                    else
+                        $('#popularquestioncloud').append("<div id='popularquestiondiv'><a class='popularquestiontitle' href='/Feed/Details/" + value.questionId + "'> " + value.title + "..</a></div>");
+                });
+            }
+        });
+    });
+</script>
+
+<style type="text/css">
+    .popularquestioncontainerdiv {
+        padding-top: 3px;
+    }
+
+    #popularquestiondiv
+    {
+        padding:4px;
+    }
+
+    .popularquestiontitle
+    {
+        font-size:13px;
+    }
+   
+    /*question count font size in each tag*/
+    #answercount {
+        font-size: 10px;
+    }
+</style>
+
+<div class="well popularquestioncontainerdiv">
+    <h5>Popular Questions</h5>
+    <hr id="bigseparator" />
+    <div id="popularquestioncloud">
+    </div>
+</div>
+

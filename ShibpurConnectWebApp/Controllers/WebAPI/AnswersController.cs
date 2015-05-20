@@ -69,6 +69,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [InvalidateCacheOutput("GetQuestions", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetAnswersCount", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetResponseRate", typeof(AskToAnswerController))]
+        [InvalidateCacheOutput("GetPopularQuestions", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetAnswers")]
         public IHttpActionResult PostAnswer(Answer answer)
         {

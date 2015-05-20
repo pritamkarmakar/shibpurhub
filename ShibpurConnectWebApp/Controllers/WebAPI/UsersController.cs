@@ -8,6 +8,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using Nest;
+using System.Threading.Tasks;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -25,33 +27,82 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// Get all system users, this will give result order by (descending) user reputation
         /// </summary>
         /// <returns></returns>
-        public object GetAllUsers()
+        public async Task<IHttpActionResult> GetAllUsers()
         {
-            int from = 0;
-            long totalHits = 0;
-            int resultRetrieved = 0;
-            List<CustomUserInfo> result = new List<CustomUserInfo>();
-            var client = _elasticSearchHealer.ElasticClient();
-
-            while (resultRetrieved <= totalHits)
+            try
             {
-                var response = client.Search<object>(s => s.AllIndices().Type(typeof(CustomUserInfo)).From(from));
-                // get the total count of hits
-                if (totalHits == 0)
-                    totalHits = response.Total;
-                // increase the result retrieve + 10 as elastic search by default return this many documents
-                resultRetrieved += 10;
-                // increase the from to go to next page
-                from += 10;
-                // add the response in final result object
-                foreach (CustomUserInfo doc in response.Documents)
-                {
-                    result.Add(doc);
-                }                
-            }
+                int from = 0;
+                long totalHits = 0;
+                int resultRetrieved = 0;
+                List<CustomUserInfo> result = new List<CustomUserInfo>();
+                var client = _elasticSearchHealer.ElasticClient();
 
-            return result.OrderByDescending(m => m.ReputationCount).ToList();
+                while (resultRetrieved <= totalHits)
+                {
+                    var response = client.Search<object>(s => s.AllIndices().Type(typeof(CustomUserInfo)).From(from));
+                    // get the total count of hits
+                    if (totalHits == 0)
+                        totalHits = response.Total;
+                    // increase the result retrieve + 10 as elastic search by default return this many documents
+                    resultRetrieved += 10;
+                    // increase the from to go to next page
+                    from += 10;
+                    // add the response in final result object
+                    foreach (CustomUserInfo doc in response.Documents)
+                    {
+                        result.Add(doc);
+                    }
+                }
+
+                return Ok(result.OrderByDescending(m => m.ReputationCount).ToList());
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
+        /// <summary>
+        /// Get specific no of users who has highest reputation
+        /// </summary>
+        /// <param name="count">total user to return</param>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        public async Task<IHttpActionResult> GetLeaderBoard(int count)
+        {
+            try
+            {
+                int from = 0;
+                long totalHits = 0;
+                int resultRetrieved = 0;
+                List<CustomUserInfo> result = new List<CustomUserInfo>();
+                var client = _elasticSearchHealer.ElasticClient();
+
+                while (resultRetrieved <= totalHits)
+                {
+                    var response = client.Search<object>(s => s.AllIndices().Type(typeof(CustomUserInfo)).From(from));
+                    // get the total count of hits
+                    if (totalHits == 0)
+                        totalHits = response.Total;
+                    // increase the result retrieve + 10 as elastic search by default return this many documents
+                    resultRetrieved += 10;
+                    // increase the from to go to next page
+                    from += 10;
+                    // add the response in final result object
+                    foreach (CustomUserInfo doc in response.Documents)
+                    {
+                        result.Add(doc);
+                    }
+                }
+
+                return Ok(result.OrderByDescending(m => m.ReputationCount).ToList().Take(count));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// Search users by name, email, company name, location etc

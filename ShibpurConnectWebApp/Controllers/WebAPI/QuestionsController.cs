@@ -34,6 +34,23 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<Question>();
         }
 
+        /// <summary>
+        /// Get total question count
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IHttpActionResult> GetTotalQuestionCount()
+        {
+            try
+            {
+                var allQuestions = _mongoHelper.Collection.FindAll().ToList();
+                return Ok(allQuestions.Count);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // GET: api/Questions
         /// <summary>
         /// Will return all available questions
@@ -87,7 +104,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="category">category/tag name</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false)]
+        [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = false)]
         public async Task<IHttpActionResult> GetQuestionsByCategory(string category, int page)
         {
             try
@@ -260,6 +277,41 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return Ok(count);
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get popular questions by total answer count
+        /// </summary>
+        /// <param name="count">no of questions to retrieve</param>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        public async Task<IHttpActionResult> GetPopularQuestions(int count)
+        {
+            try
+            {
+                List<PopularQuestionModel> questionList = new List<PopularQuestionModel>();
+
+                // get all the questions from database
+                var allquestions = _mongoHelper.Collection.FindAll().ToList();
+                foreach (Question question in allquestions)
+                {
+                    //get the answer count for each question
+                    var actionResult = GetAnswersCount(question.QuestionId);
+                    var contentResult = actionResult as OkNegotiatedContentResult<int>;                    
+                    questionList.Add(new PopularQuestionModel
+                    {
+                        AnswerCount = contentResult.Content,
+                        QuestionId = question.QuestionId,
+                        Title = question.Title
+                    });
+                }
+
+                return Ok(questionList.OrderByDescending(m => m.AnswerCount).ToList().Take(count));
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }
