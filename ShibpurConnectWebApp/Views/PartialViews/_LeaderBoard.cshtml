@@ -6,6 +6,8 @@
                 if (!result) {
                     return;
                 }
+                // enable the div
+                $('.popularuserscontainerdiv').show();
 
                 // hide the loading div
                 $('#loadingusers').hide();
@@ -36,8 +38,10 @@
 
 
 <div class="well popularuserscontainerdiv">
-    <h5>Leaderboard</h5>
-    <hr id="bigseparator" />
+    <div class="col-md-12">
+        <h5>Leaderboard</h5>
+        <hr id="bigseparator" />
+    </div>
     <div id="popularusers">
     </div>
 </div>

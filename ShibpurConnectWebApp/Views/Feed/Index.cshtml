@@ -12,6 +12,10 @@
 <script type="text/javascript">
     $(document).ready(function()
     {
+        // hide the right column modules, we will enable inside respective the partial view once receive the server response
+        $('.popularuserscontainerdiv').hide();
+        $('.tagcontainermaindiv').hide();
+        $('.popularquestioncontainerdiv').hide();
         scAjax({
             "url": "questions/GetTotalQuestionCount",
             "success": function (result) {

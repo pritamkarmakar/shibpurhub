@@ -6,7 +6,8 @@
                 if (!result) {
                     return;
                 }
-
+                // enable the div, if it is disabled
+                $('.tagcontainermaindiv').show();
                 $.each(result, function (key, value) {
                     if (value.questionCount > 0)
                         $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
