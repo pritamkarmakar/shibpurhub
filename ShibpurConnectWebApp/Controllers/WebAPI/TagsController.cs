@@ -17,11 +17,11 @@ using WebApi.OutputCache.V2;
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class CategoriesController : ApiController
+    public class TagsController : ApiController
     {
         private MongoHelper<Categories> _mongoHelper;
 
-        public CategoriesController()
+        public TagsController()
         {
             _mongoHelper = new MongoHelper<Categories>();
         }
@@ -30,7 +30,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// Get all existing categories
         /// </summary>
         /// <returns></returns>
-        public IHttpActionResult GetCategories()
+        public IHttpActionResult GetTags()
         {
             try
             {
@@ -49,7 +49,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [ResponseType(typeof(Categories))]
         [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
-        public IHttpActionResult GetCategory(string categoryName)
+        public IHttpActionResult GetTag(string categoryName)
         {
             Categories category = null;
 
@@ -76,7 +76,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="count">no of categories that we want</param>
         /// <returns></returns>
         [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
-        public IHttpActionResult GetPopularCategories(int count)
+        public IHttpActionResult GetPopularTags(int count)
         {
             List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
             
@@ -100,12 +100,41 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
+        /// Get all the tags by popularity (no of questions tagged to each tag)
+        /// </summary>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        public IHttpActionResult GetPopularTags()
+        {
+            List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
+
+            foreach (Categories catg in _mongoHelper.Collection.FindAll())
+            {
+                // retrieve the total questions tagged with this category
+                CategoryTaggingController ctc = new CategoryTaggingController();
+                IHttpActionResult actionResult = ctc.GetQuestionCount(catg.CategoryId.ToString());
+                var result = actionResult as OkNegotiatedContentResult<int>;
+
+                categoryCloud.Add(new CategoryCloud
+                {
+                    CategoryId = catg.CategoryId,
+                    CategoryName = catg.CategoryName,
+                    HasPublished = catg.HasPublished,
+                    QuestionCount = result.Content
+                });
+            }
+
+            return Ok(categoryCloud.OrderByDescending(m => m.QuestionCount).ToList());
+        }
+
+        /// <summary>
         /// Add a new category
         /// </summary>
         /// <param name="category">Categories object</param>
         /// <returns></returns>
         [ResponseType(typeof(Categories))]
-        public IHttpActionResult PostCategories(Categories category)
+        [InvalidateCacheOutput("GetPopularTags")]
+        public IHttpActionResult PostTag(Categories category)
         {
             if (!ModelState.IsValid || category == null)
             {

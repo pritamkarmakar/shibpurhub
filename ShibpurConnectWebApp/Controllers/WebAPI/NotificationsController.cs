@@ -23,7 +23,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/Notification
-        [CacheOutput(ClientTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = true, MustRevalidate = true)]
         public IHttpActionResult GetNotifications(string userId)
         {
             try
@@ -45,7 +45,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        [CacheOutput(ClientTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = true, MustRevalidate = true)]
         public IHttpActionResult GetNewNotifications(string userId)
         {
             try

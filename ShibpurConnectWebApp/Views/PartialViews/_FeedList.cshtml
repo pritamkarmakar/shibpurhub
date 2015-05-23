@@ -39,17 +39,15 @@
         margin-right: 12px;
     }
 
-    .avatar {
+    /*.avatar {
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
         background-color: #CCCCCA;
         cursor: pointer;
         -webkit-transition: opacity ease-in-out .25s 0s;
         -moz-transition: opacity ease-in-out .25s 0s;
         -o-transition: opacity ease-in-out .25s 0s;
         transition: opacity ease-in-out .25s 0s;
-    }
+    }*/
 
     div.detail {
         float: left;
@@ -265,8 +263,8 @@
                 $(userNameAnchor).attr('href', url);
             }
             //$(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
-            $(thread).find('div.detail h3 a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
-            $(thread).find('div.detail h3 a').attr('class', 'question-hyperlink');
+            $(thread).find('div.detail a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
+            $(thread).find('div.detail a').attr('class', 'question-hyperlink');
             // extract only text from the question description, if user has image in the question description we will be able to remove those
             var tempdescription = '<p>' + question.description + '</p>';
             $(thread).find('div.detail .excerpt').append($(tempdescription).text().substring(0, 250));
@@ -324,18 +322,18 @@
 <div class="main">    
     <div id="threads">
         <!--div for loading message for the question list-->
-        <div id="loadingquestions" class="center-block col-md-4" style="float: none;margin-left:300px;margin-top:200px;">
+        <div id="loadingquestions" class="col-md-4 col-xs-4 col-md-offset-8 col-xs-offset-2" style="margin-top:200px;">
             <i class="fa fa-spinner fa-spin fa-3x"></i>
         </div>
-        <div class="hide thread col-md-12">
-            <div class="user">
-                <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+        <div class="hide thread col-md-12 col-xs-12">
+            <div class="user col-xs-5 hidden-xs">
+                <img class="avatar" src="/Content/images/profile-image.jpg">
                 <a class="userName twelvepxfont" href="\Account\Profile"></a>
             </div>
             <div class="detail col-md-10">
-                <h3>
+                @*<h3>*@
                     <a href="#"></a>
-                </h3>
+                @*</h3>*@
                 <div class="excerpt">
 
                 </div>

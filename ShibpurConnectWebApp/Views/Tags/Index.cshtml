@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.Title = "ShibpurConnect - All Tags";
+}
+
+<style type="text/css">
+    /*popular tag name font size*/
+    .populartagname {
+        font-size: 18px;
+    }
+
+    .tagcontainermaindiv {
+        padding-top: 3px;
+    }
+
+    /*tag container div padding*/
+    #tagcontainerdiv {
+        padding: 8px;
+    }
+     #tagcontainerdiv:hover {
+         background-color: #E4EDF4;
+        border-radius: 5px;
+    }
+    /*word break for all tags*/
+    .thumbnail {
+        word-break: break-all;
+    }
+    /*question count font size in each tag*/
+    #tagquestioncount {
+        font-size: 10px;
+    }
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        scAjax({
+            "url": "tags/GetPopularTags",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+                $.each(result, function (key, value) {
+                    if (value.questionCount > 0)
+                        $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><p id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;questions</p></div></div>");
+                    else
+                        $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><p id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;question</p></div></div>");
+                });
+            }
+        });
+
+        $('#tagcontainerdiv').mouseenter(
+            function() {
+                alert("hola");
+            }
+        );
+    });
+</script>
+
+
+<div class="taglistcontainer">
+    <h4>All Tags</h4><hr/>
+    <hr id="bigseparator" />
+    <div id="taglist" >
+    </div>
+</div>
+
+

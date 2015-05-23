@@ -83,10 +83,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     // userdata can be null, for example -> one user posted a question and later on deleted his account
                     if (userData != null)
                     {
-                        var questionVM = GetQuestionViewModel(question, userData);
-                        questionVM.AnswerCount = answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == question.QuestionId).Count();
-                        questionVM.TotalPages = totalPages;
-                        result.Add(questionVM);
+                        var questionVm = GetQuestionViewModel(question, userData);
+                        questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
+                        questionVm.TotalPages = totalPages;
+                        result.Add(questionVm);
                     }
                 }
 
@@ -104,7 +104,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="category">category/tag name</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = false)]
+        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestionsByCategory(string category, int page)
         {
             try
@@ -114,7 +114,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var matchedQuestions = new List<Question>();
                 foreach (var question in allQuestions)
                 {
-                    var searchedCategory = question.Categories.Where(a => a.ToLower().Trim() == category.ToLower().Trim()).FirstOrDefault();
+                    var searchedCategory = question.Categories.FirstOrDefault(a => a.ToLower().Trim() == category.ToLower().Trim());
                     if (!string.IsNullOrEmpty(searchedCategory))
                     {
                         matchedQuestions.Add(question);
@@ -132,15 +132,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var userDetail = await actionResult;
                     userDetails.Add(userId, userDetail);
                 }
-
+                var answerMongoHelper = new MongoHelper<Answer>();
                 foreach (var question in questions)
                 {
                     var userData = userDetails[question.UserId];
                     if (userData != null)
                     {
-                        var questionVM = GetQuestionViewModel(question, userData);
-                        questionVM.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
-                        result.Add(questionVM);
+                        var questionVm = GetQuestionViewModel(question, userData);
+                        questionVm.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
+                        questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
+                        result.Add(questionVm);
                     }
                 }
 
@@ -157,7 +158,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan=1)]
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
@@ -322,7 +323,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true, ExcludeQueryStringFromCacheKey = false)]
         public int GetViewCount(string questionId)
         {
             try
@@ -377,7 +378,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [ResponseType(typeof(Question))]
         [InvalidateCacheOutput("GetQuestions")]
-        [InvalidateCacheOutput("GetPopularCategories", typeof(CategoriesController))]
+        [InvalidateCacheOutput("GetPopularTags", typeof(TagsController))]
         public async Task<IHttpActionResult> PostQuestions(QuestionDTO question)
         {
             // validate title
@@ -428,10 +429,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
            
             // create the new categories if those don't exist            
             List<Categories> categoryList = new List<Categories>();
-            CategoriesController categoriesController = new CategoriesController();
+            TagsController categoriesController = new TagsController();
             foreach (string category in question.Categories)
             {
-                var actionResult = categoriesController.GetCategory(category.Trim());
+                var actionResult = categoriesController.GetTag(category.Trim());
                 var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
                 if (contentResult == null)
                 {
@@ -441,7 +442,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         CategoryName = category.Trim().ToLower(),
                         HasPublished = false
                     };
-                    var actionResult2 = categoriesController.PostCategories(catg);
+                    var actionResult2 = categoriesController.PostTag(catg);
                     var contentResult2 = actionResult2 as CreatedAtRouteNegotiatedContentResult<Categories>;
                     if (contentResult2 != null)
                     {

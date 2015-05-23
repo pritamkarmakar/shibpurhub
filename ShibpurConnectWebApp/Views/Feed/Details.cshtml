@@ -7,7 +7,13 @@
     ViewBag.Title = "Feed Details";
 }
 
-<style type="text/css">   
+<style type="text/css"> 
+    /*increase profile image size in ask to answer*/
+   .avatarasktoanswer {
+              width: 60px;
+              height: 60px;
+          }
+          
     /*wrap the question body*/
     .detail {
         word-wrap: break-word;
@@ -27,11 +33,11 @@
         font-size: 9pt;
     }
 
-        div.stat span {
-            display: inline-block;
-            /*width: 100%;*/
-            margin-top: 5px;
-        }
+    div.stat span {
+        display: inline-block;
+        /*width: 100%;*/
+        margin-top: 5px;
+    }
 
     /*Reduce the well sm padding. we are using it to display who asked the question*/
     .well-sm {
@@ -93,22 +99,10 @@
         font-size:12px;
     }
 
-        div.user a.mark-answer {
-            margin-top: 6px;
-            padding: 3px 6px;
-        }
-
-    .avatar {
-        border-radius: 50%;
-        /*width: 40px;
-        height: 40px;*/
-        background-color: #CCCCCA;
-        cursor: pointer;
-        -webkit-transition: opacity ease-in-out .25s 0s;
-        -moz-transition: opacity ease-in-out .25s 0s;
-        -o-transition: opacity ease-in-out .25s 0s;
-        transition: opacity ease-in-out .25s 0s;
-    }
+    div.user a.mark-answer {
+        margin-top: 6px;
+        padding: 3px 6px;
+    }   
 
     .comment-form textarea {
         /*-webkit-appearance: none;
@@ -166,9 +160,9 @@
         border-bottom: 1px solid #e0e0e0;*/
     }
 
-        li.answer:nth-last-child(2), li.answer:last-child {
-            border: none;
-        }
+    li.answer:nth-last-child(2), li.answer:last-child {
+        border: none;
+    }
 
     #answerlist li:last-child {
         padding-bottom: 0;
@@ -183,10 +177,10 @@
         font-size: 9pt;
     }
 
-        div.stat span {
-            display: inline-block;
-            width: 100%;
-        }
+    div.stat span {
+        display: inline-block;
+        width: 100%;
+    }
 
     div.answer-links {
         margin-top:20px;
@@ -197,26 +191,26 @@
         margin-right: 20px;
     }
 
-        span.link a {
-            color: #999;
-        }
+    span.link a {
+        color: #999;
+    }
 
-            span.link a.upvote-anchor {
-                box-sizing: border-box;
-                transition: all ease-in-out 100ms;
-                border-radius: 3px;
-                box-shadow: 0 1px 1px 0 rgba(200,200,200,0.2);
-                display: inline-block;
-                font-weight: 500;
-                outline: 0;
-                padding: 3px 7px 4px 7px;
-                text-align: center;
-                text-decoration: none;
-                cursor: pointer;
-                background: #e4edf4;
-                color: #3e6d8e;
-                border: 1px solid #bbcadc;
-            }
+    span.link a.upvote-anchor {
+        box-sizing: border-box;
+        transition: all ease-in-out 100ms;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px 0 rgba(200,200,200,0.2);
+        display: inline-block;
+        font-weight: 500;
+        outline: 0;
+        padding: 3px 7px 4px 7px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        background: #e4edf4;
+        color: #3e6d8e;
+        border: 1px solid #bbcadc;
+    }
 
     .upvote-anchor span.count {
         background: 0;
@@ -413,9 +407,9 @@
                             // update the div with the user data received from the API
                             jQuery.each(result, function (i, val) {
                                 if (val.profileImageURL != null)
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo col-md-9 col-xs-9' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                                 else
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo col-md-9 col-xs-9' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "' data-email='" + val.email + "' class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                                 // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
                                 scAjax({
                                     "url": "asktoanswer/GetAskToAnswer",
@@ -722,7 +716,7 @@
         var userid = userInfo.id;
 
         //var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var answerObject = { "AnswerText": answer, "QuestionId": questionID, "UserId": userid, "DisplayName": userInfo.firstName, "UserEmail": userInfo.email, "UserProfileImage": userInfo.profileImageURL };
+        var answerObject = { "AnswerText": answer, "QuestionId": questionID };
 
         advancedEditor.setHTML("");
         scAjax({
@@ -1235,14 +1229,14 @@
 </script>
 
 <div class="container">   
-    <div class="col-md-9">
+    <div class="col-md-9 col-xs-12">
         <div>
             <div class="header col-md-12">
                 <h2 style="font-size:22px;" id="questiontitle"></h2>
             </div>
             <div id="details" style="display:none">
-                <div class="description col-md-12"></div>
-                <div class="tags col-md-9"></div>
+                <div class="description col-md-12 col-xs-12"></div>
+                <div class="tags col-md-9 col-xs-9"></div>
                 @*<div class="stat col-md-2">
                     <span class="date"></span>
                     <span class="answercount"></span>
@@ -1320,7 +1314,7 @@
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <strong>Error!</strong>
             </div>
-            <div class="wirte-answer col-md-12" style="margin-top:40px; display:none;">
+            <div class="wirte-answer col-md-12 col-xs-12" style="margin-top:40px; display:none;">
                 @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
                 <div class="text-wrapper col-md-12">
                     <div class="toolbar-container">
@@ -1435,7 +1429,7 @@
             </div>
 
             <!--div to show Ask to Answer module-->
-            <div class="well panel panel-default col-md-12" id="userToAnswer" style="margin-top:30px;padding-left:80px; display:none">
+            <div class="well panel panel-default col-md-12 col-xs-12" id="userToAnswer" style="margin-top:30px;display:none">
                 <h4>Ask to Answer</h4>
                 <div>
                     <form role="search">
@@ -1456,10 +1450,10 @@
         </div>
 
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-xs-12">
         @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-xs-12">
         @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
     </div>
 </div>

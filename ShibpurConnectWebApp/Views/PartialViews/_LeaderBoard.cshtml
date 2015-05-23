@@ -15,9 +15,9 @@
                 $(result).each(function (i, userinfo) {
                     if (userinfo.profileImageURL == null)
                         //$('#popularusers').append("<div class='media'><div class='media-left'><a href='#'><img class='media-object' src='http://i.imgur.com/WHFstjs.jpg'></a></div><div class='media-body'><h4 class='media-heading'>Media heading</h4></div></div>");
-                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4'><img class='avatar' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
+                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4 col-xs-4'><img class='avatar' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
                     else
-                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4'><img class='avatar' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
+                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4 col-xs-4'><img class='avatar' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
                 });
             }
         });

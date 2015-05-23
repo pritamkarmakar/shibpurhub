@@ -64,6 +64,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // POST: api/Questions
+        [Authorize]
         [ResponseType(typeof(Answer))]
         [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetQuestions", typeof(QuestionsController))]
@@ -71,24 +72,43 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [InvalidateCacheOutput("GetResponseRate", typeof(AskToAnswerController))]
         [InvalidateCacheOutput("GetPopularQuestions", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetAnswers")]
-        public IHttpActionResult PostAnswer(Answer answer)
+        public async Task<IHttpActionResult> PostAnswer(AnswerDTO answerdto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (answer == null)
+            if (answerdto == null)
                 return BadRequest("Request body is null. Please send a valid Answer object");
+
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
             try
             {
-                // validate given questionid, userid are valid
+                // validate given questionid is valid
                 var questionMongoHelper = new MongoHelper<Question>();
-                var question = questionMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == answer.QuestionId).ToList().FirstOrDefault();
+                var question = questionMongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == answerdto.QuestionId).ToList().FirstOrDefault();
                 if (question == null)
                     return BadRequest("Supplied questionid is invalid");
 
-                // add the datetime stamp for this question
-                answer.PostedOnUtc = DateTime.UtcNow;
+                // create the Answer object to save to database
+                Answer answer = new Answer()
+                {
+                    AnswerId = ObjectId.GenerateNewId().ToString(),
+                    AnswerText = answerdto.AnswerText,
+                    PostedOnUtc = DateTime.UtcNow,
+                    QuestionId = answerdto.QuestionId,
+                    UserId = userInfo.Id,
+                };              
 
                 // save the answer to the database
                 var result = _mongoHelper.Collection.Save(answer);
@@ -103,14 +123,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     question.HasAnswered = true;
                     questionMongoHelper.Collection.Save(question);
                 }
+
+                return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
             {
                 return BadRequest(ex.Message);
-            }
-            
-
-            return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
+            }          
         }
 
         public async Task<int> UpdateUpVoteCount(Answer answer)

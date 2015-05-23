@@ -43,8 +43,8 @@ namespace ShibpurConnectWebApp.Controllers
                 departmentList = actionResult2 as OkNegotiatedContentResult<List<Departments>>;
             }
 
-            CategoriesController categoriesController = new CategoriesController();
-            var actionResult3 = categoriesController.GetCategories();
+            WebAPI.TagsController categoriesController = new WebAPI.TagsController();
+            var actionResult3 = categoriesController.GetTags();
             var categoryList = actionResult3 as OkNegotiatedContentResult<List<Categories>>;
 
             // if there is no categories in the db then add the default categories

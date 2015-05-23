@@ -8,8 +8,27 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
+    /// <summary>
+    /// Object to be used in the PostAnswer controller. Idea is to create a simple request object for post answer
+    /// </summary>
+    [Serializable]
+    public class AnswerDTO
+    {
+        [DataMember]
+        [Required]
+        [MinLength(45, ErrorMessage = "Answer should be more than 30 characters long")]
+        [MaxLength(10015, ErrorMessage = "Answer can be maximum 10000 characters long")]
+        public string AnswerText { get; set; }
+
+        [DataMember]
+        public string QuestionId { get; set; }        
+    }
+
+    /// <summary>
+    /// We use this model to save into database
+    /// </summary>
     [BsonIgnoreExtraElements]
-    public class Answer
+    public class Answer : AnswerDTO
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -17,16 +36,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string AnswerId { get; set; }
 
         [DataMember]
-        public string UserId { get; set; }        
-
-        [DataMember]
-        public string QuestionId { get; set; }
-
-        [DataMember]
-        [Required]
-        [MinLength(45, ErrorMessage = "Answer should be more than 30 characters long")]
-        [MaxLength(10015, ErrorMessage = "Answer can be maximum 10000 characters long")]
-        public string AnswerText { get; set; }
+        public string UserId { get; set; } 
 
         [DataMember]
         public bool MarkedAsAnswer { get; set; }

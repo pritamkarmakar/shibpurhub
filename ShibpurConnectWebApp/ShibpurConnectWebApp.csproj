@@ -262,12 +262,13 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\TagsController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\WebAPI\AnswersController.cs" />
     <Compile Include="Controllers\WebAPI\AskToAnswerController.cs" />
-    <Compile Include="Controllers\WebAPI\CategoriesController.cs" />
+    <Compile Include="Controllers\WebAPI\TagsController.cs" />
     <Compile Include="Controllers\WebAPI\CategoryTaggingController.cs" />
     <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
     <Compile Include="Controllers\WebAPI\EducationalHistoriesController.cs" />
@@ -526,6 +527,7 @@
     <Content Include="Views\PartialViews\_PopularTags.cshtml" />
     <Content Include="Views\PartialViews\_PopularQuestions.cshtml" />
     <Content Include="Views\PartialViews\_LeaderBoard.cshtml" />
+    <Content Include="Views\Tags\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

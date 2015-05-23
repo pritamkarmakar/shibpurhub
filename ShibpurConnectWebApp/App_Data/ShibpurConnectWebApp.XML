@@ -526,34 +526,40 @@
             <param name="askToAnswer"></param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetCategories">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.GetTags">
             <summary>
             Get all existing categories
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetCategory(System.String)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.GetTag(System.String)">
             <summary>
             Get details about a specific category
             </summary>
             <param name="categoryName">category name</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.GetPopularCategories(System.Int32)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.GetPopularTags(System.Int32)">
             <summary>
             Get popular categories
             </summary>
             <param name="count">no of categories that we want</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.PostCategories(ShibpurConnectWebApp.Models.WebAPI.Categories)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.GetPopularTags">
+            <summary>
+            Get all the tags by popularity (no of questions tagged to each tag)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.PostTag(ShibpurConnectWebApp.Models.WebAPI.Categories)">
             <summary>
             Add a new category
             </summary>
             <param name="category">Categories object</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoriesController.DeleteCategories(System.String)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.DeleteCategories(System.String)">
             <summary>
             Delete a category
             </summary>
@@ -788,6 +794,16 @@
             <param name="webApiurl"></param>
             <param name="loginViewModel"></param>
             <returns></returns>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.AnswerDTO">
+            <summary>
+            Object to be used in the PostAnswer controller. Idea is to create a simple request object for post answer
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.Answer">
+            <summary>
+            We use this model to save into database
+            </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.CategoryCloud">
             <summary>
