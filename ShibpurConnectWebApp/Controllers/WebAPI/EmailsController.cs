@@ -53,11 +53,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         private async Task configSendGridasync(Email message)
         {
-            var myMessage = new SendGridMessage(); 
-            // split the email ids, if there are multiples
-            foreach(string email in message.EmailAddress.Split(','))
+            var myMessage = new SendGridMessage();
+            Helper.Helper helper = new Helper.Helper();
+            // split the user ids, if there are multiples
+            foreach (string userId in message.UserId.Split(','))
             {
-                myMessage.AddTo(email);
+                // find the email address of the user from the userid
+                Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                var userInfo = await actionResult;
+                myMessage.AddTo(userInfo.Email);
             }           
            
             myMessage.From = new System.Net.Mail.MailAddress(

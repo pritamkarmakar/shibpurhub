@@ -65,7 +65,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         Body = alert.Content,
                         Subject = "ShibpurConnect: ALERT !!!",
-                        EmailAddress = alert.EmailSentTo
+                        UserId = alert.EmailSentTo
                     });
 
                     return Ok("sent new email alert");
@@ -90,7 +90,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             {
                                 Body = alert.Content,
                                 Subject = "ShibpurConnect: ALERT !!!",
-                                EmailAddress = alert.EmailSentTo
+                                UserId = alert.EmailSentTo
                             });
 
                             return Ok("sent new email alert");
@@ -110,7 +110,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         {
                             Body = alert.Content,
                             Subject = "ShibpurConnect: ALERT !!!",
-                            EmailAddress = alert.EmailSentTo
+                            UserId = alert.EmailSentTo
                         });
 
                         return Ok("sent new email alert");

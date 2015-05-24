@@ -12,7 +12,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class Email
     {
         [DataMember]
-        public string EmailAddress { get; set; }
+        public string UserId { get; set; }
 
         [DataMember]
         public string Subject { get; set; }
