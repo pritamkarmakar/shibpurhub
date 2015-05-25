@@ -109,7 +109,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="searchTerm">comma (,) separeted search term</param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
         public async Task<IHttpActionResult> SearchUsers(string searchTerm)
         {
             int from = 0;
@@ -157,24 +157,30 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var userData = JObject.Parse(obj.ToString());
                 string userId = string.Empty;
 
-                // process only if userid not present in our hash
-                if (!hash.Contains(userId))
+                // retrieve the userinfo if the search term found in the educational or employment background                
+                if ((string)userData["firstName"] == null)
                 {
-                    // retrieve the userinfo if the search term found in the educational or employment background                
-                    if ((string)userData["firstName"] == null)
-                    {
-                        userId = (string)userData["userId"];
+                    userId = (string)userData["userId"];
 
-                        var userES = client.Search<CustomUserInfo>(v => v
-                        .Index("my_index")
-                        .Type("customuserinfo")
-                        .Query(l => l.Term("id", userId)));
-                        if (userES.Documents.Count() > 0)
+                    // process only if the userid not present in the hashset
+                    if (!hash.Contains(userId))
+                    {
+                        var userEs = client.Search<CustomUserInfo>(v => v
+                   .Index("my_index")
+                   .Type("customuserinfo")
+                   .Query(l => l.Term("id", userId)));
+                        if (userEs.Documents.Any())
                         {
-                            userProfileList.Add(userES.Documents.ToList()[0]);
+                            userProfileList.Add(userEs.Documents.ToList()[0]);
                         }
+
+                        // add this new userid in the hashset
+                        hash.Add(userId);
                     }
-                    else
+                }
+                else
+                {
+                    if (!hash.Contains((string)userData["id"]))
                     {
                         userProfileList.Add(new CustomUserInfo
                         {
@@ -188,10 +194,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             RegisteredOn = (DateTime)userData["registeredOn"],
                             ReputationCount = (int)userData["reputationCount"]
                         });
+
+                        // add this new userid in the hashset
+                        hash.Add((string)userData["id"]);
                     }
-                    hash.Add(userId);
                 }
-            }          
+            }
             return Ok(userProfileList.OrderByDescending(m => m.ReputationCount).ToList());
         }
 
@@ -241,6 +249,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return Ok(result.OrderByDescending(m => m.ReputationCount).ToList());
-        }       
+        }
     }
 }
