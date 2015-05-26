@@ -7,298 +7,299 @@
     ViewBag.Title = "Feed Details";
 }
 
-<style type="text/css"> 
-    /*increase profile image size in ask to answer*/
-   .avatarasktoanswer {
-              width: 60px;
-              height: 60px;
-          }
-          
-    /*wrap the question body*/
-    .detail {
-        word-wrap: break-word;
-    }
+<style type="text/css">
 
-    #details {
-        word-wrap: break-word;
-    }
+     /*increase profile image size in ask to answer*/
+    .avatarasktoanswer {
+               width: 60px;
+               height: 60px;
+           }
 
-    /*css for questionaskedby*/
-    #questionaskedby {
-        background-color: #e0eaf1;
-    }
+     /*wrap the question body*/
+     .detail {
+         word-wrap: break-word;
+     }
 
-    div.stat {
-        color: #808080;
-        font-size: 9pt;
-    }
+     #details {
+         word-wrap: break-word;
+     }
 
-    div.stat span {
-        display: inline-block;
-        /*width: 100%;*/
-        margin-top: 5px;
-    }
+     /*css for questionaskedby*/
+     #questionaskedby {
+         background-color: #e0eaf1;
+     }
 
-    /*Reduce the well sm padding. we are using it to display who asked the question*/
-    .well-sm {
-        padding: 5px;
-    }
-    /*CSS form tags*/
-    .tags {
-        margin-top: 2%;
-    }
+     div.stat {
+         color: #808080;
+         font-size: 9pt;
+     }
 
-    .post-tag {
-        color: #566e76;
-        background: #f7fdff;
-        border: 1px solid #c0d4db;
-        padding: .4em .5em;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 11px;
-        line-height: 1;
-        color: #3e6d8e;
-        background-color: #e4edf4;
-        margin: 2px 2px 2px 0;
-        text-decoration: none;
-        font-size: 12px;
-        /*white-space: nowrap;*/
-        display: inline-block;
-        border-radius: 0;
-        border: 1px solid #e4edf4;
-    }
+     div.stat span {
+         display: inline-block;
+         /*width: 100%;*/
+         margin-top: 5px;
+     }
 
-    /*CSS for the toolbas to create question*/
-    #toolbar {
-        height: 70px;
-        margin-top: 40px;
-    }
+     /*Reduce the well sm padding. we are using it to display who asked the question*/
+     .well-sm {
+         padding: 5px;
+     }
+     /*CSS form tags*/
+     .tags {
+         margin-top: 2%;
+     }
 
-    /*.block {
-        border-top: 1px solid #d3d4cf;
-        padding-top: 20px;
-        margin-bottom: 29px;
-    }*/
+     .post-tag {
+         color: #566e76;
+         background: #f7fdff;
+         border: 1px solid #c0d4db;
+         padding: .4em .5em;
+         border-radius: 15px;
+         text-align: center;
+         font-size: 11px;
+         line-height: 1;
+         color: #3e6d8e;
+         background-color: #e4edf4;
+         margin: 2px 2px 2px 0;
+         text-decoration: none;
+         font-size: 12px;
+         /*white-space: nowrap;*/
+         display: inline-block;
+         border-radius: 0;
+         border: 1px solid #e4edf4;
+     }
 
-    /*.column {
-        float: left;
-        width: calc(85% - 20px);
-        margin-right: 20px;
-    }*/
+     /*CSS for the toolbas to create question*/
+     #toolbar {
+         height: 70px;
+         margin-top: 40px;
+     }
 
-    div.detail {
-        /*min-height: 40px;*/
-    }
+     /*.block {
+         border-top: 1px solid #d3d4cf;
+         padding-top: 20px;
+         margin-bottom: 29px;
+     }*/
 
-    div.user {
-        /*width: 60px;*/
-        text-align: center;
-        /*height: 60px;*/
-        display: block;
-        float: left;
-        font-size:12px;
-    }
+     /*.column {
+         float: left;
+         width: calc(85% - 20px);
+         margin-right: 20px;
+     }*/
 
-    div.user a.mark-answer {
-        margin-top: 6px;
-        padding: 3px 6px;
-    }   
+     div.detail {
+         /*min-height: 40px;*/
+     }
 
-    .comment-form textarea {
-        /*-webkit-appearance: none;
-        line-height: 20px;
-        background-color: #f9faf7;
-        border: 1px solid #D9DAD6;
-        padding: 9px 13px;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        resize: none;
-        height: 40px;*/
-        border-radius: 5px;
-    }
+     div.user {
+         /*width: 60px;*/
+         text-align: center;
+         /*height: 60px;*/
+         display: block;
+         float: left;
+         font-size:12px;
+     }
 
-    .button, input[type=submit] {
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        padding-left: 22px;
-        padding-right: 22px;
-        height: 40px;
-        min-width: 104px;
-        border-radius: 5px;
-        border: 0;
-        font-weight: 700;
-        color: #fcfcfa;
-        background-color: #7ab21e;
-    }
+     div.user a.mark-answer {
+         margin-top: 6px;
+         padding: 3px 6px;
+     }
 
-    .comment-form.active form textarea {
-        resize: vertical;
-        margin-bottom: 11px;
-        min-height: 50px;
-        height: 150px;
-        -webkit-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-        -moz-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-        -o-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-        transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-    }
+     .comment-form textarea {
+         /*-webkit-appearance: none;
+         line-height: 20px;
+         background-color: #f9faf7;
+         border: 1px solid #D9DAD6;
+         padding: 9px 13px;
+         -moz-box-sizing: border-box;
+         -webkit-box-sizing: border-box;
+         box-sizing: border-box;
+         resize: none;
+         height: 40px;*/
+         border-radius: 5px;
+     }
 
-    .comment-form.active input[type=submit] {
-        top: inherit;
-        right: 0;
-        bottom: 0;
-    }
+     .button, input[type=submit] {
+         -moz-box-sizing: border-box;
+         -webkit-box-sizing: border-box;
+         box-sizing: border-box;
+         padding-left: 22px;
+         padding-right: 22px;
+         height: 40px;
+         min-width: 104px;
+         border-radius: 5px;
+         border: 0;
+         font-weight: 700;
+         color: #fcfcfa;
+         background-color: #7ab21e;
+     }
 
-    #answerlist {
-        list-style-type: none;
-    }
+     .comment-form.active form textarea {
+         resize: vertical;
+         margin-bottom: 11px;
+         min-height: 50px;
+         height: 150px;
+         -webkit-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+         -moz-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+         -o-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+         transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+     }
 
-    li.answer {
-        padding-bottom: 15px;
-        /*padding-top: 15px;
-        border-bottom: 1px solid #e0e0e0;*/
-    }
+     .comment-form.active input[type=submit] {
+         top: inherit;
+         right: 0;
+         bottom: 0;
+     }
 
-    li.answer:nth-last-child(2), li.answer:last-child {
-        border: none;
-    }
+     #answerlist {
+         list-style-type: none;
+     }
 
-    #answerlist li:last-child {
-        padding-bottom: 0;
-    }
+     li.answer {
+         padding-bottom: 15px;
+         /*padding-top: 15px;
+         border-bottom: 1px solid #e0e0e0;*/
+     }
 
-    li.answer div.stat {
-        float: right !important;
-    }
+     li.answer:nth-last-child(2), li.answer:last-child {
+         border: none;
+     }
 
-    div.stat {
-        color: #808080;
-        font-size: 9pt;
-    }
+     #answerlist li:last-child {
+         padding-bottom: 0;
+     }
 
-    div.stat span {
-        display: inline-block;
-        width: 100%;
-    }
+     li.answer div.stat {
+         float: right !important;
+     }
 
-    div.answer-links {
-        margin-top:20px;
-        font-size: 10pt;
-    }
+     div.stat {
+         color: #808080;
+         font-size: 9pt;
+     }
 
-    span.link {
-        margin-right: 20px;
-    }
+     div.stat span {
+         display: inline-block;
+         width: 100%;
+     }
 
-    span.link a {
-        color: #999;
-    }
+     div.answer-links {
+         margin-top:20px;
+         font-size: 10pt;
+     }
 
-    span.link a.upvote-anchor {
-        box-sizing: border-box;
-        transition: all ease-in-out 100ms;
-        border-radius: 3px;
-        box-shadow: 0 1px 1px 0 rgba(200,200,200,0.2);
-        display: inline-block;
-        font-weight: 500;
-        outline: 0;
-        padding: 3px 7px 4px 7px;
-        text-align: center;
-        text-decoration: none;
-        cursor: pointer;
-        background: #e4edf4;
-        color: #3e6d8e;
-        border: 1px solid #bbcadc;
-    }
+     span.link {
+         margin-right: 20px;
+     }
 
-    .upvote-anchor span.count {
-        background: 0;
-        padding: 0;
-        margin: 0;
-        margin-left: 6px;
-        padding-left: 6px;
-        transition: all ease-in-out 100ms;
-        position: relative;
-        border-radius: 0 3px 3px 0;
-        -webkit-font-smoothing: antialiased;
-        color: #3e6d8e;
-        font-weight: bold;
-        min-width: 10px;
-        text-align: center;
-        display: inline-block;
-        float: none;
-        border-left: 1px solid #3e6d8e;
-    }
+     span.link a {
+         color: #999;
+     }
 
-    div.answer-comments {
-        font-size: 13px;        
-        margin-top: 12px;
-        /*margin-bottom: 30px;*/
-        /*background: #f6f6f6;
-        border: 1px solid #e2e2e2;
-        border-radius: 2px;*/
-        padding-top:2px;
-        padding-bottom:2px;
-    }
+     span.link a.upvote-anchor {
+         box-sizing: border-box;
+         transition: all ease-in-out 100ms;
+         border-radius: 3px;
+         box-shadow: 0 1px 1px 0 rgba(200,200,200,0.2);
+         display: inline-block;
+         font-weight: 500;
+         outline: 0;
+         padding: 3px 7px 4px 7px;
+         text-align: center;
+         text-decoration: none;
+         cursor: pointer;
+         background: #e4edf4;
+         color: #3e6d8e;
+         border: 1px solid #bbcadc;
+     }
 
-    div.comment-box {
-        overflow: auto;
-        padding: 5px 0;
-    }
+     .upvote-anchor span.count {
+         background: 0;
+         padding: 0;
+         margin: 0;
+         margin-left: 6px;
+         padding-left: 6px;
+         transition: all ease-in-out 100ms;
+         position: relative;
+         border-radius: 0 3px 3px 0;
+         -webkit-font-smoothing: antialiased;
+         color: #3e6d8e;
+         font-weight: bold;
+         min-width: 10px;
+         text-align: center;
+         display: inline-block;
+         float: none;
+         border-left: 1px solid #3e6d8e;
+     }
 
-    a.commentor {
-        float: left;
-    }
+     div.answer-comments {
+         font-size: 13px;
+         margin-top: 12px;
+         /*margin-bottom: 30px;*/
+         /*background: #f6f6f6;
+         border: 1px solid #e2e2e2;
+         border-radius: 2px;*/
+         padding-top:2px;
+         padding-bottom:2px;
+     }
 
-    /* CSS for Ask to Answer*/
+     div.comment-box {
+         overflow: auto;
+         padding: 5px 0;
+     }
 
-    .wantedanswersuggestion {
-        float: left;
-        width: 90%;
-        margin-bottom: 12px;
-    }
+     a.commentor {
+         float: left;
+     }
 
-    .upvote-span.disabled a.upvote-anchor, .upvote-span.disabled span {
-        color: #9D9C9C;
-        background-color: #DBD7D7;
-    }
+     /* CSS for Ask to Answer*/
 
-    .no-right-padding {
-        padding-right: 0;
-    }
+     .wantedanswersuggestion {
+         float: left;
+         width: 90%;
+         margin-bottom: 12px;
+     }
 
-    .comment-list {
-        border-bottom: 1px solid #e2e2e2;
-        padding: 8px;
-        margin-right: 20px;
-    }
+     .upvote-span.disabled a.upvote-anchor, .upvote-span.disabled span {
+         color: #9D9C9C;
+         background-color: #DBD7D7;
+     }
 
-    .comment-date, .comment-user {
-        font-size: 9pt;
-    }
+     .no-right-padding {
+         padding-right: 0;
+     }
 
-    .comment-user {
-        font-weight: bold;
-        padding-right: 10px;
-    }
+     .comment-list {
+         border-bottom: 1px solid #e2e2e2;
+         padding: 8px;
+         margin-right: 20px;
+     }
 
-    .comment-text {
-        display: inline-block;
-        width: 100%;
-        /*padding: 0 10px;*/
-        word-wrap: break-word;
-    }
+     .comment-date, .comment-user {
+         font-size: 9pt;
+     }
 
-    /*.comment-box .input-div {
-        width: 70%;
-        float: left;
-        padding-left: 10px;
-    }*/
+     .comment-user {
+         font-weight: bold;
+         padding-right: 10px;
+     }
 
-    .comment-box .buttons {
-        padding-left: 10px;
-    }
+     .comment-text {
+         display: inline-block;
+         width: 100%;
+         /*padding: 0 10px;*/
+         word-wrap: break-word;
+     }
+
+     /*.comment-box .input-div {
+         width: 70%;
+         float: left;
+         padding-left: 10px;
+     }*/
+
+     .comment-box .buttons {
+         padding-left: 10px;
+     }
 </style>
 
 <script type="text/javascript">
@@ -311,7 +312,7 @@
         // hide the submit answer rich text control
         $('.wirte-answer').hide();
 
-        // hide the right column modules, we will enable inside respective the partial view once receive the server response      
+        // hide the right column modules, we will enable inside respective the partial view once receive the server response
         $('.tagcontainermaindiv').hide();
         $('.popularquestioncontainerdiv').hide();
 
@@ -455,8 +456,7 @@
                 if (XMLHttpRequest.status == "401")
                     window.location.href = "/account/login";
                 // if it is 404 response then redirect to 404 page
-                if (XMLHttpRequest.status == "404")
-                {
+                if (XMLHttpRequest.status == "404") {
                     window.location.href = "/errors/Http404";
                 }
                 // toastr notification
@@ -768,7 +768,7 @@
                 });
 
                 var utcDate = new Date(result.postedOnUtc);
-                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + "at"+ utcDate.getHours() + ":" + utcDate.getMinutes();
+                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + "at" + utcDate.getHours() + ":" + utcDate.getMinutes();
 
                 var answerBlock = $('#answerlist li.answer.hide').clone();
                 $(answerBlock).removeClass('hide');
@@ -1059,76 +1059,68 @@
 
             // show the 'ask to answer module'
             $('#userToAnswer').show();
-                return;
-            }
+            return;
+        }
 
         $('#answerlist').before("<div class='col-md-12'><h4>Answers:</h4><hr/></div>");
-            var save = $('#answerlist .answer.hide').detach();
-            $('#answerlist').empty().append(save);
+        var save = $('#answerlist .answer.hide').detach();
+        $('#answerlist').empty().append(save);
 
-            $(result).each(function (index, answer) {
-                var answerBlock = $('#answerlist li.answer.hide').clone();
-                createAnswerHtml(answerBlock, answer);
-                if (isAskedByMe) {
-                    var markAnswer = $(answerBlock).find('.mark-answer');
-                    $(markAnswer).removeClass('hide').click(function () {
-                        var span = $(this);
-                        if ($(span).hasClass('btn-success')) {
-                            return;
-                        }
+        $(result).each(function (index, answer) {
+            var answerBlock = $('#answerlist li.answer.hide').clone();
+            createAnswerHtml(answerBlock, answer);
+            if (isAskedByMe) {
+                var markAnswer = $(answerBlock).find('.mark-answer');
+                $(markAnswer).removeClass('hide').click(function () {
+                    var span = $(this);
+                    if ($(span).hasClass('btn-success')) {
+                        return;
+                    }
 
-                        var answerId = $(span).closest('li.answer').attr('data-answerid');
-                        var answerBy = $(span).closest('li.answer').attr('data-answerBy');
-                        var answers = [];
-                        answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
-                        $('.mark-answer.btn-success').each(function (i, e) {
-                            $(e).removeClass('btn-success');
-                            var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
-                            answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
-                        });
-
-                        $(span).addClass('btn-success');
-                        logActivity(5, answerId, answerBy);
-
-                        scAjax({
-                            "url": "answers/UpdateMarkAsAnswer",
-                            "type": "POST",
-                            "data": JSON.stringify(answers)
-                        });
+                    var answerId = $(span).closest('li.answer').attr('data-answerid');
+                    var answerBy = $(span).closest('li.answer').attr('data-answerBy');
+                    var answers = [];
+                    answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
+                    $('.mark-answer.btn-success').each(function (i, e) {
+                        $(e).removeClass('btn-success');
+                        var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
+                        answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
                     });
-                }
 
-                getComments(answerBlock, answer);
-                setUpAnswerUserActions();
-            });
+                    $(span).addClass('btn-success');
+                    logActivity(5, answerId, answerBy);
+
+                    scAjax({
+                        "url": "answers/UpdateMarkAsAnswer",
+                        "type": "POST",
+                        "data": JSON.stringify(answers)
+                    });
+                });
+            }
+
+            getComments(answerBlock, answer);
+            setUpAnswerUserActions();
+        });
     }
 
     // This method will execute when user will type user details in the 'Ask To Answer' serach box
-    var lastentry = "";
-    var xhrCount = 0;
     $(function () {
         $('#usernametext').keyup(function (event) {
-            // clear the previous users
-            $('#userlistasktoanswer').empty();
+            var searchValue = $(this).val();
+            setTimeout(function () {
+                if (searchValue == $('#usernametext').val() && searchValue != null && searchValue != "") {
+                    //alert(searchValue);
+                    scAjax({
+                        "url": "search/SearchUsersByNameEmail",
+                        "data": { "userDetails": searchValue },
+                        "success": function (result) {
+                            if (!result) {
+                                return;
+                            }
 
-            // sequence number for the current invocation of function
-            var seqNumber = ++xhrCount;
-
-            jQuery.support.cors = true;
-            var SERVER = "/api/";
-            // enable loading div
-            $('#loadingasktoanswer').show();
-
-            if ($('#usernametext').val() != "") {
-                scAjax({
-                    "url": "search/SearchUsersByNameEmail",
-                    "data": { "userDetails": $('#usernametext').val() },
-                    "success": function (result) {
-                        if (!result) {
-                            return;
-                        }
-                        if (seqNumber === xhrCount) {
-
+                            // clear the previous users
+                            $('#userlistasktoanswer').empty();
+                           
                             // if no user found then show this message
                             if (result.length == 0) {
                                 $('#userlistasktoanswer').append("<span>No user found</span>");
@@ -1174,61 +1166,63 @@
                                 });
                             }
 
+                            //}
                         }
-                    }
-                });
-            }
-            else {
-                // clear the previous users
-                $('#userlistasktoanswer').empty();
-
-                if (userListAskToAnswer.length == 0) {
-                    $('#userlistasktoanswer').append("<span>Sorry no matching profile available</span>");
-                    // hide the loading message
-                    $('#loadingasktoanswer').hide();
-                }
-                else {
-                    // update the div with the user data received from the API
-                    jQuery.each(userListAskToAnswer, function (i, val) {
-                        // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                        if (val.profileImageURL != null)
-                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                        else
-                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                        // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                        scAjax({
-                            "url": "asktoanswer/GetAskToAnswer",
-                            "data": { "questionId": questionID, "userId": val.id },
-                            "success": function (result) {
-                                if (result != null) {
-                                    $('a[id$="' + val.id + '"]:first').text("Already Asked");
-                                    $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
-                                }
-                                //get the response rate for each user
-                                var responseRate;
-                                scAjax({
-                                    "url": "asktoanswer/GetResponseRate",
-                                    "data": { "userId": val.id },
-                                    "success": function (rRate) {
-                                        //wantedanswersuggestion
-                                        responseRate = rRate;
-                                        $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);
-
-                                        // hide the loading message
-                                        $('#loadingasktoanswer').hide();
-                                    }
-                                });
-                            }
-                        });
-
                     });
                 }
-            }
+                else if (searchValue == '') {
+                    // user have cleared all text from the text field so load all previous users
+                    // clear the existing users
+                    $('#userlistasktoanswer').empty();
+
+                    if (userListAskToAnswer.length == 0) {
+                        $('#userlistasktoanswer').append("<span>Sorry no matching profile available</span>");
+                        // hide the loading message
+                        $('#loadingasktoanswer').hide();
+                    }
+                    else {
+                        // update the div with the user data received from the API
+                        jQuery.each(userListAskToAnswer, function (i, val) {
+                            // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
+                            if (val.profileImageURL != null)
+                                $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                            else
+                                $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                            // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
+                            scAjax({
+                                "url": "asktoanswer/GetAskToAnswer",
+                                "data": { "questionId": questionID, "userId": val.id },
+                                "success": function (result) {
+                                    if (result != null) {
+                                        $('a[id$="' + val.id + '"]:first').text("Already Asked");
+                                        $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
+                                    }
+                                    //get the response rate for each user
+                                    var responseRate;
+                                    scAjax({
+                                        "url": "asktoanswer/GetResponseRate",
+                                        "data": { "userId": val.id },
+                                        "success": function (rRate) {
+                                            //wantedanswersuggestion
+                                            responseRate = rRate;
+                                            $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);
+
+                                            // hide the loading message
+                                            $('#loadingasktoanswer').hide();
+                                        }
+                                    });
+                                }
+                            });
+
+                        });
+                    }
+                }
+            }, 400);
         });
     });
 </script>
 
-<div class="container">   
+<div class="container">
     <div class="col-md-9 col-xs-12">
         <div>
             <div class="header col-md-12">
@@ -1238,9 +1232,9 @@
                 <div class="description col-md-12 col-xs-12"></div>
                 <div class="tags col-md-9 col-xs-9"></div>
                 @*<div class="stat col-md-2">
-                    <span class="date"></span>
-                    <span class="answercount"></span>
-                </div>*@
+                        <span class="date"></span>
+                        <span class="answercount"></span>
+                    </div>*@
                 <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
             </div>
             <br /><br />
@@ -1261,7 +1255,7 @@
                                 </a>
                             </div>
                             <div class="detail col-md-10">
-                                <div class="text"></div> 
+                                <div class="text"></div>
                                 <div class="answer-links">
                                     <span class="link upvote-span">
                                         <a class="upvote-anchor" href="#">
@@ -1276,9 +1270,9 @@
                                     <div class="stat">
                                         <span class="date"></span>
                                     </div>
-                                </div>                               
-                            </div>                      
-                        </div>                  
+                                </div>
+                            </div>
+                        </div>
                         <div class="well answer-comments col-md-10 col-md-offset-2">
                             <div class="comment-list hide">
                                 <a class="comment-user"></a>
@@ -1290,8 +1284,8 @@
                             </div>
                             <div class="comment-box">
                                 @*<a class="commentor col-md-1" href="#">
-                                    <img height="25" width="25" src="/Content/images/profile-image.jpg">
-                                </a>*@
+                                        <img height="25" width="25" src="/Content/images/profile-image.jpg">
+                                    </a>*@
                                 <div class="input-div col-md-9">
                                     <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
                                     @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
@@ -1305,7 +1299,7 @@
                                 </div>
 
                             </div>
-                        </div>                                           
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -1423,7 +1417,7 @@
                     <div class="editor-container"></div>
                 </div>
                 @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
-                <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">
+                <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-xs" style=" margin-top: 15px;">
                     <i></i><span>Submit Answer</span>
                 </button>
             </div>
