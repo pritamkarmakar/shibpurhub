@@ -1120,42 +1120,38 @@
 
                             // clear the previous users
                             $('#userlistasktoanswer').empty();
-                           
-                            // if no user found then show this message
+
                             if (result.length == 0) {
-                                $('#userlistasktoanswer').append("<span>No user found</span>");
-                                // hide the loading
+                                $('#userlistasktoanswer').append("<span>Sorry no matching profile available</span>");
+                                // hide the loading message
                                 $('#loadingasktoanswer').hide();
-                                return;
                             }
                             else {
                                 // update the div with the user data received from the API
                                 jQuery.each(result, function (i, val) {
+                                    if (val.profileImageURL != null)
+                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                                    else
+                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                                     // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
                                     scAjax({
                                         "url": "asktoanswer/GetAskToAnswer",
                                         "data": { "questionId": questionID, "userId": val.id },
                                         "success": function (result) {
+                                            if (result != null) {
+                                                $('a[id$="' + val.id + '"]:first').text("Already Asked");
+                                                $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
+                                            }
                                             //get the response rate for each user
                                             var responseRate;
                                             scAjax({
                                                 "url": "asktoanswer/GetResponseRate",
                                                 "data": { "userId": val.id },
                                                 "success": function (rRate) {
-
+                                                    //wantedanswersuggestion
                                                     responseRate = rRate;
-                                                    if (result == null) {
-                                                        if (val.profileImageURL != null)
-                                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>");
-                                                        else
-                                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div><hr id='smallseparator'/>");
-                                                    }
-                                                    else {
-                                                        if (val.profileImageURL != null)
-                                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.id + "'class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>");
-                                                        else
-                                                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Response rate: " + responseRate + "</span></div><a id='askmeto' data-id='" + val.id + "'class='btn btn-primary btn-sm' disabled='disabled' style='float:right;' onclick='SendNotification(this)'>Already Asked</a></div><hr id='smallseparator'/>");
-                                                    }
+                                                    $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);
+
                                                     // hide the loading message
                                                     $('#loadingasktoanswer').hide();
                                                 }
@@ -1165,8 +1161,6 @@
 
                                 });
                             }
-
-                            //}
                         }
                     });
                 }
