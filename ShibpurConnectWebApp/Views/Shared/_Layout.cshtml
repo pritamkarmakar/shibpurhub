@@ -77,9 +77,9 @@
 
                     },
                     error: function (err) {
-                         // send alert to admin team
+                        // send alert to admin team
 
-                }
+                    }
                 });
 
                 // get all the notifications
@@ -128,11 +128,32 @@
                 });
             }
 
+            // back to top animation
+            $(function () {
+                $(document).on('scroll', function () {
+
+                    if ($(window).scrollTop() > 100) {
+                        $('.scroll-top-wrapper').addClass('show');
+                    } else {
+                        $('.scroll-top-wrapper').removeClass('show');
+                    }
+                });
+
+                $('.scroll-top-wrapper').on('click', scrollToTop);
+            });
+
+            function scrollToTop() {
+                verticalOffset = typeof (verticalOffset) != 'undefined' ? verticalOffset : 0;
+                element = $('body');
+                offset = element.offset();
+                offsetTop = offset.top;
+                $('html, body').animate({ scrollTop: offsetTop }, 500, 'linear');
+            }
+
         });
 
         // when user will click on any notification we will mark that as visited and next time the background color will change
-        function MarkItRead(url, notificationId)
-        {
+        function MarkItRead(url, notificationId) {
             var SERVER = "/api/";
             $.ajax({
                 url: SERVER + "notifications/MarkNotificationsAsVisited?notificationId=" + notificationId,
@@ -150,8 +171,7 @@
             window.location.href = url;
         }
 
-        function GetNotification(userInfo)
-        {
+        function GetNotification(userInfo) {
             scAjax({
                 url: "notifications/GetNotifications?userId=" + userInfo.id,
                 success: function (result) {
@@ -218,121 +238,159 @@
     </script>
 
     <style type="text/css">
-         .avatar {
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        background-color: #CCCCCA;
-        cursor: pointer;
-        -webkit-transition: opacity ease-in-out .25s 0s;
-        -moz-transition: opacity ease-in-out .25s 0s;
-        -o-transition: opacity ease-in-out .25s 0s;
-        transition: opacity ease-in-out .25s 0s;
-    }
-
-        /*class for 12 px font size across the site*/
-        .twelvepxfont
-        {
-            font-size:12px;
+             /*css for back to top icon*/
+             .scroll-top-wrapper {
+            position: fixed;
+            opacity: 0;
+            visibility: hidden;
+            overflow: hidden;
+            text-align: center;
+            z-index: 99999999;
+            background-color: #777777;
+            color: #eeeeee;
+            width: 50px;
+            height: 48px;
+            line-height: 48px;
+            right: 6px;
+            bottom: 30px;
+            padding-top: 2px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            -webkit-transition: all 0.5s ease-in-out;
+            -moz-transition: all 0.5s ease-in-out;
+            -ms-transition: all 0.5s ease-in-out;
+            -o-transition: all 0.5s ease-in-out;
+            transition: all 0.5s ease-in-out;
         }
-        /*different separators*/
-        hr#bigseparator {
-            border-top: 3px double white;
-            color: #fff;
-            background-color: #fff;
-            margin: 8px 0 8px 0;
-            width: 90%;
+        .scroll-top-wrapper:hover {
+            background-color: #888888;
         }
-
-        hr#smallseparator {
-            border-top: 1px double white;
-            color: #fff;
-            background-color: #fff;
-            margin: 8px 0 8px 0;
-            width: 90%;
+        .scroll-top-wrapper.show {
+            visibility:visible;
+            cursor:pointer;
+            opacity: 1.0;
         }
-        /*override css for the answer rich text eitor*/
-        .editor-container {
-            height: 320px !important;
-        }
-
-        .ql-image-tooltip {
-            top: 20px !important;
+        .scroll-top-wrapper i.fa {
+            line-height: inherit;
         }
 
-        /* positioning toast notification*/
-        #toast-container > div {
-            opacity: .8;
-            margin-top: 50px;
-        }
 
-        /* Sticky footer styles
-        -------------------------------------------------- */
+            .avatar {
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                background-color: #CCCCCA;
+                cursor: pointer;
+                -webkit-transition: opacity ease-in-out .25s 0s;
+                -moz-transition: opacity ease-in-out .25s 0s;
+                -o-transition: opacity ease-in-out .25s 0s;
+                transition: opacity ease-in-out .25s 0s;
+            }
 
-        html,
-        body {
-            height: 100%;
-            /* The html and body elements cannot have any padding or margin. */
-        }
+            /*class for 12 px font size across the site*/
+            .twelvepxfont {
+                font-size: 12px;
+            }
+            /*different separators*/
+            hr#bigseparator {
+                border-top: 3px double white;
+                color: #fff;
+                background-color: #fff;
+                margin: 8px 0 8px 0;
+                width: 90%;
+            }
 
-        /* Wrapper for page content to push down footer */
-        #wrap {
-            min-height: 100%;
-            height: auto !important;
-            height: 100%;
-            /* Negative indent footer by its height */
-            margin: 0 auto -60px;
-            /* Pad bottom by footer height */
-            padding: 0 0 60px;
-        }
+            hr#smallseparator {
+                border-top: 1px double white;
+                color: #fff;
+                background-color: #fff;
+                margin: 8px 0 8px 0;
+                width: 90%;
+            }
+            /*override css for the answer rich text eitor*/
+            .editor-container {
+                height: 320px !important;
+            }
 
-        /* Set the fixed height of the footer here */
-        #footer {
-            height: 60px;
-            background-color: #f5f5f5;
-        }
+            .ql-image-tooltip {
+                top: 20px !important;
+            }
 
-        .container .credit {
-            margin: 20px 0;
-        }
+            /* positioning toast notification*/
+            #toast-container > div {
+                opacity: .8;
+                margin-top: 50px;
+            }
 
-        #footer > .container {
-            padding-left: 15px;
-            padding-right: 15px;
-        }
+            /* Sticky footer styles
+                    -------------------------------------------------- */
 
-        /*mark visited notification background as white */
-        .whitewell {
-            background: rgba(255,255,255,0.4);
-        }
+            html,
+            body {
+                height: 100%;
+                /* The html and body elements cannot have any padding or margin. */
+            }
 
-        #lessbottommargin {
-            margin-bottom: 2px;
-            cursor: pointer;
-        }
+            /* Wrapper for page content to push down footer */
+            #wrap {
+                min-height: 100%;
+                height: auto !important;
+                height: 100%;
+                /* Negative indent footer by its height */
+                margin: 0 auto -60px;
+                /* Pad bottom by footer height */
+                padding: 0 0 60px;
+            }
 
-        #nomarginhr {
-            margin-top: 0px;
-            margin-bottom: 0px;
-        }
+            /* Set the fixed height of the footer here */
+            #footer {
+                height: 60px;
+                background-color: #f5f5f5;
+            }
 
-        #notification_li {
-            position: relative;
-        }
+            .container .credit {
+                margin: 20px 0;
+            }
 
-        #notificationContainer {
-            background-color: #fff;
-            border: 1px solid rgba(100, 100, 100, .4);
-            -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
-            overflow: visible;
-            position: absolute;
-            top: 50px;
-            margin-left: -176px;
-            width: 400px;
-            z-index: -1;
-            display: none;
-            /*Enable this after jquery implementation;*/
-        }
+            #footer > .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            /*mark visited notification background as white */
+            .whitewell {
+                background: rgba(255,255,255,0.4);
+            }
+
+            #lessbottommargin {
+                margin-bottom: 2px;
+                cursor: pointer;
+            }
+
+            #nomarginhr {
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+
+            #notification_li {
+                position: relative;
+            }
+
+            #notificationContainer {
+                background-color: #fff;
+                border: 1px solid rgba(100, 100, 100, .4);
+                -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+                overflow: visible;
+                position: absolute;
+                top: 50px;
+                margin-left: -176px;
+                width: 400px;
+                z-index: -1;
+                display: none;
+                /*Enable this after jquery implementation;*/
+            }
 
             /*Popup Arrow*/
             #notificationContainer:before {
@@ -348,46 +406,46 @@
                 margin-left: 188px;
             }
 
-        #notificationTitle {
-            font-weight: bold;
-            padding: 8px;
-            font-size: 13px;
-            background-color: #ffffff;
-            position: fixed;
-            z-index: 1000;
-            width: 384px;
-            border-bottom: 1px solid #dddddd;
-        }
+            #notificationTitle {
+                font-weight: bold;
+                padding: 8px;
+                font-size: 13px;
+                background-color: #ffffff;
+                position: fixed;
+                z-index: 1000;
+                width: 384px;
+                border-bottom: 1px solid #dddddd;
+            }
 
-        #notificationsBody {
-            padding: 33px 0px 0px 0px !important;
-            min-height: 300px;
-            max-height: 350px;
-            overflow: auto;
-            margin-top: 0px;
-        }
+            #notificationsBody {
+                padding: 33px 0px 0px 0px !important;
+                min-height: 300px;
+                max-height: 350px;
+                overflow: auto;
+                margin-top: 0px;
+            }
 
-        #notificationFooter {
-            background-color: #e9eaed;
-            text-align: center;
-            font-weight: bold;
-            padding: 8px;
-            font-size: 12px;
-            border-top: 1px solid #dddddd;
-        }
+            #notificationFooter {
+                background-color: #e9eaed;
+                text-align: center;
+                font-weight: bold;
+                padding: 8px;
+                font-size: 12px;
+                border-top: 1px solid #dddddd;
+            }
 
-        #notification_count {
-            padding: 3px 7px 3px 7px;
-            background: #cc0000;
-            color: #ffffff;
-            font-weight: bold;
-            margin-left: 77px;
-            border-radius: 9px;
-            -moz-border-radius: 9px;
-            -webkit-border-radius: 9px;
-            position: absolute;
-            font-size: 11px;
-        }
+            #notification_count {
+                padding: 3px 7px 3px 7px;
+                background: #cc0000;
+                color: #ffffff;
+                font-weight: bold;
+                margin-left: 77px;
+                border-radius: 9px;
+                -moz-border-radius: 9px;
+                -webkit-border-radius: 9px;
+                position: absolute;
+                font-size: 11px;
+            }
     </style>
 </head>
 <body>
@@ -406,42 +464,42 @@
                     <ul class="nav navbar-nav">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            @*<li>@Html.ActionLink("Profile", "Profile", "Account")</li>*@
+                        @*<li>@Html.ActionLink("Profile", "Profile", "Account")</li>*@
 
                         <!-- Notification center-->
-                            <li id="notification_li">
-                                <span id="notification_count" style="display:none;"></span>
-                                <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
+                        <li id="notification_li">
+                            <span id="notification_count" style="display:none;"></span>
+                            <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
 
-                                <div id="notificationContainer">
-                                    <div id="notificationTitle">Notifications</div>
-                                    <div id="notificationsBody" class="notifications"></div>
-                                    <div id="notificationFooter"><a href="/notifications">See All</a></div>
-                                </div>
-                            </li>
+                            <div id="notificationContainer">
+                                <div id="notificationTitle">Notifications</div>
+                                <div id="notificationsBody" class="notifications"></div>
+                                <div id="notificationFooter"><a href="/notifications">See All</a></div>
+                            </div>
+                        </li>
                         }
                         <li>@Html.ActionLink("Questions", "Index", "Feed")</li>
                         <li>@Html.ActionLink("Tags", "Index", "Tags")</li>
                         <li>@Html.ActionLink("Users", "Index", "Users")</li>
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li>
-                                <a href="/Feed/StartDiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
-                            </li>
+                        <li>
+                            <a href="/Feed/StartDiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
+                        </li>
                         }
                     </ul>
 
                     @Html.Partial("_LoginPartial")
                 </div>
             </div>
-        </div>       
+        </div>
         <div class="container" style="margin-top:20px;">
             @RenderSection("emailconfirmalert", required: false)
         </div>
 
         @RenderSection("jambo", required: false)
         <div class="container body-content">
-            @RenderBody()           
+            @RenderBody()
         </div>
         @RenderSection("scripts", required: false)
     </div>
@@ -449,6 +507,11 @@
         <div class="container">
             <p class="text-muted credit">&copy; @DateTime.Now.Year - ShibpurConnect</p>
         </div>
+    </div>
+    <div class="scroll-top-wrapper ">
+        <span class="scroll-top-inner">
+            <i class="fa fa-2x fa-arrow-circle-up"></i>
+        </span>
     </div>
 </body>
 </html>
