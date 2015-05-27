@@ -832,6 +832,11 @@
             AskToAnswer model
             </summary>
         </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.ImageInfo">
+            <summary>
+            Model for user profile image
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.Notifications">
             <summary>
             Notification model
@@ -861,6 +866,12 @@
             </summary>
             <param name="userEmail">user email</param>
             <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UpdateProfileImage(ShibpurConnectWebApp.Models.WebAPI.ImageInfo)">
+            <summary>
+            API to update user profile image
+            </summary>
+            <param name="imageInfo"></param>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UpdateProfile(System.String,System.String,System.String,System.String)">
             <summary>

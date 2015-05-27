@@ -145,12 +145,34 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(userInfo);
         }
 
-        public async void UpdateProfileImage(ImageInfo imageInfo)
+        /// <summary>
+        /// API to update user profile image
+        /// </summary>
+        /// <param name="imageInfo"></param>
+        [HttpPost]
+        [Authorize]
+        [InvalidateCacheOutput("GetProfileByUserId")]
+        [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
+        public async Task<IHttpActionResult> UpdateProfileImage(ImageInfo imageInfo)
         {
-            if (string.IsNullOrEmpty(imageInfo.UserId) || string.IsNullOrEmpty(imageInfo.ImageBase64))
+            if (string.IsNullOrEmpty(imageInfo.ImageBase64))
             {
-                return;
+                ModelState.AddModelError("","image can't be null or empty string");
+                return BadRequest(ModelState);
             }
+
+            // get user identity
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
 
             using (var webClient = new WebClient())
             {
@@ -174,10 +196,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 match = reg.Match(result);
                 string deleteHash = match.ToString().Replace("deletehash\":\"", "").Replace("\"", "").Replace("\\/", "/");
 
-                var helper = new Helper.Helper();
-
-                Task<CustomUserInfo> actionResult = helper.FindUserById(imageInfo.UserId);
-                var userInfo = await actionResult;
                 if (!string.IsNullOrEmpty(userInfo.ProfileImageURL) && userInfo.ProfileImageURL.IndexOf('#') > 0)
                 {
 
@@ -188,8 +206,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     }
                 }
 
-                helper.UpdateProfileImageURL(imageInfo.UserId, imageName + "#" + deleteHash);
+                helper.UpdateProfileImageURL(userInfo.Id, imageName + "#" + deleteHash);
             }
+
+            return Ok();
         }
 
         /// <summary>
@@ -206,10 +226,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {       
            using (AuthRepository _repo = new AuthRepository())
             {
-               // get user identity
+                // get user identity
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
                 var claim = principal.FindFirst("sub");
-
                 ApplicationUser user = await _repo.FindUserByEmail(claim.Value);
 
                 if (!string.IsNullOrEmpty(firstName))

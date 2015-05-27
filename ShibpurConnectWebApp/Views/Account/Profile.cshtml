@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Profile";    
+    ViewBag.Title = "Profile";
 }
 
 <style type="text/css">
@@ -72,158 +72,130 @@
     }
 </style>
 
-
-
 <script type="text/javascript">
-        // get the user profile for this user
-        $(document).ready(function() {
-            jQuery.support.cors = true;
-            var SERVER = "/api/";
-            var profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
-            var loggedInUserId = "";
+    // get the user profile for this user
+    $(document).ready(function() {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
+        var loggedInUserId = "";
 
-            // check if this call for a different user or current logged-in user. If there is no data in the TempData["profileEmail"] then consider current session user
-            if (!profileId) {
-                // get current user email from session
-                var userDetails = localStorage.getItem("SC_Session_UserDetails");
-                if (!userDetails) {
-                    //TO-DO: Handle if userdetail is not available in Session Storage
+        // get current user id from local storage
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        var userInfo = $.parseJSON(userDetails);
+        if (userInfo != null)
+            loggedInUserId = userInfo.id;
+
+        // If profileId is null then consider loggedInUserId. This will happen when a logged in user will click on the 'Profile' link from the navbar.
+        // That url will be '/account/profile' without any userid. But if both are null then redirect to feed/index page
+        if (profileId == null & loggedInUserId != null)
+            profileId = loggedInUserId;
+
+        $.ajax({
+            url: SERVER + "profile/GetProfileByUserId",
+            type: "GET",
+            dataType: "json",
+            data: { "userId": profileId },
+            contentType: "application/json",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                //"Access-Control-Allow-Origin": "*"
+            },
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
+            },
+            success: function(result) {
+                if (!result) {
                     return;
                 }
 
-                var userInfo = $.parseJSON(userDetails);
-                //profileEmail = userInfo.email;
-                loggedInUserId = userInfo.id;
+                var userDetails = localStorage.getItem("SC_Session_UserDetails");
+                if (userDetails) {
+                    var userInfo = $.parseJSON(userDetails);
+                    var loggedInUserId = userInfo.id;
+                }
+
+                $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
+                $(".registeredon").after( getDateFormattedByMonthYear(result.userInfo.registeredOn));
+                $(".reputationcount").after(result.userInfo.reputationCount);
+                $(".userlocation").after(result.userInfo.location);
+                $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
+                $(".aboutmebody").text(result.userInfo.aboutMe);
+                $("#hdnUserId").val(result.userInfo.id);
+                //$(".registeredon").insertAfter.append("<strong class='registrationdatespan'>Joined</strong>" + getDateFormattedByMonthYear(result.userInfo.registeredOn));
+
+                if(result.userInfo.id == loggedInUserId)
+                {
+                    $("#imagePreview").siblings('.imageDiv').show();
+                }
+                if(result.userInfo.profileImageURL)
+                {
+                    $("#imagePreview").show().css("background-image", "url("+ IMGURPATH + result.userInfo.profileImageURL+")");
+                }
+                // iterate over all the educational histories
+                if(result.educationalHistories != null)
+                {
+                    jQuery.each(result.educationalHistories, function(i, val) {
+                        $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
+                        if(i != result.educationalHistories.length - 1)
+                        {
+                            $('.educationbody').append("<hr id='dotted'/>");
+                        }
+                    });
+                }
+
+                // iterate over all the employment histories
+                if(result.employmentHistories != null)
+                {
+                    jQuery.each(result.employmentHistories, function(i, val) {
+                        //var eduDiv = document.getElementById('educationalList');
+                        var months = ["January", "February", "March", "April", "May", "June", "July",
+     "August", "September", "October", "November", "December"];
+                        var utcDate = new Date(val.from);
+                        var fromDate = months[utcDate.getMonth()] + " " + utcDate.getFullYear();
+
+                        var toDate;
+                        if (val.to != null)
+                        {
+                            var utcDateTo = new Date(val.to);
+                            toDate = months[utcDateTo.getMonth()] + " " + utcDateTo.getFullYear();
+                        }
+                        else {
+                            toDate = "Present";
+                        }
+                        $('.employmentbody').append("<div id=\"employmentDetails\"><span id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></span><br><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
+                        if(i != result.employmentHistories.length - 1)
+                        {
+                            $('.employmentbody').append("<hr id='dotted'/>");
+                        }
+                    });
+                }
             }
-            $.ajax({
-                url: SERVER + "profile/GetProfileByUserId",
-                type: "GET",
-                dataType: "json",
-                data: { "userId": profileId },
-                contentType: "application/json",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    //"Access-Control-Allow-Origin": "*"
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-                },
-                success: function(result) {
-                    if (!result) {
-                        return;
-                    }
-
-                    var userDetails = localStorage.getItem("SC_Session_UserDetails");
-                    if (userDetails) {
-                        var userInfo = $.parseJSON(userDetails);
-                        var loggedInUserId = userInfo.id;
-                    }                    
-
-                    $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
-                    $(".registeredon").after( getDateFormattedByMonthYear(result.userInfo.registeredOn));
-                    $(".reputationcount").after(result.userInfo.reputationCount);
-                    $(".userlocation").after(result.userInfo.location);
-                    $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
-                    $(".aboutmebody").text(result.userInfo.aboutMe);
-                    $("#hdnUserId").val(result.userInfo.id);
-                    //$(".registeredon").insertAfter.append("<strong class='registrationdatespan'>Joined</strong>" + getDateFormattedByMonthYear(result.userInfo.registeredOn));
-
-                    if(result.userInfo.id == loggedInUserId)
-                    {
-                        $("#imagePreview").siblings('.imageDiv').show();
-                    }
-                    if(result.userInfo.profileImageURL)
-                    {
-                        $("#imagePreview").show().css("background-image", "url("+ IMGURPATH + result.userInfo.profileImageURL+")");
-                    }
-                    // iterate over all the educational histories
-                    if(result.educationalHistories != null)
-                    {
-                        jQuery.each(result.educationalHistories, function(i, val) {
-                            $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
-                            if(i != result.educationalHistories.length - 1)
-                            {
-                                $('.educationbody').append("<hr id='dotted'/>");
-                            }
-                        });
-                    }
-
-                    // iterate over all the employment histories
-                    if(result.employmentHistories != null)
-                    {
-                        jQuery.each(result.employmentHistories, function(i, val) {
-                            //var eduDiv = document.getElementById('educationalList');
-                            var months = ["January", "February", "March", "April", "May", "June", "July",
-         "August", "September", "October", "November", "December"];
-                            var utcDate = new Date(val.from);
-                            var fromDate = months[utcDate.getMonth()] + " " + utcDate.getFullYear();
-
-                            var toDate;
-                            if (val.to != null)
-                            {
-                                var utcDateTo = new Date(val.to);
-                                toDate = months[utcDateTo.getMonth()] + " " + utcDateTo.getFullYear();
-                            }
-                            else {
-                                toDate = "Present";
-                            }
-                            $('.employmentbody').append("<div id=\"employmentDetails\"><span id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></span><br><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
-                            if(i != result.employmentHistories.length - 1)
-                            {
-                                $('.employmentbody').append("<hr id='dotted'/>");
-                            }
-                        });
-                    }
-                }
-            });
-
-            $('#uploadImg').change(function(){
-                var files = !!this.files ? this.files : [];
-                if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
- 
-                if (/^image/.test( files[0].type)){ // only image file
-                    var reader = new FileReader(); // instance of the FileReader
-                    reader.readAsDataURL(files[0]); // read the local file
-                    
-                    reader.onloadend = function(){ // set image data as background of div
-                        $('#anchorImage').hide();
-                        var image = this.result;
-                        $("#imagePreview").show().css("background-image", "url("+image+")");
-
-                        var imageBase64 = image.replace(/.*,/, '');
-                        imgurUpload(imageBase64);
-                    }
-                }
-            });
         });
 
+        $('#uploadImg').change(function(){
+            var files = !!this.files ? this.files : [];
+            if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+            if (/^image/.test( files[0].type)){ // only image file
+                var reader = new FileReader(); // instance of the FileReader
+                reader.readAsDataURL(files[0]); // read the local file
+
+                reader.onloadend = function(){ // set image data as background of div
+                    $('#anchorImage').hide();
+                    var image = this.result;
+                    $("#imagePreview").show().css("background-image", "url("+image+")");
+
+                    var imageBase64 = image.replace(/.*,/, '');
+                    imgurUpload(imageBase64);
+                }
+            }
+        });
+    });
+
     function imgurUpload(imageBase64) {
-
-        //var auth = 'Client-ID b079e1d3167ca54';
-        //$.ajax({
-        //    url: 'https://api.imgur.com/3/image',
-        //    type: 'POST',
-        //    headers: {
-        //        Authorization: auth,
-        //        Accept: 'application/json'
-        //    },
-        //    data: {
-        //        image: imageBase64,
-        //        type: 'base64'
-        //    },
-        //    success: function(result) {
-        //        var link = result.data.link;
-        //        var data = {"userId": $("#hdnUserId").val(), "profileImageURL": link};
-        //        scAjax({
-        //            "url": "profile/updateprofileimage",
-        //            "type": "POST",
-        //            "data": JSON.stringify(data, null, 2)
-        //        });
-        //    }
-        //});
-
-        var data = {"userId": $("#hdnUserId").val(), "imageBase64": imageBase64};
+        var data = {"imageBase64": imageBase64};
         scAjax({
             "url": "profile/updateprofileimage",
             "type": "POST",
@@ -258,13 +230,13 @@
             <ul class="list-group">
                 <li class="list-group-item text-muted" contenteditable="false">Profile</li>
                 <li class="list-group-item text-right"><span class="pull-left registeredon"><strong class="">Joined</strong></span> </li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Last seen</strong></span> ....</li>                
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Last seen</strong></span> ....</li>
                 <li class="list-group-item text-right">
-                    <span class="pull-left userlocation"><strong class="">Location </strong></span> 
+                    <span class="pull-left userlocation"><strong class="">Location </strong></span>
 
                 </li>
             </ul>
-            
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Website <i class="fa fa-link fa-1x"></i>
@@ -305,7 +277,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading educationheading">Education</div>
                 <div class="panel-body educationbody">
-                    
+
                 </div>
             </div>
             <div class="panel panel-default">
@@ -313,12 +285,12 @@
                 <div class="panel-body employmentbody">
 
                 </div>
-            </div>               
+            </div>
         </div>
 
 
         <div id="push"></div>
-    </div>  
+    </div>
     <input type="hidden" id="hdnUserId" value="" />
 </div>
 
