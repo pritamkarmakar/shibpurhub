@@ -88,6 +88,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         /// <summary>
         /// API to get complete user profile (including educational and employment background) using user id
+        /// We are using this API for the user profile page '/account/profile'
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>

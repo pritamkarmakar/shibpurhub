@@ -171,6 +171,16 @@
                         }
                     });
                 }
+
+                // iterate over all the tags user is following
+                if(result.userInfo.tags != null)
+                {
+                    // enable follow tag div
+                    $('.followtags').show();
+                    jQuery.each(result.userInfo.tags, function(i, value) {
+                        $('.followtagsbody').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value + "'> " + value + "</a></div></div>");
+                    });
+                }
             }
         });
 
@@ -277,13 +287,16 @@
             <div class="panel panel-default">
                 <div class="panel-heading educationheading">Education</div>
                 <div class="panel-body educationbody">
-
                 </div>
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading employmentheading">Employment</div>
                 <div class="panel-body employmentbody">
-
+                </div>
+            </div>
+            <div class="panel panel-default followtags" style="display:none;">
+                <div class="panel-heading">Tags I'm following</div>
+                <div class="panel-body followtagsbody">
                 </div>
             </div>
         </div>

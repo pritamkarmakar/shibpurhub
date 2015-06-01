@@ -226,3 +226,87 @@ function getQueryStringParam(name) {
     catch (result) {
     }
 }
+
+// function to follow a new tag
+function followfunction(event) {
+    var tagname = event.id;
+
+    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "follow") {
+        scAjax({
+            "url": "tags/FollowNewTag?tagName=" + tagname,
+            "type": "POST",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                $("#" + tagname + " > i").addClass('fa fa-check-circle');
+                $("#" + tagname + " > span").text(' Following');
+
+                Command: toastr["success"]("Successfully subscribed to " + tagname);
+            },
+            "error": function () {
+                Command: toastr["error"](tagname + " is not a valid tag");
+            }
+        });
+    }
+    else if ($("#" + event.id + " > span").text().trim().toLowerCase() == "unfollow") {
+        scAjax({
+            "url": "tags/unfollowtag?tagName=" + tagname,
+            "type": "POST",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                $("#" + tagname + " > i").removeClass('fa fa-check-circle');
+                $("#" + tagname + " > i").addClass('fa fa-plus-circle');
+                $("#" + tagname + " > span").text(' follow');
+
+                Command: toastr["success"]("Successfully unsubscribed " + tagname);
+            },
+            "error": function () {
+                Command: toastr["error"]("Failed to unsubscribed this tag. Please try again");
+            }
+        });
+    }
+}
+
+// change text of the follow button on mouse hover
+function changetextonmouseover(event) {
+    //$("#" + event.id + " > span").attr('style', 'color:black;font-weight:bold');
+
+    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "following") {
+        $("#" + event.id + " > i").removeClass('fa fa-check-circle');
+        $("#" + event.id + " > i").addClass('fa fa-minus-circle');
+        $("#" + event.id + " > i").attr('style', 'color:white;');
+        $("#" + event.id).attr('style', 'background-color:#A5152A;');
+        $("#" + event.id + " > span").attr('style', 'color:white;font-weight:bold;background-color:#A5152A;');
+        $("#" + event.id + " > span").text(" Unfollow");
+    }
+    else {
+        // change button color when somone will hover on the follow button and if the text is 'Follow'
+        $("#" + event.id).attr('style', 'background-color:#2098D1;');
+        $("#" + event.id + " > i").attr('style', 'color:white;');
+        $("#" + event.id + " > span").attr('style', 'color:white;font-weight:bold;');
+    }
+}
+
+// change text of the follow button on mouse out
+function changetextonmouseout(event) {
+    //$("#" + event.id + " > span").attr('style', 'color:black;font-weight:normal');
+
+    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "unfollow") {
+        $("#" + event.id + " > i").removeClass('fa fa-minus-circle');
+        $("#" + event.id + " > i").addClass('fa fa-check-circle');
+        $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
+        $("#" + event.id + " > span").attr('style', 'color:black;');
+        $("#" + event.id + " > span").text(" Following");
+        $("#" + event.id + " > i").attr('style', 'color:green;');
+    }
+    else {
+        $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
+        $("#" + event.id + " > span").attr('style', 'color:black;');
+        $("#" + event.id + " > i").attr('style', 'color:green;');
+    }
+}

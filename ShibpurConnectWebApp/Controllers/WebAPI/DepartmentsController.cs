@@ -45,42 +45,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return Ok(departments.First());
-        }
-
-        //// PUT: api/Departments/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutDepartments(string id, Departments departments)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != departments.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    db.Entry(departments).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!DepartmentsExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
+        }     
 
         // POST: api/Departments
         [ResponseType(typeof(Departments))]
@@ -103,36 +68,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return InternalServerError();
 
            return CreatedAtRoute("DefaultApi", new { id = departments.Id }, departments);
-        }
-
-        //// DELETE: api/Departments/5
-        //[ResponseType(typeof(Departments))]
-        //public IHttpActionResult DeleteDepartments(string id)
-        //{
-        //    Departments departments = db.Departmentses.Find(id);
-        //    if (departments == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    db.Departmentses.Remove(departments);
-        //    db.SaveChanges();
-
-        //    return Ok(departments);
-        //}
-
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        db.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
-
-        //private bool DepartmentsExists(string id)
-        //{
-        //    return db.Departmentses.Count(e => e.Id == id) > 0;
-        //}
+        }       
     }
 }

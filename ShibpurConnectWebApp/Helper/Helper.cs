@@ -142,7 +142,8 @@ namespace ShibpurConnectWebApp.Helper
                         ReputationCount = user.ReputationCount,
                         RegisteredOn = user.RegisteredOn,
                         AboutMe = user.AboutMe,
-                        ProfileImageURL = user.ProfileImageURL
+                        ProfileImageURL = user.ProfileImageURL,
+                        Tags = user.Tags
                     };
 
                 }
@@ -170,7 +171,8 @@ namespace ShibpurConnectWebApp.Helper
                         Location = user.Location,
                         ReputationCount = user.ReputationCount,
                         AboutMe = user.AboutMe,
-                        ProfileImageURL = user.ProfileImageURL
+                        ProfileImageURL = user.ProfileImageURL,
+                        Tags = user.Tags
                     };
 
                 }
@@ -229,6 +231,24 @@ namespace ShibpurConnectWebApp.Helper
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Method to post a new tag, this is not in api as we don't want end user to create tag using api
+        /// It will be called while posting a new question
+        /// </summary>
+        /// <param name="category">Categories object</param>
+        /// <returns></returns>
+        public async Task<Categories> PostTag(Categories category)
+        {
+            MongoHelper _mongoHelper = new MongoHelper("categories");
+            var result = _mongoHelper.Collection.Save(category);
+
+            // if mongo failed to save the data then send null response
+            if (!result.Ok)
+                return null;                
+
+            return new Categories { CategoryId = category.CategoryId, CategoryName = category.CategoryName };
         }
     }
 }

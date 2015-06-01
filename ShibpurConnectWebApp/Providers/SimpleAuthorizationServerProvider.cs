@@ -12,6 +12,7 @@ using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System.Web;
 using System.Net.Http;
+using System.Collections.Generic;
 
 namespace ShibpurConnectWebApp.Providers
 {
@@ -64,7 +65,7 @@ namespace ShibpurConnectWebApp.Providers
             _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
         }
 
-        public async Task<IdentityResult> RegisterUser(RegisterViewModel userModel)
+        internal async Task<IdentityResult> RegisterUser(RegisterViewModel userModel)
         {
             ApplicationUser user = new ApplicationUser
             {
@@ -105,28 +106,28 @@ namespace ShibpurConnectWebApp.Providers
         /// <param name="userId"></param>
         /// <param name="passwordViewModel"></param>
         /// <returns></returns>
-        public async Task<IdentityResult> ChangePassword(string userId, ChangePasswordViewModel passwordViewModel)
+        internal async Task<IdentityResult> ChangePassword(string userId, ChangePasswordViewModel passwordViewModel)
         {
             var result = await _userManager.ChangePasswordAsync(userId, passwordViewModel.OldPassword, passwordViewModel.NewPassword);
 
             return result;
         }
 
-        public async Task<ApplicationUser> FindUser(string userName, string password)
+        internal async Task<ApplicationUser> FindUser(string userName, string password)
         {
             ApplicationUser user = await _userManager.FindAsync(userName, password);
 
             return user;
         }
 
-        public async Task<ApplicationUser> FindUserByEmail(string userName)
+        internal async Task<ApplicationUser> FindUserByEmail(string userName)
         {
             ApplicationUser user = await _userManager.FindByEmailAsync(userName);
 
             return user;
         }
 
-        public async Task<ApplicationUser> FindUserById(string userId)
+        internal async Task<ApplicationUser> FindUserById(string userId)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
 
@@ -138,7 +139,7 @@ namespace ShibpurConnectWebApp.Providers
         /// </summary>
         /// <param name="applicationUser">ApplicationUser object</param>
         /// <returns></returns>
-        public async Task<IdentityResult> UpdateUser(ApplicationUser applicationUser)
+        internal async Task<IdentityResult> UpdateUser(ApplicationUser applicationUser)
         {
             var result = await _userManager.UpdateAsync(applicationUser);
 
@@ -169,7 +170,7 @@ namespace ShibpurConnectWebApp.Providers
         /// <param name="deltaReputation">reputation change amount</param>
         /// <param name="addReputaion">add/subtract reputation</param>
         /// <returns></returns>
-        public ApplicationUser UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
+        internal ApplicationUser UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
         {
             ApplicationUser user = _userManager.FindById(userId);
             if (user != null)
@@ -201,7 +202,7 @@ namespace ShibpurConnectWebApp.Providers
         /// <param name="userId">user userid</param>
         /// <param name="url">profile image url</param>
         /// <returns></returns>
-        public ApplicationUser UpdateProfileImageURL(string userId, string url)
+        internal ApplicationUser UpdateProfileImageURL(string userId, string url)
         {
             ApplicationUser user = _userManager.FindById(userId);
             if (user != null)
@@ -221,6 +222,80 @@ namespace ShibpurConnectWebApp.Providers
             }
 
             return user;
+        }
+
+        /// <summary>
+        /// Method to add a new tag in users collection for a particular user
+        /// </summary>
+        /// <param name="userId">userid for whom we will do this update</param>
+        /// <param name="tagname">new tag to be added</param>
+        /// <returns></returns>
+        internal async Task<IdentityResult> FollowNewTag(string userId, string tagname)
+        {
+            ApplicationUser user = _userManager.FindById(userId);
+            if (user != null)
+            {
+                if (user.Tags == null)
+                {
+                    List<string> tags = new List<string>();
+                    tags.Add(tagname);
+
+                    user.Tags = tags;
+                }
+                else
+                {
+                    user.Tags.Add(tagname);
+                }
+                // save this new tag in database
+                var updatedUser = _userManager.Update(user);
+
+                // update same tags in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                // get the tags from previous user object
+                List<string> tagList = user.Tags;
+
+                client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(userId)
+                    .Type("customuserinfo")
+                    .Doc(new { Tags = tagList }));
+
+                return updatedUser;
+            }
+            return null;
+        }
+              
+        /// <summary>
+        /// Method to unfollow a tag
+        /// </summary>
+        /// <param name="userId">userid for whom to remove the tag</param>
+        /// <param name="tagName">tag to unfollow</param>
+        /// <returns></returns>
+        internal async Task<IdentityResult> UnfollowTag(string userId, string tagName)
+        {
+             ApplicationUser user = _userManager.FindById(userId);
+            if (user != null)
+            {
+                // remove the tag from user object
+                user.Tags.Remove(tagName);
+                // save this new user in database
+                var updatedUser = _userManager.Update(user);
+
+                // update same in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                // get the tags from previous user object
+                List<string> tagList = user.Tags;
+
+                client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(userId)
+                    .Type("customuserinfo")
+                    .Doc(new { Tags = tagList }));
+
+                return updatedUser;
+            }
+
+            return null;
         }
 
         public void Dispose()

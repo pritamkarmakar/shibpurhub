@@ -3,8 +3,8 @@
 }
 
 <style type="text/css">
-    /*popular tag name font size*/
-    .populartagname {
+    /*tag name font size*/
+    .tagname {
         font-size: 18px;
     }
 
@@ -17,7 +17,7 @@
         padding: 8px;
     }
      #tagcontainerdiv:hover {
-         background-color: #E4EDF4;
+        /*background-color: #E4EDF4;*/
         border-radius: 5px;
     }
     /*word break for all tags*/
@@ -28,33 +28,72 @@
     #tagquestioncount {
         font-size: 10px;
     }
+
+    /*follow button back ground color*/
+    .followbutton {
+        background-color: #E4EDF4;
+        /*color: white;*/ 
+    }
+
+    /*align loading div centered*/
+    #loadingtags {
+        width: 200px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
 </style>
-
-
-
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // get current user id from local storage
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        var userInfo = $.parseJSON(userDetails);
+
         scAjax({
             "url": "tags/GetPopularTags",
             "success": function (result) {
                 if (!result) {
                     return;
                 }
-                $.each(result, function (key, value) {
-                    if (value.questionCount > 0)
-                        $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><p id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;questions</p></div></div>");
-                    else
-                        $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><p id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;question</p></div></div>");
-                });
-            }
-        });
 
-        $('#tagcontainerdiv').mouseenter(
-            function() {
-                alert("hola");
+                // hide the loading div
+                $('#loadingtags').hide();
+
+                $.each(result, function (key, value) {
+                    // create the tag div based on whether there is a logged in user or not
+                    if (userInfo == null) {
+                        if (value.questionCount > 0)
+                            $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><p id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;questions</p></div></div>");
+                        else
+                            $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><p id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;question</p></div></div>");
+                    }
+                    else {
+                        if (value.questionCount > 0)
+                            $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;questions</span><button type='submit' id=" + value.categoryName + " class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followfunction(this);'><i class='fa fa-plus-circle' style='color:green'></i><span> Follow</span></button></div></div>");
+                        else
+                            $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;question</span><button type='submit' id=" + value.categoryName + " onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followfunction(this);' class='btn btn-xs followbutton'><i class='fa fa-plus-circle' style='color:green'></i><span> Follow</span></button></div></div>");
+                    }
+                });
+              
+                if (userInfo != null)
+                {
+                    // find out what all tags current user is following and then update the button text accordingly from 'follow' -> 'following
+                    scAjax({
+                        "url": "tags/FindUserTags",
+                        "success": function (result) {
+                            if (!result) {
+                                return;
+                            }
+                            $.each(result, function (key, value) {
+                                $("#" + value + " > i").addClass('fa fa-check-circle');
+                                $("#" + value + " > span").text(' Following');
+                            });                           
+                        }
+                    });
+                }
             }
-        );
+        });          
     });
 </script>
 
@@ -63,6 +102,9 @@
     <h4>All Tags</h4><hr/>
     <hr id="bigseparator" />
     <div id="taglist" >
+    </div>
+    <div id="loadingtags">
+        <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
     </div>
 </div>
 

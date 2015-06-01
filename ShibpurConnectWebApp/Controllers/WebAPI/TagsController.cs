@@ -1,18 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
-using MongoDB.Bson;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System.Web.Http.Results;
 using WebApi.OutputCache.V2;
+using System.Threading.Tasks;
+using System.Security.Claims;
+
+using System.Net.Http;
+using ShibpurConnectWebApp.Providers;
+using Microsoft.AspNet.Identity;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -24,6 +27,35 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public TagsController()
         {
             _mongoHelper = new MongoHelper<Categories>();
+        }
+
+        private IHttpActionResult GetErrorResult(IdentityResult result)
+        {
+            if (result == null)
+            {
+                return InternalServerError();
+            }
+
+            if (!result.Succeeded)
+            {
+                if (result.Errors != null)
+                {
+                    foreach (string error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                }
+
+                if (ModelState.IsValid)
+                {
+                    // No ModelState errors are available to send, so just return an empty BadRequest.
+                    return BadRequest();
+                }
+
+                return BadRequest(ModelState);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -49,7 +81,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [ResponseType(typeof(Categories))]
         [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
-        public IHttpActionResult GetTag(string categoryName)
+        public async Task<IHttpActionResult> GetTag(string categoryName)
         {
             Categories category = null;
 
@@ -64,14 +96,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             if (category == null)
             {
-                return NotFound();
+                return BadRequest("category not found" + categoryName);
             }
 
             return Ok(category);
         }
        
         /// <summary>
-        /// Get popular categories
+        /// Get tags with question count
+        /// we use this api in http://shibpur.azurewebsites.net/Tags page
         /// </summary>
         /// <param name="count">no of categories that we want</param>
         /// <returns></returns>
@@ -101,6 +134,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         /// <summary>
         /// Get all the tags by popularity (no of questions tagged to each tag)
+        /// We are using this api in the Tag>Index page
         /// </summary>
         /// <returns></returns>
         [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
@@ -128,27 +162,165 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
+        /// API to follow a new tag
+        /// </summary>
+        /// <param name="tagName">new tag to follow</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        [InvalidateCacheOutput("FindUserTags")]
+        [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]        
+        public async Task<IHttpActionResult> FollowNewTag(string tagName)
+        {
+            if (string.IsNullOrEmpty(tagName))
+            {
+                ModelState.AddModelError("", "categoryName can't be null or empty string");
+                return BadRequest(ModelState);
+            }
+
+            // check if this is a valid tag that available in database collection
+            var actionResult = await GetTag(tagName);
+            var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
+            if (contentResult == null)
+            {
+                ModelState.AddModelError("", "No such category found");
+                return BadRequest(ModelState);
+            }
+
+            // get user identity from the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                ModelState.AddModelError("", "No user is found");
+                return BadRequest(ModelState);
+            }
+            
+            //process this new tag only if it is not available in user profile, otherwise return
+            if(userInfo.Tags != null && userInfo.Tags.Contains(tagName))
+            {
+                return Ok("{'status': 'tag already in user profile'}");
+            }
+
+            // if we are here that means this tag is not in user profile so we have to add it
+            AuthRepository _repo = new AuthRepository();
+            IdentityResult result = await _repo.FollowNewTag(userInfo.Id, tagName);
+            IHttpActionResult errorResult = GetErrorResult(result);
+            if (errorResult != null)
+            {
+                return errorResult;
+            }
+
+            return Ok("{'status': 'success'}");
+        }
+
+        /// <summary>
+        /// API to unfollow a tag
+        /// </summary>
+        /// <param name="tagName">tag to unfollow</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        [InvalidateCacheOutput("FindUserTags")]
+        [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]      
+        public async Task<IHttpActionResult> UnfollowTag(string tagName)
+        {
+            if (string.IsNullOrEmpty(tagName))
+            {
+                ModelState.AddModelError("", "categoryName can't be null or empty string");
+                return BadRequest(ModelState);
+            }
+
+            // check if this is a valid tag that available in database collection
+            var actionResult = await GetTag(tagName);
+            var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
+            if (contentResult == null)
+            {
+                ModelState.AddModelError("", "No such category found");
+                return BadRequest(ModelState);
+            }
+
+            // get user identity from the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                ModelState.AddModelError("", "No user is found");
+                return BadRequest(ModelState);
+            }
+
+            //process this new tag only if it is not available in user profile, otherwise return
+            if (userInfo.Tags.Contains(tagName))
+            {       
+                AuthRepository _repo = new AuthRepository();
+                IdentityResult result = await _repo.UnfollowTag(userInfo.Id, tagName);
+                IHttpActionResult errorResult = GetErrorResult(result);
+                if (errorResult != null)
+                {
+                    return errorResult;
+                }
+            }
+
+            return Ok("{'status': 'success'}");
+        }
+
+
+        /// <summary>
+        /// API to return all tags that one user is following
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize]
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        public async Task<IHttpActionResult> FindUserTags()
+        {
+            // get user identity from the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                ModelState.AddModelError("", "No user is found with the provided bearer token. Please relogin or try again. Or API user please send valid bearer token");
+                return BadRequest(ModelState);
+            }           
+
+            else
+                return Ok(userInfo.Tags);
+        }
+                
+        /// <summary>
         /// Add a new category
         /// </summary>
         /// <param name="category">Categories object</param>
         /// <returns></returns>
-        [ResponseType(typeof(Categories))]
-        [InvalidateCacheOutput("GetPopularTags")]
-        public IHttpActionResult PostTag(Categories category)
-        {
-            if (!ModelState.IsValid || category == null)
-            {
-                return BadRequest(ModelState);
-            }
+        //[ResponseType(typeof(Categories))]
+        //[InvalidateCacheOutput("GetPopularTags")]
+        //public IHttpActionResult PostTag(Categories category)
+        //{
+        //    if (!ModelState.IsValid || category == null)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var result = _mongoHelper.Collection.Save(category);
+        //    var result = _mongoHelper.Collection.Save(category);
 
-            // if mongo failed to save the data then send error
-            if (!result.Ok)
-                return InternalServerError(new Exception("Failed to save the category in the database"));
+        //    // if mongo failed to save the data then send error
+        //    if (!result.Ok)
+        //        return InternalServerError(new Exception("Failed to save the category in the database"));
 
-           return CreatedAtRoute("DefaultApi", new { id = category.CategoryId }, category);
-        }
+        //   return CreatedAtRoute("DefaultApi", new { id = category.CategoryId }, category);
+        //}
 
         /// <summary>
         /// Delete a category

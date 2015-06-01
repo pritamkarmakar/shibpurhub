@@ -19,6 +19,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using ShibpurConnectWebApp.Providers;
 using WebApi.OutputCache.V2;
+using System.Text.RegularExpressions;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -57,7 +58,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
@@ -379,6 +380,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [ResponseType(typeof(Question))]
         [InvalidateCacheOutput("GetQuestions")]
         [InvalidateCacheOutput("GetPopularTags", typeof(TagsController))]
+        [InvalidateCacheOutput("FindUserTags", typeof(TagsController))]
         public async Task<IHttpActionResult> PostQuestions(QuestionDTO question)
         {
             // validate title
@@ -392,14 +394,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // validate if incase any category is just space
             foreach(string cat in question.Categories)
             {
+                if (!Regex.IsMatch(cat, @"^[a-zA-Z0-9]+$"))
+                {
+                    ModelState.AddModelError("", cat + " category is invalid. It contains unsupported characters. Category can only contains character from a-z and any number 0-9");
+                    return BadRequest(ModelState); 
+                }
                 if(string.IsNullOrWhiteSpace(cat))
                 {
-                    ModelState.AddModelError("", "One of the question tag is empty string or contains only whitespace");
+                    ModelState.AddModelError("", cat + " category is invalid. It contains empty string or contains only whitespace");
                     return BadRequest(ModelState); 
                 }
                 if(cat.Length > 20)
                 {
-                    ModelState.AddModelError("", "One of the tag  is too long. Max 20 characters allowed per tag");
+                    ModelState.AddModelError("", cat + " category is invalid, it is too long. Max 20 characters allowed per tag");
                     return BadRequest(ModelState); 
                 }
             }
@@ -432,7 +439,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             TagsController categoriesController = new TagsController();
             foreach (string category in question.Categories)
             {
-                var actionResult = categoriesController.GetTag(category.Trim());
+                var actionResult = await categoriesController.GetTag(category.Trim());
                 var contentResult = actionResult as OkNegotiatedContentResult<Categories>;
                 if (contentResult == null)
                 {
@@ -442,9 +449,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         CategoryName = category.Trim().ToLower(),
                         HasPublished = false
                     };
-                    var actionResult2 = categoriesController.PostTag(catg);
-                    var contentResult2 = actionResult2 as CreatedAtRouteNegotiatedContentResult<Categories>;
-                    if (contentResult2 != null)
+                    var actionResult2 = await helper.PostTag(catg);
+                    if (actionResult2 != null)
                     {
                         // update the CategoryTagging collection
                         CategoryTaggingController categoryTaggingController = new CategoryTaggingController();

@@ -389,7 +389,7 @@
                 getAnswers(question.answers);
                 // attach the categories
                 $(question.categories).each(function (i, category) {
-                    var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory/" + category);
+                    var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory?category=" + category);
                     $('div.tags').append(tagAnchor);
                 });
 

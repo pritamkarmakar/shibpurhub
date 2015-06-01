@@ -108,6 +108,11 @@ namespace ShibpurConnectWebApp.Controllers
 
         public ActionResult FeedByCategory(string category)
         {
+            // if user asking about Feed/FeedByCategory page without any category name then redirect to feed index page
+            if(string.IsNullOrEmpty(category))
+                return RedirectToAction("Index");
+
+            ViewData["selectedtag"] = category;
             TempData["SelectedPage"] = "Threads";
             return View();
         }

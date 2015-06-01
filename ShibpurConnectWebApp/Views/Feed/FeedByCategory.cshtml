@@ -3,8 +3,56 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div>    
+<style type="text/css">
+    /*.followbutton {
+        margin-bottom: 10px;
+    }*/
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // hide the right column modules, we will enable inside respective the partial view once receive the server response
+        $('.tagcontainermaindiv').hide();
+        $('.popularquestioncontainerdiv').hide();
+
+        var selectedtag = @Html.Raw(Json.Encode(ViewData["selectedtag"]));
+        $('#tagheading').text("Questions about " + '"' +selectedtag + '"');
+        $('.followbutton').attr('id', selectedtag);
+
+        // get current user id from local storage
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        var userInfo = $.parseJSON(userDetails);
+        if(userInfo != null)
+        {
+            // find out if a user following particular tag or not. Then change the button text accordingly from 'follow' -> 'following
+            scAjax({
+                "url": "tags/FindUserTags",
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    if(result.indexOf(selectedtag) > -1)
+                    {
+                        $("#" + selectedtag + " > i").addClass('fa fa-check-circle');
+                        $("#" + selectedtag + " > span").text(' Following');
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<div>
     <div class="col-md-9 col-xs-12">
+        <div class="col-md-12">
+            <h4 id="tagheading"></h4>
+        </div>
+        <div class="col-md-12">
+            <button type='submit' class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followfunction(this);'><i class='fa fa-plus-circle' style='color:green;'></i><span> Follow</span></button>
+        </div>
+        <div class="col-md-12">
+            <hr id="solidseparator" />
+        </div>
         @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
     </div>
     <div class="col-md-3 col-xs-12">

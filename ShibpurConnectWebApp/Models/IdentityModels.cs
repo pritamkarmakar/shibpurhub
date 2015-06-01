@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AspNet.Identity.MongoDB;
 using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
 
 namespace ShibpurConnectWebApp.Models
 {
@@ -20,6 +21,7 @@ namespace ShibpurConnectWebApp.Models
         public string AboutMe { get; set; }
 
         public string ProfileImageURL { get; set; }
+        public List<string> Tags { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

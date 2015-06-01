@@ -10,9 +10,9 @@
                 $('.tagcontainermaindiv').show();
                 $.each(result, function (key, value) {
                     if (value.questionCount > 0)
-                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
+                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
                     else
-                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory/" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " question</span></div>");
+                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " question</span></div>");
                 });
             }
         });

@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
@@ -22,5 +23,6 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string AboutMe { get; set; }
 
         public string ProfileImageURL { get; set; }
+        public List<string> Tags { get; set; }
     }
 }
