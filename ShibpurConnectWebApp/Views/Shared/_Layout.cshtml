@@ -17,6 +17,19 @@
     @Scripts.Render("~/bundles/select2")
 
     <script type="text/javascript">
+
+        // google analytics script
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-63645922-1', 'auto');
+        ga('send', 'pageview');
+
+
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         var userInfo;
         $(document).ready(function () {
@@ -475,28 +488,28 @@
                     <ul class="nav navbar-nav">
                         @if (User.Identity.IsAuthenticated)
                         {
-                        @*<li>@Html.ActionLink("Profile", "Profile", "Account")</li>*@
+                            @*<li>@Html.ActionLink("Profile", "Profile", "Account")</li>*@
 
                         <!-- Notification center-->
-                        <li id="notification_li">
-                            <span id="notification_count" style="display:none;"></span>
-                            <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
+                            <li id="notification_li">
+                                <span id="notification_count" style="display:none;"></span>
+                                <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
 
-                            <div id="notificationContainer">
-                                <div id="notificationTitle">Notifications</div>
-                                <div id="notificationsBody" class="notifications"></div>
-                                <div id="notificationFooter"><a href="/notifications">See All</a></div>
-                            </div>
-                        </li>
+                                <div id="notificationContainer">
+                                    <div id="notificationTitle">Notifications</div>
+                                    <div id="notificationsBody" class="notifications"></div>
+                                    <div id="notificationFooter"><a href="/notifications">See All</a></div>
+                                </div>
+                            </li>
                         }
                         <li>@Html.ActionLink("Questions", "Index", "Feed")</li>
                         <li>@Html.ActionLink("Tags", "Index", "Tags")</li>
                         <li>@Html.ActionLink("Users", "Index", "Users")</li>
                         @if (User.Identity.IsAuthenticated)
                         {
-                        <li>
-                            <a href="/Feed/StartDiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
-                        </li>
+                            <li>
+                                <a href="/Feed/StartDiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
+                            </li>
                         }
                     </ul>
 
