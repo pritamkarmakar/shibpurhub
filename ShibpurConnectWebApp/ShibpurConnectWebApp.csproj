@@ -137,6 +137,10 @@
       <HintPath>packages\Sendgrid.5.1.0\lib\SendGridMail.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ServiceStack.Text, Version=4.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -327,6 +331,9 @@
     <Compile Include="Models\WebAPI\Questions.cs" />
     <Compile Include="Models\WebAPI\CategoryTagging.cs" />
     <Compile Include="Models\WebAPI\WebsiteAlert.cs" />
+    <Compile Include="MongodbOutputCache\CachedItem.cs" />
+    <Compile Include="MongodbOutputCache\KeyTooLongException.cs" />
+    <Compile Include="MongodbOutputCache\MongoDbApiOutputCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ShibpurConnectDB.cs" />
     <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
@@ -391,6 +398,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="lib\ServiceStack.Text.dll" />
     <Content Include="packages.config" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

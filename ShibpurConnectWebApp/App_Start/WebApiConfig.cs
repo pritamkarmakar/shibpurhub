@@ -1,4 +1,8 @@
-﻿using System.Web.Http;
+﻿using MongoDB.Driver;
+using ShibpurConnectWebApp.MongodbOutputCache;
+using System.Configuration;
+using System.Web.Http;
+using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.App_Start
 {
@@ -28,6 +32,11 @@ namespace ShibpurConnectWebApp.App_Start
             formatter.SerializerSettings.ContractResolver =
                 new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
 
+            // persistent cache with mongodb for cacheoutput
+            var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
+            var db = client.GetServer().GetDatabase("shibpurconnect");
+            MongoCollection mongocollection = db.GetCollection("cache");
+            GlobalConfiguration.Configuration.CacheOutputConfiguration().RegisterCacheOutputProvider(() => new MongoDbApiOutputCache(db));
         }
     }
 }
