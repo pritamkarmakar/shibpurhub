@@ -1,8 +1,8 @@
 ﻿using MongoDB.Driver;
-using ShibpurConnectWebApp.MongodbOutputCache;
 using System.Configuration;
 using System.Web.Http;
 using WebApi.OutputCache.V2;
+using WebAPI.OutputCache.MongoDb;
 
 namespace ShibpurConnectWebApp.App_Start
 {

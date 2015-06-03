@@ -231,7 +231,7 @@ function getQueryStringParam(name) {
 function followfunction(event) {
     var tagname = event.id;
 
-    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "follow") {
+    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "follow" || $("#" + event.id + " > span").text().trim().toLowerCase() == "follow this tag") {
         scAjax({
             "url": "tags/FollowNewTag?tagName=" + tagname,
             "type": "POST",
@@ -245,8 +245,11 @@ function followfunction(event) {
 
                 Command: toastr["success"]("Successfully subscribed to " + tagname);
             },
-            "error": function () {
-                Command: toastr["error"](tagname + " is not a valid tag");
+            error: function (XMLHttpRequest, textStatus, errorThrown) {               
+                if (XMLHttpRequest.status == "401")
+                    window.location.href = "/account/login";
+                else
+                    Command: toastr["error"](tagname + " is not a valid tag");
             }
         });
     }
