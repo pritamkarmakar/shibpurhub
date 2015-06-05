@@ -334,6 +334,7 @@
     <Compile Include="Models\WebAPI\AskToAnswer.cs" />
     <Compile Include="Models\WebAPI\ImageInfo.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
+    <Compile Include="Models\WebAPI\QuestionSpam.cs" />
     <Compile Include="Models\WebAPI\UserActivityLog.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />
     <Compile Include="Controllers\WebAPI\ProfileController.cs" />

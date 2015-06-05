@@ -17,7 +17,16 @@
                         //$('#popularusers').append("<div class='media'><div class='media-left'><a href='#'><img class='media-object' src='http://i.imgur.com/WHFstjs.jpg'></a></div><div class='media-body'><h4 class='media-heading'>Media heading</h4></div></div>");
                         $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4 col-xs-4'><img class='avatar' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
                     else
-                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4 col-xs-4'><img class='avatar' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
+                    {
+                        // form the smaller imgur image by adding 's' before '.jpg'
+                        if (userinfo.profileImageURL.charAt(userinfo.profileImageURL.indexOf('.jpg') - 1) != 's') {
+                            userinfo.profileImageURL = IMGURPATH + userinfo.profileImageURL.replace('.jpg', 's.jpg');
+                        }
+                        else
+                            userinfo.profileImageURL = IMGURPATH + userinfo.profileImageURL;
+                
+                        $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4 col-xs-4'><img class='avatar' src='" + userinfo.profileImageURL + "'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
+                }
                 });
             }
         });

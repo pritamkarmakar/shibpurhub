@@ -8,12 +8,20 @@
 }
 
 <style type="text/css">
-
-     /*increase profile image size in ask to answer*/
+    .custom-class {
+        width: 20%;
+        /* either % (e.g. 60%) or px (400px) */
+    }
+    .modal-body
+    {
+        padding-top:5px;
+        padding-bottom:5px;
+    }
+    /*increase profile image size in ask to answer*/
     .avatarasktoanswer {
-               width: 60px;
-               height: 60px;
-           }
+        width: 60px;
+        height: 60px;
+    }
 
      /*wrap the question body*/
      .detail {
@@ -354,7 +362,8 @@
                 if (!result) {
                     return;
                 }
-                //debugger;
+                // hide the loading div
+                $('#loadingdiv').hide();
                 var question = result;
                 $('#details').show();
                 $('.header h2').text(question.title);
@@ -380,6 +389,11 @@
                             return;
                         }
                         $('#questionaskedby').show();
+                        // form the smaller imgur image by adding 's' before '.jpg'
+                        if (question.userProfileImage.charAt(question.userProfileImage.indexOf('.jpg') - 1) != 's') {
+                            question.userProfileImage = question.userProfileImage.replace('.jpg', 's.jpg');
+                        }
+
                         $('#questionaskedby').append("<div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + question.userProfileImage + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='questionaskedbyuser' style='margin-left:15px;font-size:13px;' userid='" + userinfo.id + "'href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:10px'>reputation: " + userinfo.reputationCount + "</span></div><div class='stat'><span class='date'>asked: " + dateString + "</span></div>");
                     }
                 });
@@ -412,8 +426,13 @@
                         else {
                             // update the div with the user data received from the API
                             jQuery.each(result, function (i, val) {
-                                if (val.profileImageURL != null)
+                                if (val.profileImageURL != null) {
+                                    // form the smaller imgur image by adding 's' before '.jpg'
+                                    if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
+                                        val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
+                                    }
                                     $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                                }
                                 else
                                     $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                                 // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
@@ -450,7 +469,7 @@
                         // toastr notification
                         Command: toastr["error"](errorText)
                         // hide the loading message
-                        $('#loadinganswers').hide();
+                        $('#loadingdiv').hide();
 
                         // hide the loading message in ask to answer module
                         $('#loadingasktoanswer').hide();
@@ -467,7 +486,7 @@
                 // toastr notification
                 Command: toastr["error"]("Failed to load the question")
                 // hide the loading message
-                $('#loadinganswers').hide();
+                $('#loadingdiv').hide();
             }
         });
 
@@ -787,6 +806,10 @@
                 var userNameAnchor = $(answerBlock).find('div.user a.userName');
                 $(userNameAnchor).text(userInfo.firstName + " " + userInfo.lastName);
                 var userProfileImage = $(answerBlock).find('div.user img.avatar');
+                // form the smaller imgur image by adding 's' before '.jpg'
+                if (userInfo.profileImageURL.charAt(userInfo.profileImageURL.indexOf('.jpg') - 1) != 's') {
+                    userInfo.profileImageURL = userInfo.profileImageURL.replace('.jpg', 's.jpg');
+                }
                 $(userProfileImage).attr('src', IMGURPATH + userInfo.profileImageURL);
                 if (result.userEmail != null) {
                     var url = $(userNameAnchor).attr('href') + '?userId=' + result.userId;
@@ -832,7 +855,7 @@
         }
 
         // hide the loading symbol for the answers
-        $('#loadinganswers').hide();
+        $('#loadingdiv').hide();
 
         // show the submit answer rich text control
         $('.wirte-answer').show();
@@ -1034,6 +1057,10 @@
         $(userNameAnchor).text(answer.displayName);
         if (answer.userProfileImage) {
             var userProfileImage = $(answerBlock).find('div.user img.avatar');
+            // form the smaller imgur image by adding 's' before '.jpg'
+            if (answer.userProfileImage.charAt(answer.userProfileImage.indexOf('.jpg') - 1) != 's') {
+                answer.userProfileImage = answer.userProfileImage.replace('.jpg', 's.jpg');
+            }
             $(userProfileImage).attr('src', IMGURPATH + answer.userProfileImage);
         }
         if (answer.userEmail != null) {
@@ -1057,7 +1084,7 @@
 
         if (!result) {
             // hide the loading symbol for the answers
-            $('#loadinganswers').hide();
+            $('#loadingdiv').hide();
 
             // show the submit answer rich text control
             $('.wirte-answer').show();
@@ -1134,8 +1161,13 @@
                             else {
                                 // update the div with the user data received from the API
                                 jQuery.each(result, function (i, val) {
-                                    if (val.profileImageURL != null)
+                                    if (val.profileImageURL != null) {
+                                        // form the smaller imgur image by adding 's' before '.jpg'
+                                        if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
+                                            val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
+                                        }
                                         $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                                    }
                                     else
                                         $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                                     // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
@@ -1183,8 +1215,13 @@
                         // update the div with the user data received from the API
                         jQuery.each(userListAskToAnswer, function (i, val) {
                             // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                            if (val.profileImageURL != null)
+                            if (val.profileImageURL != null) {
+                                // form the smaller imgur image by adding 's' before '.jpg'
+                                if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
+                                    val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
+                                }
                                 $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
+                            }
                             else
                                 $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-sm' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
                             // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
@@ -1229,21 +1266,16 @@
             </div>
             <div id="details" style="display:none">
                 <div class="description col-md-12 col-xs-12"></div>
-                <div class="tags col-md-9 col-xs-9"></div>
-                @*<div class="stat col-md-2">
-                        <span class="date"></span>
-                        <span class="answercount"></span>
-                    </div>*@
+                <div class="tags col-md-12 col-xs-12"></div>
+                <div class="stat col-md-2">
+                    <span><i class="fa fa-flag" style="color: rgb(234, 113, 113)">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
+                </div>
                 <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
             </div>
             <br /><br />
             <div id="moduleanswers">
                 @*<h4>Answers:</h4><hr />*@
-                <ul id="answerlist" class="list-group">
-                    <!--div for loading message for the Answers list-->
-                    <div id="loadinganswers" class="center-block col-md-4" style="float:none;margin-left:300px;margin-top:200px;">
-                        <i class="fa fa-spinner fa-spin fa-3x"></i>
-                    </div>
+                <ul id="answerlist" class="list-group">                   
                     <li class="hide answer">
                         <div class="col-md-12" style="margin-top:30px;">
                             <div class="user col-md-2">
@@ -1443,11 +1475,48 @@
         </div>
 
     </div>
-    <div class="col-md-3 col-xs-12">
+    <div class="col-md-3">
         @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
-    </div>
-    <div class="col-md-3 col-xs-12">
-        @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
+        @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")       
     </div>
 </div>
 
+<div id="loadingdiv">
+    <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+</div>
+
+<!--modal to show report spam options-->
+<div class="modal" id="reportspammodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display:none;">
+    <div class="modal-dialog custom-class">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="togglemodal();">&times;</button>
+                <span class="modal-title" id="myModalLabel">Reason for reporting this question</span>
+
+            </div>
+            <div class="modal-body">
+                <div class="radio">
+                    <label><input type="radio" name="spamtyperadio" value="0">Advertisement/Spam</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="spamtyperadio" value="1">Inappropriate content</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="spamtyperadio" value="2">Hate speech</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="spamtyperadio" value="3">Nudity or pornography</label>
+                </div>                            
+                <div class="radio">
+                    <label><input type="radio" name="spamtyperadio" value="4">Others</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal" onclick="togglemodal();">Close</button>
+                <button type="button" class="btn btn-primary btn-xs" onclick="reportspam();">Submit</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

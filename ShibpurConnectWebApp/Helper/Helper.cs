@@ -1,14 +1,15 @@
-﻿using System;
+﻿using MongoDB.Driver.Linq;
+using Newtonsoft.Json;
+using ShibpurConnectWebApp.Models;
+using ShibpurConnectWebApp.Models.WebAPI;
+using ShibpurConnectWebApp.Providers;
+using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http;
-using Newtonsoft.Json;
-using ShibpurConnectWebApp.Models;
-using ShibpurConnectWebApp.Models.WebAPI;
-using ShibpurConnectWebApp.Providers;
 
 namespace ShibpurConnectWebApp.Helper
 {
@@ -249,6 +250,31 @@ namespace ShibpurConnectWebApp.Helper
                 return null;                
 
             return new Categories { CategoryId = category.CategoryId, CategoryName = category.CategoryName };
+        }
+
+        /// <summary>
+        /// internal method to update the QuestionSpamDTO collection
+        /// </summary>
+        /// <param name="questionSpamDto"></param>
+        /// <returns></returns>
+        internal async Task<QuestionSpamAudit> ReportSpam(QuestionSpamAudit questionSpamDto)
+        {
+            MongoHelper<QuestionSpamAudit> _mongoHelper = new MongoHelper<QuestionSpamAudit>();
+
+            //check same user already reported this question or not
+            var spamObj = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionSpamDto.QuestionId & m.UserId == questionSpamDto.UserId).FirstOrDefault();
+
+            if (spamObj == null)
+            {
+                var result = _mongoHelper.Collection.Save(questionSpamDto);
+                // if mongo failed to save the data then send null response
+                if (!result.Ok)
+                    return null;
+            }
+            else
+                return new QuestionSpamAudit { SpamId = spamObj.SpamId, QuestionId = spamObj.QuestionId };
+
+            return new QuestionSpamAudit { SpamId = questionSpamDto.SpamId, QuestionId = questionSpamDto.QuestionId };
         }
     }
 }

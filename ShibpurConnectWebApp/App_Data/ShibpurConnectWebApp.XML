@@ -684,6 +684,13 @@
             <param name="question"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.ReportSpam(ShibpurConnectWebApp.Models.WebAPI.QuestionSpam)">
+            <summary>
+            API to mark a question as inappropriate
+            </summary>
+            <param name="questionId">questionid to mark</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.PostQuestions(ShibpurConnectWebApp.Models.WebAPI.QuestionDTO)">
             <summary>
             API to post a new question
@@ -818,6 +825,13 @@
             <param name="category">Categories object</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Helper.Helper.ReportSpam(ShibpurConnectWebApp.Models.WebAPI.QuestionSpamAudit)">
+            <summary>
+            internal method to update the QuestionSpamDTO collection
+            </summary>
+            <param name="questionSpamDto"></param>
+            <returns></returns>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.AnswerDTO">
             <summary>
             Object to be used in the PostAnswer controller. Idea is to create a simple request object for post answer
@@ -921,6 +935,21 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.PopularQuestionModel">
             <summary>
             We will use this model in the most popular question model
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionSpam">
+            <summary>
+            Model we use to post a spam report
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionSpamAudit">
+            <summary>
+            We will use this model to save the data to database
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.SpamType">
+            <summary>
+            spam types to use
             </summary>
         </member>
         <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.ChangePassword(System.String,ShibpurConnectWebApp.Models.ChangePasswordViewModel)">

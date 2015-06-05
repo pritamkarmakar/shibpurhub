@@ -1,4 +1,9 @@
 ﻿<style type="text/css">
+    /*resize profile images to improve page load time*/
+    img.resize {
+        width: 200px;
+        height: 40px;
+    }
 
     /*question title font-face size*/
     .question-hyperlink{
@@ -113,16 +118,7 @@
     .pagination
     {
         display: none;
-    }
-
-    /*align loading div centered*/
-    #loadingquestions {
-        width: 200px;
-        display: block;
-        margin-top: 100px;
-        margin-left: 300px;
-        margin-right: auto;
-    }
+    }   
 </style>
 
 <script type="text/javascript">
@@ -153,7 +149,7 @@
             var anchor = $(this);
             $('.pagination').hide();
             $('#threads .thread:not(.hide)').remove();
-            //$('#loadingquestions').show();
+            //$('#loadingdiv').show();
             var page = parseInt($(anchor).text());
             loadQuestions(page - 1);
             $('.pagination li.disabled').removeClass('disabled');
@@ -179,7 +175,7 @@
                         return;
                     }
                     // hide the loading div
-                    $('#loadingquestions').hide();
+                    $('#loadingdiv').hide();
                     var questions = result;
                     var totalPages = questions[0].totalPages || 0;
                     buildPagination(totalPages);
@@ -197,7 +193,7 @@
                         return;
                     }
                     // hide the loading symbol
-                    $('#loadingquestions').hide();
+                    $('#loadingdiv').hide();
                     var questions = result;
                     if (pageNumber == 0)
                     {
@@ -209,7 +205,7 @@
                 },
                 "error": function (err) {
                     // hide the loading symbol
-                    $('#loadingquestions').hide();
+                    $('#loadingdiv').hide();
 
                     // temporarily adding this, will remove it later. this is to identify whats going wrong here.
                     alert(err);
@@ -239,7 +235,7 @@
                 var link = $(this);
                 $('.pagination').hide();
                 $('#threads .thread:not(.hide)').remove();
-                $('#loadingquestions').show();
+                $('#loadingdiv').show();
                 var page = parseInt($(link).text());
                 loadQuestions(page - 1);
                 $('.pagination li.disabled').removeClass('disabled');
@@ -265,6 +261,13 @@
             var userNameAnchor = $(thread).find('div.user a.userName');
             if (question.userProfileImage) {
                 var userProfileImage = $(thread).find('div.user img.avatar');
+                // form the smaller imgur image by adding 's' before '.jpg'
+                if (question.userProfileImage.charAt(question.userProfileImage.indexOf('.jpg') - 1) != 's') {
+                    question.userProfileImage = question.userProfileImage.replace('.jpg', 's.jpg');
+                }
+                else
+                    question.userProfileImage = question.userProfileImage;
+
                 $(userProfileImage).attr('src', IMGURPATH + question.userProfileImage);
             }
             $(userNameAnchor).text(question.displayName);
@@ -330,11 +333,8 @@
 
 
 <div class="main">    
-    <div id="threads">
-        <!--div for loading message for the question list-->
-        @*<div id="loadingquestions" class="col-md-4 col-xs-4 col-md-offset-8 col-xs-offset-2" style="margin-top:200px;">
-            <i class="fa fa-spinner fa-spin fa-3x"></i>
-        </div>*@        
+    <div id="threads">        
+        <!--div for loading message for the question list-->      
         <div class="hide thread col-md-12 col-xs-12">
             <div class="user col-xs-5 hidden-xs">
                 <img class="avatar" src="/Content/images/profile-image.jpg">
@@ -362,8 +362,9 @@
     <nav>
         <ul class="pagination pagination-sm">           
         </ul>
-    </nav> 
-    <div id="loadingquestions">
-        <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
-    </div> 
+    </nav>     
 </div>
+
+<div id="loadingdiv">
+    <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+</div> 

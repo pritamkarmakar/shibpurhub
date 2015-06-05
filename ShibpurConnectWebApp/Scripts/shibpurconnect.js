@@ -313,3 +313,46 @@ function changetextonmouseout(event) {
         $("#" + event.id + " > i").attr('style', 'color:green;');
     }
 }
+
+// method to report spam for a question
+function reportspam()
+{
+    var data = {
+        "QuestionId": questionID,
+        "SpamType": $("input[name=spamtyperadio]:checked").val()
+    };
+
+    scAjax({
+        "url": "questions/reportspam",
+        "data": JSON.stringify(data, null, 2),
+        "type": "POST",
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+            // close the modal
+            $('#reportspammodal').toggle();
+            if (result == "you have alrady reported this before") {
+                Command: toastr["info"](result);
+            }
+            else
+                Command: toastr["success"](result);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            // close the modal
+            $('#reportspammodal').toggle();
+            if (XMLHttpRequest.status == "401")
+                window.location.href = "/account/login";
+            else
+                Command: toastr["error"]("Error: " + textStatus);
+        }
+    });
+
+    
+}
+
+// method to close the report spam modal dialog
+function togglemodal()
+{
+    $('#reportspammodal').toggle();
+}

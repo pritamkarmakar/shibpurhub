@@ -53,6 +53,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public int ViewCount { get; set; }
+
+        public int SpamCount { get; set; }
     }
 
     /// <summary>
@@ -106,5 +108,40 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class PopularQuestionModel : Question
     {
         public int AnswerCount { get; set; }
+    }
+
+    /// <summary>
+    /// Model we use to post a spam report
+    /// </summary>
+    [Serializable]
+    public class QuestionSpam
+    {
+        public string QuestionId { get; set; }
+        public SpamType SpamType { get; set; }
+    }
+
+    /// <summary>
+    /// We will use this model to save the data to database
+    /// </summary>
+    [Serializable]
+    public class QuestionSpamAudit : QuestionSpam
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string SpamId { get; set; }
+        public string UserId { get; set; }
+        public DateTime PostedOnUtc { get; set; }
+    }
+
+    /// <summary>
+    /// spam types to use
+    /// </summary>
+    public enum SpamType
+    {
+        Spam,
+        Inappropriate,        
+        Hate,
+        Obscene,
+        Others
     }
 }

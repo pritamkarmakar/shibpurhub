@@ -20,6 +20,7 @@ using System.Security.Claims;
 using ShibpurConnectWebApp.Providers;
 using WebApi.OutputCache.V2;
 using System.Text.RegularExpressions;
+using System.Configuration;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -27,6 +28,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class QuestionsController : ApiController
     {
         private const int PAGESIZE = 20;
+        private int maxSpamCount = Convert.ToInt16(ConfigurationManager.AppSettings["maxspamcount"]);
 
         private MongoHelper<Question> _mongoHelper;
 
@@ -80,20 +82,24 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var totalPages = totalQuestions % PAGESIZE == 0 ? totalQuestions / PAGESIZE : (totalQuestions / PAGESIZE) + 1;
                 foreach (var question in questions)
                 {
-                    var userData = userDetails[question.UserId];
-                    // userdata can be null, for example -> one user posted a question and later on deleted his account
-                    if (userData != null)
+                    // consider only if question spam count is below the max limit
+                    if (question.SpamCount <= maxSpamCount)
                     {
-                        var questionVm = GetQuestionViewModel(question, userData);
-                        questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
-                        questionVm.TotalPages = totalPages;
-                        result.Add(questionVm);
+                        var userData = userDetails[question.UserId];
+                        // userdata can be null, for example -> one user posted a question and later on deleted his account. So we will not conside those questions
+                        if (userData != null)
+                        {
+                            var questionVm = GetQuestionViewModel(question, userData);
+                            questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
+                            questionVm.TotalPages = totalPages;
+                            result.Add(questionVm);
+                        }
                     }
                 }
 
                 return Ok(result);
-            }
-            catch (MongoDB.Driver.MongoConnectionException ex)
+            }            
+            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -136,13 +142,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var answerMongoHelper = new MongoHelper<Answer>();
                 foreach (var question in questions)
                 {
-                    var userData = userDetails[question.UserId];
-                    if (userData != null)
+                    // consider only if question spam count is below the max limit
+                    if (question.SpamCount <= maxSpamCount)
                     {
-                        var questionVm = GetQuestionViewModel(question, userData);
-                        questionVm.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
-                        questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
-                        result.Add(questionVm);
+                        var userData = userDetails[question.UserId];
+                        if (userData != null)
+                        {
+                            var questionVm = GetQuestionViewModel(question, userData);
+                            questionVm.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
+                            questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
+                            result.Add(questionVm);
+                        }
                     }
                 }
 
@@ -300,15 +310,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var allquestions = _mongoHelper.Collection.FindAll().ToList();
                 foreach (Question question in allquestions)
                 {
-                    //get the answer count for each question
-                    var actionResult = GetAnswersCount(question.QuestionId);
-                    var contentResult = actionResult as OkNegotiatedContentResult<int>;                    
-                    questionList.Add(new PopularQuestionModel
+                    // consider only if question spam count is below the max limit
+                    if (question.SpamCount <= maxSpamCount)
                     {
-                        AnswerCount = contentResult.Content,
-                        QuestionId = question.QuestionId,
-                        Title = question.Title
-                    });
+                        //get the answer count for each question
+                        var actionResult = GetAnswersCount(question.QuestionId);
+                        var contentResult = actionResult as OkNegotiatedContentResult<int>;
+                        questionList.Add(new PopularQuestionModel
+                        {
+                            AnswerCount = contentResult.Content,
+                            QuestionId = question.QuestionId,
+                            Title = question.Title
+                        });
+                    }
                 }
 
                 return Ok(questionList.OrderByDescending(m => m.AnswerCount).ToList().Take(count));
@@ -369,6 +383,63 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return 0;
+        }
+
+
+        /// <summary>
+        /// API to mark a question as inappropriate
+        /// </summary>
+        /// <param name="questionId">questionid to mark</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        [InvalidateCacheOutput("GetQuestions")]
+        public async Task<IHttpActionResult> ReportSpam(QuestionSpam questionSpam)
+        {
+            if (string.IsNullOrEmpty(questionSpam.QuestionId))
+                return BadRequest("questionId can't be null or empty");
+
+            // find the userinfo using the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            // retrieve the question from database
+            var questionObj = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionSpam.QuestionId).FirstOrDefault();
+            if (questionObj != null)
+            {
+                // new spam dto to save in database
+                QuestionSpamAudit newSpamDto = new QuestionSpamAudit
+                    {
+                        SpamId = ObjectId.GenerateNewId().ToString(),
+                        QuestionId = questionSpam.QuestionId,
+                        SpamType = questionSpam.SpamType,
+                        UserId = userInfo.Id,
+                        PostedOnUtc = DateTime.UtcNow
+                    };
+                // update the spam collection
+                QuestionSpamAudit spamDTO = await helper.ReportSpam(newSpamDto);
+
+                if (spamDTO.SpamId == newSpamDto.SpamId)
+                {
+                    // increment the question spam count
+                    questionObj.SpamCount += 1;
+                    // save the updated question object in question collection
+                    _mongoHelper.Collection.Save(questionObj);
+                    return Ok("Successfully reported this question");
+                }
+                else
+                    return Ok("you have alrady reported this before");
+
+            }
+            else
+                return BadRequest("Invalid questionId");
         }
 
         /// <summary>
