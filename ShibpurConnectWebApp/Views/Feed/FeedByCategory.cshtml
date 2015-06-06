@@ -3,12 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style type="text/css">
-    /*.followbutton {
-        margin-bottom: 10px;
-    }*/
-</style>
-
 <script type="text/javascript">
     $(document).ready(function () {
         // hide the right column modules, we will enable inside respective the partial view once receive the server response
@@ -56,9 +50,7 @@
         @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
     </div>
     <div class="col-md-3 col-xs-12">
-        @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
-    </div>
-    <div class="col-md-3 col-xs-12">
+        @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")    
         @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
     </div>
 </div>
