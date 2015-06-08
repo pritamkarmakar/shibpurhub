@@ -24,5 +24,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         public string ProfileImageURL { get; set; }
         public List<string> Tags { get; set; }
+        public List<string> Followers { get; set; }
+        public List<string> Following { get; set; }
     }
 }

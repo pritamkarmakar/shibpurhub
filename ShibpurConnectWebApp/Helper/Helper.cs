@@ -144,14 +144,16 @@ namespace ShibpurConnectWebApp.Helper
                         RegisteredOn = user.RegisteredOn,
                         AboutMe = user.AboutMe,
                         ProfileImageURL = user.ProfileImageURL,
-                        Tags = user.Tags
+                        Tags = user.Tags,
+                        Followers = user.Followers,
+                        Following = user.Following
                     };
 
                 }
             }
         }
 
-        public async Task<CustomUserInfo> FindUserById(string userId)
+        internal async Task<CustomUserInfo> FindUserById(string userId)
         {
             using (AuthRepository _repo = new AuthRepository())
             {
@@ -173,7 +175,9 @@ namespace ShibpurConnectWebApp.Helper
                         ReputationCount = user.ReputationCount,
                         AboutMe = user.AboutMe,
                         ProfileImageURL = user.ProfileImageURL,
-                        Tags = user.Tags
+                        Tags = user.Tags,
+                        Followers = user.Followers,
+                        Following = user.Following
                     };
 
                 }
@@ -276,5 +280,7 @@ namespace ShibpurConnectWebApp.Helper
 
             return new QuestionSpamAudit { SpamId = questionSpamDto.SpamId, QuestionId = questionSpamDto.QuestionId };
         }
+
+        
     }
 }

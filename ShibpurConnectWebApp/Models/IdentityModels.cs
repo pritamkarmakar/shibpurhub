@@ -22,6 +22,8 @@ namespace ShibpurConnectWebApp.Models
 
         public string ProfileImageURL { get; set; }
         public List<string> Tags { get; set; }
+        public List<string> Followers { get; set; }
+        public List<string> Following { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

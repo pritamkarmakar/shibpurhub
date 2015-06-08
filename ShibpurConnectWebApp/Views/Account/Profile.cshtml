@@ -1,9 +1,26 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Profile";
+    ViewBag.Title = "ShibpurConnect - Profile";
 }
 
 <style type="text/css">
+    .user {
+        margin-bottom: 20px;
+    }
+
+    #userlist {
+        margin-top: 40px;
+    }
+    .nav-tabs li a {
+        border: none;
+        padding-right: 10px;
+        color: #66757f;
+    }
+   
+    ul.nav a:visited {        
+        background-color: white;
+    }
+
     span#department {
         font-size: 15px;
     }
@@ -73,11 +90,18 @@
 </style>
 
 <script type="text/javascript">
+    // userid of the user whose profile we are looking at
+    var profileId;
     // get the user profile for this user
     $(document).ready(function() {
         jQuery.support.cors = true;
+        
+        // select the first tab 'Profile'
+        $('.nav-tabs li:first').css("border-bottom", "3px solid #58C8C4");
+        $('.nav-tabs li:first').css("font-weight", "bold");       
+
         var SERVER = "/api/";
-        var profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
+        profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
         var loggedInUserId = "";
 
         // get current user id from local storage
@@ -187,6 +211,23 @@
             }
         });
 
+        if(userInfo != null)
+        {
+            // find out if current user is following this user or not. Then change the button text accordingly from 'follow' -> 'following
+            scAjax({
+                "url": "profile/CheckUserFollow?userId="+profileId,
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+                        $("#userfollowbutton > i").addClass('fa fa-check-circle');
+                        $("#userfollowbutton > span").text(' Following');
+                                             
+                }
+            });
+        }
+       
+
         $('#uploadImg').change(function(){
             var files = !!this.files ? this.files : [];
             if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
@@ -215,15 +256,113 @@
             "data": JSON.stringify(data, null, 2)
         });
     }
-</script>
 
+    function ChangeColor(obj)
+    {
+        // remove the styles from all 'li'
+        $('.nav-tabs li').css("border-bottom", "none");
+        $('.nav-tabs li').css("font-weight", "normal");
+
+        // add border-bottom to the selected one
+        $(obj).css("border-bottom", "3px solid #58C8C4");
+        $(obj).css("font-weight", "bold");
+
+        if($(obj).text().toLowerCase() == "followers")
+        {
+            $('.userprofiledivs').hide();            
+            $('.userfollowing').hide();
+            
+            // show the loading div
+            $('#loadingdiv2').show();
+
+            scAjax({
+                "url": "profile/GetUserFollowers?userId="+profileId,
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    
+                    // remove previous values
+                    $('.userfollowers').show();
+                    $('.userfollowers').empty();
+
+                    // hide the loading div
+                    $('#loadingdiv2').hide();
+
+                    if(result.length == 0)
+                        $('.userfollowers').append("<p>No follower available</p>");
+                    
+                    // iterate over all followers and add them in the div
+                    $(result).each(function (i, userinfo) {
+                        if (userinfo.profileImageURL == null)
+                            $('.userfollowers').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                        else
+                            $('.userfollowers').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                    });
+                                             
+                }
+            });
+        }
+        else if($(obj).text().toLowerCase() == "profile")
+        {
+            $('.userprofiledivs').show();   
+            $('.userfollowers').hide();
+            $('.userfollowing').hide();
+        }
+        else if($(obj).text().toLowerCase() == "following")
+        {
+            $('.userprofiledivs').hide();
+            $('.userfollowers').hide();
+
+            // show the loading div
+            $('#loadingdiv2').show();
+
+            scAjax({
+                "url": "profile/GetUserFollowing?userId="+profileId,
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    // clear previous values
+                    $('.userfollowing').show();
+                    $('.userfollowing').empty();
+
+                    // hide the loading div
+                    $('#loadingdiv2').hide();
+
+                    if(result.length == 0)
+                        $('.userfollowing').append("<p>Not following anyone</p>");
+
+                    // iterate over all followers and add them in the div
+                    $(result).each(function (i, userinfo) {
+                        if (userinfo.profileImageURL == null)
+                            $('.userfollowing').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                        else
+                            $('.userfollowing').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                    });
+                                             
+                }
+            });
+        }
+    }
+
+    // method to decide to call follow/unfollow javascript method
+    function followUnfollowUser(obj)
+    {
+        if ($("#" + obj.id + " > span").text().trim().toLowerCase() == "follow") 
+            followuser(obj, profileId);        
+        else if($("#" + obj.id + " > span").text().trim().toLowerCase() == "unfollow")
+            unfollowuser(obj, profileId);
+    }
+</script>
 
 <div class="container target" style="display:none;">
     <div class="row">
          
         <div class="col-sm-10">
-            <h1 class="userdisplayname"></h1>
-            <button type="button" class="btn btn-success">Follow</button>  <button type="button" class="btn btn-info">Send me a message</button>
+            <h2 class="userdisplayname"></h2>
+            <button type="button" class="btn btn-sm btn-success" id="userfollowbutton" onclick="followUnfollowUser(this);" onmouseout='changeuserfollowonmouseout(this);' onmouseover='    changeuserfollowonmouseover(this);'><i class='fa fa-plus-circle'></i><span> Follow</span></button>  
+            @*<button type="button" class="btn btn-sm btn-info">Send a message</button>*@
             <br>
         </div>
         <div class="col-sm-2">
@@ -267,9 +406,8 @@
                     Activity <i class="fa fa-dashboard fa-1x"></i>
 
                 </li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Shares</strong></span> ...</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Likes</strong></span> ...</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Posts</strong></span> ...</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Questions</strong></span> ...</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Answers</strong></span> ...</li>               
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Followers</strong></span> ...</li>
                 <li class="list-group-item text-right"><span class="pull-left reputationcount"><strong class="">Reputation</strong></span></li>
             </ul>
@@ -284,27 +422,43 @@
         </div>
         <!--/col-3-->
         <div class="col-sm-9" contenteditable="false" style="">
-            <div class="panel panel-default">
-                <div class="panel-heading aboutmeheading"></div>
-                <div class="panel-body aboutmebody"></div>
+            <div class="activitynavigation" style="margin-bottom:10px;">
+                <ul class="nav nav-tabs">
+                    <li onclick="ChangeColor(this);"><a href="#">PROFILE</a></li>
+                    <li onclick="ChangeColor(this);"><a href="#">FOLLOWERS</a></li>
+                    <li onclick="ChangeColor(this);"><a href="#">FOLLOWING</a></li>
+                </ul>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading educationheading">Education</div>
-                <div class="panel-body educationbody">
+            <div class="userprofiledivs">
+                <div class="panel panel-default">
+                    <div class="panel-heading aboutmeheading"></div>
+                    <div class="panel-body aboutmebody"></div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading educationheading">Education</div>
+                    <div class="panel-body educationbody">
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading employmentheading">Employment</div>
+                    <div class="panel-body employmentbody">
+                    </div>
+                </div>
+                <div class="panel panel-default followtags" style="display:none;">
+                    <div class="panel-heading">Tags I'm following</div>
+                    <div class="panel-body followtagsbody">
+                    </div>
                 </div>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading employmentheading">Employment</div>
-                <div class="panel-body employmentbody">
-                </div>
+            <div class="userfollowers" style="display:none;margin-top:20px;">               
             </div>
-            <div class="panel panel-default followtags" style="display:none;">
-                <div class="panel-heading">Tags I'm following</div>
-                <div class="panel-body followtagsbody">
-                </div>
+            <div class="userfollowing" style="display:none;margin-top:20px;">
             </div>
         </div>
 
+        <div id="loadingdiv2" style="display:none;">
+            <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+        </div>
 
         <div id="push"></div>
     </div>

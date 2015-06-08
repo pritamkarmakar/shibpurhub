@@ -295,6 +295,25 @@ function changetextonmouseover(event) {
     }
 }
 
+// mouseover effect for 'Account/Profile' page user follow button
+function changeuserfollowonmouseover(event) { 
+    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "following") {
+        $("#" + event.id + " > i").removeClass('fa fa-check-circle');
+        $("#" + event.id + " > i").addClass('fa fa-minus-circle');         
+        
+        $("#" + event.id).removeClass();
+        $("#" + event.id).addClass('btn btn-sm btn-danger');
+        $("#" + event.id + " > span").text(" Unfollow");
+    }
+    else {
+        // change button css when somone will hover on the follow button and if the text is 'Follow'       
+        $("#" + event.id).removeClass();
+        $("#" + event.id).addClass('btn btn-sm btn-warning');
+        $("#" + event.id + " > i").attr('style', 'color:white;');
+        $("#" + event.id + " > span").attr('style', 'color:white;font-weight:bold;');
+    }
+}
+
 // change text of the follow button on mouse out
 function changetextonmouseout(event) {
     //$("#" + event.id + " > span").attr('style', 'color:black;font-weight:normal');
@@ -311,6 +330,24 @@ function changetextonmouseout(event) {
         $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
         $("#" + event.id + " > span").attr('style', 'color:black;');
         $("#" + event.id + " > i").attr('style', 'color:green;');
+    }
+}
+
+// mouseout effect for 'Account/Profile' page user follow button
+function changeuserfollowonmouseout(event) {
+    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "unfollow") {
+        $("#" + event.id + " > i").removeClass('fa fa-minus-circle');
+        $("#" + event.id + " > i").addClass('fa fa-check-circle');  
+       
+        $("#" + event.id).removeClass();
+        $("#" + event.id).addClass('btn btn-sm btn-success');
+        $("#" + event.id + " > span").text(" Following");
+    }
+    else {
+        $("#" + event.id).removeClass();
+        $("#" + event.id).addClass('btn btn-sm btn-success');
+        $("#" + event.id + " > span").attr('style', 'color:white;');
+        $("#" + event.id + " > i").attr('style', 'color:white;');
     }
 }
 
@@ -355,4 +392,60 @@ function reportspam()
 function togglemodal()
 {
     $('#reportspammodal').toggle();
+}
+
+// method to follow a user
+function followuser(obj, profileId) {
+    scAjax({
+        "url": "profile/followuser?userIdToFollow=" + profileId,
+        "type": "POST",
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+            if (result == "you have alrady reported this before") {
+                Command: toastr["info"](result);
+            }
+            else {
+                Command: toastr["success"](result);
+                $("#" + obj.id + "> i").removeClass();
+                $("#" + obj.id + "> i").addClass('fa fa-check-circle');
+                $("#" + obj.id + "> span").text(' Following');
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {            
+            if (XMLHttpRequest.status == "401")
+                window.location.href = "/account/login";
+            else
+                Command: toastr["error"]("Error: " + textStatus);
+        }
+    });
+}
+
+// method to unfollow user
+function unfollowuser(obj, profileId) {
+    scAjax({
+        "url": "profile/unfollowuser?userToUnfollow=" + profileId,
+        "type": "POST",
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+            if (result == "you are not following this user") {
+                Command: toastr["info"](result);
+            }
+            else {
+                Command: toastr["success"](result);
+                $("#" + obj.id + "> i").removeClass();
+                $("#" + obj.id + "> i").addClass('fa fa-plus-circle');
+                $("#" + obj.id + "> span").text(' Follow');
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            if (XMLHttpRequest.status == "401")
+                window.location.href = "/account/login";
+            else
+                Command: toastr["error"]("Error: " + textStatus);
+        }
+    });
 }

@@ -917,6 +917,41 @@
             </summary>
             <param name="userInfo">CustomUserInfo object</param>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.FollowUser(System.String)">
+            <summary>
+            API to follow a user
+            </summary>
+            <param name="userIdToFollow">userid that we want to follow</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UnFollowUser(System.String)">
+            <summary>
+            API to unfollow a user
+            </summary>
+            <param name="userIdToFollow">user to unfollow</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserFollowers(System.String)">
+            <summary>
+            API to get list of followers of a user
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserFollowing(System.String)">
+            <summary>
+            API to get following list of current user
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.CheckUserFollow(System.String)">
+            <summary>
+            API to check if user following another user or not
+            </summary>
+            <param name="userId">userid to check if current user is following this user to or</param>
+            <returns></returns>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionDTO">
             <summary>
             Object to be used in the PostQuestions controller. Idea is to create a simple request object for post question
@@ -1000,6 +1035,22 @@
             </summary>
             <param name="userId">userid for whom to remove the tag</param>
             <param name="tagName">tag to unfollow</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.FollowUser(System.String,System.String)">
+            <summary>
+            Method to follow a user
+            </summary>
+            <param name="userId">user who wants to follow another user</param>
+            <param name="userIdToFollow">to whom userid wants to follow</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.UnFollowUser(System.String,System.String)">
+            <summary>
+            Method to unfollow user
+            </summary>
+            <param name="userId">user who wants to unfollow another user</param>
+            <param name="userIdToUnFollow">user to unfollow</param>
             <returns></returns>
         </member>
     </members>

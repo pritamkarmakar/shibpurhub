@@ -298,6 +298,136 @@ namespace ShibpurConnectWebApp.Providers
             return null;
         }
 
+        /// <summary>
+        /// Method to follow a user
+        /// </summary>
+        /// <param name="userId">user who wants to follow another user</param>
+        /// <param name="userIdToFollow">to whom userid wants to follow</param>
+        /// <returns></returns>
+        internal async Task<IdentityResult> FollowUser(string userId, string userIdToFollow)
+        {
+            // one user can't follow himself/herself
+            if(userId == userIdToFollow)
+            {
+                return null;
+            }
+
+            // user is the one who will follow another user
+            ApplicationUser user = _userManager.FindById(userId);
+            // user2 is the one who will be followed by user1
+            ApplicationUser user2 = _userManager.FindById(userIdToFollow);
+            if (user != null && user2 != null)
+            {                
+                // first complete processing for user to update its following list
+                if (user.Following == null)
+                {
+                    List<string> following = new List<string>();
+                    following.Add(userIdToFollow);
+
+                    user.Following = following;
+                }
+                else
+                {
+                    user.Following.Add(userIdToFollow);
+                }
+                // save this new following in database
+                var updatedUser = _userManager.Update(user);
+
+                // update same following in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                // get the tags from previous user object                
+
+                client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(userId)
+                    .Type("customuserinfo")
+                    .Doc(new { Following = user.Following }));
+
+                // now process profile for user2 to update its follower list
+                if (user2.Followers == null)
+                {
+                    List<string> followers = new List<string>();
+                    followers.Add(userId);
+
+                    user2.Followers = followers;
+                }
+                else
+                {
+                    user2.Followers.Add(userId);
+                }
+                // save this new following in database
+                var updatedUser2 = _userManager.Update(user2);
+
+                // update same following in elastic search                
+                // get the followers list from previous user object
+                
+                client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(userIdToFollow)
+                    .Type("customuserinfo")
+                    .Doc(new { Followers = user2.Followers }));
+
+                return updatedUser;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Method to unfollow user
+        /// </summary>
+        /// <param name="userId">user who wants to unfollow another user</param>
+        /// <param name="userIdToUnFollow">user to unfollow</param>
+        /// <returns></returns>
+        internal async Task<IdentityResult> UnFollowUser(string userId, string userIdToUnFollow)
+        {
+            // one user can't follow himself/herself
+            if (userId == userIdToUnFollow)
+            {
+                return null;
+            }
+
+            // user is the one who will unfollow another user
+            ApplicationUser user = _userManager.FindById(userId);
+            // user2 is the one who will be unfollowed by user1
+            ApplicationUser user2 = _userManager.FindById(userIdToUnFollow);
+            if (user != null && user2 != null)
+            {
+                // first complete processing for user to update its following list
+                user.Following.Remove(userIdToUnFollow);
+                
+                // save this new following in database
+                var updatedUser = _userManager.Update(user);
+
+                // update same following in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                // get the tags from previous user object                
+
+                client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(userId)
+                    .Type("customuserinfo")
+                    .Doc(new { Following = user.Following }));
+
+                // now process profile for user2 to update its follower list               
+                user2.Followers.Remove(userId);
+                
+                // save this new following in database
+                var updatedUser2 = _userManager.Update(user2);
+
+                // update same following in elastic search                
+                // get the followers list from previous user object
+
+                client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(userIdToUnFollow)
+                    .Type("customuserinfo")
+                    .Doc(new { Followers = user2.Followers }));
+
+                return updatedUser;
+            }
+            return null;
+        }
+
         public void Dispose()
         {
             _ctx.Dispose();

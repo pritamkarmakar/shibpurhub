@@ -260,5 +260,210 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     });
             }           
         }        
+
+        /// <summary>
+        /// API to follow a user
+        /// </summary>
+        /// <param name="userIdToFollow">userid that we want to follow</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        [InvalidateCacheOutput("GetUserFollowers")]
+        [InvalidateCacheOutput("GetUserFollowing")]
+        public async Task<IHttpActionResult> FollowUser(string userIdToFollow)
+        {
+            if (string.IsNullOrEmpty(userIdToFollow))
+                return BadRequest("supplied userid is null or empty");
+
+            // get user identity from the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            // check if userIdToFollow is a valid userid or not
+            Helper.Helper helper = new Helper.Helper();
+            if(helper.FindUserById(userIdToFollow) == null)
+                return BadRequest("supplied userIdToFollow is not valid userid");
+
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+                return BadRequest("userid not found with the suuplied bearer token");
+
+            //process this only if the userIdToFollow is not present in the current user profile collection
+            if (userInfo.Following != null && userInfo.Following.Contains(userIdToFollow))
+            {
+                return Ok("you are already following this user");
+            }
+
+            // if we are here that means this user is not following this user so we have to add it
+            AuthRepository _repo = new AuthRepository();
+            IdentityResult result = await _repo.FollowUser(userInfo.Id, userIdToFollow);
+            IHttpActionResult errorResult = GetErrorResult(result);
+            if (errorResult != null)
+            {
+                return errorResult;
+            }
+
+            return Ok("now you are following this user");
+            
+        }
+
+        /// <summary>
+        /// API to unfollow a user
+        /// </summary>
+        /// <param name="userIdToFollow">user to unfollow</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        [InvalidateCacheOutput("GetUserFollowers")]
+        [InvalidateCacheOutput("GetUserFollowing")]
+        public async Task<IHttpActionResult> UnFollowUser(string userToUnfollow)
+        {
+            if (string.IsNullOrEmpty(userToUnfollow))
+                return BadRequest("supplied userid is null or empty");
+
+            // get user identity from the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            // check if userToUnfollow is a valid userid or not
+            Helper.Helper helper = new Helper.Helper();
+            if (helper.FindUserById(userToUnfollow) == null)
+                return BadRequest("supplied userIdToFollow is not valid userid");
+
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+                return BadRequest("userid not found with the suuplied bearer token");
+
+            //process this only if the userToUnfollow is present in the current user profile collection
+            if (userInfo.Following != null && userInfo.Following.Contains(userToUnfollow))
+            {
+                // if we are here that means this user is not following this user so we have to add it
+                AuthRepository _repo = new AuthRepository();
+                IdentityResult result = await _repo.UnFollowUser(userInfo.Id, userToUnfollow);
+                IHttpActionResult errorResult = GetErrorResult(result);
+                if (errorResult != null)
+                {
+                    return errorResult;
+                }
+
+                return Ok("suceessfully unfollowed this user");
+            }
+
+            // if we are here that means the user is not following the user
+            return Ok("you are not following this user");
+        }
+
+        /// <summary>
+        /// API to get list of followers of a user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        public async Task<IHttpActionResult> GetUserFollowers(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("userId can't be null or empty");
+            
+            // validate given userId is valid
+            Helper.Helper helper = new Helper.Helper();          
+            Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+            var userInfo = await actionResult;
+            
+            if(userInfo == null)
+                return BadRequest("supplied userId is not valid userid");
+
+            // list to keep the final follower list
+            List<CustomUserInfo> followerList = new List<CustomUserInfo>();
+
+            // if user don't have any follower list then return null
+            if (userInfo.Followers == null)
+                return Ok(followerList);
+            
+            foreach(string followerUserId in userInfo.Followers)
+            {
+                Task<CustomUserInfo> actionResult2 = helper.FindUserById(followerUserId);
+                var userInfo2 = await actionResult2;
+                if (userInfo2 != null)
+                    followerList.Add(userInfo2);
+            }
+
+            return Ok(followerList);
+        }
+
+        /// <summary>
+        /// API to get following list of current user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        public async Task<IHttpActionResult> GetUserFollowing(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("userId can't be null or empty");
+
+            // validate given userId is valid
+            Helper.Helper helper = new Helper.Helper();
+            Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+            var userInfo = await actionResult;
+
+            if (userInfo == null)
+                return BadRequest("supplied userId is not valid userid");
+
+            // list to keep the final follower list
+            List<CustomUserInfo> followingList = new List<CustomUserInfo>();
+
+            // if user following list is null then return null
+            if (userInfo.Following == null)
+                return Ok(followingList);
+            
+            foreach (string followerUserId in userInfo.Following)
+            {
+                Task<CustomUserInfo> actionResult2 = helper.FindUserById(followerUserId);
+                var userInfo2 = await actionResult2;
+                if (userInfo2 != null)
+                    followingList.Add(userInfo2);
+            }
+
+            return Ok(followingList);
+        }
+
+        /// <summary>
+        /// API to check if user following another user or not
+        /// </summary>
+        /// <param name="userId">userid to check if current user is following this user to or</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        public async Task<IHttpActionResult> CheckUserFollow(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("supplied userid is null or empty");
+
+            // get user identity from the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            // check if userIdToFollow is a valid userid or not
+            Helper.Helper helper = new Helper.Helper();
+            if (helper.FindUserById(userId) == null)
+                return BadRequest("supplied userIdToFollow is not valid userid");
+
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+                return BadRequest("userid not found with the suuplied bearer token");
+
+            //process this only if the userIdToFollow is not present in the current user profile collection
+            if (userInfo.Following != null && userInfo.Following.Contains(userId))
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
+        }
     }
 }
