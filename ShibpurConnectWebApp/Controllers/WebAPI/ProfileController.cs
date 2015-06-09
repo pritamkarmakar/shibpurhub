@@ -3,6 +3,7 @@ using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using ShibpurConnectWebApp.Providers;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
@@ -303,6 +304,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return errorResult;
             }
+
+            // send notification to the user who is getting followed
+            Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+            string pathQuery = myuri.PathAndQuery;
+            string hostName = myuri.ToString().Replace(pathQuery , "");
+            EmailsController emailController = new EmailsController();
+            emailController.SendEmail(new Email()
+                {
+                    UserId = userIdToFollow,
+                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a> now following you. Check all your followers <a href=" + hostName + "/Account/Profile> here</a>",
+                    Subject = "ShibpurConnect: You have a new follower"
+
+                });
 
             return Ok("now you are following this user");
             

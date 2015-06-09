@@ -343,7 +343,7 @@ namespace ShibpurConnectWebApp.Providers
                     .Type("customuserinfo")
                     .Doc(new { Following = user.Following }));
 
-                // now process profile for user2 to update its follower list
+                // now process profile for user2 to update its follower list, if the list doesn't contains the follower userid
                 if (user2.Followers == null)
                 {
                     List<string> followers = new List<string>();
@@ -353,7 +353,8 @@ namespace ShibpurConnectWebApp.Providers
                 }
                 else
                 {
-                    user2.Followers.Add(userId);
+                    if (!user2.Followers.Contains(userId))
+                        user2.Followers.Add(userId);
                 }
                 // save this new following in database
                 var updatedUser2 = _userManager.Update(user2);
