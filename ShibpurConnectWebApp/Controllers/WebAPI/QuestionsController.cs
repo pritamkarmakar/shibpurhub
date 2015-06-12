@@ -54,6 +54,25 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        /// <summary>
+        /// Get the total questions posted by a specific user
+        /// </summary>
+        /// <param name="userId">userid for whom we want to do the searh</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IHttpActionResult> GetUserQuestionCount(string userId)
+        {
+            try
+            {
+                var questionCount = _mongoHelper.Collection.AsQueryable().Count(m => m.UserId == userId);
+                return Ok(questionCount);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // GET: api/Questions
         /// <summary>
         /// Will return all available questions
@@ -165,7 +184,57 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        /// Will return a specific question with comments
+        /// Get the questions posted by a specific user
+        /// </summary>
+        /// <param name="userId">userid for which we are searching</param>
+        /// <param name="page">page index</param>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+        public async Task<IHttpActionResult> GetQuestionsByUser(string userId, int page)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("userId can't be null or empty string");
+
+            try
+            {
+                var allQuestions = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).ToList();
+                var questions = allQuestions.OrderByDescending(a => a.PostedOnUtc).Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
+
+                return Ok(questions);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// API to get question details like title, details, posted by user, datetime etc. This will not give you the associated answers and comments
+        /// </summary>
+        /// <param name="questionId"></param>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        public async Task<IHttpActionResult> GetQuestionInfo(string questionId)
+        {
+            try
+            {
+                var question = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.QuestionId == questionId);
+                if (question == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(question);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        /// <summary>
+        /// Will return a specific question with answers and comments. If you just need only question details without comments and answers then use GetQuestionInfo method
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
@@ -354,6 +423,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return question == null ? 0 : question.ViewCount;
         }
 
+
         /// <summary>
         /// Increment view count for a question
         /// </summary>
@@ -450,6 +520,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [ResponseType(typeof(Question))]
         [InvalidateCacheOutput("GetQuestions")]
+        [InvalidateCacheOutput("GetQuestionsByUser")]
         [InvalidateCacheOutput("GetPopularTags", typeof(TagsController))]
         [InvalidateCacheOutput("FindUserTags", typeof(TagsController))]
         public async Task<IHttpActionResult> PostQuestions(QuestionDTO question)

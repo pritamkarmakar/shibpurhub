@@ -20,6 +20,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class AnswersController : ApiController
     {
         private MongoHelper<Answer> _mongoHelper;
+        private const int PAGESIZE = 20;
 
         public AnswersController()
         {
@@ -63,6 +64,78 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(questions.ToList());
         }
 
+        /// <summary>
+        /// Get the total answer count of a user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        public async Task<IHttpActionResult> GetUserAnswerCount(string userId)
+        {
+            try
+            {
+                var answerCount = _mongoHelper.Collection.AsQueryable().Count(m => m.UserId == userId);
+                return Ok(answerCount);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// API to get list of answers posted by an user
+        /// </summary>
+        /// <param name="userId">userId for whom we want this list</param>
+        /// <param name="page">page index</param>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+        public async Task<IHttpActionResult> GetAnswersByUser(string userId, int page)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("userId can't be null or empty string");
+
+            try
+            {
+                var allAnswers = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).ToList();
+                var answers = allAnswers.OrderByDescending(a => a.PostedOnUtc).Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
+
+                // get the question title using the question id
+                List<AnswerWithQuestionTitle> finalList = new List<AnswerWithQuestionTitle>();
+                // hashset to check unique questionid, one user can have submitted multiple answers to same question
+                HashSet<string> hash = new HashSet<string>();
+                foreach (var answer in answers)
+                {
+                    if (!hash.Contains(answer.QuestionId))
+                    {
+                        QuestionsController questionsController = new QuestionsController();
+                        IHttpActionResult actionresult = await questionsController.GetQuestionInfo(answer.QuestionId);
+                        var questionObj = actionresult as OkNegotiatedContentResult<Question>;
+
+                        if (questionObj != null)
+                        {
+                            finalList.Add(new AnswerWithQuestionTitle()
+                            {
+                                QuestionId = questionObj.Content.QuestionId,
+                                QuestionTitle = questionObj.Content.Title,
+                                AnswerText = answer.AnswerText,
+                                PostedOnUtc = answer.PostedOnUtc
+
+                            });
+                        }
+
+                        hash.Add(answer.QuestionId);
+                    }
+                }
+                return Ok(finalList);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // POST: api/Questions
         [Authorize]
         [ResponseType(typeof(Answer))]
@@ -72,6 +145,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [InvalidateCacheOutput("GetResponseRate", typeof(AskToAnswerController))]
         [InvalidateCacheOutput("GetPopularQuestions", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetAnswers")]
+        [InvalidateCacheOutput("GetAnswersByUser")]
         public async Task<IHttpActionResult> PostAnswer(AnswerDTO answerdto)
         {
             if (!ModelState.IsValid)

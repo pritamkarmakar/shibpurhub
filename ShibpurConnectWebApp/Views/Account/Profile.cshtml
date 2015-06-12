@@ -1,9 +1,16 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "ShibpurConnect - Profile";
+    //ViewBag.Title = "ShibpurConnect - Profile";
 }
 
 <style type="text/css">
+    /*font size of the 'Questions' tab question title''*/
+     .question-hyperlink {
+         font-size: 18px;
+     }
+     .post-tag {
+         padding: .2em .4em;
+     }
     .user {
         margin-bottom: 20px;
     }
@@ -143,6 +150,9 @@
                     var loggedInUserId = userInfo.id;
                 }
 
+                // set page title
+                document.title = result.userInfo.firstName + " " + result.userInfo.lastName + " - ShibpurConnect";
+
                 $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
                 $(".registeredon").after( getDateFormattedByMonthYear(result.userInfo.registeredOn));
                 $(".reputationcount").after(result.userInfo.reputationCount);
@@ -215,7 +225,7 @@
         {
             // find out if current user is following this user or not. Then change the button text accordingly from 'follow' -> 'following
             scAjax({
-                "url": "profile/CheckUserFollow?userId="+profileId,
+                "url": "profile/checkuserfollow?userId="+profileId,
                 "success": function (result) {
                     if (!result) {
                         return;
@@ -226,6 +236,24 @@
                 }
             });
         }
+
+        // find total questions posted by this user
+        scAjax({
+            "url": "questions/getuserquestioncount?userId="+profileId,
+            "success": function (result) {
+                $(".userquestioncount").after("<a href='#tab4' onclick=activateTab('tab4')>" + result + "</a>");
+
+            }
+        });
+
+        // find total answers posted by this user
+        scAjax({
+            "url": "answers/getuseranswercount?userId="+profileId,
+            "success": function (result) {
+                $(".useranswercount").after("<a href='#tab5' onclick=activateTab('tab5')>" + result + "</a>");
+
+            }
+        });
        
 
         $('#uploadImg').change(function(){
@@ -257,7 +285,8 @@
         });
     }
 
-    function ChangeColor(obj)
+    // method to show profile, followers, following tabbed data
+    function ShowTabbedData(obj)
     {
         // remove the styles from all 'li'
         $('.nav-tabs li').css("border-bottom", "none");
@@ -271,6 +300,8 @@
         {
             $('.userprofiledivs').hide();            
             $('.userfollowing').hide();
+            $('.userquestions').hide();
+            $('.useranswers').hide();
             
             // show the loading div
             $('#loadingdiv2').show();
@@ -308,11 +339,15 @@
             $('.userprofiledivs').show();   
             $('.userfollowers').hide();
             $('.userfollowing').hide();
+            $('.userquestions').hide();
+            $('.useranswers').hide();
         }
         else if($(obj).text().toLowerCase() == "following")
         {
             $('.userprofiledivs').hide();
             $('.userfollowers').hide();
+            $('.userquestions').hide();
+            $('.useranswers').hide();
 
             // show the loading div
             $('#loadingdiv2').show();
@@ -344,6 +379,26 @@
                 }
             });
         }
+        else if($(obj).text().toLowerCase() == "questions")
+        {
+            $('.userprofiledivs').hide();
+            $('.userfollowers').hide();
+            $('.userfollowing').hide();
+            $('.useranswers').hide();
+
+            // load user questions
+            loaduserquestions(0);
+        }
+        else if($(obj).text().toLowerCase() == "answers")
+        {
+            $('.userprofiledivs').hide();
+            $('.userfollowers').hide();
+            $('.userfollowing').hide();
+            $('.userquestions').hide();
+
+            // load user answers
+            loaduseranswers(0);
+        }
     }
 
     // method to decide to call follow/unfollow javascript method
@@ -353,6 +408,96 @@
             followuser(obj, profileId);        
         else if($("#" + obj.id + " > span").text().trim().toLowerCase() == "unfollow")
             unfollowuser(obj, profileId);
+    }
+
+    // if user wants to see next page user question then this will execute
+    $('.pagination li a').click(function () {
+        var anchor = $(this);
+        $('.pagination').hide();
+        var page = parseInt($(anchor).text());
+        loaduserquestions(page - 1);
+        $('.pagination li.disabled').removeClass('disabled');
+        $(anchor).parent().addClass('disabled');
+        return false;
+    });
+
+    // load user questions
+    function loaduserquestions(pagenumber) {
+        $('#loadingdiv2').show();
+        scAjax({
+            "url": "questions/getquestionsbyuser",
+            "data": { "userId": profileId, "page": pagenumber },
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                // disable the loading div
+                $('#loadingdiv2').hide();
+
+                // clear previous values
+                $('.userquestions').show();
+                $('.userquestions').empty();
+
+                // hide the loading div
+                $('#loadingdiv2').hide();
+
+                if(result.length == 0)
+                    $('.userquestions').append("<p>No question posted</p>");
+
+                // iterate over all questions and add them in the div
+                $(result).each(function (i, question) {
+                    $('.userquestions').append("<div id='"+ question.questionId +"'><div class='title'><a class='question-hyperlink' href='/Feed/Details/" + question.questionId + "'>" + question.title + "</a></div><div class='categories'></div></div>");
+                    if (question.categories) {
+                        $(question.categories).each(function (i, category) {
+                            var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory?category=" + category);
+                            $("#"+ question.questionId +" .categories").append(tagAnchor);
+                        });
+                    }
+                    $('.userquestions').append("<hr>");
+                });
+                                             
+            }
+        });
+    }
+
+    // load user questions
+    function loaduseranswers(pagenumber) {
+        $('#loadingdiv2').show();
+        scAjax({
+            "url": "answers/getanswersbyuser",
+            "data": { "userId": profileId, "page": pagenumber },
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                // disable the loading div
+                $('#loadingdiv2').hide();
+
+                // clear previous values
+                $('.useranswers').show();
+                $('.useranswers').empty();
+
+                // hide the loading div
+                $('#loadingdiv2').hide();
+
+                if(result.length == 0)
+                    $('.useranswers').append("<p>No answer posted</p>");
+
+                // iterate over all questions and add them in the div
+                $(result).each(function (i, answer) {
+                    $('.useranswers').append("<div id='"+ answer.questionId +"'><div class='title'><a class='question-hyperlink' href='/Feed/Details/" + answer.questionId + "'>" + answer.questionTitle + "</a></div><p>"+ answer.answerText  +"</p></div>");
+                    
+                    $('.useranswers').append("<hr>");
+                });
+                                             
+            }
+        });
+    }
+
+    function activateTab(tab) {
+        $('.nav-tabs a[href="#' + tab + '"]').click();
     }
 </script>
 
@@ -389,26 +534,13 @@
 
                 </li>
             </ul>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Website <i class="fa fa-link fa-1x"></i>
-
-                </div>
-                <div class="panel-body">
-                    <a href="http://bootply.com" class="">...</a>
-
-                </div>
-            </div>
-
             <ul class="list-group">
                 <li class="list-group-item text-muted">
                     Activity <i class="fa fa-dashboard fa-1x"></i>
 
                 </li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Questions</strong></span> ...</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Answers</strong></span> ...</li>               
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Followers</strong></span> ...</li>
+                <li class="list-group-item text-right"><span class="pull-left userquestioncount"><strong class="">Questions</strong></span></li>
+                <li class="list-group-item text-right"><span class="pull-left useranswercount"><strong class="">Answers</strong></span></li>            
                 <li class="list-group-item text-right"><span class="pull-left reputationcount"><strong class="">Reputation</strong></span></li>
             </ul>
             <div class="panel panel-default">
@@ -424,9 +556,11 @@
         <div class="col-sm-9" contenteditable="false" style="">
             <div class="activitynavigation" style="margin-bottom:10px;">
                 <ul class="nav nav-tabs">
-                    <li onclick="ChangeColor(this);"><a href="#">PROFILE</a></li>
-                    <li onclick="ChangeColor(this);"><a href="#">FOLLOWERS</a></li>
-                    <li onclick="ChangeColor(this);"><a href="#">FOLLOWING</a></li>
+                    <li onclick="ShowTabbedData(this);"><a href="#tab1">PROFILE</a></li>
+                    <li onclick="ShowTabbedData(this);"><a href="#tab2">FOLLOWERS</a></li>
+                    <li onclick="ShowTabbedData(this);"><a href="#tab3">FOLLOWING</a></li>
+                    <li onclick="ShowTabbedData(this);"><a href="#tab4">QUESTIONS</a></li>
+                    <li onclick="ShowTabbedData(this);"><a href="#tab5">ANSWERS</a></li>
                 </ul>
             </div>
             <div class="userprofiledivs">
@@ -452,10 +586,22 @@
             </div>
             <div class="userfollowers" style="display:none;margin-top:20px;">               
             </div>
-            <div class="userfollowing" style="display:none;margin-top:20px;">
+            <div class="userfollowing" style="display: none; margin-top: 20px;">
+            </div>
+            <div class="userquestions" style="display: none; margin-top: 20px;">
+                <div class="thread"></div>
+                <nav>
+                    <ul class="pagination">
+                    </ul>
+                </nav>
+            </div>
+            <div class="useranswers" style="display: none; margin-top: 20px;">
+                <div class="thread"></div>
+                <nav>
+                    <ul class="pagination"></ul>
+                </nav>
             </div>
         </div>
-
         <div id="loadingdiv2" style="display:none;">
             <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
         </div>

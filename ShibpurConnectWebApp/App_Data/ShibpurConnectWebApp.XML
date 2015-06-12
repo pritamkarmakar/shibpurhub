@@ -503,6 +503,21 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.GetUserAnswerCount(System.String)">
+            <summary>
+            Get the total answer count of a user
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.GetAnswersByUser(System.String,System.Int32)">
+            <summary>
+            API to get list of answers posted by an user
+            </summary>
+            <param name="userId">userId for whom we want this list</param>
+            <param name="page">page index</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.GetAskToAnswer(System.String,System.String)">
             <summary>
              API to check if we have asked a user to answer a question
@@ -634,6 +649,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetUserQuestionCount(System.String)">
+            <summary>
+            Get the total questions posted by a specific user
+            </summary>
+            <param name="userId">userid for whom we want to do the searh</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestions(System.Int32)">
             <summary>
             Will return all available questions
@@ -649,9 +671,24 @@
             <param name="page">page index</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestionsByUser(System.String,System.Int32)">
+            <summary>
+            Get the questions posted by a specific user
+            </summary>
+            <param name="userId">userid for which we are searching</param>
+            <param name="page">page index</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestionInfo(System.String)">
+            <summary>
+            API to get question details like title, details, posted by user, datetime etc. This will not give you the associated answers and comments
+            </summary>
+            <param name="questionId"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestion(System.String)">
             <summary>
-            Will return a specific question with comments
+            Will return a specific question with answers and comments. If you just need only question details without comments and answers then use GetQuestionInfo method
             </summary>
             <param name="questionId">question id</param>
             <returns></returns>
@@ -840,6 +877,11 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.Answer">
             <summary>
             We use this model to save into database
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.AnswerWithQuestionTitle">
+            <summary>
+            We will use this model in the user profile page, to show what all answers user have posted
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.CategoryCloud">

@@ -90,4 +90,12 @@ namespace ShibpurConnectWebApp.Models.WebAPI
             };
         }
     }
+
+    /// <summary>
+    /// We will use this model in the user profile page, to show what all answers user have posted
+    /// </summary>
+    public class AnswerWithQuestionTitle : Answer
+    {
+        public string QuestionTitle { get; set; }
+    }
 }

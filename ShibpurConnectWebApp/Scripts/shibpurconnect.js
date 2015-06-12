@@ -449,3 +449,20 @@ function unfollowuser(obj, profileId) {
         }
     });
 }
+
+// create bootstrap pagination
+function buildPagination(pages) {
+    $('.pagination li').remove();
+
+    if (pages == 1) {
+        return;
+    }
+    for (var i = 1; i <= pages; i++) {
+        var anchor = $('<a>').text(i).attr('href', '#');
+        var li = $('<li>').append(anchor);
+        if (i == 1) {
+            $(li).addClass('disabled');
+        }
+        $('.pagination').append(li);
+    }
+}
