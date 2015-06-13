@@ -895,7 +895,7 @@
     function handleCommentLinkClick(event) {
         event.preventDefault();
         var anchor = $(this);
-        var commentBox = $(anchor).closest('.answer-links').siblings('.answer-comments');
+        var commentBox = $(anchor).closest('li.answer').find('.answer-comments');
         $(commentBox).slideToggle();
         if ($(commentBox).find('.comment-list').length == 1) {
             $(commentBox).find('.add-comment .anchor-add-comment').hide();
