@@ -890,7 +890,7 @@
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (!userDetails) {
             //TO-DO: Handle if userdetail is not available in Session Storage
-            return;
+            window.location.href = "/account/login";
         }
         var userInfo = $.parseJSON(userDetails);
         var userId = userInfo.id;
