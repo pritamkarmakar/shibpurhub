@@ -633,58 +633,7 @@
             });
         }
     }
-
-    // this will trigger when someone will add new comment, to send notification to the user who posted the answer
-    function NotificationForNewComment(emailtosend, notificationToSend) {
-        // retrieve current logged-in user details
-        var userDetails = localStorage.getItem("SC_Session_UserDetails");
-        if (!userDetails) {
-            //TO-DO: Handle if userdetail is not available in Session Storage
-            return;
-        }
-        var userInfo = $.parseJSON(userDetails);
-
-        // send email notification if the user who posted the comment and user who answered it are different
-        if (email.toLowerCase() != userInfo.email.toLowerCase()) {
-            // send email notification
-            var emaildata = {
-                "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " posted a comment to your answer in question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
-                "UserId": emailtosend,
-                "Subject": "ShibpurConnect: New comment to your answer"
-            };
-
-            scAjax({
-                "url": "emails/sendemail",
-                "type": "POST",
-                "data": JSON.stringify(emaildata, null, 2),
-                "success": function (result) {
-                }
-            });
-
-            //save this request in the Notification collection
-            var notificationContent = {
-                "commentedBy": userInfo.email,
-                "displayName": userInfo.firstName + " " + userInfo.lastName,
-                "questionId": questionID,
-                "questionTitle": $('#questiontitle').text()
-            };
-            var data = {
-                "UserId": notificationToSend,
-                "NotificationContent": JSON.stringify(notificationContent),
-                "NotificationType": "ReceivedComment"
-            };
-
-            scAjax({
-                "url": "notifications/PostNotification",
-                "type": "POST",
-                "data": JSON.stringify(data, null, 2),
-                "success": function (result) {
-
-                }
-            });
-        }
-    }
-
+    
     function saveAnswer() {
         // hide the error div
         $('#errormessage').empty();
@@ -702,7 +651,7 @@
 
         if (!userDetails) {
             //TO-DO: Handle if userdetail is not available in Session Storage
-            return;
+            window.location.href = "/account/login";
         }
 
         var answer = advancedEditor.getHTML();
@@ -947,9 +896,9 @@
         var userId = userInfo.id;
 
         var answerId = $(button).closest('li.answer').attr('data-answerid');
-        var data = { "CommentText": $.trim(comment), "UserId": userId, "DisplayName": userInfo.firstName, "AnswerId": answerId };
+        var data = { "CommentText": $.trim(comment), "AnswerId": answerId };
         scAjax({
-            "url": "comments/AddComment",
+            "url": "comments/postcomment",
             "type": "POST",
             "data": JSON.stringify(data, null, 2),
             "success": function (result) {
@@ -969,14 +918,14 @@
                 $(commentBlock).removeClass('hide');
                 $(commentBlock).find('.comment-text').text(comment);
                 $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
-                $(commentBlock).find('.comment-user').text(result.displayName);
+                $(commentBlock).find('.comment-user').text(userInfo.firstName + " " + userInfo.lastName);
                 //$(answerBlock).find('.answer-comments').append(commentBlock);
                 $(commentBlock).insertBefore($(answerBlock).find('.answer-comments .comment-list.hide'));
 
                 // retrieve email of the user who posted the answer
-                var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
-                var notificationToSend = $(answerBlock).attr("data-answerby");
-                NotificationForNewComment(emailToSend, notificationToSend);
+                //var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
+                //var notificationToSend = $(answerBlock).attr("data-answerby");
+                //NotificationForNewComment(emailToSend, notificationToSend);
             },
             "error": function (err) {
                 // parse the error json

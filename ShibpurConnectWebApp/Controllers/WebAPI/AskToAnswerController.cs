@@ -51,7 +51,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="userId">user id</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
         public string GetResponseRate(string userId)
         {
             // total response received

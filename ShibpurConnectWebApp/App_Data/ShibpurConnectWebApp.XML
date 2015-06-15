@@ -503,6 +503,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.GetAnswer(System.String)">
+            <summary>
+            API to get details about a specific answer
+            </summary>
+            <param name="answerId">answerid to search</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.GetUserAnswerCount(System.String)">
             <summary>
             Get the total answer count of a user
@@ -688,7 +695,8 @@
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestion(System.String)">
             <summary>
-            Will return a specific question with answers and comments. If you just need only question details without comments and answers then use GetQuestionInfo method
+            Will return a specific question with answers and comments. 
+            If you just need only question details without comments and answers then use GetQuestionInfo method
             </summary>
             <param name="questionId">question id</param>
             <returns></returns>
@@ -889,12 +897,22 @@
             Will use this model in the tag cloud
             </summary>
         </member>
-        <member name="T:ShibpurConnectWebApp.Models.WebAPI.Comment">
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.CommentDTO">
             <summary>
-            Model for the comment table
+            Model to use to post a comment
             </summary>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.AddComment(ShibpurConnectWebApp.Models.WebAPI.Comment)">
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.Comment">
+            <summary>
+            Model to save comment data in database
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.CommentViewModel">
+            <summary>
+            Model with comment user name
+            </summary>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.PostComment(ShibpurConnectWebApp.Models.WebAPI.CommentDTO)">
             <summary>
             Add a new comment for a question
             </summary>

@@ -38,10 +38,39 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return result;
         }
 
+        /// <summary>
+        /// API to get details about a specific answer
+        /// </summary>
+        /// <param name="answerId">answerid to search</param>
+        /// <returns></returns>
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        public async Task<IHttpActionResult> GetAnswer(string answerId)
+        {
+            // validate questionId is valid hex string
+            try
+            {
+                ObjectId.Parse(answerId);
+            }
+            catch (Exception)
+            {
+                return BadRequest(String.Format("Supplied answerId: {0} is not a valid object id", answerId));
+            }
+
+
+            var answer = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == answerId);
+            if (answer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(answer);
+        }
+
         // GET: api/Questions/5
         // Will return all the answers for a specific question
         [ResponseType(typeof(Answer))]
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
         public IHttpActionResult GetAnswers(string questionId)
         {
             // validate questionId is valid hex string
@@ -70,7 +99,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetUserAnswerCount(string userId)
         {
             try
@@ -90,7 +119,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId">userId for whom we want this list</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetAnswersByUser(string userId, int page)
         {
             if (string.IsNullOrEmpty(userId))

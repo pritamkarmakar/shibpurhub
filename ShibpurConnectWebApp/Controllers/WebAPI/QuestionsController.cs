@@ -79,7 +79,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan=1200, MustRevalidate=true)]
+        [CacheOutput(ServerTimeSpan=864000, MustRevalidate=true)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
@@ -130,7 +130,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="category">category/tag name</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestionsByCategory(string category, int page)
         {
             try
@@ -189,7 +189,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId">userid for which we are searching</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestionsByUser(string userId, int page)
         {
             if (string.IsNullOrEmpty(userId))
@@ -213,7 +213,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId"></param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestionInfo(string questionId)
         {
             try
@@ -234,11 +234,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
         
         /// <summary>
-        /// Will return a specific question with answers and comments. If you just need only question details without comments and answers then use GetQuestionInfo method
+        /// Will return a specific question with answers and comments. 
+        /// If you just need only question details without comments and answers then use GetQuestionInfo method
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
@@ -284,35 +285,48 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var answerVMs = new List<AnswerViewModel>();
                 var _commentsMongoHelper = new MongoHelper<Comment>();
                 var allUserIds = new List<string>();
-                var allComments = new List<Comment>();
+                // keep track of all the comments in this question
+                List<CommentViewModel> allComments = new List<CommentViewModel>();
                 foreach(var answer in answers)
                 {
+                    // comments to be added in the answer
+                    List<CommentViewModel> answerComments = new List<CommentViewModel>();
                     var comments = _commentsMongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answer.AnswerId).OrderBy(a => a.PostedOnUtc).ToList();
-                    allComments.AddRange(comments);
+                    foreach (var comment in comments)
+                    {
+                        CommentViewModel cvm = new CommentViewModel();
+                        cvm.UserId = comment.UserId;
+                        cvm.AnswerId = comment.AnswerId;
+                        cvm.CommentId = cvm.CommentId;
+                        cvm.CommentText = comment.CommentText;
+                        cvm.PostedOnUtc = comment.PostedOnUtc;
+                        answerComments.Add(cvm);
+                    }
+                    
                     var answervm = new AnswerViewModel().Copy(answer);
-                    answervm.Comments = comments;
+                    answervm.Comments = answerComments;
+                    allComments.AddRange(answerComments);
                     answervm.IsUpvotedByMe = userInfo != null && answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.Id);
                     answerVMs.Add(answervm);
                 }
 
+                // here we are trying to retrieve userinfo for all answers and the corresponding comments
                 allUserIds.Add(question.UserId);
                 allUserIds.AddRange(answers.Select(a => a.UserId));
                 allUserIds.AddRange(allComments.Select(c => c.UserId));
 
                 var uniqueUserIds = new List<string>(allUserIds.Distinct());
-
-                    
                 foreach (var userId in uniqueUserIds)
                 {
                     Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
                     var userDetail = await actionResult;
-                    if (!userDetails.ContainsKey(userId) && userDetail !=null)
+                    if (!userDetails.ContainsKey(userId) && userDetail != null)
                     {
                         userDetails.Add(userId, userDetail);
                     }
                 }
-
-                foreach(var answerVM in answerVMs)
+                // update userinfo for all the answers
+                foreach (var answerVM in answerVMs)
                 {
                     if (userDetails.ContainsKey(answerVM.UserId))
                     {
@@ -320,7 +334,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         answerVM.UserEmail = userData.Email;
                         answerVM.DisplayName = userData.FirstName + " " + userData.LastName;
                         answerVM.UserProfileImage = userData.ProfileImageURL;
-                    }                    
+                    }
+                    // update userinfo for all comments in a answer
+                    foreach (var comment in answerVM.Comments)
+                    {
+                        if (userDetails.ContainsKey(comment.UserId))
+                        {
+                            var userData = userDetails[comment.UserId];
+                            comment.DisplayName = userData.FirstName + " " + userData.LastName;
+                        }
+                    }
                 }            
 
                 // remove the answers where there is no user information
@@ -339,7 +362,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
         public IHttpActionResult GetAnswersCount(string questionId)
         {
             try
@@ -368,7 +391,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="count">no of questions to retrieve</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetPopularQuestions(int count)
         {
             try
@@ -407,7 +430,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true, ExcludeQueryStringFromCacheKey = false)]
+        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true, ExcludeQueryStringFromCacheKey = false)]
         public int GetViewCount(string questionId)
         {
             try

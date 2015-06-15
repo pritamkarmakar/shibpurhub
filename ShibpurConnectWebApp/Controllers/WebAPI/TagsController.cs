@@ -80,7 +80,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="categoryName">category name</param>
         /// <returns></returns>
         [ResponseType(typeof(Categories))]
-        [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
+        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetTag(string categoryName)
         {
             Categories category = null;
@@ -108,7 +108,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="count">no of categories that we want</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
         public IHttpActionResult GetPopularTags(int count)
         {
             List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
@@ -137,7 +137,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// We are using this api in the Tag>Index page
         /// </summary>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
         public IHttpActionResult GetPopularTags()
         {
             List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
@@ -279,7 +279,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
         public async Task<IHttpActionResult> FindUserTags()
         {
             // get user identity from the supplied bearer token

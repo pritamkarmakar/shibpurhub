@@ -66,7 +66,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string UserProfileImage { get; set; }
 
         [DataMember]
-        public List<Comment> Comments { get; set; }        
+        public List<CommentViewModel> Comments { get; set; }        
 
         [DataMember]
         public bool IsUpvotedByMe { get; set; }
