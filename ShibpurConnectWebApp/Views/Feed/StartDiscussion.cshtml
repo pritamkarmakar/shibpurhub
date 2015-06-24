@@ -1,13 +1,14 @@
-﻿@using ShibpurConnectWebApp.Models.WebAPI
+@using ShibpurConnectWebApp.Models.WebAPI
 @model Question
 @{
     ViewBag.Title = "Ask a question - ShibpurConnect";
 }
 <script src='@Scripts.Url("~/bundles/select2")' async> </script>
 <script type="text/javascript">
+    var advancedEditorForQuestion;
     $(document).ready(function () {
         // rich text editor for question description
-        advancedEditor = new Quill('.text-wrapper .editor-container', {
+        advancedEditorForQuestion = new Quill('.text-wrapper .editor-container', {
             modules: {
                 'authorship': {
                     authorId: 'advanced',
@@ -67,9 +68,9 @@
             e.preventDefault();
             if ($("#newquestionform")[0].checkValidity()) {
                 // validate question description rich text is not empty and has minimum no of characters
-                var questiondescription = advancedEditor.getHTML();
+                var questiondescription = advancedEditorForQuestion.getHTML();
                 // verify if question description is empty
-                if (!questiondescription || $.trim(advancedEditor.getText()) == "") {
+                if (!questiondescription || $.trim(advancedEditorForQuestion.getText()) == "") {
                     // enable the button
                     $('#btn_Save_Question').prop('disabled', false);
 
@@ -82,7 +83,7 @@
                     return;
                 }
                 // verify whether length of question description is less than 40
-                if ($.trim(advancedEditor.getText()).length < 40) {
+                if ($.trim(advancedEditorForQuestion.getText()).length < 40) {
                     // enable the button
                     $('#btn_Save_Question').prop('disabled', false);
 

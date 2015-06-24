@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -313,6 +313,10 @@
      .description {
          margin-bottom: 20px;
      }
+    .editQuesDiv
+    {
+        display: none;
+    }
 </style>
 
 <script type="text/javascript">
@@ -512,6 +516,21 @@
             var parentDiv = $(textarea).parent();
             $(parentDiv).removeClass("col-md-8").addClass("col-md-12");
             //$(parentDiv).next().addClass("col-md-offset-9");
+        });
+        
+        $('.editQuesAnchor').click(function(){
+            $.ajax({
+                "url": "/feed/startdiscussion",
+                "type": "GET",
+                "contentType": 'applicatopn/html; charset=utf-8',
+                "dataType": 'html',
+                "success": function (result) {
+                    $(result).find('#txt_question').val($('.header h2').text());
+                    advancedEditorForQuestion.setHTML($('.description').html());
+                    $('.editQuesDiv').html(result);
+                    $('.editQuesDiv').slideToggle();
+                }
+            });
         });
     });
 
@@ -1221,7 +1240,11 @@
                 <div class="stat col-md-2">
                     <span><i class="fa fa-flag" style="color: rgb(234, 113, 113)">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
                 </div>
+                <div class="stat col-md-2">
+                    <span><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
+                </div>
                 <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
+                <div class="editQuesDiv col-md-12 col-xs-12"></div>
             </div>
             <br /><br />
             <div id="moduleanswers">
