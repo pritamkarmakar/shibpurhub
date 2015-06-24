@@ -519,18 +519,8 @@
         });
         
         $('.editQuesAnchor').click(function(){
-            $.ajax({
-                "url": "/feed/startdiscussion",
-                "type": "GET",
-                "contentType": 'applicatopn/html; charset=utf-8',
-                "dataType": 'html',
-                "success": function (result) {
-                    $(result).find('#txt_question').val($('.header h2').text());
-                    //advancedEditorForQuestion.setHTML($('.description').html());
-                    $('.editQuesDiv').html(result);
-                    $('.editQuesDiv').slideToggle();
-                }
-            });
+            
+            return false;
         });
     });
 
