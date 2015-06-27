@@ -314,7 +314,7 @@
          margin-bottom: 20px;
      }
     
-    .editQuesDiv, .spanEditQuestion
+    .editQuesDiv, .stat #spanEditQuestion
     {
         display: none;
     }
@@ -420,7 +420,7 @@
                 isAskedByMe = question.isAskedByMe;
                 if(question.isAskedByMe)
                 {
-                    $('.spanEditQuestion').show();
+                    $('#spanEditQuestion').show();
                     setUpEditQuestion();
                 }
                 getAnswers(question.answers);
@@ -1140,7 +1140,7 @@
         qustionRTBoxEditor.setHTML($('.description').html());
         
         $('#btn_Edit_Question').click(function(){
-            $('.editQuesDiv').slideToggle();
+            $('.editQuesDiv').toggle();
             $('.header h2').text($('#txt_question_edit').val());
             $('.description').html(qustionRTBoxEditor.getHTML());
             $('.question-container').slideToggle();
@@ -1284,7 +1284,7 @@
                         <span><i class="fa fa-flag" style="color: rgb(234, 113, 113)">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
                     </div>
                     <div class="stat col-md-2">
-                        <span class="spanEditQuestion"><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
+                        <span id="spanEditQuestion"><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
                     </div>
                     <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
                 </div>
