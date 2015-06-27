@@ -314,7 +314,7 @@
          margin-bottom: 20px;
      }
     
-    .editQuesDiv, .editQuesAnchor
+    .editQuesDiv, .spanEditQuestion
     {
         display: none;
     }
@@ -420,7 +420,7 @@
                 isAskedByMe = question.isAskedByMe;
                 if(isAskedByMe)
                 {
-                    $('.editQuesAnchor').show();
+                    $('.spanEditQuestion').show();
                     setUpEditQuestion();
                 }
                 getAnswers(question.answers);
@@ -536,7 +536,7 @@
         });
         
         $('.editQuesAnchor').click(function(){
-            $('.editQuesDiv').slideToggle().scrollTop(90);
+            $('.editQuesDiv').slideToggle();
             $('.question-container').slideToggle();
             $('#txt_question_edit').focus();
             return false;
@@ -1272,23 +1272,24 @@
 
 <div class="container">
     <div class="col-md-9 col-xs-12">
-        <div>
+        <div class="question-container">
             <div class="header col-md-12">
                 <h2 style="font-size:22px;" id="questiontitle"></h2>
             </div>
             <div id="details" style="display:none">
-                <div class="question-container">
+                <div>
                     <div class="description col-md-12 col-xs-12"></div>
                     <div class="tags col-md-12 col-xs-12"></div>
                     <div class="stat col-md-2">
                         <span><i class="fa fa-flag" style="color: rgb(234, 113, 113)">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
                     </div>
                     <div class="stat col-md-2">
-                        <span><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
+                        <span class="spanEditQuestion"><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
                     </div>
                     <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
                 </div>
-                <!-- EDIT QUESTION START-->
+            </div>
+            <!-- EDIT QUESTION START-->
                 <div class="editQuesDiv col-md-12 col-xs-12">
                     <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
                         <label class="control-label col-md-3" for="Question">Question title</label>
@@ -1307,8 +1308,6 @@
                     </div>
                 </div>
                 <!-- EDIT QUESTION END-->
-                
-            </div>
             <br /><br />
             <div id="moduleanswers">
                 @*<h4>Answers:</h4><hr />*@
