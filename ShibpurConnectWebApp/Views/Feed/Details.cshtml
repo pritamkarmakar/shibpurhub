@@ -340,14 +340,14 @@
         // hide 'ask to answer' module
         $('#userToAnswer').hide();
 
-        advancedEditor = new Quill('.text-wrapper .editor-container', {
+        advancedEditor = new Quill('.wirte-answer .text-wrapper .editor-container', {
             modules: {
                 'authorship': {
                     authorId: 'advanced',
                     enabled: true
                 },
                 'toolbar': {
-                    container: '.text-wrapper .toolbar-container'
+                    container: '.wirte-answer .text-wrapper .toolbar-container'
                 },
                 'link-tooltip': true,
                 'image-tooltip': true,
@@ -525,7 +525,7 @@
         });
         
         $('.editQuesAnchor').click(function(){
-            
+            $('.editQuesDiv').slideToggle();
             return false;
         });
     });
@@ -1125,6 +1125,10 @@
         });
         
         qustionRTBoxEditor.setHTML($('.description').html());
+        
+        $('#btn_Edit_Question').click(function(){
+            $('.editQuesDiv').slideToggle();
+        });
     }
 
     // This method will execute when user will type user details in the 'Ask To Answer' serach box
@@ -1269,9 +1273,9 @@
                 
                 <!-- EDIT QUESTION START-->
                 <div class="editQuesDiv col-md-12 col-xs-12">
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 15px;">
                         <label class="control-label" for="Question">Question title</label>
-                        <div class="col-md-9" id="questiontitlediv">
+                        <div id="questiontitlediv">
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <input class="form-control" id="txt_question_edit" type="text" required>
@@ -1280,12 +1284,9 @@
                         </div>
                     </div>
                     @{ Html.RenderPartial("_RichTextBox"); }
-                    <div class="form-group">
-                        <div class="col-md-offset-3 col-md-10">
-                            <button type="submit" id="btn_Edit_Question" class="btn btn-primary">
-                                <i></i><span>Save question</span>
-                            </button>
-                        </div>
+                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin-top: 15px;">
+                        <i></i><span>Save question</span>
+                    </button>
                     </div>
                 </div>
                 <!-- EDIT QUESTION END-->
