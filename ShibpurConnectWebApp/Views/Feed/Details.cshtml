@@ -317,6 +317,11 @@
     {
         display: none;
     }
+    
+    .stat a
+    {
+        cursor: pointer;
+    }
 </style>
 
 <script type="text/javascript">
@@ -1274,8 +1279,8 @@
                 
                 <!-- EDIT QUESTION START-->
                 <div class="editQuesDiv col-md-12 col-xs-12">
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label class="control-label" for="Question">Question title</label>
+                    <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
+                        <label class="control-label col-md-3" for="Question">Question title</label>
                         <div id="questiontitlediv">
                             <div class="form-group">
                                 <div class="col-md-12">
@@ -1285,7 +1290,7 @@
                         </div>
                     </div>
                     @{ Html.RenderPartial("_RichTextBox"); }
-                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px, 15px, 0, 0; float: left;">
+                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 15px 0 0; float: left;">
                         <i></i><span>Save question</span>
                     </button>
                     </div>
