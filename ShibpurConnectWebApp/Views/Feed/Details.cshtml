@@ -525,7 +525,8 @@
         });
         
         $('.editQuesAnchor').click(function(){
-            $('.editQuesDiv').slideToggle();
+            $('.editQuesDiv').slideToggle().scrollTop(90);
+            $('#txt_question_edit').focus();
             return false;
         });
     });
@@ -1284,7 +1285,7 @@
                         </div>
                     </div>
                     @{ Html.RenderPartial("_RichTextBox"); }
-                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin-top: 15px;">
+                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px, 15px, 0, 0; float: left;">
                         <i></i><span>Save question</span>
                     </button>
                     </div>
