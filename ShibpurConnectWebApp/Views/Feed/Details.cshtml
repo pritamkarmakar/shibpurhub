@@ -313,7 +313,8 @@
      .description {
          margin-bottom: 20px;
      }
-    .editQuesDiv
+    
+    .editQuesDiv, .editQuesAnchor
     {
         display: none;
     }
@@ -388,7 +389,7 @@
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
                 
-                setUpEditQuestion();
+                
 
                 // get reputation of the user who asked this question
                 var reputation;
@@ -417,6 +418,11 @@
                 //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
 
                 isAskedByMe = question.isAskedByMe;
+                if(isAskedByMe)
+                {
+                    $('.editQuesAnchor').show();
+                    setUpEditQuestion();
+                }
                 getAnswers(question.answers);
                 // attach the categories
                 $(question.categories).each(function (i, category) {
@@ -531,6 +537,7 @@
         
         $('.editQuesAnchor').click(function(){
             $('.editQuesDiv').slideToggle().scrollTop(90);
+            $('.question-container').slideToggle();
             $('#txt_question_edit').focus();
             return false;
         });
@@ -1134,6 +1141,9 @@
         
         $('#btn_Edit_Question').click(function(){
             $('.editQuesDiv').slideToggle();
+            $('.header h2').text($('#txt_question_edit').val());
+            $('.description').html(qustionRTBoxEditor.getHTML());
+            $('.question-container').slideToggle();
         });
     }
 
@@ -1267,16 +1277,17 @@
                 <h2 style="font-size:22px;" id="questiontitle"></h2>
             </div>
             <div id="details" style="display:none">
-                <div class="description col-md-12 col-xs-12"></div>
-                <div class="tags col-md-12 col-xs-12"></div>
-                <div class="stat col-md-2">
-                    <span><i class="fa fa-flag" style="color: rgb(234, 113, 113)">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
+                <div class="question-container">
+                    <div class="description col-md-12 col-xs-12"></div>
+                    <div class="tags col-md-12 col-xs-12"></div>
+                    <div class="stat col-md-2">
+                        <span><i class="fa fa-flag" style="color: rgb(234, 113, 113)">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
+                    </div>
+                    <div class="stat col-md-2">
+                        <span><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
+                    </div>
+                    <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
                 </div>
-                <div class="stat col-md-2">
-                    <span><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
-                </div>
-                <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
-                
                 <!-- EDIT QUESTION START-->
                 <div class="editQuesDiv col-md-12 col-xs-12">
                     <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
@@ -1290,7 +1301,7 @@
                         </div>
                     </div>
                     @{ Html.RenderPartial("_RichTextBox"); }
-                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 15px 0 0; float: left;">
+                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
                         <i></i><span>Save question</span>
                     </button>
                     </div>
