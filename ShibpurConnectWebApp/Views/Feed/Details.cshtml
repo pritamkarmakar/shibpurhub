@@ -418,7 +418,7 @@
                 //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
 
                 isAskedByMe = question.isAskedByMe;
-                if(isAskedByMe)
+                if(question.isAskedByMe)
                 {
                     $('.spanEditQuestion').show();
                     setUpEditQuestion();
@@ -1289,25 +1289,25 @@
                     <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
                 </div>
             </div>
-            <!-- EDIT QUESTION START-->
-                <div class="editQuesDiv col-md-12 col-xs-12">
-                    <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
-                        <label class="control-label col-md-3" for="Question">Question title</label>
-                        <div id="questiontitlediv">
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <input class="form-control" id="txt_question_edit" type="text" required>
-                                </div>
-                            </div>
+         </div>
+        <!-- EDIT QUESTION START-->
+        <div class="editQuesDiv col-md-12 col-xs-12">
+            <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
+                <label class="control-label col-md-3" for="Question">Question title</label>
+                <div id="questiontitlediv">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input class="form-control" id="txt_question_edit" type="text" required>
                         </div>
                     </div>
-                    @{ Html.RenderPartial("_RichTextBox"); }
-                    <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
-                        <i></i><span>Save question</span>
-                    </button>
-                    </div>
                 </div>
-                <!-- EDIT QUESTION END-->
+            </div>
+            @{ Html.RenderPartial("_RichTextBox"); }
+            <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
+                <i></i><span>Save question</span>
+            </button>
+        </div>
+        <!-- EDIT QUESTION END-->
             <br /><br />
             <div id="moduleanswers">
                 @*<h4>Answers:</h4><hr />*@
