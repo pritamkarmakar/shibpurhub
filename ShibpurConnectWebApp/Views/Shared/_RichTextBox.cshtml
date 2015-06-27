@@ -1,12 +1,10 @@
 <script type="text/javascript">
     $(document).ready(function () {
-        var hdnRTBoxParams = $('.richtextbox-container').closest('.rtboxparams');
-        if(!hdnRTBoxParams)
-        {
-            return;
-        }
         
-        var params = $.parseJSON($(hdnRTBoxParams).val());
+        if(typeof setUpRichTextBox == 'function')
+        {
+            setUpRichTextBox();
+        }
     });
     
 </script>

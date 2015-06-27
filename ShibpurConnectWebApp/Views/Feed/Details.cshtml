@@ -1097,6 +1097,13 @@
             setUpAnswerUserActions();
         });
     }
+    
+    function setUpRichTextBox()
+    {
+        //var params = {'editorclass': 'ques-editor', 'toolbarclass': 'ques-toolbar', 'quilvar': qustionRTBoxEditor, 'label': 'Question'};
+        var rtContainer = $('.richtextbox-container');
+        var hdnParams = $(rtContainer).closest('.rtboxparams');
+    }
 
     // This method will execute when user will type user details in the 'Ask To Answer' serach box
     $(function () {
