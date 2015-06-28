@@ -1064,6 +1064,13 @@
         if(answer.isAnsweredByMe)
         {
             $(answerBlock).find('.edit-answer-span').show();
+            $('.edit-answer-anchor').click(function(){
+                advancedEditor.setHTML(answer.answerText);
+                $('html,body').animate({scrollTop: $('.wirte-answer').offset().top},'slow');
+                var answerHtml = $(this).closest('.answer-links').siblings('.text').html();
+                
+             });
+            
         }
 
         $('#answerlist').append(answerBlock);
