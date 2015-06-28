@@ -722,6 +722,12 @@
         var answerObject = { "AnswerText": answer, "QuestionId": questionID };
 
         advancedEditor.setHTML("");
+        var editAnswerId;
+        if($('.button.btn-submit-answer').attr('data-answer-id'))
+        {
+            editAnswerId = $('.button.btn-submit-answer').attr('data-answer-id');
+            $('.button.btn-submit-answer').removeAttr('data-answer-id');
+        }
         scAjax({
             "url": "Answers/PostAnswer",
             "type": "POST",
@@ -1067,9 +1073,8 @@
             $(span).show();
             $(span).find('.edit-answer-anchor').click(function(){
                 advancedEditor.setHTML(answer.answerText);
-                $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 55},'slow');
-                var answerHtml = $(this).closest('.answer-links').siblings('.text').html();
-                
+                $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 70},'slow');
+                $('.button.btn-submit-answer').attr('data-answer-id', answer.answerId); 
              });
             
         }
