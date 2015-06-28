@@ -314,7 +314,7 @@
          margin-bottom: 20px;
      }
     
-    .editQuesDiv, .stat #spanEditQuestion
+    .editQuesDiv, .stat #spanEditQuestion, .edit-answer-span
     {
         display: none;
     }
@@ -850,7 +850,13 @@
 
             var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
             $(commentBlock).removeClass('hide');
-            $(commentBlock).find('.comment-text').text(e.commentText);
+            var commentTextSpan = $(commentBlock).find('.comment-text');
+            $(commentTextSpan).text(e.commentText);
+            if(e.isCommentedByMe)
+            {
+                var editCommentAnchor = $('<a href="#">').text(' Edit');
+                $(commentTextSpan).append(editCommentAnchor);
+            }
             $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
             $(commentBlock).find('.comment-user').text(e.displayName);
             $(commentBlock).find('.comment-user').attr("href", "/Account/Profile?userId=" + e.userId);
@@ -1053,6 +1059,11 @@
 
         if (answer.markedAsAnswer) {
             $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
+        }
+        
+        if(answer.isAnsweredByMe)
+        {
+            $(answerBlock).find('.edit-answer-span').show();
         }
 
         $('#answerlist').append(answerBlock);
@@ -1333,6 +1344,9 @@
                                     <span class="link comment-span">
                                         <a class="comment-anchor" href="#">Comment</a>
                                         <span class="comment-count"></span>
+                                    </span>
+                                    <span class="link edit-answer-span">
+                                        <a class="edit-answer-anchor" href="#">Edit</a>
                                     </span>
                                     <div class="stat">
                                         <span class="date"></span>

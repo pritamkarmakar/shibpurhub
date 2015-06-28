@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -300,11 +300,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         cvm.CommentId = cvm.CommentId;
                         cvm.CommentText = comment.CommentText;
                         cvm.PostedOnUtc = comment.PostedOnUtc;
+                        cvm.IsCommentedByMe = userInfo != null && comment.UserId == userInfo.Id;
                         answerComments.Add(cvm);
                     }
                     
                     var answervm = new AnswerViewModel().Copy(answer);
                     answervm.Comments = answerComments;
+                    answervm.IsAnswereddByMe = userInfo != null && answer.UserId == userInfo.Id;
                     allComments.AddRange(answerComments);
                     answervm.IsUpvotedByMe = userInfo != null && answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.Id);
                     answerVMs.Add(answervm);

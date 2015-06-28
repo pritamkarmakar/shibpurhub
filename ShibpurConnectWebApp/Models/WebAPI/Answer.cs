@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -73,6 +73,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public List<CustomUserInfo> UpvotedByUsers { get; set; }
+        
+        public bool IsAnswereddByMe { get; set; }
 
         public AnswerViewModel Copy(Answer answer)
         {

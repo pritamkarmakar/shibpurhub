@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
@@ -47,5 +47,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class CommentViewModel : Comment
     {
         public string DisplayName { get; set; }
+        
+        public bool IsCommentedByMe { get; set; }
     }
 }
