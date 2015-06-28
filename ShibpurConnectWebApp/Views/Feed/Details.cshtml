@@ -1063,10 +1063,11 @@
         
         if(answer.isAnsweredByMe)
         {
-            $(answerBlock).find('.edit-answer-span').show();
-            $('.edit-answer-anchor').click(function(){
+            var span = $(answerBlock).find('.edit-answer-span');
+            $(span).show();
+            $(span).find('.edit-answer-anchor').click(function(){
                 advancedEditor.setHTML(answer.answerText);
-                $('html,body').animate({scrollTop: $('.wirte-answer').offset().top},'slow');
+                $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 55},'slow');
                 var answerHtml = $(this).closest('.answer-links').siblings('.text').html();
                 
              });
