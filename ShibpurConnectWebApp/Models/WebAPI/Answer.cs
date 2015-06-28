@@ -74,7 +74,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public List<CustomUserInfo> UpvotedByUsers { get; set; }
         
-        public bool IsAnswereddByMe { get; set; }
+        public bool IsAnsweredByMe { get; set; }
 
         public AnswerViewModel Copy(Answer answer)
         {

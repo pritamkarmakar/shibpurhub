@@ -306,7 +306,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     
                     var answervm = new AnswerViewModel().Copy(answer);
                     answervm.Comments = answerComments;
-                    answervm.IsAnswereddByMe = userInfo != null && answer.UserId == userInfo.Id;
+                    answervm.IsAnsweredByMe = userInfo != null && answer.UserId == userInfo.Id;
                     allComments.AddRange(answerComments);
                     answervm.IsUpvotedByMe = userInfo != null && answervm.UpvotedByUserIds != null && answervm.UpvotedByUserIds.Contains(userInfo.Id);
                     answerVMs.Add(answervm);
