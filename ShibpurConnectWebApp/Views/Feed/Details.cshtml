@@ -722,11 +722,14 @@
         var answerObject = { "AnswerText": answer, "QuestionId": questionID };
 
         advancedEditor.setHTML("");
-        var editAnswerId;
-        if($('.button.btn-submit-answer').attr('data-answer-id'))
+        if($('.btn-submit-answer').attr('data-answer-id'))
         {
-            editAnswerId = $('.button.btn-submit-answer').attr('data-answer-id');
-            $('.button.btn-submit-answer').removeAttr('data-answer-id');
+            var editAnswerId = $('.btn-submit-answer').attr('data-answer-id');
+            $('.btn-submit-answer').removeAttr('data-answer-id');
+            $('#'+ editAnswerId).html(answer);
+            $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 20},'slow');
+            //TODO: EDIT ANSWER WEB API CALL
+            return;
         }
         scAjax({
             "url": "Answers/PostAnswer",
@@ -782,7 +785,7 @@
                 var answerBlock = $('#answerlist li.answer.hide').clone();
                 $(answerBlock).removeClass('hide');
                 // add fixed width if user add any image as part of the answer
-                $(answerBlock).find('.text').html(result.answerText.replace("<img", "<img style='max-width:530px;'"));
+                $(answerBlock).find('.text').html(result.answerText.replace("<img", "<img style='max-width:530px;'")).attr('id', result.answerId);
                 $(answerBlock).find('.userName').text(result.displayName);
                 $(answerBlock).find('.date').text(dateString);
                 $(answerBlock).find('.upvote-span').addClass('disabled');
@@ -862,6 +865,14 @@
             {
                 var editCommentAnchor = $('<a href="#">').text(' Edit');
                 $(commentTextSpan).append(editCommentAnchor);
+                $(editCommentAnchor).click(function(){
+                    var editCommentDiv = $('.edit-comment').clone().removeClass('hide');
+                    $(editCommentDiv).find('.txt_comment').val(e.commentText);
+                    $(editCommentDiv).find('.btn-edit-comment').attr('data-comment-id', e.commentId);
+                    $(commentBlock).children().hide();
+                    $(commentBlock).append(editCommentDiv);
+                
+                });
             }
             $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
             $(commentBlock).find('.comment-user').text(e.displayName);
@@ -1074,7 +1085,7 @@
             $(span).find('.edit-answer-anchor').click(function(){
                 advancedEditor.setHTML(answer.answerText);
                 $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 70},'slow');
-                $('.button.btn-submit-answer').attr('data-answer-id', answer.answerId); 
+                $('.btn-submit-answer').attr('data-answer-id', answer.answerId); 
              });
             
         }
@@ -1380,18 +1391,17 @@
                                 @*<a class="commentor col-md-1" href="#">
                                         <img height="25" width="25" src="/Content/images/profile-image.jpg">
                                     </a>*@
-                                <div class="input-div col-md-9">
+                                <div class="input-div col-md-10" style="padding: 0;">
                                     <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
                                     @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2" style="padding: 2px 0px 0px 6px;">
                                     @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
-                                    <button type="submit" class="btn btn-sm btn-primary btn-save-comment">
+                                    <button type="submit" class="btn btn-sm btn-primary btn-save-comment btn-xs">
                                         <i></i><span>Save</span>
                                     </button>
                                     <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
                                 </div>
-
                             </div>
                         </div>
                     </li>
@@ -1539,6 +1549,19 @@
     <div class="col-md-3 col-xs-12">
         @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
         @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")       
+    </div>
+    <div class="edit-comment hide">
+        <div class="input-div col-md-10" style="padding: 0;">
+            <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required> </textarea>
+            @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
+        </div>
+        <div class="col-md-2" style="padding: 2px 0px 0px 6px;">
+            @* <input type="button" class="btn btn-sm btn-primary btn-edit-comment" value="Comment">*@
+            <button type="submit" class="btn btn-sm btn-primary btn-edit-comment btn-xs">
+                <i></i><span>Save</span>
+            </button>
+            <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
+        </div>
     </div>
 </div>
 
