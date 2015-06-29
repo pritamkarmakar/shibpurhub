@@ -874,12 +874,13 @@
                 var editCommentAnchor = $('<a href="#">').text(' Edit');
                 $(commentTextSpan).append(editCommentAnchor);
                 $(editCommentAnchor).click(function(){
-                    var editCommentDiv = $('.edit-comment').clone().removeClass('hide');
+                    var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
                     $(editCommentDiv).find('.txt_comment').val(e.commentText);
                     $(editCommentDiv).find('.btn-edit-comment').attr('data-comment-id', e.commentId);
                     $(commentBlock).children().hide();
                     $(commentBlock).append(editCommentDiv);
                     
+                    $('.edit-comment:not(.hide)').parent().remove('.edit-comment').children().show();
                     return false;
                 
                 });
