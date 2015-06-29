@@ -785,7 +785,7 @@
                 var answerBlock = $('#answerlist li.answer.hide').clone();
                 $(answerBlock).removeClass('hide');
                 // add fixed width if user add any image as part of the answer
-                $(answerBlock).find('.text').html(result.answerText.replace("<img", "<img style='max-width:530px;'")).attr('id', result.answerId);
+                $(answerBlock).find('.text').html(result.answerText.replace("<img", "<img style='max-width:530px;'"));
                 $(answerBlock).find('.userName').text(result.displayName);
                 $(answerBlock).find('.date').text(dateString);
                 $(answerBlock).find('.upvote-span').addClass('disabled');
@@ -1046,7 +1046,7 @@
     function createAnswerHtml(answerBlock, answer) {
         $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
         // set a max width for any image that is part of the answer
-        $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'"));
+        $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'")).attr('id', result.answerId);
         $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
         if (answer.isUpvotedByMe) {
             $(answerBlock).find('.upvote-span').addClass('disabled');
@@ -1550,7 +1550,7 @@
         @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
         @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")       
     </div>
-    <div class="edit-comment hide">
+    <div class="edit-comment hide" style="overflow: auto;">
         <div class="input-div col-md-10" style="padding: 0;">
             <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required> </textarea>
             @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
