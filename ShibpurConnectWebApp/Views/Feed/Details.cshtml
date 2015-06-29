@@ -1046,7 +1046,7 @@
     function createAnswerHtml(answerBlock, answer) {
         $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
         // set a max width for any image that is part of the answer
-        $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'")).attr('id', result.answerId);
+        $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'")).attr('id', answer.answerId);
         $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
         if (answer.isUpvotedByMe) {
             $(answerBlock).find('.upvote-span').addClass('disabled');
