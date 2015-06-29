@@ -727,8 +727,16 @@
             var editAnswerId = $('.btn-submit-answer').attr('data-answer-id');
             $('.btn-submit-answer').removeAttr('data-answer-id');
             $('#'+ editAnswerId).html(answer);
-            $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 20},'slow');
+            $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 50},'slow');
             //TODO: EDIT ANSWER WEB API CALL
+            
+            // enable the button
+            $('.btn-submit-answer').prop('disabled', false);
+
+            // remove the loading class from save button
+            $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+            $('.btn-submit-answer > span').text('Submit Answer');
+            
             return;
         }
         scAjax({
@@ -871,6 +879,8 @@
                     $(editCommentDiv).find('.btn-edit-comment').attr('data-comment-id', e.commentId);
                     $(commentBlock).children().hide();
                     $(commentBlock).append(editCommentDiv);
+                    
+                    return false;
                 
                 });
             }
