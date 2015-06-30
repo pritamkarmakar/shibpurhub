@@ -418,15 +418,11 @@
                 //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
 
                 isAskedByMe = question.isAskedByMe;
-                // get the user who currently logged-in
-                var userDetails = localStorage.getItem("SC_Session_UserDetails");
-                if (userDetails != null) {
-                    var userInfo = $.parseJSON(userDetails);
-                    // if the logged-in user and the user who asked this question is same then show the question edit option
-                    if (userInfo.id == question.userId) {
-                        $('#spanEditQuestion').show();
-                        setUpEditQuestion();
-                    }
+                // if the logged-in user and the user who asked this question is same then show the question edit option
+                if(isLoggedInUserId(question.userId))
+                {
+                    $('#spanEditQuestion').show();
+                    setUpEditQuestion();
                 }
                 
                 getAnswers(question.answers);
@@ -733,7 +729,7 @@
             var editAnswerId = $('.btn-submit-answer').attr('data-answer-id');
             $('.btn-submit-answer').removeAttr('data-answer-id');
             $('#'+ editAnswerId).html(answer);
-            $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 50},'slow');
+            $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 70},'slow');
             //TODO: EDIT ANSWER WEB API CALL
             
             // enable the button

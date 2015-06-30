@@ -1,4 +1,4 @@
-﻿
+
 var SERVER = "http://shibpur.azurewebsites.net/api/";
 var IMGURPATH = "http://i.imgur.com/";
 $(document).ready(function () {
@@ -465,4 +465,26 @@ function buildPagination(pages) {
         }
         $('.pagination').append(li);
     }
+}
+
+var LOGGEDINUSERDETAILS;
+function isLoggedInUserId(userId)
+{
+    if(!userId)
+    {
+        return false;
+    }
+    
+    if(LOGGEDINUSERDETAILS == null)
+    {
+        LOGGEDINUSERDETAILS = localStorage.getItem("SC_Session_UserDetails");
+    }
+    
+    var userInfo = $.parseJSON(LOGGEDINUSERDETAILS);
+
+    if (userInfo.id == userId) {
+        return true;
+    }
+    
+    return false;
 }
