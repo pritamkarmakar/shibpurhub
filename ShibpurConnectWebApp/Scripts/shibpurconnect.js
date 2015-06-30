@@ -62,7 +62,7 @@ function scAjax(options)
     try
     {
         var token = $.parseJSON(localStorage.getItem("TOKEN"));
-        var server = "/api/"
+        var server = "/api/";
         var ajaxOptions = {
             url: server + options.url,
             type: options.type || "GET",
@@ -70,7 +70,7 @@ function scAjax(options)
             contentType: options.contentType || "application/json; charset=utf-8",
             headers: {
                 Accept: "application/json",
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
             beforeSend: function (xhr) {
                 // check if there is no token in browser local storage

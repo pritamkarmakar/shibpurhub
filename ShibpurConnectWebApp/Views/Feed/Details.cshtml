@@ -314,7 +314,7 @@
          margin-bottom: 20px;
      }
     
-    .editQuesDiv, .stat #spanEditQuestion, .edit-answer-span
+    .editQuesDiv, #spanEditQuestion, .edit-answer-span
     {
         display: none;
     }
@@ -418,11 +418,17 @@
                 //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
 
                 isAskedByMe = question.isAskedByMe;
-                if(question.isAskedByMe)
-                {
-                    $('#spanEditQuestion').show();
-                    setUpEditQuestion();
+                // get the user who currently logged-in
+                var userDetails = localStorage.getItem("SC_Session_UserDetails");
+                if (userDetails != null) {
+                    var userInfo = $.parseJSON(userDetails);
+                    // if the logged-in user and the user who asked this question is same then show the question edit option
+                    if (userInfo.id == question.userId) {
+                        $('#spanEditQuestion').show();
+                        setUpEditQuestion();
+                    }
                 }
+                
                 getAnswers(question.answers);
                 // attach the categories
                 $(question.categories).each(function (i, category) {
@@ -1329,11 +1335,12 @@
                 <div>
                     <div class="description col-md-12 col-xs-12"></div>
                     <div class="tags col-md-12 col-xs-12"></div>
-                    <div class="stat col-md-2">
-                        <span><i class="fa fa-flag" style="color: rgb(234, 113, 113)">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
+                    <div class="col-md-4" style="margin-top: 20px">
+                        <span style="font-size: 9pt; margin-right: 10px;"><i class="fa fa-flag" style="color: rgb(234, 113, 113);">&nbsp;</i><a onclick="togglemodal();">Report</a></span>
+                        <span id="spanEditQuestion" style="font-size: 9pt;"><i class="fa fa-pencil">&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
                     </div>
                     <div class="stat col-md-2">
-                        <span id="spanEditQuestion"><i class="fa fa-pencil" >&nbsp;</i><a class="editQuesAnchor">Edit</a></span>
+                        
                     </div>
                     <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
                 </div>
