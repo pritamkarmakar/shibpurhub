@@ -871,7 +871,7 @@
             $(commentBlock).removeClass('hide');
             var commentTextSpan = $(commentBlock).find('.comment-text');
             $(commentTextSpan).text(e.commentText);
-            if(e.isCommentedByMe)
+            if(isLoggedInUserId(e.userId))
             {
                 var editCommentAnchor = $('<a href="#">').text(' Edit');
                 $(commentTextSpan).append(editCommentAnchor);
@@ -1094,7 +1094,7 @@
             $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
         }
         
-        if(answer.isAnsweredByMe)
+        if(isLoggedInUserId(answer.userId))
         {
             var span = $(answerBlock).find('.edit-answer-span');
             $(span).show();
