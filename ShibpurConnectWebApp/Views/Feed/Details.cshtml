@@ -333,7 +333,7 @@
     
     //used to reference rich textbox editor for question edit
     var qustionRTBoxEditor;
-
+    var categoryArr = [];
     $(document).ready(function () {
         
         // hide the submit answer rich text control
@@ -431,6 +431,7 @@
                 $(question.categories).each(function (i, category) {
                     var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory?category=" + category);
                     $('div.tags').append(tagAnchor);
+                    categoryArr.push(category);
                 });
 
                 // show the suggested user who can answer this question using elastic search
@@ -1195,7 +1196,8 @@
             var data = {
                 "questionId" : $(this).attr('data-question-id'),
                 "title": $('#txt_question_edit').val(),
-                "description": qustionRTBoxEditor.getHTML()
+                "description": qustionRTBoxEditor.getHTML(),
+                "categories": categoryArr
             };
 
             scAjax({
