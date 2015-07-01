@@ -407,6 +407,7 @@
                             return;
                         }
                         $('#questionaskedby').show();
+                        $('#btn_Edit_Question').attr('data-question-id', questionID);
                         // form the smaller imgur image by adding 's' before '.jpg'
                         if (question.userProfileImage.charAt(question.userProfileImage.indexOf('.jpg') - 1) != 's') {
                             question.userProfileImage = question.userProfileImage.replace('.jpg', 's.jpg');
@@ -1191,9 +1192,31 @@
         qustionRTBoxEditor.setHTML($('.description').html());
         
         $('#btn_Edit_Question').click(function(){
+            var data = {
+                "questionId" : $(this).attr('data-question-id'),
+                "title": $('#txt_question_edit').val(),
+                "description": qustionRTBoxEditor.getHTML()
+            };
+
+            scAjax({
+                "url": "questions/EditQuestion",
+                "type": "POST",
+                "data": JSON.stringify(data, null, 2),
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+                }
+            });
+            
             $('.editQuesDiv').toggle();
             $('.header h2').text($('#txt_question_edit').val());
             $('.description').html(qustionRTBoxEditor.getHTML());
+            $('.question-container').slideToggle();
+        });
+        
+        $('#btn_Cancel_Edit_Question').click(function() {
+            $('.editQuesDiv').toggle();
             $('.question-container').slideToggle();
         });
     }
@@ -1357,6 +1380,9 @@
             @{ Html.RenderPartial("_RichTextBox"); }
             <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
                 <i></i><span>Save question</span>
+            </button>
+            <button type="submit" id="btn_Cancel_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
+                <i></i><span>Cancel</span>
             </button>
         </div>
         <!-- EDIT QUESTION END-->

@@ -52,6 +52,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public List<string> UpvotedByUserIds { get; set; }
+        
+        [DataMember]
+        public DateTime? LastEditedOnUtc { get; set; }
     }
 
     public class AnswerViewModel : Answer

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,6 +15,12 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [Serializable]
     public class QuestionDTO
     {
+        // Primary key
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty(PropertyName = "questionId")]
+        public string QuestionId { get; set; }
+        
         [Required]
         [MinLength(20, ErrorMessage = "Minimum length of the question title should be more than 20 characters")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters allowed in question title")]
@@ -35,12 +41,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// </summary>
     [Serializable]
     public class Question : QuestionDTO
-    {
-        // Primary key
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        [JsonProperty(PropertyName = "questionId")]
-        public string QuestionId { get; set; }
+    { 
        
         [DataMember]
         public string UserId { get; set; }
@@ -55,6 +56,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public int ViewCount { get; set; }
 
         public int SpamCount { get; set; }
+        
+        [DataMember]
+        public DateTime? LastEditedOnUtc { get; set; }
     }
 
     /// <summary>

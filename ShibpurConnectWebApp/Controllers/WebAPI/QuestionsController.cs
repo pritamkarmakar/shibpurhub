@@ -654,6 +654,48 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = questionToPost.QuestionId }, questionToPost);
         }
         
+        /// <summary>
+        /// API to edit a question
+        /// </summary>
+        /// <param name="question">QuestionDTO object</param>
+        /// <returns></returns>
+        [Authorize]
+        [ResponseType(typeof(Question))]
+        [InvalidateCacheOutput("GetQuestions")]
+        [InvalidateCacheOutput("GetQuestionsByUser")]
+        [InvalidateCacheOutput("GetQuestion")]
+        public async Task<IHttpActionResult> EditQuestion(QuestionDTO question)
+        {
+            // validate title
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (question == null)
+            {
+                return BadRequest("Request body is null. Please send a valid QuestionDTO object"); 
+            }
+            
+            var questionFromDB = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == question.QuestionId).FirstOrDefault();
+            if (questionFromDB == null)
+            {
+                return NotFound();
+            }
+            
+            questionFromDB.Title = question.Title;
+            questionFromDB.Description = question.Description;
+            questionFromDB.LastEditedOnUtc = DateTime.UtcNow;
+            
+            // save the question to the database
+            var result = _mongoHelper.Collection.Save(questionFromDB);
+
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();
+
+            return CreatedAtRoute("DefaultApi", new { id = questionFromDB.QuestionId }, questionFromDB);
+        }
+        
         private QuestionViewModel GetQuestionViewModel(Question question, CustomUserInfo userData)
         {
             return new QuestionViewModel
