@@ -20,7 +20,7 @@
         {
             // find out if a user following particular tag or not. Then change the button text accordingly from 'follow' -> 'following
             scAjax({
-                "url": "tags/FindUserTags",
+                "url": "tags/FindUserTags?userId=" + userInfo.id,
                 "success": function (result) {
                     if (!result) {
                         return;

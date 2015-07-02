@@ -545,9 +545,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [ResponseType(typeof(Question))]
         [InvalidateCacheOutput("GetQuestions")]
-        [InvalidateCacheOutput("GetQuestionsByUser")]
         [InvalidateCacheOutput("GetPopularTags", typeof(TagsController))]
-        [InvalidateCacheOutput("FindUserTags", typeof(TagsController))]
         public async Task<IHttpActionResult> PostQuestions(QuestionDTO question)
         {
             // validate title
@@ -646,6 +644,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
       
             // save the question to the database
             var result = _mongoHelper.Collection.Save(questionToPost);
+
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+            // invalidate the GetAnswersCount api for this question
+            cache.RemoveStartsWith("questions-getquestionsbyuser-userId=" + userInfo.Id);
 
             // if mongo failed to save the data then send error
             if (!result.Ok)

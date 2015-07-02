@@ -168,7 +168,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("FindUserTags")]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]        
         public async Task<IHttpActionResult> FollowNewTag(string tagName)
         {
@@ -215,6 +214,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return errorResult;
             }
 
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+            // invalidate the findusertags api 
+            cache.RemoveStartsWith("tags-findusertags-userId=" + userInfo.Id);
+
             return Ok("{'status': 'success'}");
         }
 
@@ -225,7 +229,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("FindUserTags")]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]      
         public async Task<IHttpActionResult> UnfollowTag(string tagName)
         {
@@ -267,6 +270,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     return errorResult;
                 }
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+                // invalidate the findusertags api 
+                cache.RemoveStartsWith("tags-findusertags-userId=" + userInfo.Id);
             }
 
             return Ok("{'status': 'success'}");
@@ -278,27 +286,23 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
         [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
-        public async Task<IHttpActionResult> FindUserTags()
+        public async Task<IHttpActionResult> FindUserTags(string userId)
         {
-            // get user identity from the supplied bearer token
-            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
-
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserById(userId);
             var userInfo = await userResult;
             if (userInfo == null)
             {
-                ModelState.AddModelError("", "No user is found with the provided bearer token. Please relogin or try again. Or API user please send valid bearer token");
+                ModelState.AddModelError("",
+                    "No user is found with the provided bearer token. Please relogin or try again. Or API user please send valid bearer token");
                 return BadRequest(ModelState);
-            }           
+            }
 
             else
                 return Ok(userInfo.Tags);
         }
-                
+
         /// <summary>
         /// Add a new category
         /// </summary>

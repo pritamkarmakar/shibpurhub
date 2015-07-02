@@ -153,7 +153,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="imageInfo"></param>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("GetProfileByUserId")]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
         public async Task<IHttpActionResult> UpdateProfileImage(ImageInfo imageInfo)
         {
@@ -209,6 +208,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 helper.UpdateProfileImageURL(userInfo.Id, imageName + "#" + deleteHash);
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+                // invalidate the getprofilebyuserid api for the user who is updating profile image
+                cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
             }
 
             return Ok();
@@ -220,9 +224,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userInfo">CustomUserInfo object</param>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("GetProfile")]
-        [InvalidateCacheOutput("GetProfileByUserId")]
-        [InvalidateCacheOutput("GetUserInfo")]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
         public async Task<IHttpActionResult> UpdateProfile(string firstName, string lastName, string location, string aboutMe)
         {       
@@ -248,6 +249,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     return errorResult;
                 }
 
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getprofile api call for the user who updating profile
+                cache.RemoveStartsWith("profile-getprofile-userEmail=" + user.Email);
+                // invalidate the getprofilebyuserid api call for the user who updating profile
+                cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + user.Id);
+                // invalidate the getuserinfo api call for the user who updating profile
+                cache.RemoveStartsWith("profile-getuserinfo-userId=" + user.Id);
+
+
                 return Ok(new CustomUserInfo
                     {
                         Email = user.Email,
@@ -269,8 +281,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("GetUserFollowers")]
-        [InvalidateCacheOutput("GetUserFollowing")]
         public async Task<IHttpActionResult> FollowUser(string userIdToFollow)
         {
             if (string.IsNullOrEmpty(userIdToFollow))
@@ -305,6 +315,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return errorResult;
             }
 
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+            // invalidate the getuserfollowers api 
+            cache.RemoveStartsWith("profile-getuserfollowers-userId=" + userInfo.Id);
+            // invalidate the getuserfollowing api 
+            cache.RemoveStartsWith("profile-getuserfollowing-userId=" + userInfo.Id);
+
             // send notification to the user who is getting followed
             Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
             string pathQuery = myuri.PathAndQuery;
@@ -329,8 +346,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("GetUserFollowers")]
-        [InvalidateCacheOutput("GetUserFollowing")]
         public async Task<IHttpActionResult> UnFollowUser(string userToUnfollow)
         {
             if (string.IsNullOrEmpty(userToUnfollow))
@@ -361,6 +376,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     return errorResult;
                 }
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+                // invalidate the getuserfollowers api 
+                cache.RemoveStartsWith("profile-getuserfollowers-userId=" + userInfo.Id);
+                // invalidate the getuserfollowing api 
+                cache.RemoveStartsWith("profile-getuserfollowing-userId=" + userInfo.Id);
 
                 return Ok("suceessfully unfollowed this user");
             }

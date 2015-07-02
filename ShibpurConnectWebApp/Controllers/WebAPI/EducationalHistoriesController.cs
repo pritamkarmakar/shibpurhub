@@ -61,42 +61,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(educationalHistory);
         }
 
-        //// PUT: api/EducationalHistories/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutEducationalHistory(string id, EducationalHistory educationalHistory)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != educationalHistory.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    db.Entry(educationalHistory).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!EducationalHistoryExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        // POST: api/EducationalHistories
         /// <summary>
         /// Save a new educational history for a user
         /// </summary>

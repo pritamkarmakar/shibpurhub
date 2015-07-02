@@ -168,13 +168,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // POST: api/Questions
         [Authorize]
         [ResponseType(typeof(Answer))]
-        [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetQuestions", typeof(QuestionsController))]
-        [InvalidateCacheOutput("GetAnswersCount", typeof(QuestionsController))]
-        [InvalidateCacheOutput("GetResponseRate", typeof(AskToAnswerController))]
         [InvalidateCacheOutput("GetPopularQuestions", typeof(QuestionsController))]
-        [InvalidateCacheOutput("GetAnswers")]
-        [InvalidateCacheOutput("GetAnswersByUser")]
         public async Task<IHttpActionResult> PostAnswer(AnswerDTO answerdto)
         {
             if (!ModelState.IsValid)
@@ -226,6 +221,24 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     question.HasAnswered = true;
                     questionMongoHelper.Collection.Save(question);
                 }
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getquestion api call for the question associated with this answer
+                cache.RemoveStartsWith("questions-getquestion-questionId=" + answerdto.QuestionId);
+
+                // invalidate the responserate api for the user who posted this answer
+                cache.RemoveStartsWith("asktoanswer-getresponserate-userId=" + userInfo.Id);
+
+                // invalidate the GetAnswersCount api for this question
+                cache.RemoveStartsWith("questions-getanswerscount-questionId=" + answerdto.QuestionId);
+
+                // invalidate the GetAnswers api for this answer
+                cache.RemoveStartsWith("answers-getanswers-answerId=" + answer.AnswerId);
+
+                // invalidate the GetAnswersByUser api for the user who is posting this answer
+                cache.RemoveStartsWith("answers-getanswersbyuser-userId=" + userInfo.Id);
 
                 return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
             }

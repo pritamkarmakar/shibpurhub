@@ -50,42 +50,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(employmentHistory);
         }
 
-        // PUT: api/EmploymentHistories/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutEmploymentHistory(string id, EmploymentHistory employmentHistory)
-        //{
-        //    //if (!ModelState.IsValid)
-        //    //{
-        //    //    return BadRequest(ModelState);
-        //    //}
-
-        //    //if (id != employmentHistory.Id)
-        //    //{
-        //    //    return BadRequest();
-        //    //}
-
-        //    //db.Entry(employmentHistory).State = EntityState.Modified;
-
-        //    //try
-        //    //{
-        //    //    db.SaveChanges();
-        //    //}
-        //    //catch (DbUpdateConcurrencyException)
-        //    //{
-        //    //    if (!EmploymentHistoryExists(id))
-        //    //    {
-        //    //        return NotFound();
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        throw;
-        //    //    }
-        //    //}
-
-        //    //return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        // POST: api/EmploymentHistories
         [ResponseType(typeof(EmploymentHistories))]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
         public IHttpActionResult PostEmploymentHistory(EmploymentHistories employmentHistory)

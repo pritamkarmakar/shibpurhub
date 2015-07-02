@@ -28,6 +28,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<Comment>();
         }
 
+        /// <summary>
+        /// Get list of comments available in an answer
+        /// </summary>
+        /// <param name="answerId">answerid to search</param>
+        /// <returns></returns>
         [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
         public IList<Comment> GetCommentsForAnswer(string answerId)
         {
@@ -49,7 +54,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [ResponseType(typeof(Comment))]
         [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
-        [InvalidateCacheOutput("GetCommentsForAnswer")]
         public async Task<IHttpActionResult> PostComment(CommentDTO comment)
         {
             if (!ModelState.IsValid)
@@ -85,6 +89,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
+
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+            // invalidate the getquestion api call for the question associated with this answer
+            cache.RemoveStartsWith("comments-getcommentsforanswer-answerId=" + comment.AnswerId);
 
             // send notification to the user who posted the corresponding answer and who posted the actual question
             // get the hostname

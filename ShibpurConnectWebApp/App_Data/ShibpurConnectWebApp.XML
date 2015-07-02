@@ -590,7 +590,7 @@
             <param name="tagName">tag to unfollow</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.FindUserTags">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.FindUserTags(System.String)">
             <summary>
             API to return all tags that one user is following
             </summary>
@@ -739,6 +739,13 @@
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.PostQuestions(ShibpurConnectWebApp.Models.WebAPI.QuestionDTO)">
             <summary>
             API to post a new question
+            </summary>
+            <param name="question">QuestionDTO object</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.EditQuestion(ShibpurConnectWebApp.Models.WebAPI.QuestionDTO)">
+            <summary>
+            API to edit a question
             </summary>
             <param name="question">QuestionDTO object</param>
             <returns></returns>
@@ -911,6 +918,13 @@
             <summary>
             Model with comment user name
             </summary>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.GetCommentsForAnswer(System.String)">
+            <summary>
+            Get list of comments available in an answer
+            </summary>
+            <param name="answerId">answerid to search</param>
+            <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.PostComment(ShibpurConnectWebApp.Models.WebAPI.CommentDTO)">
             <summary>
