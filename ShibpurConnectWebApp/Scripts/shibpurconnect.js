@@ -482,7 +482,9 @@ function isLoggedInUserId(userId)
     
     var userInfo = $.parseJSON(LOGGEDINUSERDETAILS);
 
-    if (userInfo.id == userId) {
+    // check if userInfo is null, this can happen when local storage doesn't have the userinfo
+    // then check whether the localstorage userinfo and logged-in user is same or not
+    if (userInfo != null && userInfo.id == userId) {
         return true;
     }
     
