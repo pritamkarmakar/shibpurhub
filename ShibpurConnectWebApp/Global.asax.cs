@@ -24,6 +24,12 @@ namespace ShibpurConnectWebApp
             );
 
             routes.MapRoute(
+               "StartDiscussion",                                           // Route name
+               "Feed/StartDiscussion",                            // URL with parameters
+               new { controller = "Feed", action = "StartDiscussion" }  // Parameter defaults
+           );
+
+            routes.MapRoute(
                 "FeedDetails",                                           // Route name
                 "Feed/{id}",                            // URL with parameters
                 new { controller = "Feed", action = "Details" }  // Parameter defaults

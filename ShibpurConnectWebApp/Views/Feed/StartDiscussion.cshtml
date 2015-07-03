@@ -135,7 +135,12 @@
                             errorMessage += "<li>" + val + "</li>";
                         });
 
-                        Command: toastr["error"]("<ul>" + errorMessage + "</ul>")
+                        // if the error is because of duplicate question then make it as info
+                        if (errorMessage.toLowerCase().indexOf("duplicate question") > 0)
+                            Command: toastr["info"]("<ul>" + errorMessage + "</ul>");
+                        else {
+                            Command: toastr["error"]("<ul>" + errorMessage + "</ul>");
+                        }
 
                         // enable the button
                         $('#btn_Save_Question').prop('disabled', false);

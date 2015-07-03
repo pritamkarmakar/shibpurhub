@@ -587,8 +587,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("No UserId is found");
             }
 
+            // generate seo friendly slug url
             var slug = helper.GenerateSlug(question.Title);
             var urlSlug = await slug;
+
+            //check if this slug already exist then send error to user
+            if (helper.GetQuestionIdFromSlug(urlSlug) != null)
+            {
+                ModelState.AddModelError("", "Duplicate question: Please take a look in this question -  <a href ='http://" + Request.RequestUri.Authority + "/feed/" + urlSlug + "'>" + question.Title + "</a>");
+                return BadRequest(ModelState); 
+            }
 
             // new question object that we will save in the database
             Question questionToPost = new Question()

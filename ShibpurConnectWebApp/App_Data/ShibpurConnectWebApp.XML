@@ -499,7 +499,7 @@
         </member>
         <member name="T:ShibpurConnectWebApp.Controllers.SlugToIdAttribute">
             <summary>
-            Filter to convert the url slug to id
+            Filter to retrieve the question id using the seo friendly url (slug)
             </summary>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.GetAnswers">
