@@ -587,6 +587,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("No UserId is found");
             }
 
+            var slug = helper.GenerateSlug(question.Title);
+            var urlSlug = await slug;
+
             // new question object that we will save in the database
             Question questionToPost = new Question()
             {
@@ -594,6 +597,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 UserId = userInfo.Id,
                 Description = question.Description,
                 Categories = question.Categories.Select(c => c.Trim()).ToArray(),
+                UrlSlug = urlSlug,
                 QuestionId = ObjectId.GenerateNewId().ToString(),
                 PostedOnUtc = DateTime.UtcNow
             };
@@ -714,7 +718,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 ViewCount = question.ViewCount,
                 UserEmail = userData.Email,
                 UserProfileImage = userData.ProfileImageURL,
-                DisplayName = userData.FirstName + " " + userData.LastName
+                DisplayName = userData.FirstName + " " + userData.LastName,
+                UrlSlug = question.UrlSlug
             };
         }
     }

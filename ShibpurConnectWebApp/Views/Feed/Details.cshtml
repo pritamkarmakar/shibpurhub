@@ -330,12 +330,12 @@
     var advancedEditor;
     // we will keep the default users that can answer this question and we will retrieve it during page load
     var userListAskToAnswer;
-    
+
     //used to reference rich textbox editor for question edit
     var qustionRTBoxEditor;
     var categoryArr = [];
     $(document).ready(function () {
-        
+
         // hide the submit answer rich text control
         $('.wirte-answer').hide();
 
@@ -366,9 +366,7 @@
 
         jQuery.support.cors = true;
         var SERVER = "/api/";
-        var url = window.location.href;
-        var splitArr = url.split('/');
-        questionID = splitArr[splitArr.length - 1];
+        questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
         scAjax({
             "url": "questions/GetQuestion",
             "data": { "questionId": questionID },
@@ -388,8 +386,8 @@
 
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
-                
-                
+
+
 
                 // get reputation of the user who asked this question
                 var reputation;
@@ -425,7 +423,7 @@
                     $('#spanEditQuestion').show();
                     setUpEditQuestion();
                 }
-                
+
                 getAnswers(question.answers);
                 // attach the categories
                 $(question.categories).each(function (i, category) {
@@ -538,7 +536,7 @@
             $(parentDiv).removeClass("col-md-8").addClass("col-md-12");
             //$(parentDiv).next().addClass("col-md-offset-9");
         });
-        
+
         $('.editQuesAnchor').click(function(){
             $('.editQuesDiv').slideToggle();
             $('.question-container').slideToggle();
@@ -665,7 +663,7 @@
             });
         }
     }
-    
+
     function saveAnswer() {
         // hide the error div
         $('#errormessage').empty();
@@ -733,14 +731,14 @@
             $('#'+ editAnswerId).html(answer);
             $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 70},'slow');
             //TODO: EDIT ANSWER WEB API CALL
-            
+
             // enable the button
             $('.btn-submit-answer').prop('disabled', false);
 
             // remove the loading class from save button
             $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
             $('.btn-submit-answer > span').text('Submit Answer');
-            
+
             return;
         }
         scAjax({
@@ -882,14 +880,14 @@
                     var commentSection = $('.edit-comment:not(.hide)').parent();
                     $(commentSection).find('.edit-comment').remove();
                     $(commentSection).children().show();
-                    
+
                     var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
                     $(editCommentDiv).find('.txt_comment').val(e.commentText);
                     $(editCommentDiv).find('.btn-edit-comment').attr('data-comment-id', e.commentId);
                     $(commentBlock).children().hide();
                     $(commentBlock).append(editCommentDiv);
                     return false;
-                
+
                 });
             }
             $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
@@ -1095,7 +1093,7 @@
         if (answer.markedAsAnswer) {
             $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
         }
-        
+
         if(isLoggedInUserId(answer.userId))
         {
             var span = $(answerBlock).find('.edit-answer-span');
@@ -1103,9 +1101,9 @@
             $(span).find('.edit-answer-anchor').click(function(){
                 advancedEditor.setHTML(answer.answerText);
                 $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 70},'slow');
-                $('.btn-submit-answer').attr('data-answer-id', answer.answerId); 
+                $('.btn-submit-answer').attr('data-answer-id', answer.answerId);
              });
-            
+
         }
 
         $('#answerlist').append(answerBlock);
@@ -1166,13 +1164,13 @@
             setUpAnswerUserActions();
         });
     }
-    
+
     function setUpEditQuestion()
     {
         var rtContainer = $('.editQuesDiv .richtextbox-container');
         $(rtContainer).find('.control-label').text('Question');
         $('.editQuesDiv #txt_question_edit').val($('#questiontitle').text());
-        
+
         qustionRTBoxEditor = new Quill('.editQuesDiv .richtextbox-container .text-wrapper .editor-container', {
             modules: {
                 'authorship': {
@@ -1189,9 +1187,9 @@
             styles: false,
             theme: 'snow'
         });
-        
+
         qustionRTBoxEditor.setHTML($('.description').html());
-        
+
         $('#btn_Edit_Question').click(function(){
             var data = {
                 "questionId" : $(this).attr('data-question-id'),
@@ -1210,13 +1208,13 @@
                     }
                 }
             });
-            
+
             $('.editQuesDiv').toggle();
             $('.header h2').text($('#txt_question_edit').val());
             $('.description').html(qustionRTBoxEditor.getHTML());
             $('.question-container').slideToggle();
         });
-        
+
         $('#btn_Cancel_Edit_Question').click(function() {
             $('.editQuesDiv').toggle();
             $('.question-container').slideToggle();

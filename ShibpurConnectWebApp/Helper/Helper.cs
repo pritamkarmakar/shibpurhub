@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ShibpurConnectWebApp.Helper
@@ -281,6 +282,50 @@ namespace ShibpurConnectWebApp.Helper
             return new QuestionSpamAudit { SpamId = questionSpamDto.SpamId, QuestionId = questionSpamDto.QuestionId };
         }
 
-        
+        /// <summary>
+        /// Generate url slug using quetion title
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        internal async Task<string> GenerateSlug(string title)
+        {
+            //First to lower case
+            title = title.ToLowerInvariant();
+
+            //Remove all accents
+            var bytes = Encoding.GetEncoding("Cyrillic").GetBytes(title);
+            title = Encoding.ASCII.GetString(bytes);
+
+            //Replace spaces
+            title = Regex.Replace(title, @"\s", "-", RegexOptions.Compiled);
+
+            //Remove invalid chars
+            title = Regex.Replace(title, @"[^a-z0-9\s-_]", "", RegexOptions.Compiled);
+
+            //Trim dashes from end
+            title = title.Trim('-', '_');
+
+            //Replace double occurences of - or _
+            title = Regex.Replace(title, @"([-_]){2,}", "$1", RegexOptions.Compiled);
+
+            return title;
+        }
+
+        /// <summary>
+        /// Get the question id using the slug url
+        /// </summary>
+        /// <param name="slugUrl">question slug url</param>
+        /// <returns></returns>
+        internal string GetQuestionIdFromSlug(string slugUrl)
+        {
+            MongoHelper<Question> _mongoHelper = new MongoHelper<Question>();
+
+            //find out the question object using the slugurl
+            var questionObj = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.UrlSlug == slugUrl);
+
+            if (questionObj != null) return questionObj.QuestionId;
+
+            return null;
+        }
     }
 }

@@ -70,11 +70,11 @@ namespace ShibpurConnectWebApp.Controllers
         }
 
         // GET: Feed/Details/5
+        [SlugToId]
         public ActionResult Details(string id)
         {
-            //var thread = Threads.Where(a => a.ThreadID == id).FirstOrDefault();
-            //return View(thread);
             TempData["SelectedPage"] = "Threads";
+            ViewData["questionId"] = id;
             return View();
         }
 

@@ -497,6 +497,11 @@
             </summary>
             <param name="documentPath">The physical path to XML document.</param>
         </member>
+        <member name="T:ShibpurConnectWebApp.Controllers.SlugToIdAttribute">
+            <summary>
+            Filter to convert the url slug to id
+            </summary>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.GetAnswers">
             <summary>
             Will return all available Answers
@@ -882,6 +887,20 @@
             internal method to update the QuestionSpamDTO collection
             </summary>
             <param name="questionSpamDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Helper.Helper.GenerateSlug(System.String)">
+            <summary>
+            Generate url slug using quetion title
+            </summary>
+            <param name="title"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Helper.Helper.GetQuestionIdFromSlug(System.String)">
+            <summary>
+            Get the question id using the slug url
+            </summary>
+            <param name="slugUrl">question slug url</param>
             <returns></returns>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.AnswerDTO">

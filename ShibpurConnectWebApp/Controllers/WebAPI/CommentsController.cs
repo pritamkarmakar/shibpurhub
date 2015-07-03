@@ -119,7 +119,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             emailsController.SendEmail(new Email()
             {
                 UserId = answer.Content.UserId,
-                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your answer in question <a href='" + hostName + "/feed/details/" + question.Content.QuestionId + "'>" + question.Content.Title + "</a>",
+                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your answer in question <a href='" + hostName + "/feed/" + question.Content.QuestionId + "'>" + question.Content.Title + "</a>",
                 Subject = "ShibpurConnect: New comment to your answer"
             });
             }
@@ -131,7 +131,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 emailsController.SendEmail(new Email()
                 {
                     UserId = question.Content.UserId,
-                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/details/" + question.Content.QuestionId  +"'>" + question.Content.Title + "</a>",
+                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.QuestionId  +"'>" + question.Content.Title + "</a>",
                     Subject = "ShibpurConnect: New comment to your question" + question.Content.Title
                 });
             }

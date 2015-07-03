@@ -22,6 +22,12 @@ namespace ShibpurConnectWebApp
                 "Feed/Categories/{category}",                            // URL with parameters
                 new { controller = "Feed", action = "Categories" }  // Parameter defaults
             );
+
+            routes.MapRoute(
+                "FeedDetails",                                           // Route name
+                "Feed/{id}",                            // URL with parameters
+                new { controller = "Feed", action = "Details" }  // Parameter defaults
+            );
             
             routes.MapRoute(
                 "Default",                                              // Route name

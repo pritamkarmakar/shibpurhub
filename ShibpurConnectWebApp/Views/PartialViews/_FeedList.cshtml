@@ -257,7 +257,10 @@
                 $(userNameAnchor).attr('href', url);
             }
             //$(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
-            $(thread).find('div.detail a').text(question.title).attr('href', '/Feed/Details/' + question.questionId);
+            if (question.urlSlug != null)
+                $(thread).find('div.detail a').text(question.title).attr('href', '/feed/' + question.urlSlug);
+            else
+                $(thread).find('div.detail a').text(question.title).attr('href', '/feed/' + question.questionId);
             $(thread).find('div.detail a').attr('class', 'question-hyperlink');
             // extract only text from the question description, if user has image in the question description we will be able to remove those
             var tempdescription = '<p>' + question.description + '</p>';

@@ -50,7 +50,10 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public bool HasAnswered { get; set; }
 
         [DataMember]
-        public DateTime? PostedOnUtc { get; set; }       
+        public DateTime? PostedOnUtc { get; set; }
+
+        [DataMember]
+        public string UrlSlug { get; set; }
 
         [DataMember]
         public int ViewCount { get; set; }

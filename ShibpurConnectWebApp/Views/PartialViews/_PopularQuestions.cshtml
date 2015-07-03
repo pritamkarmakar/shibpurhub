@@ -10,9 +10,9 @@
 
                 $.each(result, function (key, value) {
                     if (value.answerCount > 0)
-                        $('#popularquestioncloud').append("<div id='popularquestiondiv'><a class='popularquestiontitle' href='/Feed/Details/" + value.questionId + "'> " + value.title + "..</a></div>");
+                        $('#popularquestioncloud').append("<div id='popularquestiondiv'><a class='popularquestiontitle' href='/feed/" + value.questionId + "'> " + value.title + "..</a></div>");
                     else
-                        $('#popularquestioncloud').append("<div id='popularquestiondiv'><a class='popularquestiontitle' href='/Feed/Details/" + value.questionId + "'> " + value.title + "..</a></div>");
+                        $('#popularquestioncloud').append("<div id='popularquestiondiv'><a class='popularquestiontitle' href='/feed/" + value.questionId + "'> " + value.title + "..</a></div>");
                 });
             }
         });
