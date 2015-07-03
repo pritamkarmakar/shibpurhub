@@ -79,7 +79,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan=864000, MustRevalidate=true)]
+        [CacheOutput(ServerTimeSpan=864000, ClientTimeSpan=864000, MustRevalidate=true)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
