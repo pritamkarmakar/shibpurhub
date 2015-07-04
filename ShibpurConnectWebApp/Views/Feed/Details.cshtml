@@ -733,6 +733,7 @@
             $('#'+ editAnswerId).html(answer);
             $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 70},'slow');
             
+            answerObject.AnswerId = editAnswerId;
             //Save the edit
             scAjax({
             "url": "Answers/EditAnswer",

@@ -352,6 +352,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
                 
                 answerInDB.AnswerText = answer.AnswerText;
+                answerInDB.LastEditedOnUtc = DateTime.UtcNow;
                 _mongoHelper.Collection.Save(answerInDB);
                 
                 return CreatedAtRoute("DefaultApi", new { id = answer.AnswerId }, answer);
