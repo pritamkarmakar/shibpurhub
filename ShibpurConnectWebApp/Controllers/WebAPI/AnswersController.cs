@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -329,6 +329,39 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return true;
+        }
+        
+        [Authorize]
+        [ResponseType(typeof(Answer))]
+        [InvalidateCacheOutput("GetQuestion")]
+        public async Task<IHttpActionResult> EditAnswer(Answer answer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (answer == null)
+                return BadRequest("Request body is null. Please send a valid Answer object");
+            
+            try
+            {
+                var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
+                if (answerInDB == null)
+                {
+                    return NotFound();
+                }
+                
+                answerInDB.AnswerText = answer.AnswerText;
+                answerInDB.LastEditedOnUtc = DateTime.UtcNow;
+                _mongoHelper.Collection.Save(answerInDB);
+                
+                return CreatedAtRoute("DefaultApi", new { id = answer.AnswerId }, answer);
+                
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            } 
         }
     }
 }
