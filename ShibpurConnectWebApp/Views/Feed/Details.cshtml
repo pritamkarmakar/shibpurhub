@@ -724,23 +724,39 @@
         var answerObject = { "AnswerText": answer, "QuestionId": questionID };
 
         advancedEditor.setHTML("");
+        
+        //This is for Edit
         if($('.btn-submit-answer').attr('data-answer-id'))
         {
             var editAnswerId = $('.btn-submit-answer').attr('data-answer-id');
             $('.btn-submit-answer').removeAttr('data-answer-id');
             $('#'+ editAnswerId).html(answer);
             $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 70},'slow');
-            //TODO: EDIT ANSWER WEB API CALL
+            
+            //Save the edit
+            scAjax({
+            "url": "Answers/EditAnswer",
+            "type": "POST",
+            "data": JSON.stringify(answerObject),
+            "success": function (result, data) {
+                if (!result) {
+                    return;
+                }
+                // enable the button
+                $('.btn-submit-answer').prop('disabled', false);
 
-            // enable the button
-            $('.btn-submit-answer').prop('disabled', false);
+                // remove the loading class from save button
+                $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('.btn-submit-answer > span').text('Submit Answer');
 
-            // remove the loading class from save button
-            $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
-            $('.btn-submit-answer > span').text('Submit Answer');
+                // send notification to the user who asked this question, that there is a new answer for your question
+                NotificationForNewAnswer();
+                }
+            });
 
             return;
         }
+        
         scAjax({
             "url": "Answers/PostAnswer",
             "type": "POST",
