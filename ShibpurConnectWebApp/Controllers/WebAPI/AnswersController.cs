@@ -170,6 +170,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [ResponseType(typeof(Answer))]
         [InvalidateCacheOutput("GetQuestions", typeof(QuestionsController))]
         [InvalidateCacheOutput("GetPopularQuestions", typeof(QuestionsController))]
+        [InvalidateCacheOutput("GetLeaderBoard", typeof(UsersController))]
         public async Task<IHttpActionResult> PostAnswer(AnswerDTO answerdto)
         {
             if (!ModelState.IsValid)

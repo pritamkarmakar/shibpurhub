@@ -239,7 +239,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ClientTimeSpan = 864000, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
