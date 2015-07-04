@@ -241,6 +241,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // invalidate the GetAnswersByUser api for the user who is posting this answer
                 cache.RemoveStartsWith("answers-getanswersbyuser-userId=" + userInfo.Id);
 
+                // invalidate the GetProfileByUserId api for the user who is posting this answer
+                cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+
                 return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
