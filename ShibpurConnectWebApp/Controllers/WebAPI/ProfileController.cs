@@ -331,7 +331,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     UserId = userIdToFollow,
                     Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a> now following you. Check all your followers <a href=" + hostName + "/Account/Profile> here</a>",
-                    Subject = "ShibpurConnect: You have a new follower"
+                    Subject = "ShibpurHub: You have a new follower"
 
                 });
 

@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@model ShibpurConnectWebApp.Models.DiscussionThread
+@model ShibpurHubWebApp.Models.DiscussionThread
 @{
     //ViewBag.Title = "Feed Details";
 }
@@ -379,7 +379,7 @@
                 var question = result;
                 $('#details').show();
                 // set page title
-                document.title = question.title + " - ShibpurConnect";
+                document.title = question.title + " - ShibpurHub";
                 $('.header h2').text(question.title);
                 $('.header h2').append("<hr/>");
                 $('.description').html(question.description.replace("<img", "<img style='max-width:730px;'"));
@@ -559,7 +559,7 @@
         var emaildata = {
             "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
             "UserId": elm.attributes["data-id"].value,
-            "Subject": "ShibpurConnect: Can you answer this question?"
+            "Subject": "ShibpurHub: Can you answer this question?"
         };
 
         scAjax({
@@ -629,7 +629,7 @@
             var emaildata = {
                 "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
                 "UserId": emailToSend,
-                "Subject": "ShibpurConnect: New answer in your question"
+                "Subject": "ShibpurHub: New answer in your question"
             };
 
             scAjax({
