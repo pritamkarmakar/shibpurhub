@@ -572,8 +572,9 @@
 
         // save this request in the Notification collection
         var notificationContent = {
-            "askedBy": userInfo.email,
+            "askedBy": userInfo.id,
             "displayName": userInfo.firstName + " " + userInfo.lastName,
+            "profileImage":userInfo.profileImageURL,
             "questionId": questionID,
             "questionTitle": $('#questiontitle').text()
         };
@@ -642,9 +643,10 @@
 
             // save this request in the Notification collection
             var notificationContent = {
-                "answeredBy": userInfo.email,
+                "answeredBy": userInfo.id,
                 "displayName": userInfo.firstName + " " + userInfo.lastName,
                 "questionId": questionID,
+                "profileImage":userInfo.profileImageURL,
                 "questionTitle": $('#questiontitle').text()
             };
             var data = {

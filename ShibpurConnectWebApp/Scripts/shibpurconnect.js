@@ -302,13 +302,13 @@ function changeuserfollowonmouseover(event) {
         $("#" + event.id + " > i").addClass('fa fa-minus-circle');         
         
         $("#" + event.id).removeClass();
-        $("#" + event.id).addClass('btn btn-sm btn-danger');
+        $("#" + event.id).addClass('btn btn-xs btn-danger');
         $("#" + event.id + " > span").text(" Unfollow");
     }
     else {
         // change button css when somone will hover on the follow button and if the text is 'Follow'       
         $("#" + event.id).removeClass();
-        $("#" + event.id).addClass('btn btn-sm btn-warning');
+        $("#" + event.id).addClass('btn btn-xs btn-warning');
         $("#" + event.id + " > i").attr('style', 'color:white;');
         $("#" + event.id + " > span").attr('style', 'color:white;font-weight:bold;');
     }
@@ -340,12 +340,12 @@ function changeuserfollowonmouseout(event) {
         $("#" + event.id + " > i").addClass('fa fa-check-circle');  
        
         $("#" + event.id).removeClass();
-        $("#" + event.id).addClass('btn btn-sm btn-success');
+        $("#" + event.id).addClass('btn btn-xs btn-success');
         $("#" + event.id + " > span").text(" Following");
     }
     else {
         $("#" + event.id).removeClass();
-        $("#" + event.id).addClass('btn btn-sm btn-success');
+        $("#" + event.id).addClass('btn btn-xs btn-success');
         $("#" + event.id + " > span").attr('style', 'color:white;');
         $("#" + event.id + " > i").attr('style', 'color:white;');
     }

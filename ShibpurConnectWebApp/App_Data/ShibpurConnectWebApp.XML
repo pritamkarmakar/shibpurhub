@@ -1017,7 +1017,7 @@
             <param name="userIdToFollow">userid that we want to follow</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UnFollowUser(System.String)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UnfollowUser(System.String)">
             <summary>
             API to unfollow a user
             </summary>

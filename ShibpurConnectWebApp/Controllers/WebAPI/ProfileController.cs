@@ -318,7 +318,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // invalidate the cache for the action those will get impacted due to this new answer post
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
             // invalidate the getuserfollowers api 
-            cache.RemoveStartsWith("profile-getuserfollowers-userId=" + userInfo.Id);
+            cache.RemoveStartsWith("profile-getuserfollowers-userId=" + userIdToFollow);
             // invalidate the getuserfollowing api 
             cache.RemoveStartsWith("profile-getuserfollowing-userId=" + userInfo.Id);
 
@@ -346,7 +346,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<IHttpActionResult> UnFollowUser(string userToUnfollow)
+        public async Task<IHttpActionResult> UnfollowUser(string userToUnfollow)
         {
             if (string.IsNullOrEmpty(userToUnfollow))
                 return BadRequest("supplied userid is null or empty");
@@ -380,7 +380,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
                 // invalidate the getuserfollowers api 
-                cache.RemoveStartsWith("profile-getuserfollowers-userId=" + userInfo.Id);
+                cache.RemoveStartsWith("profile-getuserfollowers-userId=" + userToUnfollow);
                 // invalidate the getuserfollowing api 
                 cache.RemoveStartsWith("profile-getuserfollowing-userId=" + userInfo.Id);
 
@@ -397,7 +397,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetUserFollowers(string userId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -435,7 +435,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400, MustRevalidate = true)]
         public async Task<IHttpActionResult> GetUserFollowing(string userId)
         {
             if (string.IsNullOrEmpty(userId))
