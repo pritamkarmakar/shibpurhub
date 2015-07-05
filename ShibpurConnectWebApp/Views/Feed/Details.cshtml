@@ -931,7 +931,7 @@
                         $(commentSection).find('.edit-comment').remove();
                         return false;
                     });
-            });
+                });
                 
           }
             
@@ -940,8 +940,7 @@
             $(commentBlock).find('.comment-user').attr("href", "/Account/Profile?userId=" + e.userId);
             answerBlock.find('.answer-comments').prepend(commentBlock);
         });
-    
-
+    }
 
     function handleAddComment(event) {
         event.preventDefault();
