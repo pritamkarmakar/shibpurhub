@@ -1033,7 +1033,7 @@
                 var answerBlock = $(button).closest('li.answer');
                 var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
                 $(commentBlock).removeClass('hide');
-                $(commentBlock).find('.comment-text')find('span').text(comment);
+                $(commentBlock).find('.comment-text').find('span').text(comment);
                 $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
                 $(commentBlock).find('.comment-user').text(userInfo.firstName + " " + userInfo.lastName);
                 //$(answerBlock).find('.answer-comments').append(commentBlock);
