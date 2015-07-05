@@ -298,6 +298,10 @@
          /*padding: 0 10px;*/
          word-wrap: break-word;
      }
+    .comment-text a
+    {
+        display: none;
+    }
 
      /*.comment-box .input-div {
          width: 70%;
@@ -889,11 +893,11 @@
             var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
             $(commentBlock).removeClass('hide');
             var commentTextSpan = $(commentBlock).find('.comment-text');
-            $(commentTextSpan).text(e.commentText);
+            $(commentTextSpan).find('span').text(e.commentText);
             if(isLoggedInUserId(e.userId))
             {
-                var editCommentAnchor = $('<a href="#">').text(' Edit');
-                $(commentTextSpan).append(editCommentAnchor);
+                var editCommentAnchor = $(commentTextSpan).find('a').show();
+                
                 $(editCommentAnchor).click(function(){
                     //first hide if any open edit comment
                     var commentSection = $('.edit-comment:not(.hide)').parent();
@@ -910,9 +914,9 @@
                     
                     $(editCommentButton).click(function(){
                         var commentText = $(editCommentInput).val();
-                        $(commentTextSpan).text(commentText);
+                        $(commentTextSpan).find('span').text(commentText);
                         $(commentBlock).children().show();
-                        $(commentSection).find('.edit-comment').remove();
+                        $(commentBlock).find('.edit-comment').remove();
                         
                         var commentObject = {'CommentText': commentText, 'CommentId': $(this).attr('data-comment-id')};
                         
@@ -928,9 +932,11 @@
                     var editCommentCancel = $(editCommentDiv).find('.anchor-cancel-comment');
                     $(editCommentCancel).click(function(){
                         $(commentBlock).children().show();
-                        $(commentSection).find('.edit-comment').remove();
+                        $(commentBlock).find('.edit-comment').remove();
                         return false;
                     });
+                    
+                    return false;
                 });
                 
           }
@@ -938,7 +944,7 @@
             $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
             $(commentBlock).find('.comment-user').text(e.displayName);
             $(commentBlock).find('.comment-user').attr("href", "/Account/Profile?userId=" + e.userId);
-            answerBlock.find('.answer-comments').prepend(commentBlock);
+            $(answerBlock).find('.answer-comments').prepend(commentBlock);
         });
     }
 
@@ -1027,7 +1033,7 @@
                 var answerBlock = $(button).closest('li.answer');
                 var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
                 $(commentBlock).removeClass('hide');
-                $(commentBlock).find('.comment-text').text(comment);
+                $(commentBlock).find('.comment-text')find('span').text(comment);
                 $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
                 $(commentBlock).find('.comment-user').text(userInfo.firstName + " " + userInfo.lastName);
                 //$(answerBlock).find('.answer-comments').append(commentBlock);
@@ -1469,7 +1475,10 @@
                             <div class="comment-list hide">
                                 <a class="comment-user"></a>
                                 <span class="comment-date"></span>
-                                <span class="comment-text"></span>
+                                <span class="comment-text">
+                                    <span></span>
+                                    <a href="#"> Edit</a>
+                                </span>
                             </div>
                             <div class="add-comment twelvepxfont">
                                 <a href="#" class="anchor-add-comment add">Add Comment</a>
