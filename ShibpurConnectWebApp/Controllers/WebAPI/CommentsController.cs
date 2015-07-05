@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -137,6 +137,44 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             return CreatedAtRoute("DefaultApi", new { id = commentToPost.CommentId }, commentToPost);
+        }
+        
+        /// <summary>
+        /// Edit a new comment for a question
+        /// </summary>
+        /// <param name="comment">Comment object</param>
+        /// <returns></returns>
+        [Authorize]
+        [ResponseType(typeof(Comment))]
+        [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
+        public async Task<IHttpActionResult> EditComment(Comment comment)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (comment == null)
+            {
+                return BadRequest("Request body is null. Please send a valid Comment object");
+            }
+            
+            try
+            {
+                var commentInDB = _mongoHelper.Collection.AsQueryable().Where(a => a.CommentId == comment.CommentId).FirstOrDefault();
+                if (commentInDB == null)
+                {
+                    return NotFound();
+                }
+
+                commentInDB.CommentText = comment.CommentText;
+                commentInDB.LastEditedOnUtc = DateTime.UtcNow;
+                
+                return CreatedAtRoute("DefaultApi", new { id = comment.CommentId }, comment);
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

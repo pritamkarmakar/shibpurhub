@@ -38,6 +38,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public DateTime PostedOnUtc { get; set; }
 
         public string UserId { get; set; }
+        
+        [DataMember]
+        public DateTime? LastEditedOnUtc { get; set; }
     }
 
     /// <summary>

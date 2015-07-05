@@ -337,7 +337,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         
         [Authorize]
         [ResponseType(typeof(Answer))]
-        [InvalidateCacheOutput("GetQuestion")]
+        [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
         public async Task<IHttpActionResult> EditAnswer(Answer answer)
         {
             if (!ModelState.IsValid)

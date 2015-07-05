@@ -899,15 +899,38 @@
                     var commentSection = $('.edit-comment:not(.hide)').parent();
                     $(commentSection).find('.edit-comment').remove();
                     $(commentSection).children().show();
-
+                    
                     var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
-                    $(editCommentDiv).find('.txt_comment').val(e.commentText);
-                    $(editCommentDiv).find('.btn-edit-comment').attr('data-comment-id', e.commentId);
+                    var editCommentInput = $(editCommentDiv).find('.txt_comment');
+                    $(editCommentInput).val(e.commentText);
+                    var editCommentButton = $(editCommentDiv).find('.btn-edit-comment');
+                    $(editCommentButton).attr('data-comment-id', e.commentId);
                     $(commentBlock).children().hide();
                     $(commentBlock).append(editCommentDiv);
-                    return false;
-
-                });
+                    
+                    $(editCommentButton).click(function(){
+                        var commentText = $(editCommentInput).val();
+                        $(commentTextSpan).text(commentText);
+                        $(commentBlock).children().show();
+                        $(commentSection).find('.edit-comment').remove();
+                        
+                        var commentObject = {'CommentText': commentText, 'CommentId': $(this).attr('data-comment-id')};
+                        
+                        scAjax({
+                            "url": "comments/editcomment",
+                            "type": "POST",
+                            "data": JSON.stringify(commentObject)
+                        });
+                    
+                        return false;
+                    });
+                    
+                    var editCommentCancel = $(editCommentDiv).find('.anchor-cancel-comment');
+                    $(editCommentCancel).click(function(){
+                        $(commentBlock).children().show();
+                        $(commentSection).find('.edit-comment').remove();
+                        return false;
+                    });
             }
             $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
             $(commentBlock).find('.comment-user').text(e.displayName);
