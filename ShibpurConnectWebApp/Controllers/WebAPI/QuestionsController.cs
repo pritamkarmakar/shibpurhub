@@ -297,7 +297,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         CommentViewModel cvm = new CommentViewModel();
                         cvm.UserId = comment.UserId;
                         cvm.AnswerId = comment.AnswerId;
-                        cvm.CommentId = cvm.CommentId;
+                        cvm.CommentId = comment.CommentId;
                         cvm.CommentText = comment.CommentText;
                         cvm.PostedOnUtc = comment.PostedOnUtc;
                         cvm.IsCommentedByMe = userInfo != null && comment.UserId == userInfo.Id;
