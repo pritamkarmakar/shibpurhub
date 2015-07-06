@@ -169,6 +169,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 commentInDB.CommentText = comment.CommentText;
                 commentInDB.LastEditedOnUtc = DateTime.UtcNow;
                 
+                _mongoHelper.Collection.Save(commentInDB);
+                
                 return CreatedAtRoute("DefaultApi", new { id = comment.CommentId }, comment);
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
