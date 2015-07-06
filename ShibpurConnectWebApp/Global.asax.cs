@@ -17,6 +17,7 @@ namespace ShibpurConnectWebApp
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.IgnoreRoute("SiteMap/sitemap.xml");
             routes.MapRoute(
                 "Categories",                                           // Route name
                 "Feed/Categories/{category}",                            // URL with parameters
