@@ -952,6 +952,13 @@
             <param name="comment">Comment object</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.EditComment(ShibpurConnectWebApp.Models.WebAPI.Comment)">
+            <summary>
+            Edit a new comment for a question
+            </summary>
+            <param name="comment">Comment object</param>
+            <returns></returns>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo">
             <summary>
             We will use this model in the api/FindUser API. Main intention is to send the userid to the API user, so that we can use the userid for other APIs
