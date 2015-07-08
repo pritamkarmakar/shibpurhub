@@ -18,6 +18,7 @@ namespace ShibpurConnectWebApp
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("sitemap.xml");
+            routes.IgnoreRoute("BingSiteAuth.xml");
             routes.MapRoute(
                 "Categories",                                           // Route name
                 "Feed/Categories/{category}",                            // URL with parameters
