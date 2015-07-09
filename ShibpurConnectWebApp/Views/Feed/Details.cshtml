@@ -820,9 +820,15 @@
                 $(answerBlock).find('.userName').text(result.displayName);
                 $(answerBlock).find('.date').text(dateString);
                 $(answerBlock).find('.upvote-span').addClass('disabled');
-                $(answerBlock).find('.edit-answer-span').show();
-                $(answerBlock).find('.answer-comments').toggle();
-                $(answerBlock).find('.answer-comments .add-comment').toggle();
+                
+                var editAnswerSpan = $(answerBlock).find('.edit-answer-span');
+                $(editAnswerSpan).show();
+                $(editAnswerSpan).find('.edit-answer-anchor').click(function(){
+                    handleEditAnswerClick({"answerText": result.answerText, "answerId": result.answerId});
+                });
+
+                $(answerBlock).find('.answer-comments').hide();
+                $(answerBlock).find('.answer-comments .add-comment').hide();
 
                 var userNameAnchor = $(answerBlock).find('div.user a.userName');
                 $(userNameAnchor).text(userInfo.firstName + " " + userInfo.lastName);
@@ -1154,14 +1160,24 @@
             var span = $(answerBlock).find('.edit-answer-span');
             $(span).show();
             $(span).find('.edit-answer-anchor').click(function(){
-                advancedEditor.setHTML(answer.answerText);
-                $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 70},'slow');
-                $('.btn-submit-answer').attr('data-answer-id', answer.answerId);
+                handleEditAnswerClick(answer)
              });
 
         }
 
         $('#answerlist').append(answerBlock);
+    }
+
+    function handleEditAnswerClick(answer)
+    {
+        if(!answer)
+        {
+            return;
+        }
+
+        advancedEditor.setHTML(answer.answerText);
+        $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 70},'slow');
+        $('.btn-submit-answer').attr('data-answer-id', answer.answerId);
     }
 
     var isAskedByMe = false;
