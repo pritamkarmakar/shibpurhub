@@ -1101,7 +1101,7 @@
         var commentBox = $(anchor).closest('.comment-box');
         $(commentBox).hide();
         $(commentBox).siblings('.add-comment').show();
-        var comments = $(commentBox).siblings('.comment-list :not(.hide)');
+        var comments = $(commentBox).siblings('.comment-list:not(.hide)');
         if(comments.length == 0)
         {
             $(commentBox).closest('.answer-comments').hide();
