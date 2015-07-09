@@ -19,10 +19,10 @@
                     else
                     {
                         // form the smaller imgur image by adding 's' before '.jpg'
-                        if (userinfo.profileImageURL.charAt(userinfo.profileImageURL.indexOf('.jpg') - 1) != 's') {
-                            userinfo.profileImageURL = IMGURPATH + userinfo.profileImageURL.replace('.jpg', 's.jpg');
-                        }
-                        else
+                        //if (userinfo.profileImageURL.charAt(userinfo.profileImageURL.indexOf('.jpg') - 1) != 's') {
+                            //userinfo.profileImageURL = IMGURPATH + userinfo.profileImageURL.replace('.jpg', 's.jpg');
+                        //}
+                        //else
                             userinfo.profileImageURL = IMGURPATH + userinfo.profileImageURL;
                 
                         $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-4 col-xs-4'><img class='avatar' src='" + userinfo.profileImageURL + "'></img></div><div class='userinfo'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
