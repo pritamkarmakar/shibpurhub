@@ -253,7 +253,7 @@ namespace ShibpurConnectWebApp.Controllers
                     // Send an email with this link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
+                    await UserManager.SendEmailAsync(user.Id, "Hello from ShibpurHub", "Thanks for joining ShibpurHub. You have to confirm your account to use ShibpurHub. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>ShibpurHub Team");
 
                     TempData["ConfirmEmail"] = "Well done. Please check your email and confirm your account, you must be confirmed "
                         + "before you can log in.";
@@ -308,8 +308,8 @@ namespace ShibpurConnectWebApp.Controllers
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                await UserManager.SendEmailAsync(user.Id, "ShibpurConnect: Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "ShibpurHub: Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 

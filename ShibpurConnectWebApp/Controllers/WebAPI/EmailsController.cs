@@ -65,7 +65,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }           
            
             myMessage.From = new System.Net.Mail.MailAddress(
-                                "pritam83@gmail.com", "ShibpurHub");
+                                "info@shibpurhub.com", "ShibpurHub");
             myMessage.Subject = message.Subject;
             myMessage.Text = message.Body;
             myMessage.Html = message.Body;
