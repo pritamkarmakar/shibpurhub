@@ -19,6 +19,14 @@ namespace ShibpurConnectWebApp
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("sitemap.xml");
             routes.IgnoreRoute("BingSiteAuth.xml");
+
+            // the first match will be the route for the url, so keep custom routes before the default one
+            routes.MapRoute(
+                "FeedByCategory",                                              // Route name
+                "feed/FeedByCategory/{category}",                           // URL with parameters
+                new { controller = "Feed", action = "FeedByCategory", category = UrlParameter.Optional }  // Parameter defaults
+            );
+
             routes.MapRoute(
                 "Categories",                                           // Route name
                 "Feed/Categories/{category}",                            // URL with parameters
@@ -34,7 +42,7 @@ namespace ShibpurConnectWebApp
             routes.MapRoute(
                 "FeedDetails",                                           // Route name
                 "Feed/{id}",                            // URL with parameters
-                new { controller = "Feed", action = "Details" }  // Parameter defaults
+                new { controller = "Feed", action = "Details"}  // Parameter defaults
             );
             
             routes.MapRoute(
