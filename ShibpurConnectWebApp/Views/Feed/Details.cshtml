@@ -847,7 +847,12 @@
                 $('.textarea').val('');
                 logActivity(2, result.answerId);
 
-                setUpAnswerUserActions();
+                $(answerBlock).find('.anchor-add-comment').unbind("click").bind("click", handleAddComment);
+                $(answerBlock).find('.anchor-cancel-comment').unbind('click').bind('click', handleCancelComment);
+                $(answerBlock).find('.btn-save-comment').unbind("click").bind("click", handleSaveComment);
+
+                $(answerBlock).find('.comment-anchor').unbind("click").bind("click", handleCommentLinkClick);
+                $(answerBlock).find('.upvote-anchor').unbind("click").bind("click", handleUpvote);
             },
             "error": function (XMLHttpRequest, textStatus, errorThrown) {
                 var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
@@ -1048,7 +1053,8 @@
                 //var notificationToSend = $(answerBlock).attr("data-answerby");
                 //NotificationForNewComment(emailToSend, notificationToSend);
 
-                var editCommentAnchor = $(commentBlock).find('.comment-text a').show();
+                var editCommentAnchor = $(commentBlock).find('.comment-text a');
+                $(editCommentAnchor).show();
 
                 $(editCommentAnchor).click(function(){
                     //first hide if any open edit comment
