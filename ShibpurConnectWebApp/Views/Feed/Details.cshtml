@@ -820,7 +820,7 @@
                 $(answerBlock).find('.userName').text(result.displayName);
                 $(answerBlock).find('.date').text(dateString);
                 $(answerBlock).find('.upvote-span').addClass('disabled');
-                
+
                 var editAnswerSpan = $(answerBlock).find('.edit-answer-span');
                 $(editAnswerSpan).show();
                 $(editAnswerSpan).find('.edit-answer-anchor').click(function(){
@@ -847,9 +847,7 @@
                 $('.textarea').val('');
                 logActivity(2, result.answerId);
 
-                $('.anchor-add-comment').unbind("click").bind("click", handleAddComment);
-                $('.anchor-cancel-comment').unbind('click').bind('click', handleCancelComment);
-                $('.btn-save-comment').unbind("click").bind("click", handleSaveComment);
+                setUpAnswerUserActions();
             },
             "error": function (XMLHttpRequest, textStatus, errorThrown) {
                 var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
@@ -1049,6 +1047,49 @@
                 //var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
                 //var notificationToSend = $(answerBlock).attr("data-answerby");
                 //NotificationForNewComment(emailToSend, notificationToSend);
+
+                var editCommentAnchor = $(commentBlock).find('.comment-text a').show();
+
+                $(editCommentAnchor).click(function(){
+                    //first hide if any open edit comment
+                    var commentSection = $('.edit-comment:not(.hide)').parent();
+                    $(commentSection).find('.edit-comment').remove();
+                    $(commentSection).children().show();
+
+                    var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
+                    var editCommentInput = $(editCommentDiv).find('.txt_comment');
+                    $(editCommentInput).val(e.commentText);
+                    var editCommentButton = $(editCommentDiv).find('.btn-edit-comment');
+                    $(editCommentButton).attr('data-comment-id', result.commentId);
+                    $(commentBlock).children().hide();
+                    $(commentBlock).append(editCommentDiv);
+
+                    $(editCommentButton).click(function(){
+                        var commentText = $(editCommentInput).val();
+                        $(commentTextSpan).find('span').text(commentText);
+                        $(commentBlock).children().show();
+                        $(commentBlock).find('.edit-comment').remove();
+
+                        var commentObject = {'CommentText': commentText, 'CommentId': $(this).attr('data-comment-id')};
+
+                        scAjax({
+                            "url": "comments/editcomment",
+                            "type": "POST",
+                            "data": JSON.stringify(commentObject)
+                        });
+
+                        return false;
+                    });
+
+                    var editCommentCancel = $(editCommentDiv).find('.anchor-cancel-comment');
+                    $(editCommentCancel).click(function(){
+                        $(commentBlock).children().show();
+                        $(commentBlock).find('.edit-comment').remove();
+                        return false;
+                    });
+
+                    return false;
+                });
             },
             "error": function (err) {
                 // parse the error json
