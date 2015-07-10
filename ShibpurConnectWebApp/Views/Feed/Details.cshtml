@@ -813,7 +813,7 @@
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + "at" + utcDate.getHours() + ":" + utcDate.getMinutes();
 
-                var answerBlock = $('#answerlist li.answer.hide').clone();
+                var answerBlock = $('#answerlist li.answer.hide').clone().attr('data-answerid', result.answerId);
                 $(answerBlock).removeClass('hide');
                 // add fixed width if user add any image as part of the answer
                 $(answerBlock).find('.text').html(result.answerText.replace("<img", "<img style='max-width:530px;'"));
@@ -1064,7 +1064,7 @@
 
                     var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
                     var editCommentInput = $(editCommentDiv).find('.txt_comment');
-                    $(editCommentInput).val(e.commentText);
+                    $(editCommentInput).val(result.commentText);
                     var editCommentButton = $(editCommentDiv).find('.btn-edit-comment');
                     $(editCommentButton).attr('data-comment-id', result.commentId);
                     $(commentBlock).children().hide();
