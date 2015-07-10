@@ -913,6 +913,9 @@
                     $(commentSection).find('.edit-comment').remove();
                     $(commentSection).children().show();
 
+                    $('.comment-box:not(.hide)').hide();
+                    $('.add-comment:hidden').show();
+
                     var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
                     var editCommentInput = $(editCommentDiv).find('.txt_comment');
                     $(editCommentInput).val(e.commentText);
@@ -1062,9 +1065,12 @@
                     $(commentSection).find('.edit-comment').remove();
                     $(commentSection).children().show();
 
+                    $('.comment-box:not(.hide)').hide();
+                    $('.add-comment:hidden').show();
+
                     var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
                     var editCommentInput = $(editCommentDiv).find('.txt_comment');
-                    $(editCommentInput).val(result.commentText);
+                    $(editCommentInput).val($(this).siblings('span').text());
                     var editCommentButton = $(editCommentDiv).find('.btn-edit-comment');
                     $(editCommentButton).attr('data-comment-id', result.commentId);
                     $(commentBlock).children().hide();
