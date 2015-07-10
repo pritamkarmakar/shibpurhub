@@ -1072,7 +1072,7 @@
 
                     $(editCommentButton).click(function(){
                         var commentText = $(editCommentInput).val();
-                        $(commentTextSpan).find('span').text(commentText);
+                        $(commentBlock).find('.comment-text span').text(commentText);
                         $(commentBlock).children().show();
                         $(commentBlock).find('.edit-comment').remove();
 
