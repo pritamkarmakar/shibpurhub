@@ -44,7 +44,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="answerId">answerid to search</param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetAnswer(string answerId)
         {
             // validate questionId is valid hex string
@@ -70,7 +70,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // GET: api/Questions/5
         // Will return all the answers for a specific question
         [ResponseType(typeof(Answer))]
-        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400)]
         public IHttpActionResult GetAnswers(string questionId)
         {
             // validate questionId is valid hex string
@@ -99,7 +99,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetUserAnswerCount(string userId)
         {
             try

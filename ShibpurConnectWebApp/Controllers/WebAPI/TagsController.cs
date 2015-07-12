@@ -80,7 +80,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="categoryName">category name</param>
         /// <returns></returns>
         [ResponseType(typeof(Categories))]
-        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400)]
         public async Task<IHttpActionResult> GetTag(string categoryName)
         {
             Categories category = null;

@@ -79,7 +79,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan=864000, ClientTimeSpan=864000, MustRevalidate=true)]
+        [CacheOutput(ServerTimeSpan=864000)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
@@ -239,7 +239,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, ClientTimeSpan = 864000, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000)]
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
@@ -364,7 +364,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ClientTimeSpan = 864000, ServerTimeSpan = 86400)]
+        [CacheOutput(ServerTimeSpan = 86400)]
         public IHttpActionResult GetAnswersCount(string questionId)
         {
             try

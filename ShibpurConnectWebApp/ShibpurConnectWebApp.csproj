@@ -521,7 +521,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_RichTextBox.cshtml" />
     <Content Include="Views\Account\_ExternalSignUpListPartial.cshtml" />
-    <Content Include="Views\Account\Profile2.cshtml" />
     <Content Include="Views\Account\Info.cshtml" />
     <Content Include="Views\Feed\Index.cshtml" />
     <Content Include="Views\Feed\Details.cshtml" />
