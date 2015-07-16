@@ -35,6 +35,7 @@ namespace ShibpurConnectWebApp
             myMessage.Subject = message.Subject;
             myMessage.Text = message.Body;
             myMessage.Html = message.Body;
+            myMessage.EnableTemplateEngine(ConfigurationManager.AppSettings["emailTemplate"]);
 
             var credentials = new NetworkCredential(
                        ConfigurationManager.AppSettings["mailAccount"],
