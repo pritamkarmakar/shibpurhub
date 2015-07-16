@@ -4,12 +4,14 @@
 
 <style type="text/css">
     /*font size of the 'Questions' tab question title''*/
-     .question-hyperlink {
-         font-size: 18px;
-     }
-     .post-tag {
-         padding: .2em .4em;
-     }
+    .question-hyperlink {
+        font-size: 18px;
+    }
+
+    .post-tag {
+        padding: .2em .4em;
+    }
+
     .user {
         margin-bottom: 20px;
     }
@@ -17,13 +19,14 @@
     #userlist {
         margin-top: 40px;
     }
+
     .nav-tabs li a {
         border: none;
         padding-right: 10px;
         color: #66757f;
     }
-   
-    ul.nav a:visited {        
+
+    ul.nav a:visited {
         background-color: white;
     }
 
@@ -33,7 +36,7 @@
 
     #companyname {
         font-size: 14px;
-        font-weight:bold;
+        font-weight: bold;
     }
 
     hr#dotted {
@@ -55,36 +58,40 @@
     #collegeName {
         font-weight: bold;
     }
+
     .btn-file {
         position: relative;
         overflow: hidden;
     }
-    .btn-file input[type=file] {
-        position: absolute;
-        top: 0;
-        right: 0;
-        min-width: 100%;
-        min-height: 100%;
-        font-size: 100px;
-        text-align: right;
-        filter: alpha(opacity=0);
-        opacity: 0;
-        outline: none;
-        background: white;
-        cursor: inherit;
-        display: block;
-    }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+
     .center-block {
         text-align: center;
     }
-    .imageDiv
-    {
+
+    .imageDiv {
         display: none;
         position: absolute;
         bottom: 5px;
-        right: 15px;
+        right: 0;
         opacity: 0.75;
     }
+
     #imagePreview {
         width: 100%;
         height: 140px;
@@ -92,6 +99,11 @@
         background-size: cover;
         -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
         background-image: url('/Content/images/profile-image.jpg');
+    }
+    .userdisplayname
+    {
+        font-size: 32px;
+        word-wrap: break-word;
     }
 </style>
 
@@ -101,10 +113,10 @@
     // get the user profile for this user
     $(document).ready(function() {
         jQuery.support.cors = true;
-        
+
         // select the first tab 'Profile'
         $('.nav-tabs li:first').css("border-bottom", "3px solid #58C8C4");
-        $('.nav-tabs li:first').css("font-weight", "bold");       
+        $('.nav-tabs li:first').css("font-weight", "bold");
 
         var SERVER = "/api/";
         profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
@@ -231,7 +243,7 @@
                     }
                         $("#userfollowbutton > i").addClass('fa fa-check-circle');
                         $("#userfollowbutton > span").text(' Following');
-                                             
+
                 }
             });
         }
@@ -253,7 +265,7 @@
 
             }
         });
-       
+
 
         $('#uploadImg').change(function(){
             var files = !!this.files ? this.files : [];
@@ -297,11 +309,11 @@
 
         if($(obj).text().toLowerCase() == "followers")
         {
-            $('.userprofiledivs').hide();            
+            $('.userprofiledivs').hide();
             $('.userfollowing').hide();
             $('.userquestions').hide();
             $('.useranswers').hide();
-            
+
             // show the loading div
             $('#loadingdiv2').show();
 
@@ -311,7 +323,7 @@
                     if (!result) {
                         return;
                     }
-                    
+
                     // remove previous values
                     $('.userfollowers').show();
                     $('.userfollowers').empty();
@@ -321,7 +333,7 @@
 
                     if(result.length == 0)
                         $('.userfollowers').append("<p>No follower available</p>");
-                    
+
                     // iterate over all followers and add them in the div
                     $(result).each(function (i, userinfo) {
                         if (userinfo.profileImageURL == null)
@@ -329,13 +341,13 @@
                         else
                             $('.userfollowers').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
                     });
-                                             
+
                 }
             });
         }
         else if($(obj).text().toLowerCase() == "profile")
         {
-            $('.userprofiledivs').show();   
+            $('.userprofiledivs').show();
             $('.userfollowers').hide();
             $('.userfollowing').hide();
             $('.userquestions').hide();
@@ -374,7 +386,7 @@
                         else
                             $('.userfollowing').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
                     });
-                                             
+
                 }
             });
         }
@@ -403,8 +415,8 @@
     // method to decide to call follow/unfollow javascript method
     function followUnfollowUser(obj)
     {
-        if ($("#" + obj.id + " > span").text().trim().toLowerCase() == "follow") 
-            followuser(obj, profileId);        
+        if ($("#" + obj.id + " > span").text().trim().toLowerCase() == "follow")
+            followuser(obj, profileId);
         else if($("#" + obj.id + " > span").text().trim().toLowerCase() == "unfollow")
             unfollowuser(obj, profileId);
     }
@@ -455,7 +467,7 @@
                     }
                     $('.userquestions').append("<hr>");
                 });
-                                             
+
             }
         });
     }
@@ -487,10 +499,10 @@
                 // iterate over all questions and add them in the div
                 $(result).each(function (i, answer) {
                     $('.useranswers').append("<div id='"+ answer.questionId +"'><div class='title'><a class='question-hyperlink' href='/feed/" + answer.questionId + "'>" + answer.questionTitle + "</a></div><p>"+ answer.answerText  +"</p></div>");
-                    
+
                     $('.useranswers').append("<hr>");
                 });
-                                             
+
             }
         });
     }
@@ -501,17 +513,18 @@
 </script>
 
 <div class="container target" style="display:none;">
-    <div class="row">
-         
+    <!--<div class="row">
+
         <div class="col-sm-10">
             <h2 class="userdisplayname"></h2>
-            <button type="button" class="btn btn-xs btn-success" id="userfollowbutton" onclick="followUnfollowUser(this);" onmouseout='changeuserfollowonmouseout(this);' onmouseover='changeuserfollowonmouseover(this);'><i class='fa fa-plus-circle'></i><span> Follow</span></button>  
+            <button type="button" class="btn btn-xs btn-success" id="userfollowbutton" onclick="followUnfollowUser(this);" onmouseout='changeuserfollowonmouseout(this);' onmouseover='changeuserfollowonmouseover(this);'><i class='fa fa-plus-circle'></i><span> Follow</span></button>
             @*<button type="button" class="btn btn-sm btn-info">Send a message</button>*@
             <br>
         </div>
         <div class="col-sm-2">
             @*<a id="anchorImage" href="/users" class="pull-right">
-                <img title="profile image" class="img-cir img-responsive" src="~/Content/images/profile-image.jpg" /></a>*@
+                <img title="profile image" class="img-cir img-responsive" src="~/Content/images/profile-image.jpg" />
+            </a>*@
             <canvas id="imagePreview"></canvas>
             <div class="center-block imageDiv">
                 <span class="btn btn-info btn-sm btn-file">
@@ -520,10 +533,28 @@
             </div>
         </div>
     </div>
-    <br>
+    <br>-->
     <div class="row">
         <div class="col-sm-3">
             <!--left col-->
+            <div class="col-sm-8 col-sm-offset-2" style="padding: 0;">
+                @*<a id="anchorImage" href="/users" class="pull-right">
+                    <img title="profile image" class="img-cir img-responsive" src="~/Content/images/profile-image.jpg" />
+                </a>*@
+                <canvas id="imagePreview"></canvas>
+                <div class="center-block imageDiv">
+                    <span class="btn btn-info btn-sm btn-file">
+                        <i class="fa fa-camera"></i> <input type="file" id="uploadImg">
+                    </span>
+                </div>
+            </div>
+            <div>
+                <span class="userdisplayname"></span>
+                <div class="form-group">
+                    <button type="button" class="btn btn-xs btn-success" id="userfollowbutton" onclick="followUnfollowUser(this);" onmouseout='changeuserfollowonmouseout(this);' onmouseover='changeuserfollowonmouseover(this);'><i class='fa fa-plus-circle'></i><span> Follow</span></button>
+                </div>
+                    @*<button type="button" class="btn btn-sm btn-info">Send a message</button>*@
+                </div>
             <ul class="list-group">
                 <li class="list-group-item text-muted" contenteditable="false">Profile</li>
                 <li class="list-group-item text-right"><span class="pull-left registeredon"><strong class="">Joined</strong></span> </li>
@@ -539,7 +570,7 @@
 
                 </li>
                 <li class="list-group-item text-right"><span class="pull-left userquestioncount"><strong class="">Questions</strong></span></li>
-                <li class="list-group-item text-right"><span class="pull-left useranswercount"><strong class="">Answers</strong></span></li>            
+                <li class="list-group-item text-right"><span class="pull-left useranswercount"><strong class="">Answers</strong></span></li>
                 <li class="list-group-item text-right"><span class="pull-left reputationcount"><strong class="">Reputation</strong></span></li>
             </ul>
             <div class="panel panel-default">
@@ -590,8 +621,7 @@
             <div class="col-md-12 userquestions" style="display: none; margin-top: 20px;">
                 <div class="thread"></div>
                 <nav>
-                    <ul class="pagination">
-                    </ul>
+                    <ul class="pagination"></ul>
                 </nav>
             </div>
             <div class="col-md-12 useranswers" style="display: none; margin-top: 20px;">
@@ -607,7 +637,7 @@
 
         <div id="push"></div>
     </div>
-    <input type="hidden" id="hdnUserId" value="" />    
+    <input type="hidden" id="hdnUserId" value="" />
 </div>
 
 <div id="loadingdiv">

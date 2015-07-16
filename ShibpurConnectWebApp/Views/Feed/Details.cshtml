@@ -337,7 +337,7 @@
     var qustionRTBoxEditor;
     var categoryArr = [];
     $(document).ready(function () {
-
+        scrollToADivOnPageLoad();
         // hide the submit answer rich text control
         $('.wirte-answer').hide();
 
@@ -1231,6 +1231,14 @@
         advancedEditor.setHTML(answer.answerText);
         $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 70},'slow');
         $('.btn-submit-answer').attr('data-answer-id', answer.answerId);
+    }
+
+    function scrollToADivOnPageLoad()
+    {
+        var hash = window.location.hash;
+        if(hash.length > 0 && $('#'+ hash).size() > 0){
+            $('html, body').animate({ scrollTop: $(hash).offset().top - 70});
+        }
     }
 
     var isAskedByMe = false;
