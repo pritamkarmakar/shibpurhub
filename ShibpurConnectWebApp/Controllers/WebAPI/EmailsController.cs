@@ -16,6 +16,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class EmailsController : ApiController
     {
         private ApplicationUserManager _userManager;
+        private string emailTemplate = ConfigurationManager.AppSettings["emailTemplate"];
         // GET: api/Emails
         public IEnumerable<string> Get()
         {
@@ -68,7 +69,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                 "info@shibpurhub.com", "ShibpurHub");
             myMessage.Subject = message.Subject;
             myMessage.Text = message.Body;
-            myMessage.Html = message.Body;
+            myMessage.Html= "<p>" + message.Body + "</p>";
+            myMessage.EnableTemplateEngine(emailTemplate);
 
             var credentials = new NetworkCredential(
                        ConfigurationManager.AppSettings["mailAccount"],

@@ -119,8 +119,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             emailsController.SendEmail(new Email()
             {
                 UserId = answer.Content.UserId,
-                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your answer in question <a href='" + hostName + "/feed/" + question.Content.QuestionId + "'>" + question.Content.Title + "</a>",
-                Subject = "ShibpurHub: New comment to your answer"
+                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your answer in question <a href='" + hostName + "/feed/" + question.Content.QuestionId + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
+                Subject = "ShibpurHub | New comment to your answer"
             });
             }
 
@@ -131,8 +131,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 emailsController.SendEmail(new Email()
                 {
                     UserId = question.Content.UserId,
-                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.QuestionId  +"'>" + question.Content.Title + "</a>",
-                    Subject = "ShibpurHub: New comment to your question" + question.Content.Title
+                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.QuestionId + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
+                    Subject = "ShibpurHub | New comment to your question" + question.Content.Title
                 });
             }
 

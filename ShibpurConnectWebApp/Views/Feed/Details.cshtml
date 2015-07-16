@@ -559,9 +559,9 @@
 
         // send email notification
         var emaildata = {
-            "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+            "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "' style='text-decoration:none'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer <a href='" + window.location.href + "' style='text-decoration:none'>" + $('#questiontitle').text() + "</a>",
             "UserId": elm.attributes["data-id"].value,
-            "Subject": "ShibpurHub: Can you answer this question?"
+            "Subject": "ShibpurHub | Can you answer this question?"
         };
 
         scAjax({
@@ -630,9 +630,9 @@
         if (emailToSend.toLowerCase() != userInfo.email.toLowerCase()) {
             // send email notification
             var emaildata = {
-                "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "'>" + $('#questiontitle').text() + "</a>",
+                "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "' style='text-decoration:none'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "' style='text-decoration:none'>" + $('#questiontitle').text() + "</a>",
                 "UserId": emailToSend,
-                "Subject": "ShibpurHub: New answer in your question"
+                "Subject": "ShibpurHub | New answer in your question"
             };
 
             scAjax({
