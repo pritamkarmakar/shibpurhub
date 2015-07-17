@@ -134,8 +134,9 @@ namespace ShibpurConnectWebApp.Controllers
                         return RedirectToAction("Profile", "Account");
                     }
                     
-                    if((TempData["IsEmailConfirmed"] as bool) != null)
+                    if(TempData["IsEmailConfirmed"] != null)
                     {
+                        TempData["IsEmailConfirmed"] = null;
                         return RedirectToAction("Index", "Feed");
                     }
 
