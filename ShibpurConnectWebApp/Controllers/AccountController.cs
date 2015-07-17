@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -132,6 +132,11 @@ namespace ShibpurConnectWebApp.Controllers
                     if (education == null)
                     {
                         return RedirectToAction("Profile", "Account");
+                    }
+                    
+                    if((TempData["IsEmailConfirmed"] as bool) != null)
+                    {
+                        return RedirectToAction("Index", "Feed");
                     }
 
                     if (Url.IsLocalUrl(returnUrl))
@@ -277,6 +282,10 @@ namespace ShibpurConnectWebApp.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
+            if(result.Succeeded)
+            {
+                TempData["IsEmailConfirmed"] = true;
+            }
 
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
