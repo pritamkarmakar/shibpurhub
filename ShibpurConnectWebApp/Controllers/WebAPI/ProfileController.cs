@@ -327,13 +327,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             string pathQuery = myuri.PathAndQuery;
             string hostName = myuri.ToString().Replace(pathQuery , "");
             EmailsController emailController = new EmailsController();
-            emailController.SendEmail(new Email()
-                {
-                    UserId = userIdToFollow,
-                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a> now following you. Check all your followers <a href=" + hostName + "/Account/Profile> here</a>",
-                    Subject = "ShibpurHub: You have a new follower"
+            await emailController.SendEmail(new Email()
+            {
+                UserId = userIdToFollow,
+                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a> now following you. Check all your followers <a href=" + hostName + "/Account/Profile> here</a>",
+                Subject = "ShibpurHub: You have a new follower"
 
-                });
+            });
 
             return Ok("now you are following this user");
             

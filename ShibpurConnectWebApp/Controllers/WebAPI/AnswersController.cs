@@ -230,6 +230,33 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 if (askToAnswer != null)
                     askToAnswerController.UpdateHasAnswered(askToAnswer);
 
+                // send notification for this new answer
+                NotificationsController notificationsController = new NotificationsController();
+                notificationsController.PostNotification(new Notifications()
+                {
+                    UserId = question.UserId,
+                    PostedOnUtc = DateTime.UtcNow,
+                    NotificationType = NotificationTypes.ReceivedAnswer,
+                    NotificationContent = "{\"answeredBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"questionId\":\"" + answerdto.QuestionId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" + question.UrlSlug + "\"}"
+                });
+
+                // get the hostname
+                Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+                string pathQuery = myuri.PathAndQuery;
+                string hostName = myuri.ToString().Replace(pathQuery, "");
+
+                // sent notification to the user who posted the question
+                EmailsController emailsController = new EmailsController();
+                if (question.UserId != userInfo.Id)
+                {
+                    await emailsController.SendEmail(new Email()
+                    {
+                        UserId = question.UserId,
+                        Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to your question <a href='" + hostName + "/feed/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a>",
+                        Subject = "ShibpurHub | New answer to your question \"" + question.Title + "\""
+                    });
+                }
+
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 
@@ -44,7 +45,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="alert"></param>
         /// <returns></returns>
-        public IHttpActionResult SendEmailNotificationForOutage(WebsiteAlert alert)
+        public async Task<IHttpActionResult> SendEmailNotificationForOutage(WebsiteAlert alert)
         {
             if (!ModelState.IsValid)
             {
@@ -61,7 +62,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     alert.AlertTime = DateTime.UtcNow;
                     EmailsController emailController = new EmailsController();
-                    emailController.SendEmail(new Email
+                    await emailController.SendEmail(new Email
                     {
                         Body = alert.Content,
                         Subject = "ShibpurHub: ALERT !!!",
@@ -86,7 +87,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             alert.AlertTime = DateTime.UtcNow;        
 
                             EmailsController emailController = new EmailsController();
-                            emailController.SendEmail(new Email
+                            await emailController.SendEmail(new Email
                             {
                                 Body = alert.Content,
                                 Subject = "ShibpurHub: ALERT !!!",
@@ -106,7 +107,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         alert.AlertTime = DateTime.UtcNow;
     
                         EmailsController emailController = new EmailsController();
-                        emailController.SendEmail(new Email
+                        await emailController.SendEmail(new Email
                         {
                             Body = alert.Content,
                             Subject = "ShibpurHub: ALERT !!!",

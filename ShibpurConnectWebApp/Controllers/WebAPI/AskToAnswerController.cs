@@ -142,7 +142,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var question = actionresult as OkNegotiatedContentResult<Question>;
 
                 EmailsController emailsController = new EmailsController();
-                emailsController.SendEmail(new Email()
+                await emailsController.SendEmail(new Email()
                 {
                     UserId = askToAnswerDto.AskedTo,
                     Body =

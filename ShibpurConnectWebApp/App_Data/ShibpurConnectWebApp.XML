@@ -648,6 +648,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EmailsController.SendEmail(ShibpurConnectWebApp.Models.WebAPI.Email)">
+            <summary>
+            API to send email to end user
+            </summary>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.PostNotification(ShibpurConnectWebApp.Models.WebAPI.Notifications)">
             <summary>
             Submit a new notification

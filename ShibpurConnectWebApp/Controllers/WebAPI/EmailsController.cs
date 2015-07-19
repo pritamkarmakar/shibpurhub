@@ -17,39 +17,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     {
         private ApplicationUserManager _userManager;
         private string emailTemplate = ConfigurationManager.AppSettings["emailTemplate"];
-        // GET: api/Emails
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
 
-        // GET: api/Emails/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST: api/Emails
-        public void PostEmails(Email email)
-        {
-            //await UserManager.SendEmailAsync("", "Hello from ShibpurConnect", "Thanks for joining ShibpurConnect. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
-        }
-
-        // PUT: api/Emails/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Emails/5
-        public void Delete(int id)
-        {
-        }
-
-        public Task SendEmail(Email message)
+        /// <summary>
+        /// API to send email to end user
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        [Authorize]
+        public async Task SendEmail(Email message)
         {
             // Plug in your email service here to send an email.
             //return Task.FromResult(0);
-            return configSendGridasync(message);
+            await configSendGridasync(message);
         }
 
         private async Task configSendGridasync(Email message)
@@ -60,8 +39,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             foreach (string userId in message.UserId.Split(','))
             {
                 // find the email address of the user from the userid
-                Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
-                var userInfo = await actionResult;
+                var userInfo = await helper.FindUserById(userId);
+                //var userInfo = actionResult.;
                 myMessage.AddTo(userInfo.Email);
             }           
            

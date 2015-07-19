@@ -569,61 +569,6 @@
         });
     }
 
-    // function to send notification when someone will post a new answer
-    function NotificationForNewAnswer() {
-        // retrieve current logged-in user details
-        var userDetails = localStorage.getItem("SC_Session_UserDetails");
-        if (!userDetails) {
-            //TO-DO: Handle if userdetail is not available in Session Storage
-            return;
-        }
-        var userInfo = $.parseJSON(userDetails);
-
-        // retrieve email of the user who asked this question
-        var emailToSend = $('.questionaskedbyuser').attr("href").substring($('.questionaskedbyuser').attr("href").indexOf("=") + 1);
-
-        // send email notification if the user who posted the answer and user who asked this question are different
-        if (emailToSend.toLowerCase() != userInfo.email.toLowerCase()) {
-            // send email notification
-            var emaildata = {
-                "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "' style='text-decoration:none'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " wrote an answer to your question <a href='" + window.location.href + "' style='text-decoration:none'>" + $('#questiontitle').text() + "</a>",
-                "UserId": emailToSend,
-                "Subject": "ShibpurHub | New answer in your question"
-            };
-
-            scAjax({
-                "url": "emails/sendemail",
-                "type": "POST",
-                "data": JSON.stringify(emaildata, null, 2),
-                "success": function (result) {
-                }
-            });
-
-            // save this request in the Notification collection
-            var notificationContent = {
-                "answeredBy": userInfo.id,
-                "displayName": userInfo.firstName + " " + userInfo.lastName,
-                "questionId": questionID,
-                "profileImage":userInfo.profileImageURL,
-                "questionTitle": $('#questiontitle').text()
-            };
-            var data = {
-                "UserId": $('.questionaskedbyuser').attr("userId"),
-                "NotificationContent": JSON.stringify(notificationContent),
-                "NotificationType": "ReceivedAnswer"
-            };
-
-            scAjax({
-                "url": "notifications/PostNotification",
-                "type": "POST",
-                "data": JSON.stringify(data, null, 2),
-                "success": function (result) {
-
-                }
-            });
-        }
-    }
-
     function saveAnswer() {
         // hide the error div
         $('#errormessage').empty();
@@ -709,9 +654,6 @@
                 // remove the loading class from save button
                 $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
                 $('.btn-submit-answer > span').text('Submit Answer');
-
-                // send notification to the user who asked this question, that there is a new answer for your question
-                NotificationForNewAnswer();
                 }
             });
 
@@ -734,8 +676,6 @@
                 $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
                 $('.btn-submit-answer > span').text('Submit Answer');
 
-                // send notification to the user who asked this question, that there is a new answer for your question
-                NotificationForNewAnswer();
 
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + "at" + utcDate.getHours() + ":" + utcDate.getMinutes();
