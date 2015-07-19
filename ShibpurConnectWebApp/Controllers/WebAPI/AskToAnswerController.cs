@@ -148,7 +148,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     Body =
                         "<a href='" + hostName + "/Account/Profile?userId=" + askToAnswerDto.AskedBy +
                         "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
-                        " requested you to answer <a href='" + hostName + "' style='text-decoration:none'>" +
+                        " requested you to answer <a href='" + hostName + "/feed/"  + question.Content.UrlSlug + "' style='text-decoration:none'>" +
                         question.Content.Title + "</a>",
                     Subject = "ShibpurHub | You have a new request to answer a question"
                 });

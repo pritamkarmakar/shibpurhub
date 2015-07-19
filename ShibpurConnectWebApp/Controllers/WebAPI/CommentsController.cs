@@ -89,13 +89,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
-
-            // invalidate the cache for the action those will get impacted due to this new answer post
-            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
-
-            // invalidate the getquestion api call for the question associated with this answer
-            cache.RemoveStartsWith("comments-getcommentsforanswer-answerId=" + comment.AnswerId);
-
+            
             // send notification to the user who posted the corresponding answer and who posted the actual question
             // get the hostname
             Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
@@ -112,6 +106,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var actionresult2 = await questionsController.GetQuestionInfo(answer.Content.QuestionId);
             var question = actionresult2 as OkNegotiatedContentResult<Question>;
 
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+            // invalidate the getquestion api call for the question associated with this answer
+            cache.RemoveStartsWith("comments-getcommentsforanswer-answerId=" + comment.AnswerId);
+            cache.RemoveStartsWith("questions-getquestion-questionId=" + question.Content.QuestionId);
+
+
             EmailsController emailsController = new EmailsController();
             // sent notification to the user who posted the answer, only if the user who posted the comment is a different person
             if (answer.Content.UserId != userInfo.Id)
@@ -119,7 +121,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             emailsController.SendEmail(new Email()
             {
                 UserId = answer.Content.UserId,
-                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your answer in question <a href='" + hostName + "/feed/" + question.Content.QuestionId + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
+                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your answer in question <a href='" + hostName + "/feed/" + question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
                 Subject = "ShibpurHub | New comment to your answer"
             });
             }
@@ -131,7 +133,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 emailsController.SendEmail(new Email()
                 {
                     UserId = question.Content.UserId,
-                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.QuestionId + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
+                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
                     Subject = "ShibpurHub | New comment to your question" + question.Content.Title
                 });
             }
