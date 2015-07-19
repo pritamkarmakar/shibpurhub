@@ -45,7 +45,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = true, MustRevalidate = true)]
+        [Authorize]
+        [CacheOutput(ServerTimeSpan = 600)]
         public IHttpActionResult GetNewNotifications(string userId)
         {
             try
@@ -65,21 +66,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ex.Message);
             }
         }
-
-        // GET: api/Notification/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
+       
         // POST: api/Notification
         /// <summary>
         /// Submit a new notification
         /// </summary>
         /// <param name="notification">Notification object</param>
+        [Authorize]
         [ResponseType(typeof(Notifications))]
-        [InvalidateCacheOutput("GetNotifications")]
-        [InvalidateCacheOutput("GetNewNotifications")]
         public IHttpActionResult PostNotification(Notifications notification)
         {
             if (!ModelState.IsValid)
@@ -94,7 +88,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // make it as new notification
             notification.NewNotification = true;
 
-
             // save the notification to the database collection
             var result = _mongoHelper.Collection.Save(notification);
 
@@ -105,8 +98,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = notification.NotificationId }, notification);
         }
 
-        [InvalidateCacheOutput("GetNotifications")]
-        [InvalidateCacheOutput("GetNewNotifications")]
+        [Authorize]
         public IHttpActionResult MarkAllNewNotificationsAsOld(string userId)
         {
             try
@@ -130,6 +122,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     _mongoHelper.Collection.Save(notification);
                 }
 
+                // invalidate the cache for the action those will get impacted due to this new notification
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getnotification cache for the user
+                cache.RemoveStartsWith("notifications-getnotifications-userId=" + userId);
+                cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + userId);
+
                 return Ok();
             }
             catch(MongoDB.Driver.MongoConnectionException ex)
@@ -143,7 +142,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="notificationId">Notification Id</param>
         /// <returns></returns>
-        [InvalidateCacheOutput("GetNotifications")]
+        [Authorize]
         public IHttpActionResult MarkNotificationsAsVisited(string notificationId)
         {
             if (string.IsNullOrEmpty(notificationId) || notificationId == "undefined")
@@ -160,17 +159,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             result[0].HasVisited = true;
             _mongoHelper.Collection.Save(result[0]);
 
-            return Ok();
-        }
-        
-        // PUT: api/Notification/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+            // invalidate the cache for the action those will get impacted due to this new notification
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 
-        // DELETE: api/Notification/5
-        public void Delete(int id)
-        {
+            // invalidate the getnotification cache for the user
+            cache.RemoveStartsWith("notifications-getnotifications-userId=" + result[0].UserId);
+
+            return Ok();
         }
     }
 }

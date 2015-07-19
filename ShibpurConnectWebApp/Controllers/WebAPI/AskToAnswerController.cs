@@ -24,12 +24,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<AskToAnswer>();
         }
 
-        // GET api/asktoanswer
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         /// <summary>
         ///  API to check if we have asked a user to answer a question
         /// </summary>

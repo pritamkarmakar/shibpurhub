@@ -230,16 +230,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 if (askToAnswer != null)
                     askToAnswerController.UpdateHasAnswered(askToAnswer);
 
-                // send notification for this new answer
-                NotificationsController notificationsController = new NotificationsController();
-                notificationsController.PostNotification(new Notifications()
-                {
-                    UserId = question.UserId,
-                    PostedOnUtc = DateTime.UtcNow,
-                    NotificationType = NotificationTypes.ReceivedAnswer,
-                    NotificationContent = "{\"answeredBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"questionId\":\"" + answerdto.QuestionId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" + question.UrlSlug + "\"}"
-                });
-
                 // get the hostname
                 Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
                 string pathQuery = myuri.PathAndQuery;
@@ -247,6 +237,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 // sent notification to the user who posted the question
                 EmailsController emailsController = new EmailsController();
+                NotificationsController notificationsController = new NotificationsController();
                 if (question.UserId != userInfo.Id)
                 {
                     await emailsController.SendEmail(new Email()
@@ -254,6 +245,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         UserId = question.UserId,
                         Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to your question <a href='" + hostName + "/feed/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a>",
                         Subject = "ShibpurHub | New answer to your question \"" + question.Title + "\""
+                    });
+
+                    notificationsController.PostNotification(new Notifications()
+                    {
+                        UserId = question.UserId,
+                        PostedOnUtc = DateTime.UtcNow,
+                        NewNotification = true,
+                        NotificationType = NotificationTypes.ReceivedAnswer,
+                        NotificationContent = "{\"answeredBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"questionId\":\"" + answerdto.QuestionId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" + question.UrlSlug + "\"}"
                     });
                 }
 
@@ -277,6 +277,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 // invalidate the GetProfileByUserId api for the user who is posting this answer
                 cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+
+                // invalidate the notification cache for this user
+                cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + question.UserId);
+                cache.RemoveStartsWith("notifications-getnotifications-userId=" + question.UserId);
 
                 return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
             }

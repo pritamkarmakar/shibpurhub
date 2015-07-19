@@ -300,7 +300,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (userInfo == null)
                 return BadRequest("userid not found with the suuplied bearer token");
 
-            //process this only if the userIdToFollow is not present in the current user profile collection
+            // one user can't follow himself
+            if (userIdToFollow == userInfo.Id)
+                return BadRequest("you can't follow yourself");
+
+            // process this only if userIdToFollow is not present in the current user profile collection
             if (userInfo.Following != null && userInfo.Following.Contains(userIdToFollow))
             {
                 return Ok("you are already following this user");
@@ -321,6 +325,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             cache.RemoveStartsWith("profile-getuserfollowers-userId=" + userIdToFollow);
             // invalidate the getuserfollowing api 
             cache.RemoveStartsWith("profile-getuserfollowing-userId=" + userInfo.Id);
+            // invalidate the notification cache for this user
+            cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + userIdToFollow);
+            cache.RemoveStartsWith("notifications-getnotifications-userId=" + userIdToFollow);
 
             // send notification to the user who is getting followed
             Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
@@ -333,6 +340,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "'>" + userInfo.FirstName + " " + userInfo.LastName + "</a> now following you. Check all your followers <a href=" + hostName + "/Account/Profile> here</a>",
                 Subject = "ShibpurHub: You have a new follower"
 
+            });
+
+            // save this into notification collection so that user will get the bubble notice in the header
+            NotificationsController notificationsController = new NotificationsController();
+            notificationsController.PostNotification(new Notifications()
+            {
+                UserId = userIdToFollow,
+                PostedOnUtc = DateTime.UtcNow,
+                NewNotification = true,
+                NotificationType = NotificationTypes.Following,
+                NotificationContent =
+                    "{\"followedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +
+                    userInfo.LastName + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\"}"
             });
 
             return Ok("now you are following this user");

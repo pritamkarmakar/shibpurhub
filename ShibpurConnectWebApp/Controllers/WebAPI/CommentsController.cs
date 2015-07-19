@@ -111,18 +111,38 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // invalidate the getquestion api call for the question associated with this answer
             cache.RemoveStartsWith("comments-getcommentsforanswer-answerId=" + comment.AnswerId);
             cache.RemoveStartsWith("questions-getquestion-questionId=" + question.Content.QuestionId);
-
-
+            cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + answer.Content.UserId);
+            cache.RemoveStartsWith("notifications-getnotifications-userId=" + answer.Content.UserId);
+            
             EmailsController emailsController = new EmailsController();
+            // send notification for this new comment, bubble comment in the nav bar
+            NotificationsController notificationsController = new NotificationsController();
             // sent notification to the user who posted the answer, only if the user who posted the comment is a different person
             if (answer.Content.UserId != userInfo.Id)
             {
-            await emailsController.SendEmail(new Email()
-            {
-                UserId = answer.Content.UserId,
-                Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your answer in question <a href='" + hostName + "/feed/" + question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
-                Subject = "ShibpurHub | New comment to your answer \"" + question.Content.Title + "\""
-            });
+                await emailsController.SendEmail(new Email()
+                {
+                    UserId = answer.Content.UserId,
+                    Body =
+                        "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id +
+                        "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
+                        " posted a comment to your answer in question <a href='" + hostName + "/feed/" +
+                        question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
+                    Subject = "ShibpurHub | New comment to your answer \"" + question.Content.Title + "\""
+                });
+
+                notificationsController.PostNotification(new Notifications()
+                {
+                    UserId = answer.Content.UserId,
+                    PostedOnUtc = DateTime.UtcNow,
+                    NewNotification = true,
+                    NotificationType = NotificationTypes.ReceivedComment,
+                    NotificationContent =
+                        "{\"commentedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +
+                        userInfo.LastName + "\",\"questionId\":\"" + question.Content.QuestionId +
+                        "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" +
+                        question.Content.UrlSlug + "\"}"
+                });
             }
 
             // sent a notification to the user who posted the question, only if the commenter is a different person
@@ -135,7 +155,23 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a>",
                     Subject = "ShibpurHub | New comment to your question \"" + question.Content.Title + "\""
                 });
+
+                notificationsController.PostNotification(new Notifications()
+                {
+                    UserId = question.Content.UserId,
+                    PostedOnUtc = DateTime.UtcNow,
+                    NewNotification = true,
+                    NotificationType = NotificationTypes.ReceivedCommentInQuestion,
+                    NotificationContent =
+                        "{\"commentedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +
+                        userInfo.LastName + "\",\"questionId\":\"" + question.Content.QuestionId +
+                        "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" +
+                        question.Content.UrlSlug + "\"}"
+                });
             }
+
+           
+            
 
             return CreatedAtRoute("DefaultApi", new { id = commentToPost.CommentId }, commentToPost);
         }

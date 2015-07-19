@@ -27,18 +27,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        // GET api/websitealert
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/websitealert/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         /// <summary>
         /// Send email notification for any outage. This method validate if there is already email sent for the same 
         /// error in last one hour then don't send again
