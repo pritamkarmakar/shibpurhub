@@ -137,17 +137,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 });
             }
 
-            // send notification for this new answer, this will show up in the header as a bubble
-            // notification to the user who posted the answer
-            NotificationsController notificationsController = new NotificationsController();
-            notificationsController.PostNotification(new Notifications()
-            {
-                UserId = answer.Content.UserId,
-                PostedOnUtc = DateTime.UtcNow,
-                NotificationType = NotificationTypes.ReceivedComment,
-                NotificationContent = "{\"answeredBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"questionId\":\"" + answerdto.QuestionId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" + question.UrlSlug + "\"}"
-            });
-
             return CreatedAtRoute("DefaultApi", new { id = commentToPost.CommentId }, commentToPost);
         }
         
