@@ -549,66 +549,22 @@
 
     // function to send notification to the specific user from 'Ask to Answer' module
     function SendNotification(elm) {
-        // retrieve current logged-in user details
-        var userDetails = localStorage.getItem("SC_Session_UserDetails");
-        if (!userDetails) {
-            //TO-DO: Handle if userdetail is not available in Session Storage
-            return;
-        }
-        var userInfo = $.parseJSON(userDetails);
+        // disable the Ask button and change the test to Asked
+        $(elm).text("Asked");
+        $(elm).attr("disabled", "disabled");
 
-        // send email notification
-        var emaildata = {
-            "Body": "<a href='" + window.location.origin + "/Account/Profile?userId=" + userInfo.id + "' style='text-decoration:none'>" + userInfo.firstName + " " + userInfo.lastName + "</a>" + " requested you to answer <a href='" + window.location.href + "' style='text-decoration:none'>" + $('#questiontitle').text() + "</a>",
-            "UserId": elm.attributes["data-id"].value,
-            "Subject": "ShibpurHub | Can you answer this question?"
+        // save this 'ask to answer' record in database collection
+        var asktoanswer = {
+            "AskedTo": elm.attributes["data-id"].value,
+            "AskedBy": userInfo.id,
+            "QuestionId": questionID
         };
-
         scAjax({
-            "url": "emails/sendemail",
+            "url": "asktoanswer/postasktoanswer",
             "type": "POST",
-            "data": JSON.stringify(emaildata, null, 2),
+            "data": JSON.stringify(asktoanswer, null, 2),
             "success": function (result) {
-            }
-        });
 
-        // save this request in the Notification collection
-        var notificationContent = {
-            "askedBy": userInfo.id,
-            "displayName": userInfo.firstName + " " + userInfo.lastName,
-            "profileImage":userInfo.profileImageURL,
-            "questionId": questionID,
-            "questionTitle": $('#questiontitle').text()
-        };
-        var data = {
-            "UserId": elm.attributes["data-id"].value,
-            "NotificationContent": JSON.stringify(notificationContent),
-            "NotificationType": "AskToAnswer"
-        };
-
-        scAjax({
-            "url": "notifications/PostNotification",
-            "type": "POST",
-            "data": JSON.stringify(data, null, 2),
-            "success": function (result) {
-                // disable the Ask button and change the test to Asked
-                $(elm).text("Asked");
-                $(elm).attr("disabled", "disabled");
-
-                // save this 'ask to answer' record in database collection
-                var asktoanswer = {
-                    "AskedTo": elm.attributes["data-id"].value,
-                    "AskedBy": userInfo.id,
-                    "QuestionId": questionID
-                };
-                scAjax({
-                    "url": "asktoanswer/postasktoanswer",
-                    "type": "POST",
-                    "data": JSON.stringify(asktoanswer, null, 2),
-                    "success": function (result) {
-
-                    }
-                });
             }
         });
     }
@@ -780,35 +736,6 @@
 
                 // send notification to the user who asked this question, that there is a new answer for your question
                 NotificationForNewAnswer();
-
-                //update the asktoanswer collection if this user has been asked to answer this question
-                scAjax({
-                    "url": "asktoanswer/GetAskToAnswer",
-                    "data": { "questionId": questionID, "userId": userInfo.id },
-                    "success": function (result) {
-                        if (result != null) {
-                            if (result.hasAnswered == false) {
-                                // mark that the user has answered this question
-                                var asktoanswer = {
-                                    "Id": result.id,
-                                    "AskedTo": userInfo.id,
-                                    "AskedBy": result.askedBy,
-                                    "QuestionId": result.questionId,
-                                    "HasAnswered": true,
-                                    "AskedOnUtc": result.askedOnUtc
-                                };
-                                scAjax({
-                                    "url": "asktoanswer/postasktoanswer",
-                                    "type": "POST",
-                                    "data": JSON.stringify(asktoanswer, null, 2),
-                                    "success": function (result) {
-
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
 
                 var utcDate = new Date(result.postedOnUtc);
                 var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + "at" + utcDate.getHours() + ":" + utcDate.getMinutes();

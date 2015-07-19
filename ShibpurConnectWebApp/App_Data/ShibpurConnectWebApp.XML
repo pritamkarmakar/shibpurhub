@@ -546,7 +546,13 @@
             <param name="userId">user id</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.PostAskToAnswer(ShibpurConnectWebApp.Models.WebAPI.AskToAnswer)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.UpdateHasAnswered(ShibpurConnectWebApp.Models.WebAPI.AskToAnswer)">
+            <summary>
+            Update the 'HasAnswered' column for a particular record
+            </summary>
+            <param name="askToAnswer"></param>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.PostAskToAnswer(ShibpurConnectWebApp.Models.WebAPI.AskToAnswerDTO)">
             <summary>
             API to save the Ask to answer request 
             </summary>
@@ -964,9 +970,14 @@
             We will use this model in the api/FindUser API. Main intention is to send the userid to the API user, so that we can use the userid for other APIs
             </summary>
         </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.AskToAnswerDTO">
+            <summary>
+            AskToAnswer model for the API
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.AskToAnswer">
             <summary>
-            AskToAnswer model
+            Model we will use to save to database
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.ImageInfo">

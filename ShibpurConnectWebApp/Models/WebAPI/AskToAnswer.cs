@@ -11,19 +11,15 @@ using System.Web;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     /// <summary>
-    /// AskToAnswer model
+    /// AskToAnswer model for the API
     /// </summary>
     [Serializable]
     [BsonIgnoreExtraElements]
-    public class AskToAnswer
+    public class AskToAnswerDTO
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
         [DataMember]
         [Required]
-        public string AskedTo { get; set; }        
+        public string AskedTo { get; set; }
 
         [DataMember]
         [Required]
@@ -33,11 +29,23 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [Required]
         public string QuestionId { get; set; }
 
+    }
+
+    /// <summary>
+    /// Model we will use to save to database
+    /// </summary>
+    public class AskToAnswer : AskToAnswerDTO
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+
         [DataMember]
         public DateTime AskedOnUtc { get; set; }
 
         [DataMember]
         [Required]
-        public bool HasAnswered { get; set; }             
-    }   
+        public bool HasAnswered { get; set; }
+
+    }
 }

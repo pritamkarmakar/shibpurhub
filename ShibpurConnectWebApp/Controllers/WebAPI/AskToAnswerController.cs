@@ -5,8 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Http.Results;
 using MongoDB.Driver.Linq;
 using WebApi.OutputCache.V2;
 
@@ -36,7 +39,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public AskToAnswer GetAskToAnswer(string questionId, string userId)
         {
             var result = (from e in _mongoHelper.Collection.AsQueryable<AskToAnswer>()
-                          where e.AskedTo == userId && e.QuestionId == questionId                       
+                          where e.AskedTo == userId && e.QuestionId == questionId
                           select e).ToList();
 
             if (result.Count == 0)
@@ -57,19 +60,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // total response received
             int responseReceived = 0;
             var result = (from e in _mongoHelper.Collection.AsQueryable<AskToAnswer>()
-                          where e.AskedTo == userId 
+                          where e.AskedTo == userId
                           select e).ToList();
 
             if (result.Count > 0)
                 responseReceived = result.Count;
             else
                 return "NA";
-              
+
 
             // response given
             var responseGiven = (from e in _mongoHelper.Collection.AsQueryable<AskToAnswer>()
-                          where e.AskedTo == userId && e.HasAnswered == true
-                          select e).ToList();
+                                 where e.AskedTo == userId && e.HasAnswered == true
+                                 select e).ToList();
 
             if (responseGiven.Count == 0)
                 return "0%";
@@ -80,36 +83,104 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 return Convert.ToInt32(rRate).ToString() + "%";
             }
-           
+
         }
+
+        /// <summary>
+        /// Update the 'HasAnswered' column for a particular record
+        /// </summary>
+        /// <param name="askToAnswer"></param>
+        internal void UpdateHasAnswered(AskToAnswer askToAnswer)
+        {
+            if(askToAnswer == null)
+                return;
+
+            askToAnswer.HasAnswered = true;
+
+            _mongoHelper.Collection.Save(askToAnswer);
+        }
+
 
         /// <summary>
         /// API to save the Ask to answer request 
         /// </summary>
         /// <param name="askToAnswer"></param>
         /// <returns></returns>
+        [Authorize]
         [ResponseType(typeof(AskToAnswer))]
-        public IHttpActionResult PostAskToAnswer(AskToAnswer askToAnswer)
+        public async Task<IHttpActionResult> PostAskToAnswer(AskToAnswerDTO askToAnswerDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (askToAnswer == null)
+            if (askToAnswerDto == null)
                 return BadRequest("Request body is null. Please send a valid AskToAnswer object");
 
-            // add the datetime stamp for this askToAnswer if only this is a new entry
-            if (string.IsNullOrEmpty(askToAnswer.Id))
-                askToAnswer.AskedOnUtc = DateTime.UtcNow;        
-            
-            // save the notification to the database collection
-            var result = _mongoHelper.Collection.Save(askToAnswer);
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
 
-            // if mongo failed to save the data then send error
-            if (!result.Ok)
-                return InternalServerError();
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
 
-            return CreatedAtRoute("DefaultApi", new { id = askToAnswer.Id }, askToAnswer);
-        }    
+            // send a notification to user to answer the question, only if we haven't sent the same notification to that user before
+            if (GetAskToAnswer(askToAnswerDto.QuestionId, askToAnswerDto.AskedTo) == null)
+            {
+                // get the hostname
+                Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+                string pathQuery = myuri.PathAndQuery;
+                string hostName = myuri.ToString().Replace(pathQuery, "");
+
+                // get details about associated question
+                QuestionsController questionsController = new QuestionsController();
+                var actionresult = await questionsController.GetQuestionInfo(askToAnswerDto.QuestionId);
+                var question = actionresult as OkNegotiatedContentResult<Question>;
+
+                EmailsController emailsController = new EmailsController();
+                emailsController.SendEmail(new Email()
+                {
+                    UserId = askToAnswerDto.AskedTo,
+                    Body =
+                        "<a href='" + hostName + "/Account/Profile?userId=" + askToAnswerDto.AskedBy +
+                        "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
+                        " requested you to answer <a href='" + hostName + "' style='text-decoration:none'>" +
+                        question.Content.Title + "</a>",
+                    Subject = "ShibpurHub | You have a new request to answer a question"
+                });
+
+                // save this new request in the notification collection, so that user will get that bubble notification in the header
+                NotificationsController notificationsController = new NotificationsController();
+                string notificationContent = "{\"askedBy\":\"" + askToAnswerDto.AskedBy + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionId\":\"" + askToAnswerDto.QuestionId + "\",\"questionTitle\":\"" + question.Content.Title + "\"}";
+                notificationsController.PostNotification(new Notifications()
+                {
+                    UserId = askToAnswerDto.AskedTo,
+                    NotificationContent = notificationContent,
+                    NotificationType = NotificationTypes.AskToAnswer
+                });
+
+                // object that we will save in the database
+                AskToAnswer askToAnswer = new AskToAnswer();
+                askToAnswer.AskedBy = askToAnswerDto.AskedBy;
+                askToAnswer.AskedTo = askToAnswerDto.AskedTo;
+                askToAnswer.QuestionId = askToAnswerDto.QuestionId;
+                askToAnswer.AskedOnUtc = DateTime.UtcNow;
+
+                // save the notification to the database collection
+                var result = _mongoHelper.Collection.Save(askToAnswer);
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    return InternalServerError();
+
+                return CreatedAtRoute("DefaultApi", new { id = askToAnswer.Id }, askToAnswer);
+            }
+
+            return BadRequest("This user already requested to answer this question");
+        }
     }
 }

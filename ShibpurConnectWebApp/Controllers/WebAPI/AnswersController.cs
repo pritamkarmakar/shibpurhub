@@ -223,6 +223,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     questionMongoHelper.Collection.Save(question);
                 }
 
+                // check if this user has been requested to answer this question. Then we have to 
+                // update the 'AskToAnswer' collection to mark 'HasAnswered' as true
+                AskToAnswerController askToAnswerController = new AskToAnswerController();
+                AskToAnswer askToAnswer =  askToAnswerController.GetAskToAnswer(answerdto.QuestionId, userInfo.Id);
+                if (askToAnswer != null)
+                    askToAnswerController.UpdateHasAnswered(askToAnswer);
+
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 
