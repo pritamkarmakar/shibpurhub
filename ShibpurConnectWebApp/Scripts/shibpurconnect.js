@@ -2,7 +2,8 @@
 var SERVER = "http://shibpur.azurewebsites.net/api/";
 var IMGURPATH = "http://i.imgur.com/";
 
-$(window).on('beforeunload', function () {
+$(window).on('onunload', function () {
+    console.log("App OnUnload");
     localStorage.clear();
 });
 
