@@ -348,22 +348,25 @@
         // hide 'ask to answer' module
         $('#userToAnswer').hide();
 
-        advancedEditor = new Quill('.wirte-answer .text-wrapper .editor-container', {
-            modules: {
-                'authorship': {
-                    authorId: 'advanced',
-                    enabled: true
+        if($('.wirte-answer .text-wrapper .editor-container').length > 0)
+        {
+            advancedEditor = new Quill('.wirte-answer .text-wrapper .editor-container', {
+                modules: {
+                    'authorship': {
+                        authorId: 'advanced',
+                        enabled: true
+                    },
+                    'toolbar': {
+                        container: '.wirte-answer .text-wrapper .toolbar-container'
+                    },
+                    'link-tooltip': true,
+                    'image-tooltip': true,
+                    'multi-cursor': true
                 },
-                'toolbar': {
-                    container: '.wirte-answer .text-wrapper .toolbar-container'
-                },
-                'link-tooltip': true,
-                'image-tooltip': true,
-                'multi-cursor': true
-            },
-            styles: false,
-            theme: 'snow'
-        });
+                styles: false,
+                theme: 'snow'
+            });
+        }
 
 
         jQuery.support.cors = true;
