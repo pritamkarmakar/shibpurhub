@@ -128,5 +128,10 @@ namespace ShibpurConnectWebApp
             //var rc = new RequestContext(wrapper, routeData);
             //errorsController.Execute(rc);
         }
+        
+        protected void Session_End(object sender, EventArgs e)
+        {
+            Session.Abandon();
+        }
     }
 }
