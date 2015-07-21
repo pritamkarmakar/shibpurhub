@@ -1400,20 +1400,24 @@
                         </div>
                         <div class="detail col-md-10">
                             <div class="text"></div>
-                            <div class="answer-links">
-                                <span class="link upvote-span">
-                                    <a class="upvote-anchor" href="#">
-                                        Upvote
-                                        <span class="count">0</span>
-                                    </a>
-                                </span>
-                                <span class="link comment-span">
-                                    <a class="comment-anchor" href="#">Comment</a>
-                                    <span class="comment-count"></span>
-                                </span>
-                                <span class="link edit-answer-span">
-                                    <a class="edit-answer-anchor" href="#">Edit</a>
-                                </span>
+                            
+                                <div class="answer-links">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <span class="link upvote-span">
+                                            <a class="upvote-anchor" href="#">
+                                                Upvote
+                                                <span class="count">0</span>
+                                            </a>
+                                        </span>
+                                        <span class="link comment-span">
+                                            <a class="comment-anchor" href="#">Comment</a>
+                                            <span class="comment-count"></span>
+                                        </span>
+                                        <span class="link edit-answer-span">
+                                            <a class="edit-answer-anchor" href="#">Edit</a>
+                                        </span>
+                                    }
                                 <div class="stat">
                                     <span class="date"></span>
                                 </div>
@@ -1426,12 +1430,16 @@
                             <span class="comment-date"></span>
                             <span class="comment-text">
                                 <span></span>
-                                <a href="#"> Edit</a>
+                                @if (User.Identity.IsAuthenticated)
+                                {<a href="#"> Edit</a>}
                             </span>
                         </div>
+                        @if (User.Identity.IsAuthenticated)
+                        {
                         <div class="add-comment twelvepxfont">
                             <a href="#" class="anchor-add-comment add">Add Comment</a>
                         </div>
+                        }
                         <div class="comment-box">
                             @*<a class="commentor col-md-1" href="#">
                                 <img height="25" width="25" src="/Content/images/profile-image.jpg">
@@ -1457,6 +1465,8 @@
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <strong>Error!</strong>
         </div>
+        @if (User.Identity.IsAuthenticated)
+        {
         <div class="wirte-answer col-md-12 col-xs-12" style="margin-top:40px; display:none;">
             @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
             <div class="text-wrapper col-md-12">
@@ -1570,7 +1580,7 @@
                 <i></i><span>Submit Answer</span>
             </button>
         </div>
-
+        }
         <!--div to show Ask to Answer module-->
         <div class="well panel panel-default col-md-12 col-xs-12" id="userToAnswer" style="margin-top:30px;display:none">
             <h4>Ask to Answer</h4>
