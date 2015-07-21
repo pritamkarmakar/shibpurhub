@@ -1,6 +1,11 @@
 
 var SERVER = "http://shibpur.azurewebsites.net/api/";
 var IMGURPATH = "http://i.imgur.com/";
+
+$(window).on('beforeunload', function () {
+    localStorage.clear();
+});
+
 $(document).ready(function () {
     jQuery.support.cors = true;
     var userID = $("#hdnUserID").val();
