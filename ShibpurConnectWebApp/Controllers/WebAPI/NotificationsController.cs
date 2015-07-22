@@ -23,6 +23,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // GET: api/Notification
+        [Authorize]
         [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = true, MustRevalidate = true)]
         public IHttpActionResult GetNotifications(string userId)
         {
