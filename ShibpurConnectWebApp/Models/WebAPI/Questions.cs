@@ -67,6 +67,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// <summary>
     /// We will use this to send data from the API. This has a new property UserName. We will add firstname, lastname as well later
     /// </summary>
+    [Serializable]
     public class QuestionViewModel : Question
     {
         [DataMember]
@@ -112,6 +113,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// <summary>
     /// We will use this model in the most popular question model
     /// </summary>
+    [Serializable]
     public class PopularQuestionModel : Question
     {
         public int AnswerCount { get; set; }

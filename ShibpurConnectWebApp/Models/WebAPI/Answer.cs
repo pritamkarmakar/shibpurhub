@@ -57,6 +57,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public DateTime? LastEditedOnUtc { get; set; }
     }
 
+    [Serializable]
     public class AnswerViewModel : Answer
     {
         [DataMember]

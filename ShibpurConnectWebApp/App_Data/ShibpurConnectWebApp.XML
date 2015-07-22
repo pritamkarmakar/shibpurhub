@@ -621,6 +621,12 @@
             <param name="categoryId">category id</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CategoryTaggingController.PostCategoryTagging(ShibpurConnectWebApp.Models.WebAPI.CategoryTagging)">
+            <summary>
+            Save a new category tagging
+            </summary>
+            <param name="categoryTagging"></param>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.GetEducationalHistory">
             <summary>
             Get education histories for all users

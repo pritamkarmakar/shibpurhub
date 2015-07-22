@@ -12,6 +12,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// <summary>
     /// Model to use to post a comment
     /// </summary>
+    [Serializable]
     public class CommentDTO
     {
         [MinLength(15, ErrorMessage = "Minimum length of comment should be more than 15 characters")]

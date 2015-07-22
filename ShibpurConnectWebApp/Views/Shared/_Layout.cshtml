@@ -60,56 +60,19 @@
                 "hideMethod": "fadeOut"
             }
 
-            // if userinfo is null then redirect to login page
-            if (typeof userInfo != "undefined") {
+            // we don't want to check notification when user in the login or register page. Otherwise the login page will reload again and again.
+            // previous issue: user has an invalid token in the local storage and this if condition was not here, so it was making getnewnotification api call with that token, and this api returning 401. 
+            // Then scAjax returning the user to the login page and this process was continuing 
+            if (window.location.pathname.toLowerCase() != "/account/login" && window.location.pathname.toLowerCase() != "/account/register") {
+                // if userinfo is null then dont execute the notification api calls
+                if (typeof userInfo != "undefined") {
 
-                // get the new notification count and update notification center
-                jQuery.support.cors = true;
-                var SERVER = "/api/";
-                scAjax({
-                    url: "notifications/GetNewNotifications?userId=" + userInfo.id,
-                    type: "GET",
-                    dataType: "json",
-                    contentType: "application/json",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    success: function (result) {
-                        if (!result) {
-                            return;
-                        }
-
-                        if (result.length > 0) {
-                            $("#notification_count").show();
-                            $("#notification_count").text(result.length);
-                        }
-                        else
-                            $("#notification_count").hide();
-
-                    },
-                    error: function (err) {
-                        // send alert to admin team
-
-                    }
-                });
-
-                // get all the notifications
-                GetNotification(userInfo);
-
-                $("#notificationLink").click(function () {
-
-                    // get current logged-in user details
-                    var userInfo = $.parseJSON(userDetails);
-                    var SERVER = "/api/";
-                    // get all notifications and update the div
-                    GetNotification(userInfo);
-
-                    // mark all new notification as old
+                    // get the new notification count and update notification center
+                    jQuery.support.cors = true;
                     var SERVER = "/api/";
                     scAjax({
-                        url: "notifications/MarkAllNewNotificationsAsOld?userId=" + userInfo.id,
-                        type: "POST",
+                        url: "notifications/GetNewNotifications?userId=" + userInfo.id,
+                        type: "GET",
                         dataType: "json",
                         contentType: "application/json",
                         headers: {
@@ -117,24 +80,66 @@
                             "Content-Type": "application/json",
                         },
                         success: function (result) {
-                            $('#askmeto').text("Already Asked");
+                            if (!result) {
+                                return;
+                            }
+
+                            if (result.length > 0) {
+                                $("#notification_count").show();
+                                $("#notification_count").text(result.length);
+                            }
+                            else
+                                $("#notification_count").hide();
+
+                        },
+                        error: function (err) {
+                            // send alert to admin team
+
                         }
                     });
 
-                    $("#notificationContainer").fadeToggle(300);
-                    $("#notification_count").fadeOut("slow");
-                    return false;
-                });
+                    // get all the notifications
+                    GetNotification(userInfo);
 
-                //Document Click hiding the popup
-                $(document).click(function () {
-                    $("#notificationContainer").hide();
-                });
+                    $("#notificationLink").click(function () {
 
-                //Popup on click
-                $("#notificationContainer").click(function () {
-                    //window.location.href = "/Notifications";
-                });
+                        // get current logged-in user details
+                        var userInfo = $.parseJSON(userDetails);
+                        var SERVER = "/api/";
+                        // get all notifications and update the div
+                        GetNotification(userInfo);
+
+                        // mark all new notification as old
+                        var SERVER = "/api/";
+                        scAjax({
+                            url: "notifications/MarkAllNewNotificationsAsOld?userId=" + userInfo.id,
+                            type: "POST",
+                            dataType: "json",
+                            contentType: "application/json",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                            },
+                            success: function (result) {
+                                $('#askmeto').text("Already Asked");
+                            }
+                        });
+
+                        $("#notificationContainer").fadeToggle(300);
+                        $("#notification_count").fadeOut("slow");
+                        return false;
+                    });
+
+                    //Document Click hiding the popup
+                    $(document).click(function () {
+                        $("#notificationContainer").hide();
+                    });
+
+                    //Popup on click
+                    $("#notificationContainer").click(function () {
+                        //window.location.href = "/Notifications";
+                    });
+                }
             }
 
             // back to top animation
@@ -238,19 +243,19 @@
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
-                            // if notification type is 'received answer' then execute this
+                                // if notification type is 'received answer' then execute this
                             else if (val.notificationType == 2) {
                                 var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.answeredBy + "'>" + notificationContent.displayName + "</a> wrote an answer to your question '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
-                            // if notification type is 'received comment' then execute this
+                                // if notification type is 'received comment' then execute this
                             else if (val.notificationType == 3) {
                                 var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your answer in '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
-                            // if notification type is 'ask to answer' then execute this
+                                // if notification type is 'ask to answer' then execute this
                             else if (val.notificationType == 4) {
                                 var notificationContentWithoutColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithoutColor);
