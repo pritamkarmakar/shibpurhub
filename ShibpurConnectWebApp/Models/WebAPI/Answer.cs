@@ -28,6 +28,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     /// We use this model to save into database
     /// </summary>
     [BsonIgnoreExtraElements]
+    [Serializable]
     public class Answer : AnswerDTO
     {
         [BsonId]
