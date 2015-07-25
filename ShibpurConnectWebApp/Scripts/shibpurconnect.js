@@ -270,7 +270,7 @@ function followtag(event) {
 
                 $("#" + tagname + " > i").removeClass('fa fa-check-circle');
                 $("#" + tagname + " > i").addClass('fa fa-plus-circle');
-                $("#" + tagname + " > span").text(' follow');
+                $("#" + tagname + " > span").text(' Follow');
 
                 Command: toastr["success"]("Successfully unsubscribed " + tagname);
             },
@@ -329,8 +329,14 @@ function changetextonmouseout(event) {
         $("#" + event.id + " > i").addClass('fa fa-check-circle');
         $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
         $("#" + event.id + " > span").attr('style', 'color:black;');
-        $("#" + event.id + " > span").text(" Following");
+        //$("#" + event.id + " > span").text(" Following");
         $("#" + event.id + " > i").attr('style', 'color:green;');
+
+        if(event.attributes["count"] != null)
+            $("#" + event.id + " > span").html(" Following" + "&nbsp;&nbsp;<span class='badge'>" + event.attributes["count"].nodeValue + "</span>");
+        else {
+            $("#" + event.id + " > span").text(" Following");
+        }
     }
     else {
         $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
@@ -516,11 +522,9 @@ function followquestion(obj) {
                     $("#" + obj.id + "> span").text(" Following");
 
                     // read current follower count and add +1 into that
-                    //if (obj.followercount != null) {
-                    var followercount = parseInt(obj.attributes["followercount"].nodeValue) + 1;
+                    var followercount = parseInt(obj.attributes["count"].nodeValue) + 1;
+                    $("#" + obj.id).attr("count", followercount);
                     $("#" + obj.id + "> span").append("&nbsp;&nbsp;<span class='badge'>" + followercount + "</span>");
-                    //}
-
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

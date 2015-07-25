@@ -402,7 +402,7 @@
         var SERVER = "/api/";
         questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
 
-        // set the onclick attribute of the 'Follow' anchor
+        // set the questionID attribute of the 'Follow' button
         $(".followquestionbutton").attr("id", questionID);
         $(".followquestionbutton").attr('style', 'background-color:#E4EDF4;');
 
@@ -411,14 +411,14 @@
             "url": "questions/GetQuestionFollowers?questionId=" + questionID,
             "type": "GET",
             "success": function (result) {
-                if (result.indexOf(userId) > -1) {
+                if (result != null && result.indexOf(userId) > -1) {
                     $(".followquestionbutton > i").addClass('fa fa-check-circle');
                     $(".followquestionbutton > span").text(" Following");
                 }
-                if(result.length > 0)
+                if(result != null && result.length > 0)
                 {
                     $(".followquestionbutton > span").append("&nbsp;&nbsp;<span class='badge'>" + result.length +"</span>");
-                    $(".followquestionbutton").attr("followercount", result.length);
+                    $(".followquestionbutton").attr("count", result.length);
                 }
 
             }
