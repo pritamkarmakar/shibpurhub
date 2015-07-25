@@ -598,13 +598,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 // retrieve the existing followers of this question
                 List<string> followersList = questionObj.Followers;
-                // if userid present in the followerlist then return true
-                if (followersList != null)
-                {
-                    return Ok(followersList);
-                }
-                else
-                    return null;
+                return Ok(followersList);
             }
 
             else

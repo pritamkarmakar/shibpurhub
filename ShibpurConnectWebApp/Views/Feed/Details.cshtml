@@ -17,6 +17,12 @@
         text-align: center;
     }
 
+    /*css for the follow button*/
+    .followquestionbutton {
+        margin-right: 12px;
+    }
+
+    /*css for the question edit, report links*/
     span.action_item {
         font-size: 9pt;
         margin-right: 12px;
@@ -1405,7 +1411,7 @@
                     <div class="col-md-6" style="margin-top: 20px">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <button type='submit' class='btn btn-xs followquestionbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followquestion(this);'><i class='fa fa-plus-circle' style='color:green;'></i><span> Follow </span></button>
+                            <button type='submit' class='btn btn-xs followquestionbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followquestion(this);'><i class='fa fa-plus-circle' style='color: green;'></i><span> Follow </span></button>
                             <span class="action_item" id="spanEditQuestion"><i class="fa fa-pencil">&nbsp;</i><a href="#" class="editQuesAnchor">Edit</a></span>
                             <span class="action_item"><i class="fa fa-flag" style="color: rgb(234, 113, 113);">&nbsp;</i><a href="#" onclick="togglemodal();">Report<span class="count">1000</span></a></span>
                         }
