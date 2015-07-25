@@ -234,7 +234,7 @@ function getQueryStringParam(name) {
 }
 
 // function to follow a new tag
-function followfunction(event) {
+function followtag(event) {
     var tagname = event.id;
 
     if ($("#" + event.id + " > span").text().trim().toLowerCase() == "follow" || $("#" + event.id + " > span").text().trim().toLowerCase() == "follow this tag") {
@@ -285,7 +285,7 @@ function followfunction(event) {
 function changetextonmouseover(event) {
     //$("#" + event.id + " > span").attr('style', 'color:black;font-weight:bold');
 
-    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "following") {
+    if ($("#" + event.id + " > span").text().trim().toLowerCase().search("following") == 0) {
         $("#" + event.id + " > i").removeClass('fa fa-check-circle');
         $("#" + event.id + " > i").addClass('fa fa-minus-circle');
         $("#" + event.id + " > i").attr('style', 'color:white;');
@@ -324,7 +324,7 @@ function changeuserfollowonmouseover(event) {
 function changetextonmouseout(event) {
     //$("#" + event.id + " > span").attr('style', 'color:black;font-weight:normal');
 
-    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "unfollow") {
+    if ($("#" + event.id + " > span").text().trim().toLowerCase().search("unfollow") == 0) {
         $("#" + event.id + " > i").removeClass('fa fa-minus-circle');
         $("#" + event.id + " > i").addClass('fa fa-check-circle');
         $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
@@ -495,4 +495,60 @@ function isLoggedInUserId(userId)
     }
     
     return false;
+}
+    
+// method to follow a question
+function followquestion(obj) {
+    if ($("#" + obj.id + " > span").text().trim().toLowerCase().search("follow") == 0) {
+        scAjax({
+            "url": "questions/followquestion?questionId=" + obj.id,
+            "type": "POST",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+                if (result == "you are alrady following this question") {
+                    Command: toastr["info"](result);
+                } else {
+                    Command: toastr["success"](result);
+                    $("#" + obj.id + "> i").removeClass();
+                    $("#" + obj.id + "> i").addClass('fa fa-check-circle');
+                    $("#" + obj.id + "> span").text(" Following");
+
+                    // read current follower count and add +1 into that
+                    //if (obj.followercount != null) {
+                    var followercount = parseInt(obj.attributes["followercount"].nodeValue) + 1;
+                    $("#" + obj.id + "> span").append("&nbsp;&nbsp;<span class='badge'>" + followercount + "</span>");
+                    //}
+
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                if (XMLHttpRequest.status == "401")
+                    window.location.href = "/account/login";
+                else
+                    Command: toastr["error"]("Error: " + textStatus);
+            }
+        });
+    }
+    else if ($("#" + obj.id + " > span").text().trim().toLowerCase().search("unfollow") == 0) {
+        scAjax({
+            "url": "questions/unfollowquestion?questionId=" + obj.id,
+            "type": "POST",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+
+                $("#" + obj.id + "> i").removeClass();
+                $("#" + obj.id + "> i").addClass('fa fa-plus-circle');
+                $("#" + obj.id + "> span").text(' follow');
+
+                Command: toastr["success"]("Successfully unsubscribed this question");
+            },
+            "error": function () {
+                Command: toastr["error"]("Failed to unsubscribed this question. Please try again");
+            }
+        });
+    }
 }

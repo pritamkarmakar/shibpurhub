@@ -753,6 +753,27 @@
             <param name="question"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.FollowQuestion(System.String)">
+            <summary>
+            API to follow a question to get all updates like new answer/comment post in the question
+            </summary>
+            <param name="questionSpam"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.UnfollowQuestion(System.String)">
+            <summary>
+            API to unfollow a question
+            </summary>
+            <param name="questionId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestionFollowers(System.String)">
+            <summary>
+            Get the list of users who are following this question
+            </summary>
+            <param name="questionId"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.ReportSpam(ShibpurConnectWebApp.Models.WebAPI.QuestionSpam)">
             <summary>
             API to mark a question as inappropriate

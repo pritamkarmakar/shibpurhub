@@ -59,6 +59,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public int ViewCount { get; set; }
 
         public int SpamCount { get; set; }
+
+        public List<string> Followers { get; set; }
         
         [DataMember]
         public DateTime? LastEditedOnUtc { get; set; }

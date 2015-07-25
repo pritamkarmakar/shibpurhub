@@ -12,6 +12,7 @@
         var selectedtag = @Html.Raw(Json.Encode(ViewData["selectedtag"]));
         $('#tagheading').text("Questions about " + '"' +selectedtag + '"');
         $('.followbutton').attr('id', selectedtag);
+        $(".followbutton").attr('style', 'background-color:#E4EDF4;');
 
         // get current user id from local storage
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -42,7 +43,7 @@
             <h4 id="tagheading"></h4>
         </div>
         <div class="col-md-12">
-            <button type='submit' class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followfunction(this);'><i class='fa fa-plus-circle' style='color:green;'></i><span> Follow this tag</span></button>
+            <button type='submit' class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followtag(this);'><i class='fa fa-plus-circle' style='color:green;'></i><span> Follow this tag</span></button>
         </div>
         <div class="col-md-12">
             <hr id="solidseparator" />

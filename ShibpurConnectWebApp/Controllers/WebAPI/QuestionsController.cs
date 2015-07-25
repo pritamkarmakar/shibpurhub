@@ -79,7 +79,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan=864000, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, NoCache = true)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
@@ -117,8 +117,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 return Ok(result);
-            }            
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -232,7 +232,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ex.Message);
             }
         }
-        
+
         /// <summary>
         /// Will return a specific question with answers and comments. 
         /// If you just need only question details without comments and answers then use GetQuestionInfo method
@@ -252,7 +252,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
                 var claim = principal.FindFirst("sub");
-                
+
                 Helper.Helper helper = new Helper.Helper();
                 var userInfo = (CustomUserInfo)null;
                 // check if claim is null (this can happen if user don't have any valid token)
@@ -269,7 +269,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var _answerMongoHelper = new MongoHelper<Answer>();
                 var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderByDescending(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();
                 var userDetails = new Dictionary<string, CustomUserInfo>();
-                
+
                 Task<CustomUserInfo> actionResult1 = helper.FindUserById(question.UserId);
                 var questionUserDetail = await actionResult1;
                 userDetails.Add(question.UserId, questionUserDetail);
@@ -277,17 +277,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 questionVM.DisplayName = questionUserDetail.FirstName;
                 questionVM.UserProfileImage = questionUserDetail.ProfileImageURL;
 
-                if(answers.Count() == 0)
+                if (answers.Count() == 0)
                 {
                     return Ok(questionVM);
-                }                
-                
+                }
+
                 var answerVMs = new List<AnswerViewModel>();
                 var _commentsMongoHelper = new MongoHelper<Comment>();
                 var allUserIds = new List<string>();
                 // keep track of all the comments in this question
                 List<CommentViewModel> allComments = new List<CommentViewModel>();
-                foreach(var answer in answers)
+                foreach (var answer in answers)
                 {
                     // comments to be added in the answer
                     List<CommentViewModel> answerComments = new List<CommentViewModel>();
@@ -303,7 +303,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         cvm.IsCommentedByMe = userInfo != null && comment.UserId == userInfo.Id;
                         answerComments.Add(cvm);
                     }
-                    
+
                     var answervm = new AnswerViewModel().Copy(answer);
                     answervm.Comments = answerComments;
                     answervm.IsAnsweredByMe = userInfo != null && answer.UserId == userInfo.Id;
@@ -346,11 +346,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             comment.DisplayName = userData.FirstName + " " + userData.LastName;
                         }
                     }
-                }            
+                }
 
                 // remove the answers where there is no user information
                 questionVM.Answers = answerVMs.Where(m => m.UserEmail != null).ToList();
-                
+
                 return Ok(questionVM);
             }
             catch (FormatException fe)
@@ -421,7 +421,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 return Ok(questionList.OrderByDescending(m => m.AnswerCount).ToList().Take(count));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -480,6 +480,136 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return 0;
         }
 
+        /// <summary>
+        /// API to follow a question to get all updates like new answer/comment post in the question
+        /// </summary>
+        /// <param name="questionSpam"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public async Task<IHttpActionResult> FollowQuestion(string questionId)
+        {
+            if (string.IsNullOrEmpty(questionId))
+                return BadRequest("questionId can't be null or empty");
+
+            // find the userinfo using the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("Invalid bearer token");
+            }
+
+            // retrieve the question from database
+            var questionObj = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).FirstOrDefault();
+            if (questionObj != null)
+            {
+                // retrieve the existing followers and add this new user into that, if the user not in the follower list
+                List<string> followersList = questionObj.Followers;
+                if (followersList == null)
+                {
+                    questionObj.Followers = new List<string>();
+                    questionObj.Followers.Add(userInfo.Id);
+                    _mongoHelper.Collection.Save(questionObj);
+
+                    return Ok("Successfully followed this question");
+                }
+                else
+                {
+                    // if userid not present in the followerlist 
+                    if (!followersList.Contains(userInfo.Id))
+                    {
+                        questionObj.Followers.Add(userInfo.Id);
+                        _mongoHelper.Collection.Save(questionObj);
+
+                        return Ok("Successfully followed this question");
+                    }
+                    else
+                        return Ok("you are alrady following this question");
+                }
+
+            }
+
+            else
+                return BadRequest("Invalid questionId");
+        }
+
+        /// <summary>
+        /// API to unfollow a question
+        /// </summary>
+        /// <param name="questionId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public async Task<IHttpActionResult> UnfollowQuestion(string questionId)
+        {
+            if (string.IsNullOrEmpty(questionId))
+                return BadRequest("questionId can't be null or empty");
+
+            // find the userinfo using the supplied bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("Invalid bearer token");
+            }
+
+            // retrieve the question from database
+            var questionObj = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).FirstOrDefault();
+            if (questionObj != null)
+            {
+                // retrieve the existing followers and add this new user into that, if the user not in the follower list
+                List<string> followersList = questionObj.Followers;
+                if (followersList != null && followersList.Contains(userInfo.Id))
+                {
+
+                    questionObj.Followers.Remove(userInfo.Id);
+                    _mongoHelper.Collection.Save(questionObj);
+
+                    return Ok("Successfully unsubscribed this question");
+                }
+                else
+                    return Ok("you are not following this question");
+            }
+            else
+                return BadRequest("Invalid questionId");
+        }
+
+        /// <summary>
+        /// Get the list of users who are following this question
+        /// </summary>
+        /// <param name="questionId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IHttpActionResult> GetQuestionFollowers(string questionId)
+        {
+            if (string.IsNullOrEmpty(questionId))
+                return BadRequest("questionId can't be null or empty");
+
+            // retrieve the question from database
+            var questionObj = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).FirstOrDefault();
+            if (questionObj != null)
+            {
+                // retrieve the existing followers of this question
+                List<string> followersList = questionObj.Followers;
+                // if userid present in the followerlist then return true
+                if (followersList != null)
+                {
+                    return Ok(followersList);
+                }
+                else
+                    return null;
+            }
+
+            else
+                return BadRequest("Invalid questionId");
+        }
 
         /// <summary>
         /// API to mark a question as inappropriate
@@ -554,28 +684,28 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ModelState);
             }
             if (question == null)
-                return BadRequest("Request body is null. Please send a valid QuestionDTO object"); 
-         
+                return BadRequest("Request body is null. Please send a valid QuestionDTO object");
+
             // validate if incase any category is just space
-            foreach(string cat in question.Categories)
+            foreach (string cat in question.Categories)
             {
                 if (!Regex.IsMatch(cat, @"^[a-zA-Z0-9]+$"))
                 {
                     ModelState.AddModelError("", cat + " category is invalid. It contains unsupported characters. Category can only contains character from a-z and any number 0-9");
-                    return BadRequest(ModelState); 
+                    return BadRequest(ModelState);
                 }
-                if(string.IsNullOrWhiteSpace(cat))
+                if (string.IsNullOrWhiteSpace(cat))
                 {
                     ModelState.AddModelError("", cat + " category is invalid. It contains empty string or contains only whitespace");
-                    return BadRequest(ModelState); 
+                    return BadRequest(ModelState);
                 }
-                if(cat.Length > 20)
+                if (cat.Length > 20)
                 {
                     ModelState.AddModelError("", cat + " category is invalid, it is too long. Max 20 characters allowed per tag");
-                    return BadRequest(ModelState); 
+                    return BadRequest(ModelState);
                 }
             }
-         
+
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var claim = principal.FindFirst("sub");
 
@@ -595,7 +725,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (helper.GetQuestionIdFromSlug(urlSlug) != null)
             {
                 ModelState.AddModelError("", "Duplicate question: Please take a look in this question -  <a href ='http://" + Request.RequestUri.Authority + "/feed/" + urlSlug + "'>" + question.Title + "</a>");
-                return BadRequest(ModelState); 
+                return BadRequest(ModelState);
             }
 
             // new question object that we will save in the database
@@ -610,7 +740,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 PostedOnUtc = DateTime.UtcNow
             };
 
-           
+
             // create the new categories if those don't exist            
             List<Categories> categoryList = new List<Categories>();
             TagsController categoriesController = new TagsController();
@@ -652,8 +782,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     ct.QuestionId = questionToPost.QuestionId;
                     categoryTaggingController.PostCategoryTagging(ct);
                 }
-            }  
-      
+            }
+
             // save the question to the database
             var result = _mongoHelper.Collection.Save(questionToPost);
 
@@ -669,7 +799,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return CreatedAtRoute("DefaultApi", new { id = questionToPost.QuestionId }, questionToPost);
         }
-        
+
         /// <summary>
         /// API to edit a question
         /// </summary>
@@ -689,19 +819,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
             if (question == null)
             {
-                return BadRequest("Request body is null. Please send a valid QuestionDTO object"); 
+                return BadRequest("Request body is null. Please send a valid QuestionDTO object");
             }
-            
+
             var questionFromDB = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == question.QuestionId).FirstOrDefault();
             if (questionFromDB == null)
             {
                 return NotFound();
             }
-            
+
             questionFromDB.Title = question.Title;
             questionFromDB.Description = question.Description;
             questionFromDB.LastEditedOnUtc = DateTime.UtcNow;
-            
+
             // save the question to the database
             var result = _mongoHelper.Collection.Save(questionFromDB);
 
@@ -711,7 +841,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return CreatedAtRoute("DefaultApi", new { id = questionFromDB.QuestionId }, questionFromDB);
         }
-        
+
         private QuestionViewModel GetQuestionViewModel(Question question, CustomUserInfo userData)
         {
             return new QuestionViewModel
