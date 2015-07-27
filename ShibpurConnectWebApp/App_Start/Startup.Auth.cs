@@ -1,4 +1,6 @@
 ﻿using System;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -88,6 +90,20 @@ namespace ShibpurConnectWebApp
                 ClientId = "108349931194-2h3peq298hndtckune1h1tqi96dbh8bg.apps.googleusercontent.com",
                 ClientSecret = "xKb09OnMBqPZMVnHKCOTPfcJ"
             });
+
+            // hangfire configuration
+            GlobalConfiguration.Configuration.UseMemoryStorage();
+
+            var options = new DashboardOptions
+            {
+                AuthorizationFilters = new[]
+                {
+                    new HangfireAuthorizationFilter()
+
+                }
+            };
+            app.UseHangfireDashboard("/hangfire", options);
+            app.UseHangfireServer();
         }
     }
 }

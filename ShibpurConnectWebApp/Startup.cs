@@ -1,4 +1,7 @@
-﻿using Hangfire;
+﻿using System.Collections.Generic;
+using System.Web.Security;
+using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.MemoryStorage;
 using Hangfire.SqlServer;
 using Microsoft.Owin;
@@ -12,10 +15,7 @@ namespace ShibpurConnectWebApp
     {
         public void Configuration(IAppBuilder app)
         {
-            // hangfire configuration
-            GlobalConfiguration.Configuration.UseMemoryStorage();
-            app.UseHangfireDashboard();
-            app.UseHangfireServer();
+            
             ConfigureAuth(app);
         }
     }

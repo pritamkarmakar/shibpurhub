@@ -4,6 +4,11 @@
         <name>ShibpurConnectWebApp</name>
     </assembly>
     <members>
+        <member name="T:ShibpurConnectWebApp.HangfireAuthorizationFilter">
+            <summary>
+            Hangfire authorization filter
+            </summary>
+        </member>
         <member name="M:ShibpurConnectWebApp.ApplicationUserManager.AddUserToRolesAsync(System.String,System.Collections.Generic.IList{System.String})">
             <summary>
             Method to add user to multiple roles
