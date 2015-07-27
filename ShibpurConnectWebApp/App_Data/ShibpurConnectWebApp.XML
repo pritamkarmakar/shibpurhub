@@ -530,6 +530,12 @@
             <param name="page">page index</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.NotificationToAllFollowers(ShibpurConnectWebApp.Models.WebAPI.Question,ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo)">
+            <summary>
+            Method to send email notification to all the followers of the question
+            We will send notification whenever there will be a new answer post in the question
+            </summary>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AskToAnswerController.GetAskToAnswer(System.String,System.String)">
             <summary>
              API to check if we have asked a user to answer a question
@@ -661,11 +667,32 @@
             <param name="message"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.GetNotifications(System.String)">
+            <summary>
+            Get all the notifications for a particular user
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.GetNewNotifications(System.String)">
+            <summary>
+            Get all the new notifications for a user to show the bubble count in the navigation bar
+            </summary>
+            <param name="userId">userid to search for new notifications</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.PostNotification(ShibpurConnectWebApp.Models.WebAPI.Notifications)">
             <summary>
             Submit a new notification
             </summary>
             <param name="notification">Notification object</param>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.MarkAllNewNotificationsAsOld(System.String)">
+            <summary>
+            Mark all notifications for a user as Old. This api will remove the bubble notification that we get for all new notification in the navigation bar
+            </summary>
+            <param name="userId">userid</param>
+            <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.MarkNotificationsAsVisited(System.String)">
             <summary>

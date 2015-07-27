@@ -13,6 +13,7 @@ using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hangfire;
 using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
@@ -21,6 +22,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     {
         private MongoHelper<Answer> _mongoHelper;
         private const int PAGESIZE = 20;
+        private string hostName = string.Empty;
 
         public AnswersController()
         {
@@ -233,7 +235,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // get the hostname
                 Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
                 string pathQuery = myuri.PathAndQuery;
-                string hostName = myuri.ToString().Replace(pathQuery, "");
+                hostName = myuri.ToString().Replace(pathQuery, "");
 
                 // sent notification to the user who posted the question
                 EmailsController emailsController = new EmailsController();
@@ -256,6 +258,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         NotificationContent = "{\"answeredBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"questionId\":\"" + answerdto.QuestionId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" + question.UrlSlug + "\"}"
                     });
                 }
+
+                // send notification to all the followers of this question. This will be done as a background task
+                BackgroundJob.Enqueue(() => NotificationToAllFollowers(question, userInfo));
 
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
@@ -404,6 +409,25 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(ex.Message);
             } 
+        }
+
+        /// <summary>
+        /// Method to send email notification to all the followers of the question
+        /// We will send notification whenever there will be a new answer post in the question
+        /// </summary>
+        [DisableConcurrentExecution(3600)]
+        public async void NotificationToAllFollowers(Question question, CustomUserInfo userInfo)
+        {
+            EmailsController emailsController = new EmailsController();
+            foreach (var follower in question.Followers)
+            {
+                await emailsController.SendEmail(new Email()
+                {
+                    UserId = follower,
+                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to the question <a href='" + hostName + "/feed/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a>",
+                    Subject = "ShibpurHub | New answer to the question \"" + question.Title + "\""
+                });
+            }
         }
     }
 }

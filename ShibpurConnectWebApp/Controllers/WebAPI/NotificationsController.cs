@@ -22,7 +22,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<Notifications>();
         }
 
-        // GET: api/Notification
+        /// <summary>
+        /// Get all the notifications for a particular user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Authorize]
         [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = true, MustRevalidate = true)]
         public IHttpActionResult GetNotifications(string userId)
@@ -46,6 +50,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        /// <summary>
+        /// Get all the new notifications for a user to show the bubble count in the navigation bar
+        /// </summary>
+        /// <param name="userId">userid to search for new notifications</param>
+        /// <returns></returns>
         [Authorize]
         [CacheOutput(ServerTimeSpan = 600)]
         public IHttpActionResult GetNewNotifications(string userId)
@@ -99,6 +108,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = notification.NotificationId }, notification);
         }
 
+        /// <summary>
+        /// Mark all notifications for a user as Old. This api will remove the bubble notification that we get for all new notification in the navigation bar
+        /// </summary>
+        /// <param name="userId">userid</param>
+        /// <returns></returns>
         [Authorize]
         public IHttpActionResult MarkAllNewNotificationsAsOld(string userId)
         {
