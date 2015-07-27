@@ -502,9 +502,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest("Invalid bearer token");
             }
-
             // retrieve the question from database
             var questionObj = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).FirstOrDefault();
+
+            // if this user is the one who posted the question then no need to add him in the follower list 
+            if (userInfo.Id == questionObj.UserId)
+                return Ok("you posted the question, so you no need to follow it again");
+
             if (questionObj != null)
             {
                 // retrieve the existing followers and add this new user into that, if the user not in the follower list

@@ -22,7 +22,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     {
         private MongoHelper<Answer> _mongoHelper;
         private const int PAGESIZE = 20;
-        private string hostName = string.Empty;
+        private static string hostName = string.Empty;
 
         public AnswersController()
         {
@@ -245,7 +245,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     await emailsController.SendEmail(new Email()
                     {
                         UserId = question.UserId,
-                        Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to your question <a href='" + hostName + "/feed/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a>",
+                        Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to your question <a href='" + hostName + "/feed/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a><i>" + answerdto.AnswerText + "</i>",
                         Subject = "ShibpurHub | New answer to your question \"" + question.Title + "\""
                     });
 
@@ -260,7 +260,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 // send notification to all the followers of this question. This will be done as a background task
-                BackgroundJob.Enqueue(() => NotificationToAllFollowers(question, userInfo));
+                BackgroundJob.Enqueue(() => NotificationToAllFollowers(question, userInfo, answerdto.AnswerText));
 
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
@@ -416,17 +416,26 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// We will send notification whenever there will be a new answer post in the question
         /// </summary>
         [DisableConcurrentExecution(3600)]
-        public async void NotificationToAllFollowers(Question question, CustomUserInfo userInfo)
+        public async void NotificationToAllFollowers(Question question, CustomUserInfo userInfo, string answerText)
         {
             EmailsController emailsController = new EmailsController();
             foreach (var follower in question.Followers)
             {
-                await emailsController.SendEmail(new Email()
+                // we don't want to send the notification to the user who posted the question if he again a follower. 
+                // As we are already sending that user separate notification. Also we don't want to send notification if the follower and who posted the answer is the same user
+                if (follower != question.UserId && userInfo.Id != follower)
                 {
-                    UserId = follower,
-                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to the question <a href='" + hostName + "/feed/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a>",
-                    Subject = "ShibpurHub | New answer to the question \"" + question.Title + "\""
-                });
+                    await emailsController.SendEmail(new Email()
+                    {
+                        UserId = follower,
+                        Body =
+                            "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id +
+                            "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
+                            " posted an answer to the question <a href='" + hostName + "/feed/" + question.UrlSlug +
+                            "' style='text-decoration:none'>" + question.Title + "</a><i>" + answerText + "</i>",
+                        Subject = "ShibpurHub | New answer to the question \"" + question.Title + "\""
+                    });
+                }
             }
         }
     }

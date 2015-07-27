@@ -506,6 +506,9 @@ function isLoggedInUserId(userId)
 // method to follow a question
 function followquestion(obj) {
     if ($("#" + obj.id + " > span").text().trim().toLowerCase().search("follow") == 0) {
+        // add a spinner once user will click on the 'Follow' button
+        $("#" + obj.id + "> i").removeClass();
+        $("#" + obj.id + "> i").addClass('fa fa-circle-o-notch fa-spin');
         scAjax({
             "url": "questions/followquestion?questionId=" + obj.id,
             "type": "POST",

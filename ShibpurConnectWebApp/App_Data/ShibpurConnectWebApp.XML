@@ -535,7 +535,7 @@
             <param name="page">page index</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.NotificationToAllFollowers(ShibpurConnectWebApp.Models.WebAPI.Question,ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.NotificationToAllFollowers(ShibpurConnectWebApp.Models.WebAPI.Question,ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo,System.String)">
             <summary>
             Method to send email notification to all the followers of the question
             We will send notification whenever there will be a new answer post in the question

@@ -406,24 +406,6 @@
         $(".followquestionbutton").attr("id", questionID);
         $(".followquestionbutton").attr('style', 'background-color:#E4EDF4;');
 
-        // check if user following this question
-        scAjax({
-            "url": "questions/GetQuestionFollowers?questionId=" + questionID,
-            "type": "GET",
-            "success": function (result) {
-                if (result != null && result.indexOf(userId) > -1) {
-                    $(".followquestionbutton > i").addClass('fa fa-check-circle');
-                    $(".followquestionbutton > span").text(" Following");
-                }
-                if(result != null && result.length > 0)
-                {
-                    $(".followquestionbutton > span").append("&nbsp;&nbsp;<span class='badge'>" + result.length +"</span>");
-                    $(".followquestionbutton").attr("count", result.length);
-                }
-
-            }
-        });
-
         scAjax({
             "url": "questions/GetQuestion",
             "data": { "questionId": questionID },
@@ -435,6 +417,31 @@
                 $('#loadingdiv').hide();
                 var question = result;
                 $('#details').show();
+
+                // check if user following this question
+                scAjax({
+                    "url": "questions/GetQuestionFollowers?questionId=" + questionID,
+                    "type": "GET",
+                    "success": function (result) {
+                        // hide the follow button for the user who posted the original question
+                        if (userId == question.userId) {
+                            $(".followquestionbutton").prop('disabled', true);
+                            $(".followquestionbutton > span").text(" Following");
+                        }
+                        else if (result != null && result.indexOf(userId) > -1) {
+                            $(".followquestionbutton > i").addClass('fa fa-check-circle');
+                            $(".followquestionbutton > span").text(" Following");
+                        }
+                        // add the count of the total followers of this question
+                        if(result != null && result.length > 0)
+                        {
+                            $(".followquestionbutton > span").append("&nbsp;&nbsp;<span class='badge'>" + result.length +"</span>");
+                            $(".followquestionbutton").attr("count", result.length);
+                        }
+
+                    }
+                });
+
                 // set page title
                 document.title = question.title + " - ShibpurHub";
                 $('.header h2').text(question.title);
