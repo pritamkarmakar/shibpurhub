@@ -423,10 +423,11 @@
                     "url": "questions/GetQuestionFollowers?questionId=" + questionID,
                     "type": "GET",
                     "success": function (result) {
-                        // hide the follow button for the user who posted the original question
+                        // disable the follow button for the user who posted the original question
                         if (userId == question.userId) {
+                            $(".followquestionbutton > i").removeClass();
                             $(".followquestionbutton").prop('disabled', true);
-                            $(".followquestionbutton > span").text(" Following");
+                            $(".followquestionbutton > span").text(" Follow");
                         }
                         else if (result != null && result.indexOf(userId) > -1) {
                             $(".followquestionbutton > i").addClass('fa fa-check-circle');
