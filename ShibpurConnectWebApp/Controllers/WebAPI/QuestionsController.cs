@@ -807,10 +807,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [ResponseType(typeof(Question))]
         [InvalidateCacheOutput("GetQuestions")]
-        [InvalidateCacheOutput("GetQuestionsByUser")]
-        [InvalidateCacheOutput("GetQuestion")]
         public async Task<IHttpActionResult> EditQuestion(QuestionDTO question)
         {
+            // retrieve user information from the bearer token
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var claim = principal.FindFirst("sub");
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(claim.Value);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
             // validate title
             if (!ModelState.IsValid)
             {
@@ -837,6 +847,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
+
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+            // invalidate the getquestion api call for the question associated with this answer
+            cache.RemoveStartsWith("questions-getquestion-questionId=" + question.QuestionId);
+
+            // invalidate the GetAnswersCount api for this question
+            cache.RemoveStartsWith("questions-getquestionsbyuser-userId=" + userInfo.Id);
 
             return CreatedAtRoute("DefaultApi", new { id = questionFromDB.QuestionId }, questionFromDB);
         }
