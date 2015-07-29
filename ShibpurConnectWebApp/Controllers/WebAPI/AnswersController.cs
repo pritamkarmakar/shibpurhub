@@ -380,7 +380,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         
         [Authorize]
         [ResponseType(typeof(Answer))]
-        [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
         public async Task<IHttpActionResult> EditAnswer(Answer answer)
         {
             if (!ModelState.IsValid)
@@ -401,6 +400,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 answerInDB.AnswerText = answer.AnswerText;
                 answerInDB.LastEditedOnUtc = DateTime.UtcNow;
                 _mongoHelper.Collection.Save(answerInDB);
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getquestion api call for the question associated with this answer
+                cache.RemoveStartsWith("questions-getquestion-questionId=" + answer.QuestionId);
                 
                 return CreatedAtRoute("DefaultApi", new { id = answer.AnswerId }, answer);
                 

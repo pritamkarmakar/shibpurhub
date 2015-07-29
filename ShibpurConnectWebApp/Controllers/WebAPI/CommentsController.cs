@@ -17,8 +17,8 @@ using ShibpurConnectWebApp.Models.WebAPI;
 using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
-{    
-    
+{
+
     public class CommentsController : ApiController
     {
         private MongoHelper<Comment> _mongoHelper;
@@ -74,7 +74,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest("No UserId is found");
             }
-            
+
             // save the question to the database
             Comment commentToPost = new Comment()
             {
@@ -88,17 +88,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
-            
+
             // send notification to the user who posted the corresponding answer and who posted the actual question
             // get the hostname
             Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
             string pathQuery = myuri.PathAndQuery;
-            string hostName = myuri.ToString().Replace(pathQuery , "");
-            
+            string hostName = myuri.ToString().Replace(pathQuery, "");
+
             // get details about the associated answer
             AnswersController answersController = new AnswersController();
             var actionresult = await answersController.GetAnswer(comment.AnswerId);
-            var answer =  actionresult as OkNegotiatedContentResult<Answer>;
+            var answer = actionresult as OkNegotiatedContentResult<Answer>;
 
             // get details about associated question
             QuestionsController questionsController = new QuestionsController();
@@ -113,7 +113,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             cache.RemoveStartsWith("questions-getquestion-questionId=" + question.Content.QuestionId);
             cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + answer.Content.UserId);
             cache.RemoveStartsWith("notifications-getnotifications-userId=" + answer.Content.UserId);
-            
+
             EmailsController emailsController = new EmailsController();
             // send notification for this new comment, bubble comment in the nav bar
             NotificationsController notificationsController = new NotificationsController();
@@ -170,12 +170,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 });
             }
 
-           
-            
+
+
 
             return CreatedAtRoute("DefaultApi", new { id = commentToPost.CommentId }, commentToPost);
         }
-        
+
         /// <summary>
         /// Edit a new comment for a question
         /// </summary>
@@ -183,7 +183,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [Authorize]
         [ResponseType(typeof(Comment))]
-        [InvalidateCacheOutput("GetQuestion", typeof(QuestionsController))]
         public async Task<IHttpActionResult> EditComment(Comment comment)
         {
             if (!ModelState.IsValid)
@@ -194,7 +193,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest("Request body is null. Please send a valid Comment object");
             }
-            
+
             try
             {
                 var commentInDB = _mongoHelper.Collection.AsQueryable().Where(a => a.CommentId == comment.CommentId).FirstOrDefault();
@@ -205,9 +204,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 commentInDB.CommentText = comment.CommentText;
                 commentInDB.LastEditedOnUtc = DateTime.UtcNow;
-                
+
                 _mongoHelper.Collection.Save(commentInDB);
-                
+
+                // get associated questionid to invalidate cache for that
+                // get details about the associated answer
+                AnswersController answersController = new AnswersController();
+                var actionresult = await answersController.GetAnswer(comment.AnswerId);
+                var answer = actionresult as OkNegotiatedContentResult<Answer>;
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getquestion api call for the question associated with this answer
+                cache.RemoveStartsWith("questions-getquestion-questionId=" + answer.Content.QuestionId);
+
+
                 return CreatedAtRoute("DefaultApi", new { id = comment.CommentId }, comment);
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
