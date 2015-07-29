@@ -516,8 +516,16 @@ function followquestion(obj) {
                 if (!result) {
                     return;
                 }
-                if (result == "you are alrady following this question") {
+                if (result == "you are already following this question") {
                     Command: toastr["info"](result);
+                    $("#" + obj.id + "> i").removeClass();
+                    $("#" + obj.id + "> i").addClass('fa fa-check-circle');
+                    $("#" + obj.id + "> span").text(" Following");
+
+                    // read current follower count
+                    var followercount = parseInt(obj.attributes["count"].nodeValue);
+                    $("#" + obj.id).attr("count", followercount);
+                    $("#" + obj.id + "> span").append("&nbsp;&nbsp;<span class='badge'>" + followercount + "</span>");
                 } else {
                     Command: toastr["success"](result);
                     $("#" + obj.id + "> i").removeClass();
@@ -529,6 +537,7 @@ function followquestion(obj) {
                     $("#" + obj.id).attr("count", followercount);
                     $("#" + obj.id + "> span").append("&nbsp;&nbsp;<span class='badge'>" + followercount + "</span>");
                 }
+
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 if (XMLHttpRequest.status == "401")
@@ -549,7 +558,15 @@ function followquestion(obj) {
 
                 $("#" + obj.id + "> i").removeClass();
                 $("#" + obj.id + "> i").addClass('fa fa-plus-circle');
-                $("#" + obj.id + "> span").text(' follow');
+                $("#" + obj.id + "> span").text(' Follow');
+
+                // read current follower count and add +1 into that
+                var followercount = parseInt(obj.attributes["count"].nodeValue) - 1;
+                $("#" + obj.id).attr("count", followercount);
+
+                // don't show the nuymber if it is '0'
+                if (followercount > 0)
+                    $("#" + obj.id + "> span").append("&nbsp;&nbsp;<span class='badge'>" + followercount + "</span>");
 
                 Command: toastr["success"]("Successfully unsubscribed this question");
             },

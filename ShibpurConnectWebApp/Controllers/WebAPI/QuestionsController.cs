@@ -532,7 +532,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         return Ok("Successfully followed this question");
                     }
                     else
-                        return Ok("you are alrady following this question");
+                        return Ok("you are already following this question");
                 }
 
             }
@@ -601,7 +601,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (questionObj != null)
             {
                 // retrieve the existing followers of this question
-                List<string> followersList = questionObj.Followers;
+                List<string> followersList = new List<string>();
+                followersList = questionObj.Followers;
                 return Ok(followersList);
             }
 

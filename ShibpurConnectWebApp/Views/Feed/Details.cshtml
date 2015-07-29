@@ -433,10 +433,10 @@
                             $(".followquestionbutton > i").addClass('fa fa-check-circle');
                             $(".followquestionbutton > span").text(" Following");
                         }
-                        // add the count of the total followers of this question
-                        if(result != null && result.length > 0)
-                        {
-                            $(".followquestionbutton > span").append("&nbsp;&nbsp;<span class='badge'>" + result.length +"</span>");
+                        // add the count of the total followers of this question as an attribute
+                        if(result != null) {
+                            if (result.length > 0)
+                                $(".followquestionbutton > span").append("&nbsp;&nbsp;<span class='badge'>" + result.length + "</span>");
                             $(".followquestionbutton").attr("count", result.length);
                         }
 
