@@ -429,6 +429,7 @@
         #footer {
             height: 60px;
             background-color: #f5f5f5;
+            margin-top: 10px;
         }
 
         .container .credit {
@@ -439,6 +440,11 @@
             padding-left: 15px;
             padding-right: 15px;
         }
+
+         #footer .row {
+            margin-top:  15px;
+        }
+
 
         /*mark visited notification background as white */
         .whitewell {
@@ -586,7 +592,17 @@
     </div>
     <div id="footer">
         <div class="container">
-            <p class="text-muted credit">&copy; @DateTime.Now.Year - ShibpurHub</p>
+            <div class="row">
+                <div class="col-xs-8">
+                    <ul class="list-unstyled list-inline pull-left">
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/about/contact">Contact Us</a></li>
+                        <li><a href="/legal/tos">Terms of Service</a></li>
+                        <li><a href="/legal/privacy">Privacy</a></li>
+                    </ul>
+                </div>
+                <p class="text-muted pull-right">&copy; @DateTime.Now.Year - ShibpurHub</p>
+            </div>
         </div>
     </div>
     <div class="scroll-top-wrapper ">
