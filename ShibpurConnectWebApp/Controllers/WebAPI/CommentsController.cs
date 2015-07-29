@@ -210,7 +210,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // get associated questionid to invalidate cache for that
                 // get details about the associated answer
                 AnswersController answersController = new AnswersController();
-                var actionresult = await answersController.GetAnswer(comment.AnswerId);
+                var actionresult = await answersController.GetAnswer(commentInDB.AnswerId);
                 var answer = actionresult as OkNegotiatedContentResult<Answer>;
 
                 // invalidate the cache for the action those will get impacted due to this new answer post
