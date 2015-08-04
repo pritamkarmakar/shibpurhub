@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.Http.Filters;
 
 namespace ShibpurConnectWebApp.Helper
 {
@@ -326,6 +327,24 @@ namespace ShibpurConnectWebApp.Helper
             if (questionObj != null) return questionObj.QuestionId;
 
             return null;
+        }
+    }
+
+    /// <summary>
+    /// Custom attribute to set NoStore: this will restrict chrome to cache the API request
+    /// </summary>
+    public class CacheControlAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuted(HttpActionExecutedContext context)
+        {
+            context.Response.Headers.CacheControl = new CacheControlHeaderValue()
+            {
+                Public = true,
+                NoStore = true,
+                MaxAge = TimeSpan.FromSeconds(0)
+            };
+
+            base.OnActionExecuted(context);
         }
     }
 }

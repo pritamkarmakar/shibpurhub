@@ -975,6 +975,11 @@
             <param name="slugUrl">question slug url</param>
             <returns></returns>
         </member>
+        <member name="T:ShibpurConnectWebApp.Helper.CacheControlAttribute">
+            <summary>
+            Custom attribute to set NoStore: this will restrict chrome to cache the API request
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.AnswerDTO">
             <summary>
             Object to be used in the PostAnswer controller. Idea is to create a simple request object for post answer

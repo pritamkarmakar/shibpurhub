@@ -80,7 +80,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="categoryName">category name</param>
         /// <returns></returns>
         [ResponseType(typeof(Categories))]
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetTag(string categoryName)
         {
             Categories category = null;
@@ -108,7 +108,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="count">no of categories that we want</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public IHttpActionResult GetPopularTags(int count)
         {
             List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
@@ -137,7 +137,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// We are using this api in the Tag>Index page
         /// </summary>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public IHttpActionResult GetPopularTags()
         {
             List<CategoryCloud> categoryCloud = new List<CategoryCloud>();
@@ -286,7 +286,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> FindUserTags(string userId)
         {
             Helper.Helper helper = new Helper.Helper();
