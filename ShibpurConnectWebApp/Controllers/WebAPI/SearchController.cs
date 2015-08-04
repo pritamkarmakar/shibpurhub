@@ -109,7 +109,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="searchTerm">comma (,) separeted search term</param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> SearchUsers(string searchTerm)
         {
             int from = 0;

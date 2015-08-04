@@ -79,7 +79,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try
@@ -130,7 +130,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="category">category/tag name</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetQuestionsByCategory(string category, int page)
         {
             try
@@ -189,7 +189,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId">userid for which we are searching</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetQuestionsByUser(string userId, int page)
         {
             if (string.IsNullOrEmpty(userId))
@@ -213,7 +213,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId"></param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetQuestionInfo(string questionId)
         {
             try
@@ -239,7 +239,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetQuestion(string questionId)
         {
             try
@@ -364,7 +364,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public IHttpActionResult GetAnswersCount(string questionId)
         {
             try
@@ -393,7 +393,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="count">no of questions to retrieve</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetPopularQuestions(int count)
         {
             try
@@ -432,7 +432,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, MustRevalidate = true, ExcludeQueryStringFromCacheKey = false)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public int GetViewCount(string questionId)
         {
             try

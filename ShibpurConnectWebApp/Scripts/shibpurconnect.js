@@ -71,6 +71,7 @@ function scAjax(options)
         var server = "/api/";
         var ajaxOptions = {
             url: server + options.url,
+            cache: false,
             type: options.type || "GET",
             dataType: options.dataType || "json",
             contentType: options.contentType || "application/json; charset=utf-8",

@@ -33,7 +33,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="answerId">answerid to search</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 86400)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public IList<Comment> GetCommentsForAnswer(string answerId)
         {
             var result = _mongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answerId).OrderBy(a => a.PostedOnUtc).ToList();

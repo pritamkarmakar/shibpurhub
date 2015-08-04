@@ -28,7 +28,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId"></param>
         /// <returns></returns>
         [Authorize]
-        [CacheOutput(ServerTimeSpan = 600, ExcludeQueryStringFromCacheKey = true, MustRevalidate = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public IHttpActionResult GetNotifications(string userId)
         {
             try
@@ -56,7 +56,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId">userid to search for new notifications</param>
         /// <returns></returns>
         [Authorize]
-        [CacheOutput(ServerTimeSpan = 600)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public IHttpActionResult GetNewNotifications(string userId)
         {
             try

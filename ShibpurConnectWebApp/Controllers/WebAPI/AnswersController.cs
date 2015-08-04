@@ -46,7 +46,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="answerId">answerid to search</param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ServerTimeSpan = 86400)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetAnswer(string answerId)
         {
             // validate questionId is valid hex string
@@ -72,7 +72,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // GET: api/Questions/5
         // Will return all the answers for a specific question
         [ResponseType(typeof(Answer))]
-        [CacheOutput(ServerTimeSpan = 86400)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public IHttpActionResult GetAnswers(string questionId)
         {
             // validate questionId is valid hex string
@@ -101,7 +101,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ServerTimeSpan = 86400)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetUserAnswerCount(string userId)
         {
             try
@@ -121,7 +121,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId">userId for whom we want this list</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = false, MustRevalidate = true)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
         public async Task<IHttpActionResult> GetAnswersByUser(string userId, int page)
         {
             if (string.IsNullOrEmpty(userId))
