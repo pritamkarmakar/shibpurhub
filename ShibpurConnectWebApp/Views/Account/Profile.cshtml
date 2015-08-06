@@ -155,6 +155,9 @@
                 // hide the loading image
                 $('#loadingdiv').hide();
 
+                //Show tabbed data if we need to
+                ShowTabbedData();
+                
                 var userDetails = localStorage.getItem("SC_Session_UserDetails");
                 if (userDetails) {
                     var userInfo = $.parseJSON(userDetails);
@@ -299,6 +302,12 @@
     // method to show profile, followers, following tabbed data
     function ShowTabbedData(obj)
     {
+        var tabParam = window.location.hash;
+        if(tabParam && !obj) {
+            var tab = tabParam.substring(tabParam.length - 1, tabParam.length);
+            obj = $(".nav-tabs li:nth-child("+ tab +")" );
+        }
+        
         // remove the styles from all 'li'
         $('.nav-tabs li').css("border-bottom", "none");
         $('.nav-tabs li').css("font-weight", "normal");
