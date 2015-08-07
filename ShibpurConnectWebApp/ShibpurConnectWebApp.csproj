@@ -540,6 +540,7 @@
     <Content Include="Views\Feed\Categories.cshtml" />
     <Content Include="Views\Feed\Users.cshtml" />
     <Content Include="Views\Feed\StartDiscussion.cshtml" />
+    <Content Include="Views\Feed\MyFeeds.cshtml" />
     <Content Include="Views\PartialViews\_DepartmentDropdown.cshtml" />
     <Content Include="Views\Manage\_EducationalHistory.cshtml" />
     <Content Include="Views\Manage\_EmploymentHistory.cshtml" />
