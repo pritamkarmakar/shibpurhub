@@ -192,7 +192,9 @@
         li.answer:nth-last-child(2), li.answer:last-child {
             border: none;
         }
-
+.comment-list:nth-last-child(2) {
+    border: none;
+}
     #answerlist li:last-child {
         padding-bottom: 0;
     }
@@ -509,7 +511,7 @@
                         userListAskToAnswer = result;
 
                         if (result.length == 0) {
-                            $('#userlistasktoanswer').append("<span>Sorry we haven’t found anyone to answer this question. Use above search box to request someone to answer this question</span>");
+                            $('#userlistasktoanswer').append("<span>Sorry we havenï¿½t found anyone to answer this question. Use above search box to request someone to answer this question</span>");
                             // hide the loading message
                             $('#loadingasktoanswer').hide();
                         }
@@ -1355,7 +1357,7 @@
                     $('#userlistasktoanswer').empty();
 
                     if (userListAskToAnswer.length == 0) {
-                        $('#userlistasktoanswer').append("<span>Sorry we haven’t found anyone to answer this question. Use above search box to request someone to answer this question</span>");
+                        $('#userlistasktoanswer').append("<span>Sorry we havenï¿½t found anyone to answer this question. Use above search box to request someone to answer this question</span>");
                         // hide the loading message
                         $('#loadingasktoanswer').hide();
                     }
