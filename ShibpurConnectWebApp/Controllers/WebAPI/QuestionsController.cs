@@ -513,6 +513,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             if (questionObj != null)
             {
+                var userActivityLog = new UserActivityLog
+                {
+                    Activity = 8,
+                    UserId = userInfo.Id,
+                    ActedOnObjectId = questionId,
+                    ActedOnUserId = string.Empty
+                };
+
                 // retrieve the existing followers and add this new user into that, if the user not in the follower list
                 List<string> followersList = questionObj.Followers;
                 if (followersList == null)
@@ -521,6 +529,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     questionObj.Followers.Add(userInfo.Id);
                     _mongoHelper.Collection.Save(questionObj);
 
+                    UpdateUserActivityLog(userActivityLog);
                     return Ok("Successfully followed this question");
                 }
                 else
@@ -531,6 +540,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         questionObj.Followers.Add(userInfo.Id);
                         _mongoHelper.Collection.Save(questionObj);
 
+                        UpdateUserActivityLog(userActivityLog);
                         return Ok("Successfully followed this question");
                     }
                     else
@@ -879,6 +889,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 DisplayName = userData.FirstName + " " + userData.LastName,
                 UrlSlug = question.UrlSlug
             };
+        }
+
+        /// <summary>
+        /// Updates the user activity log.
+        /// </summary>
+        /// <param name="log">The log.</param>
+        private void UpdateUserActivityLog(UserActivityLog log)
+        {
+            //Call WebApi to log activity
+            var userActivityController = new UserActivityController();
+            userActivityController.PostAnActivity(log);
         }
     }
 }

@@ -215,6 +215,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
             }
 
+            //Call WebApi to log activity
+            var userActivityController = new UserActivityController();
+            var userActivityLog = new UserActivityLog
+            {
+                Activity = 9,
+                UserId = userInfo.Id,
+                ActedOnObjectId = string.Empty,
+                ActedOnUserId = string.Empty
+            };
+            userActivityController.PostAnActivity(userActivityLog);
+
             return Ok();
         }
 
@@ -354,6 +365,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     "{\"followedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +
                     userInfo.LastName + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\"}"
             });
+
+            //Call WebApi to log activity
+            var userActivityController = new UserActivityController();
+            var userActivityLog = new UserActivityLog
+            {
+                Activity = 7,
+                UserId = userInfo.Id,
+                ActedOnObjectId = string.Empty,
+                ActedOnUserId = userIdToFollow
+            };
+            userActivityController.PostAnActivity(userActivityLog);
 
             return Ok("now you are following this user");
             

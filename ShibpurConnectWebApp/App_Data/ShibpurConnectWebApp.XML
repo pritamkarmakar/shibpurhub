@@ -827,6 +827,12 @@
             <param name="question">QuestionDTO object</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.UpdateUserActivityLog(ShibpurConnectWebApp.Models.WebAPI.UserActivityLog)">
+            <summary>
+            Updates the user activity log.
+            </summary>
+            <param name="log">The log.</param>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AccountController.Register(ShibpurConnectWebApp.Models.RegisterViewModel)">
             <summary>
             POST: Register a new user

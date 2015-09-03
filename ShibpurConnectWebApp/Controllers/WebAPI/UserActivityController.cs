@@ -99,6 +99,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 case 5: //mark as answer
                     return 10;
 
+                case 6: // Joined ShibpurConnect
+                    return 100;
+
                 default:
                     return 0;
             }

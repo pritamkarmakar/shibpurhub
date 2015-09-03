@@ -18,7 +18,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public string UserId { get; set; }
 
-        // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer
+        // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer, 
+        // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
         [DataMember]
         public int Activity { get; set; }
 

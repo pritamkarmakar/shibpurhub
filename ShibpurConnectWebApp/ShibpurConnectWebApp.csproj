@@ -299,6 +299,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\WebAPI\AnswersController.cs" />
     <Compile Include="Controllers\WebAPI\AskToAnswerController.cs" />
+    <Compile Include="Controllers\WebAPI\FeedController.cs" />
     <Compile Include="Controllers\WebAPI\TagsController.cs" />
     <Compile Include="Controllers\WebAPI\CategoryTaggingController.cs" />
     <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
@@ -350,8 +351,11 @@
     <Compile Include="Models\WebAPI\Email.cs" />
     <Compile Include="Models\WebAPI\EmploymentHistories.cs" />
     <Compile Include="Models\WebAPI\AskToAnswer.cs" />
+    <Compile Include="Models\WebAPI\FeedContentDetail.cs" />
+    <Compile Include="Models\WebAPI\FeedUserDetail.cs" />
     <Compile Include="Models\WebAPI\ImageInfo.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
+    <Compile Include="Models\WebAPI\PersonalizedFeedItem.cs" />
     <Compile Include="Models\WebAPI\QuestionSpam.cs" />
     <Compile Include="Models\WebAPI\UserActivityLog.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />

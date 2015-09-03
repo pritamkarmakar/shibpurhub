@@ -254,6 +254,15 @@ namespace ShibpurConnectWebApp.Controllers
                         AboutMe = user.AboutMe                        
                     });
 
+                    //Call WebApi to log activity
+                    var userActivityController = new UserActivityController();
+                    var userActivityLog = new UserActivityLog {
+                        Activity = 6,
+                        UserId = user.Id,
+                        ActedOnObjectId = string.Empty,
+                        ActedOnUserId = string.Empty
+                    };
+                    userActivityController.PostAnActivity(userActivityLog);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
