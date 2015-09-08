@@ -54,8 +54,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 Task<CustomUserInfo> actionResult = helper.FindUserById(myUserId);
                 var userDetail = await actionResult;
 
-                var feedsFollowedByMe = from x in allFeeds 
-                                        where userDetail.Following.Contains(x.UserId) || userDetail.FollowedQuestions.Contains(x.ActedOnObjectId) 
+                var followedUsers = userDetail.Following ?? new List<string>();
+                var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
+
+                var feedsFollowedByMe = from x in allFeeds
+                                        where followedUsers.Contains(x.UserId) || followedQuestions.Contains(x.ActedOnObjectId) 
                                         select x;
 
                 //foreach(var feed in feedsFollowedByMe)
