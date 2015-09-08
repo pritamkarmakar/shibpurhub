@@ -40,6 +40,12 @@ namespace ShibpurConnectWebApp
            );
 
             routes.MapRoute(
+               "MyFeeds",                                           // Route name
+               "Feed/MyFeeds",                            // URL with parameters
+               new { controller = "Feed", action = "MyFeeds" }  // Parameter defaults
+           );
+
+            routes.MapRoute(
                 "FeedDetails",                                           // Route name
                 "Feed/{id}",                            // URL with parameters
                 new { controller = "Feed", action = "Details"}  // Parameter defaults

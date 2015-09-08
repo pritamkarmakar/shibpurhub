@@ -1,12 +1,4 @@
-﻿<!docType html>
-
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>My Feeds</title>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+﻿
     <style>
         h1, h2, h3, h4, h5, h6 {
             margin: 0;
@@ -263,8 +255,17 @@
             font-weight: 500;
         }
     </style>
-</head>
-<body ng-app="feedModule" ng-controller="FeedController">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            scAjax({
+                "url": "feed/GetMyFeeds",
+                "data": { "myUserId": "55a7eae58b97531188ddb3bd", "page": 0 },
+                "success": function (result) {
+                }
+            });
+        });
+      </script>
+
     <div class="content-area">
         <div class="container">
             <div class="row main-content-area">
@@ -281,7 +282,7 @@
                                             </div>
                                             <p class="header-text-content ">
                                                 <a href="#" class="name-link">Pritam Karmakar</a>
-                                                <span class="act"> asked a</span> 
+                                                <span class="act"> asked a</span>
                                                 <a href="#" class="type-link discussion">Question</a>
                                             </p>
                                             <p class="tagline-text-content">QA Architect, Tibco Software Inc (2006 EE)</p>
@@ -511,7 +512,7 @@
 
                                             <a class="post-link-image-small" target="_blank" href="#" style="background-image: url('http://i.imgur.com/bXgZRqU.jpg#w5WTHq3ASHW8iJ5')">
                                             </a>
-                                            
+
                                         </div>
 
                                         <div class="col-xs-12 col-md-9 ">
@@ -601,6 +602,3 @@
             </div>
         </div>
     </div>
-</body>
-
-</html>

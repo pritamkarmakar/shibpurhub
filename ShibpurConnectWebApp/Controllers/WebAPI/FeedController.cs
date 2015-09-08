@@ -54,6 +54,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 Task<CustomUserInfo> actionResult = helper.FindUserById(myUserId);
                 var userDetail = await actionResult;
 
+                if(userDetail == null)
+                {
+                    return NotFound();
+                }
+
                 var followedUsers = userDetail.Following ?? new List<string>();
                 var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
 

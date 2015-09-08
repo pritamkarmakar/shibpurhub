@@ -30,6 +30,12 @@ namespace ShibpurConnectWebApp.Controllers
             return View();
         }
 
+        public ActionResult MyFeeds()
+        {
+            TempData["SelectedPage"] = "Threads";
+            return View();
+        }
+
         // POST: Feed/Create
         [HttpPost]
         public ActionResult StartDiscussion(FormCollection collection)
