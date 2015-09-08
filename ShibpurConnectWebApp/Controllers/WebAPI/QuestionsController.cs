@@ -526,26 +526,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 if (followersList == null)
                 {
                     questionObj.Followers = new List<string>();
+                }                
+                
+                // if userid not present in the followerlist 
+                if (!followersList.Contains(userInfo.Id))
+                {
                     questionObj.Followers.Add(userInfo.Id);
                     _mongoHelper.Collection.Save(questionObj);
 
                     UpdateUserActivityLog(userActivityLog);
+                    helper.UpdateFollowQuestion(userInfo.Id, questionId, true);
+
                     return Ok("Successfully followed this question");
                 }
                 else
-                {
-                    // if userid not present in the followerlist 
-                    if (!followersList.Contains(userInfo.Id))
-                    {
-                        questionObj.Followers.Add(userInfo.Id);
-                        _mongoHelper.Collection.Save(questionObj);
-
-                        UpdateUserActivityLog(userActivityLog);
-                        return Ok("Successfully followed this question");
-                    }
-                    else
-                        return Ok("you are already following this question");
-                }
+                    return Ok("you are already following this question");               
 
             }
 

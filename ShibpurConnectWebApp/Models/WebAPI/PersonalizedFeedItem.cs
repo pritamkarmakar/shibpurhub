@@ -44,5 +44,11 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public Dictionary<string, string> ItemValues { get; set; }
+
+        public int ViewCount { get; set; }
+
+        public DateTime? PostedDateInUTC { get; set; }
+
+        public int AnswersCount { get; set; }
     }
 }

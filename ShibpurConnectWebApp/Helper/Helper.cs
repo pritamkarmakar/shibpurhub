@@ -148,7 +148,8 @@ namespace ShibpurConnectWebApp.Helper
                         ProfileImageURL = user.ProfileImageURL,
                         Tags = user.Tags,
                         Followers = user.Followers,
-                        Following = user.Following
+                        Following = user.Following,
+                        FollowedQuestions = user.FollowedQuestions
                     };
 
                 }
@@ -179,7 +180,8 @@ namespace ShibpurConnectWebApp.Helper
                         ProfileImageURL = user.ProfileImageURL,
                         Tags = user.Tags,
                         Followers = user.Followers,
-                        Following = user.Following
+                        Following = user.Following,
+                        FollowedQuestions = user.FollowedQuestions
                     };
 
                 }
@@ -206,7 +208,42 @@ namespace ShibpurConnectWebApp.Helper
                         LastName = user.LastName,
                         Location = user.Location,
                         ReputationCount = user.ReputationCount,
-                        ProfileImageURL = user.ProfileImageURL
+                        ProfileImageURL = user.ProfileImageURL,
+                        Tags = user.Tags,
+                        Followers = user.Followers,
+                        Following = user.Following,
+                        FollowedQuestions = user.FollowedQuestions
+                    };
+
+                }
+            }
+        }
+
+        public CustomUserInfo UpdateFollowQuestion(string userId, string questionId, bool follow = true)
+        {
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                ApplicationUser user = _repo.UpdateFollowQuestion(userId, questionId, follow);
+
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new CustomUserInfo()
+                    {
+                        Email = user.Email,
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Location = user.Location,
+                        ReputationCount = user.ReputationCount,
+                        ProfileImageURL = user.ProfileImageURL,
+                        Tags = user.Tags,
+                        Followers = user.Followers,
+                        Following = user.Following,
+                        FollowedQuestions = user.FollowedQuestions
                     };
 
                 }
@@ -233,7 +270,11 @@ namespace ShibpurConnectWebApp.Helper
                         LastName = user.LastName,
                         Location = user.Location,
                         ReputationCount = user.ReputationCount,
-                        ProfileImageURL = user.ProfileImageURL
+                        ProfileImageURL = user.ProfileImageURL,
+                        Tags = user.Tags,
+                        Followers = user.Followers,
+                        Following = user.Following,
+                        FollowedQuestions = user.FollowedQuestions
                     };
 
                 }

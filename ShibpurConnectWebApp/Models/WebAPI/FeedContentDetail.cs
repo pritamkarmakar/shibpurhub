@@ -12,5 +12,11 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string SimpleDetail { get; set; }
 
         public Dictionary<string, string> ComplexDetail { get; set; }
+
+        public int ViewCount { get; set; }
+
+        public DateTime? PostedDateInUTC { get; set; }
+
+        public int AnswersCount { get; set; }
     }
 }

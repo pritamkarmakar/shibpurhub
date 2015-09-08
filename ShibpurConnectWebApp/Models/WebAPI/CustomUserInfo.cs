@@ -26,5 +26,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public List<string> Tags { get; set; }
         public List<string> Followers { get; set; }
         public List<string> Following { get; set; }
+
+        public List<string> FollowedQuestions { get; set; }
     }
 }

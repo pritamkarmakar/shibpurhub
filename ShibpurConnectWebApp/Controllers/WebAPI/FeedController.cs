@@ -38,7 +38,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 0, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetMyFeeds(string myUserId, int page = 0)
         {
             try
@@ -54,14 +54,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 Task<CustomUserInfo> actionResult = helper.FindUserById(myUserId);
                 var userDetail = await actionResult;
 
-                var feedsFollowedByMe = from x in allFeeds where userDetail.Following.Contains(x.UserId) select x;
-                foreach(var feed in feedsFollowedByMe)
-                {
-                    allFeeds.Remove(feed);
-                }
-                allFeeds.AddRange(feedsFollowedByMe);
+                var feedsFollowedByMe = from x in allFeeds 
+                                        where userDetail.Following.Contains(x.UserId) || userDetail.FollowedQuestions.Contains(x.ActedOnObjectId) 
+                                        select x;
 
-                var feeds = allFeeds.Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
+                //foreach(var feed in feedsFollowedByMe)
+                //{
+                //    allFeeds.Remove(feed);
+                //}
+                //allFeeds.AddRange(feedsFollowedByMe);
+
+                var feeds = feedsFollowedByMe.Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
 
                 var userIds = feeds.Select(a => a.UserId).Distinct();
                 var userDetails = new Dictionary<string, FeedUserDetail>();
@@ -75,7 +78,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,                        
                         ImageUrl = userDetailInList.ProfileImageURL
                     };
-                    var careerTextResult = await GetDesigNationText(userDetailInList.Email);
+                    var careerTextResult = await GetDesignationText(userDetailInList.Email);
                     var careerText = careerTextResult as OkNegotiatedContentResult<string>;
                     user.CareerDetail = careerText.Content;
 
@@ -129,6 +132,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var result = await _questionController.GetQuestionInfo(objectId);
                 var question = result as OkNegotiatedContentResult<Question>;
                 feedContent.Header = question.Content.Title;
+
+                feedContent.ViewCount = question.Content.ViewCount;
+                feedContent.PostedDateInUTC = question.Content.PostedOnUtc;
+                var answersCountResult = _questionController.GetAnswersCount(question.Content.QuestionId);
+                var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
+                feedContent.AnswersCount = answersCount.Content;
 
                 if(type == 2 || type == 3 || type == 4 || type == 5 || type == 8)
                 {
@@ -202,7 +211,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return string.Empty;
         }
 
-        private async Task<IHttpActionResult> GetDesigNationText(string email)
+        private async Task<IHttpActionResult> GetDesignationText(string email)
         {
             var text = string.Empty;
             if(string.IsNullOrEmpty(email))

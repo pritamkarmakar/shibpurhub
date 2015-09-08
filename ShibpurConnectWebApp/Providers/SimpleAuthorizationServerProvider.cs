@@ -195,6 +195,44 @@ namespace ShibpurConnectWebApp.Providers
             return user;
         }
 
+
+        internal ApplicationUser UpdateFollowQuestion(string userId, string questionId, bool follow = true)
+        {
+            ApplicationUser user = _userManager.FindById(userId);
+            if (user != null)
+            {
+                var followedQuestions = user.FollowedQuestions;
+                if(followedQuestions == null)
+                {
+                    followedQuestions = new List<string>();
+                }
+                
+                if(follow && !followedQuestions.Contains(questionId))
+                {
+                    followedQuestions.Add(questionId);
+                }
+                else
+                {
+                    followedQuestions.Remove(questionId);
+                }
+
+                user.FollowedQuestions = followedQuestions;
+                var updatedUser = _userManager.Update(user);
+
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+
+                var response = client.Update<CustomUserInfo, object>(u => u
+                    .Index("my_index")
+                    .Id(user.Id)
+                    .Type("customuserinfo")
+                    .Doc(new { FollowedQuestions = followedQuestions }));
+            }
+
+            return user;
+        }
+
         /// <summary>
         /// Method to update user profile image
         /// This method will update both in Mongodb and ES
