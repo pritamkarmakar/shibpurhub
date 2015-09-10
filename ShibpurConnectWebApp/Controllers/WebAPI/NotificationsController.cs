@@ -208,7 +208,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="page">The page.</param>
         /// <returns></returns>
         [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 0, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 120, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetMyFeeds(string myUserId, int page = 0)
         {
             try
