@@ -37,6 +37,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _educationalHistoriesController = new EducationalHistoriesController();
         }
 
+        /// <summary>
+        /// Gets my feeds.
+        /// </summary>
+        /// <param name="myUserId">My user identifier.</param>
+        /// <param name="page">The page.</param>
+        /// <returns></returns>
         [CacheControl()]
         [CacheOutput(ServerTimeSpan = 0, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetMyFeeds(string myUserId, int page = 0)

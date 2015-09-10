@@ -570,6 +570,14 @@
             <param name="askToAnswer"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetMyFeeds(System.String,System.Int32)">
+            <summary>
+            Gets my feeds.
+            </summary>
+            <param name="myUserId">My user identifier.</param>
+            <param name="page">The page.</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.GetTags">
             <summary>
             Get all existing categories
@@ -670,6 +678,14 @@
             API to send email to end user
             </summary>
             <param name="message"></param>
+            <returns></returns>
+        </member>
+      <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetMyFeeds(System.String,System.Int32)">
+            <summary>
+            Gets my feeds.
+            </summary>
+            <param name="myUserId">My user identifier</param>
+            <param name="page">The page</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.GetNotifications(System.String)">
