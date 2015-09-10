@@ -451,6 +451,23 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
 
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public string GetQuestionTitle(string questionId)
+        {
+            try
+            {
+                ObjectId.Parse(questionId);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+
+            var question = _mongoHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionId).FirstOrDefault();
+            return question == null ? string.Empty : question.Title;
+        }
+
+
         /// <summary>
         /// Increment view count for a question
         /// </summary>

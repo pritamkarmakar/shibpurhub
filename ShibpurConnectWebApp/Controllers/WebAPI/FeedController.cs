@@ -1,4 +1,5 @@
-﻿using ShibpurConnectWebApp.Helper;
+﻿using MongoDB.Driver.Builders;
+using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Results;
 using WebApi.OutputCache.V2;
+using MongoDB.Bson;
+using MongoDB.Driver.Linq;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -19,8 +22,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         private MongoHelper<UserActivityLog> _mongoHelper;
 
+        private MongoHelper<Question> _mongoQustionHelper;
         private QuestionsController _questionController;
 
+        private MongoHelper<Answer> _mongoAnswerHelper;
         private AnswersController _answerController;
 
         private EmploymentHistoriesController _employmentHistoriesController;
@@ -30,6 +35,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public FeedController()
         {
             _mongoHelper = new MongoHelper<UserActivityLog>();
+
+            _mongoQustionHelper = new MongoHelper<Question>();
+            _questionController = new QuestionsController();
+
+            _mongoAnswerHelper = new MongoHelper<Answer>();
+            _answerController = new AnswersController();
+
+
+            _employmentHistoriesController = new EmploymentHistoriesController();
+            _educationalHistoriesController = new EducationalHistoriesController();
         }
 
         /// <summary>
@@ -39,7 +54,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="page">The page.</param>
         /// <returns></returns>
         [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 1000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 0, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetPersonalizedFeeds(string userId, int page = 0)
         {
             try
@@ -49,12 +64,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     return NotFound();
                 }
 
-                _questionController = new QuestionsController();
-                _answerController = new AnswersController();
-                _employmentHistoriesController = new EmploymentHistoriesController();
-                _educationalHistoriesController = new EducationalHistoriesController();
-
-                var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).ToList();
+                var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Take((page + 1) * 50).ToList();                
 
                 var helper = new Helper.Helper();
                 Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
@@ -94,7 +104,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     };
                     var careerTextResult = await GetDesignationText(userDetailInList.Email);
                     var careerText = careerTextResult as OkNegotiatedContentResult<string>;
-                    user.CareerDetail = careerText.Content;
+                    user.CareerDetail = careerText == null ? string.Empty : careerText.Content;
 
                     userDetails.Add(id, user);
                 }
@@ -106,10 +116,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     var feedContentResult = await GetFeedContent(feed.Activity, feed.ActedOnObjectId, feed.ActedOnUserId);
                     var feedContent = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
-                    feedItem.ItemHeader = feedContent.Content.Header;
-                    feedItem.ItemDetail = feedContent.Content.SimpleDetail;
+                    feedItem.ItemHeader = feedContent == null ? string.Empty : feedContent.Content.Header;
+                    feedItem.ItemDetail = feedContent == null ? string.Empty : feedContent.Content.SimpleDetail;
+                    feedItem.TargetAction = feedContent == null ? string.Empty : feedContent.Content.ActionName;
+                    feedItem.TargetActionUrl = feedContent == null ? string.Empty : feedContent.Content.ActionUrl;
 
                     feedItem.ActionText = GetActionText(feed.Activity);
+                    feedItem.ActivityType = feed.Activity;
 
                     var matchedUser = userDetails[feed.UserId];
                     if(matchedUser != null)
@@ -145,25 +158,37 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 var result = await _questionController.GetQuestionInfo(objectId);
                 var question = result as OkNegotiatedContentResult<Question>;
-                feedContent.Header = question.Content.Title;
+                if (question != null)
+                {
+                    feedContent.Header = question.Content.Title;
 
-                feedContent.ViewCount = question.Content.ViewCount;
-                feedContent.PostedDateInUTC = question.Content.PostedOnUtc;
-                var answersCountResult = _questionController.GetAnswersCount(question.Content.QuestionId);
-                var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
-                feedContent.AnswersCount = answersCount.Content;
+                    feedContent.ViewCount = question.Content.ViewCount;
+                    feedContent.PostedDateInUTC = question.Content.PostedOnUtc;
+                    var answersCountResult = _questionController.GetAnswersCount(question.Content.QuestionId);
+                    var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
+                    feedContent.AnswersCount = answersCount.Content;
+                }
 
                 if(type == 2 || type == 3 || type == 4 || type == 5 || type == 8)
                 {
-                    var answerResult = await _answerController.GetAnswer(objectId);
-                    var answer = result as OkNegotiatedContentResult<Answer>;
-                    feedContent.SimpleDetail = answer.Content.AnswerText;
+                    //var answerResult = await _answerController.GetAnswer(objectId);
+                    //var answer = result as OkNegotiatedContentResult<Answer>;
+                    feedContent.ActionName = GetActionName(type);
+                    
+
+                    var answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
+                    feedContent.SimpleDetail = answer == null ? string.Empty : answer.AnswerText;
+
+                    feedContent.Header = _questionController.GetQuestionTitle(answer.QuestionId);
+
+                    feedContent.ActionUrl = "/feed/" + answer.QuestionId;
                 }
                 else
                 {
-                    feedContent.SimpleDetail = question.Content.Description;
+                    feedContent.SimpleDetail = question == null ? string.Empty : question.Content.Description;
                 }
 
+                
                 return Ok<FeedContentDetail>(feedContent);
             }
 
@@ -225,6 +250,36 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return string.Empty;
         }
 
+        private string GetActionName(int type)
+        {
+            if (type == 1)
+            {
+                return "Question";
+            }
+
+            if (type == 2)
+            {
+                return "Question";
+            }
+
+            if (type == 3)
+            {
+                return "Answer";
+            }
+
+            if (type == 4)
+            {
+                return "Answer";
+            }
+
+            if (type == 5)
+            {
+                return "Question";
+            }
+
+            return string.Empty;
+        }
+
         private async Task<IHttpActionResult> GetDesignationText(string email)
         {
             var text = string.Empty;
@@ -233,26 +288,33 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return NotFound();
             }
 
-            var result = await _employmentHistoriesController.GetEmploymentHistories(email);
-            var allEmployments = result as OkNegotiatedContentResult<List<EmploymentHistories>>;
-            var current = allEmployments.Content.Where(a => !a.To.HasValue).FirstOrDefault();
-            if(current == null)
+            try
             {
-                current = allEmployments.Content.OrderByDescending(a => a.From).First();
+                var result = await _employmentHistoriesController.GetEmploymentHistories(email);
+                var allEmployments = result as OkNegotiatedContentResult<List<EmploymentHistories>>;
+                var current = allEmployments.Content.Where(a => !a.To.HasValue).FirstOrDefault();
+                if (current == null)
+                {
+                    current = allEmployments.Content.OrderByDescending(a => a.From).First();
+                }
+
+                text = current == null ? "" : current.Title + ", " + current.CompanyName;
+
+                result = await _educationalHistoriesController.GetEducationalHistories(email);
+                var allEducations = result as OkNegotiatedContentResult<List<EducationalHistories>>;
+                var currentEducation = allEducations.Content.FirstOrDefault();
+                var educationText = string.Empty;
+                if (currentEducation != null)
+                {
+                    educationText = currentEducation.GraduateYear + " " + currentEducation.Department;
+                }
+
+                return string.IsNullOrEmpty(text) ? Ok<string>(educationText) : Ok<string>(text + " (" + educationText + ")");
             }
-
-            text = current == null ? "" : current.Title + ", " + current.CompanyName;
-
-            result = await _educationalHistoriesController.GetEducationalHistories(email);
-            var allEducations = result as OkNegotiatedContentResult<List<EducationalHistories>>;
-            var currentEducation = allEducations.Content.FirstOrDefault();
-            var educationText = string.Empty;
-            if (currentEducation != null)
+            catch(Exception ex)
             {
-                educationText = currentEducation.GraduateYear + " " + currentEducation.Department; 
+                return NotFound();
             }
-
-            return string.IsNullOrEmpty(text) ? Ok<string>(educationText) : Ok<string>(text + " (" + educationText + ")");
         }
     }
 }
