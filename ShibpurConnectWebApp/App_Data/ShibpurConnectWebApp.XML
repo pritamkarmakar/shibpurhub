@@ -570,11 +570,11 @@
             <param name="askToAnswer"></param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetMyFeeds(System.String,System.Int32)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetPersonalizedFeeds(System.String,System.Int32)">
             <summary>
             Gets my feeds.
             </summary>
-            <param name="myUserId">My user identifier.</param>
+            <param name="userId">My user identifier.</param>
             <param name="page">The page.</param>
             <returns></returns>
         </member>
@@ -712,14 +712,6 @@
             Mark a notification as visited. We use this method in the Notification pane when user click on a particular notification to mark that as visited
             </summary>
             <param name="notificationId">Notification Id</param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.GetMyFeeds(System.String,System.Int32)">
-            <summary>
-            Gets my feeds.
-            </summary>
-            <param name="myUserId">My user identifier.</param>
-            <param name="page">The page.</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetTotalQuestionCount">

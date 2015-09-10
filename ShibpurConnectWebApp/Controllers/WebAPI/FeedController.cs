@@ -30,34 +30,34 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public FeedController()
         {
             _mongoHelper = new MongoHelper<UserActivityLog>();
-
-            _questionController = new QuestionsController();
-            _answerController = new AnswersController();
-            _employmentHistoriesController = new EmploymentHistoriesController();
-            _educationalHistoriesController = new EducationalHistoriesController();
         }
 
         /// <summary>
         /// Gets my feeds.
         /// </summary>
-        /// <param name="myUserId">My user identifier.</param>
+        /// <param name="userId">My user identifier.</param>
         /// <param name="page">The page.</param>
         /// <returns></returns>
         [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 0, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
-        public async Task<IHttpActionResult> GetMyFeeds(string myUserId, int page = 0)
+        [CacheOutput(ServerTimeSpan = 1000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public async Task<IHttpActionResult> GetPersonalizedFeeds(string userId, int page = 0)
         {
             try
             {
-                if (string.IsNullOrEmpty(myUserId))
+                if (string.IsNullOrEmpty(userId))
                 {
                     return NotFound();
                 }
 
+                _questionController = new QuestionsController();
+                _answerController = new AnswersController();
+                _employmentHistoriesController = new EmploymentHistoriesController();
+                _educationalHistoriesController = new EducationalHistoriesController();
+
                 var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).ToList();
 
                 var helper = new Helper.Helper();
-                Task<CustomUserInfo> actionResult = helper.FindUserById(myUserId);
+                Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
                 var userDetail = await actionResult;
 
                 if(userDetail == null)
@@ -83,9 +83,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var userIds = feeds.Select(a => a.UserId).Distinct();
                 var userDetails = new Dictionary<string, FeedUserDetail>();
                 
-                foreach (var userId in userIds)
+                foreach (var id in userIds)
                 {
-                    Task<CustomUserInfo> result = helper.FindUserById(userId);
+                    Task<CustomUserInfo> result = helper.FindUserById(id);
                     var userDetailInList = await result;
                     var user = new FeedUserDetail
                     {
@@ -96,7 +96,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var careerText = careerTextResult as OkNegotiatedContentResult<string>;
                     user.CareerDetail = careerText.Content;
 
-                    userDetails.Add(userId, user);
+                    userDetails.Add(id, user);
                 }
 
                 var feedResults = new List<PersonalizedFeedItem>();
