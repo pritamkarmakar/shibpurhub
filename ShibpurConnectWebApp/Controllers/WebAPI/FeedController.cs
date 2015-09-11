@@ -54,7 +54,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="page">The page.</param>
         /// <returns></returns>
         [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 0, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 3600, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetPersonalizedFeeds(string userId, int page = 0)
         {
             try
