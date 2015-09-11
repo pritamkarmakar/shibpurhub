@@ -1,4 +1,4 @@
-﻿using MongoDB.Driver.Builders;
+using MongoDB.Driver.Builders;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System;
@@ -149,43 +149,48 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         private async Task<IHttpActionResult> GetFeedContent(int type, string objectId = "", string objectUserId = "")
         {
             var feedContent = new FeedContentDetail();
+            feedContent.ActionName = GetActionName(type);
+            
             if(type == 1 || type == 2 || type == 3 || type == 4 || type == 5 || type == 8)
             {
                 if(string.IsNullOrEmpty(objectId))
                 {
                     return NotFound();
                 }
-
-                var result = await _questionController.GetQuestionInfo(objectId);
-                var question = result as OkNegotiatedContentResult<Question>;
-                if (question != null)
+                
+                var isFeedAnAnswer = (type == 2 || type == 3 || type == 4 || type == 5); // Else its a Question
+                Answer answer = null;
+                Question question = null;
+                
+                if(isFeedAnAnswer)
                 {
-                    feedContent.Header = question.Content.Title;
-
-                    feedContent.ViewCount = question.Content.ViewCount;
-                    feedContent.PostedDateInUTC = question.Content.PostedOnUtc;
-                    var answersCountResult = _questionController.GetAnswersCount(question.Content.QuestionId);
-                    var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
-                    feedContent.AnswersCount = answersCount.Content;
+                    answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
                 }
+                
+                var questionId = isFeedAnAnswer ? answer.QuestionId : objectId;
 
-                if(type == 2 || type == 3 || type == 4 || type == 5 || type == 8)
+                var questionInfo = await _questionController.GetQuestionInfo(questionId);
+                var questionResult = questionInfo as OkNegotiatedContentResult<Question>;
+                question = questionResult.Content;
+                
+                feedContent.Header = question.Title;
+                feedContent.ActionUrl = "/feed/" + questionId;
+
+                feedContent.ViewCount = question.ViewCount;
+
+                var answersCountResult = _questionController.GetAnswersCount(questionId);
+                var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
+                feedContent.AnswersCount = answersCount.Content;
+                
+                if(isFeedAnAnswer)
                 {
-                    //var answerResult = await _answerController.GetAnswer(objectId);
-                    //var answer = result as OkNegotiatedContentResult<Answer>;
-                    feedContent.ActionName = GetActionName(type);
-                    
-
-                    var answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
-                    feedContent.SimpleDetail = answer == null ? string.Empty : answer.AnswerText;
-
-                    feedContent.Header = _questionController.GetQuestionTitle(answer.QuestionId);
-
-                    feedContent.ActionUrl = "/feed/" + answer.QuestionId;
+                    feedContent.SimpleDetail = answer.AnswerText;
+                    feedContent.PostedDateInUTC = answer.PostedOnUtc; 
                 }
                 else
                 {
-                    feedContent.SimpleDetail = question == null ? string.Empty : question.Content.Description;
+                    feedContent.SimpleDetail = question.Description;
+                    feedContent.PostedDateInUTC = question.PostedOnUtc;
                 }
 
                 
@@ -252,29 +257,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         private string GetActionName(int type)
         {
-            if (type == 1)
+            if (type == 1 || type == 2 || type == 5 || type == 8)
             {
                 return "Question";
             }
 
-            if (type == 2)
-            {
-                return "Question";
-            }
-
-            if (type == 3)
+            if (type == 3 || type == 4)
             {
                 return "Answer";
-            }
-
-            if (type == 4)
-            {
-                return "Answer";
-            }
-
-            if (type == 5)
-            {
-                return "Question";
             }
 
             return string.Empty;
