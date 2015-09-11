@@ -1,4 +1,4 @@
-using MongoDB.Driver.Builders;
+﻿using MongoDB.Driver.Builders;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System;
@@ -178,7 +178,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 question = questionResult.Content;
                 
                 feedContent.Header = question.Title;
-                feedContent.ActionUrl = "/feed/" + questionId;
+                var questionUrl = "/feed/" + questionId;
+                feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + objectId : questionUrl;
 
                 feedContent.ViewCount = question.ViewCount;
 
@@ -286,24 +287,32 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 var result = await _employmentHistoriesController.GetEmploymentHistories(email);
                 var allEmployments = result as OkNegotiatedContentResult<List<EmploymentHistories>>;
-                var current = allEmployments.Content.Where(a => !a.To.HasValue).FirstOrDefault();
-                if (current == null)
+                if (allEmployments != null)
                 {
-                    current = allEmployments.Content.OrderByDescending(a => a.From).First();
-                }
+                    var current = allEmployments.Content.Where(a => !a.To.HasValue).FirstOrDefault();
+                    if (current == null)
+                    {
+                        current = allEmployments.Content.OrderByDescending(a => a.From).First();
+                    }
 
-                text = current == null ? "" : current.Title + ", " + current.CompanyName;
+                    text = current == null ? "" : current.Title + ", " + current.CompanyName;
+                }
 
                 result = await _educationalHistoriesController.GetEducationalHistories(email);
                 var allEducations = result as OkNegotiatedContentResult<List<EducationalHistories>>;
-                var currentEducation = allEducations.Content.FirstOrDefault();
-                var educationText = string.Empty;
-                if (currentEducation != null)
+                if (allEducations != null)
                 {
-                    educationText = currentEducation.GraduateYear + " " + currentEducation.Department;
+                    var currentEducation = allEducations.Content.FirstOrDefault();
+                    var educationText = string.Empty;
+                    if (currentEducation != null)
+                    {
+                        educationText = currentEducation.GraduateYear + " " + currentEducation.Department;
+                    }
+
+                    return string.IsNullOrEmpty(text) ? Ok<string>(educationText) : Ok<string>(text + " (" + educationText + ")");
                 }
 
-                return string.IsNullOrEmpty(text) ? Ok<string>(educationText) : Ok<string>(text + " (" + educationText + ")");
+                return Ok<string>(text);
             }
             catch(Exception ex)
             {

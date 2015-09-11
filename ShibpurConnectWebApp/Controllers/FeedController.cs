@@ -16,11 +16,27 @@ namespace ShibpurConnectWebApp.Controllers
 
         // GET: Feed/Details/5
         [SlugToId]
+        [ActionName("Details")]
         public ActionResult Details(string id)
         {
-            TempData["SelectedPage"] = "Threads";
+            TempData["SelectedPage"] = "Threads";            
+
             ViewData["questionId"] = id;
             return View();
+        }
+
+        [ActionName("DetailsWithAnswerID")]
+        public ActionResult Details(string id, string answerId)
+        {
+            TempData["SelectedPage"] = "Threads";
+
+            ViewData["questionId"] = id;
+            if (!string.IsNullOrEmpty(answerId))
+            {
+                ViewData["answerId"] = answerId;
+            }
+
+            return View("Details");
         }
 
         // GET: Feed/Create

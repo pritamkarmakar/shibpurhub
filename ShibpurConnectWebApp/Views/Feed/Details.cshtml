@@ -1107,6 +1107,7 @@
 
     function createAnswerHtml(answerBlock, answer) {
         $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
+        $(answerBlock).find('.answerdiv').attr('id', answer.answerId);
         // set a max width for any image that is part of the answer
         $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'")).attr('id', answer.answerId);
         $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
@@ -1227,6 +1228,12 @@
             getComments(answerBlock, answer);
             setUpAnswerUserActions();
         });
+
+        var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
+        if(answerId && answerId != "")
+        {
+            $('html,body').animate({scrollTop: $('#'+ answerId).offset().top - 20},'fast');
+        }
     }
 
     function setUpEditQuestion()
@@ -1459,7 +1466,7 @@
             @*<h4>Answers:</h4><hr />*@
             <ul id="answerlist" class="list-group">
                 <li class="hide answer">
-                    <div class="col-md-12" style="margin-top:30px;">
+                    <div class="col-md-12 answerdiv" style="margin-top:30px;">
                         <div class="user col-md-2">
                             <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
                             <a class="userName col-md-12" href="\Account\Profile"></a>
