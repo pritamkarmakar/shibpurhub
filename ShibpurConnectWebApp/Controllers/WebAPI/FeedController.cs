@@ -123,7 +123,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     feedItem.ActionText = GetActionText(feed.Activity);
                     feedItem.ActivityType = feed.Activity;
-
+                    
+                    feedItem.ViewCount = feedContent == null ? 0 : feedContent.Content.ViewCount;
+                    feedItem.AnswersCount = feedContent == null ? 0 : feedContent.Content.AnswersCount;
+                    feedItem.PostedDateInUTC = feedContent == null ? 0 : feedContent.PostedDateInUTC;
+                    
                     var matchedUser = userDetails[feed.UserId];
                     if(matchedUser != null)
                     {
