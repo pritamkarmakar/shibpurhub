@@ -365,6 +365,7 @@
     <Compile Include="Models\WebAPI\WebsiteAlert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ShibpurConnectDB.cs" />
+    <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -468,6 +469,11 @@
     <None Include="Properties\PublishProfiles\shibpur %284%29.pubxml" />
     <None Include="Properties\PublishProfiles\shibpur.pubxml" />
     <None Include="Properties\PublishProfiles\ShibpurConnect.pubxml" />
+    <Content Include="Scripts\app\app.datamodel.js" />
+    <Content Include="Scripts\app\app.viewmodel.js" />
+    <Content Include="Scripts\app\common.js" />
+    <Content Include="Scripts\app\home.viewmodel.js" />
+    <Content Include="Scripts\app\_run.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\date.js" />
@@ -482,6 +488,10 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\knockout-2.3.0.debug.js" />
+    <Content Include="Scripts\knockout-2.3.0.js" />
+    <Content Include="Scripts\knockout.validation.debug.js" />
+    <Content Include="Scripts\knockout.validation.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\quill.min.js" />
@@ -492,6 +502,8 @@
     <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.all.min.js" />
     <Content Include="Scripts\richtextform\bootstrap3-wysihtml5.min.js" />
     <Content Include="Scripts\richtextform\wysihtml5x-toolbar.min.js" />
+    <Content Include="Scripts\sammy-0.7.4.js" />
+    <Content Include="Scripts\sammy-0.7.4.min.js" />
     <Content Include="Scripts\select2.min.js" />
     <Content Include="Scripts\shibpurconnect.js" />
     <Content Include="Scripts\toastr.js" />
@@ -531,7 +543,7 @@
     <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\ManageLogins_.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
@@ -571,6 +583,7 @@
     <Content Include="Views\Legal\TOS.cshtml" />
     <Content Include="Views\Legal\Privacy.cshtml" />
     <Content Include="Views\About\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

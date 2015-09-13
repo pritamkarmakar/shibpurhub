@@ -62,6 +62,9 @@
                 }
             });
         });
+        $('.btn-facebook').click(function() {
+            alert("hello FB");
+        });
     });
 </script>
 
@@ -71,16 +74,16 @@
         <div class="panel panel-default">
             <div class="panel-body">
 
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "loginform" }))
+                @using (Html.BeginForm("Login", "Account", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {@class = "loginform"}))
                 {
-                   <span style="font-size:18px;">@ViewBag.Title</span><hr style="margin-top:10px;margin-bottom:10px;" />
+                    <span style="font-size: 18px;">@ViewBag.Title</span><hr style="margin-top: 10px; margin-bottom: 10px;"/>
                     @Html.AntiForgeryToken()
                     @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
                     <div class="form-group">
                         <label for="exampleInputEmail1" class="sr-only">Email address</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control email", @placeholder = "Enter email", @type = "email", id = "exampleInputEmail1", @required = "required" })
+                            @Html.TextBoxFor(m => m.Email, new {@class = "form-control email", @placeholder = "Enter email", @type = "email", id = "exampleInputEmail1", @required = "required"})
                         </div>
                     </div>
                     <div class="form-group">
@@ -89,7 +92,7 @@
                             <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
                             @*<input type="password" class="form-control password" id="exampleInputPassword1"
                                 placeholder="Password">*@
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control password", @placeholder = "Password", @required = "required" })
+                            @Html.PasswordFor(m => m.Password, new {@class = "form-control password", @placeholder = "Password", @required = "required"})
                         </div>
                         <a href="/Account/ForgotPassword" class="pull-right small">Forgot password?</a>
                     </div>
@@ -100,14 +103,19 @@
                         </label>
                     </div>
                     <button type="submit" class="btn btn-success btn-sm btn-login">Sign in</button>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="window.location='/Account/Register'">Create account</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="window.location = '/Account/Register'">Create account</button>
                 }
             </div>
         </div>
     </div>
+    <div class="col-md-4">
+        <section id="socialLoginForm">
+            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+        </section>
+    </div>
 </div>
 
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+@*@section Scripts {
+   
+}*@

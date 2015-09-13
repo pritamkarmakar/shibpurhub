@@ -67,7 +67,7 @@ function scAjax(options)
 {
     try
     {
-        var token = $.parseJSON(localStorage.getItem("TOKEN"));
+        //var token = $.parseJSON(localStorage.getItem("TOKEN"));
         var server = "/api/";
         var ajaxOptions = {
             url: server + options.url,
@@ -77,12 +77,8 @@ function scAjax(options)
             contentType: options.contentType || "application/json; charset=utf-8",
             headers: {
                 Accept: "application/json",
-                "Content-Type": "application/json"
-            },
-            beforeSend: function (xhr) {
-                // check if there is no token in browser local storage
-                if (token != null)
-                    xhr.setRequestHeader("Authorization", "Bearer " + token.access_token);
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + sessionStorage.getItem("accessToken")
             },
             success: function (result) {
                 if(options.success && typeof options.success == "function")
@@ -95,7 +91,8 @@ function scAjax(options)
                 // if the request become unauthorize then redirect user 
                 // to login page (this will happen once token will get expire)
                 if (XMLHttpRequest.status == "401")
-                    window.location.href = "/account/login";
+                    //window.location.href = "/account/login";
+                    window.location = "/Account/Authorize?client_id=web&response_type=token&state=" + encodeURIComponent(window.location.hash);
                 if (options.error && typeof options.error == "function") {
                     options.error(XMLHttpRequest, textStatus, errorThrown);
                 }

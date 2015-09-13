@@ -36,6 +36,30 @@
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         var userInfo;
         $(document).ready(function () {
+            // get the user details only if we have the token for this user and userDetails is null so far
+            var token = sessionStorage.getItem("accessToken");
+            if (token != null && userDetails == null) {
+                scAjax({
+                    "url": "account/me",
+                    "success": function (result) {
+                        if (!result) {
+                            return;
+                        }
+
+                        userDetails = JSON.stringify(result);
+                        localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
+                        // change the html with user first name
+                        if (userDetails) {
+                            userInfo = $.parseJSON(userDetails);
+                            $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
+                        }
+                    },
+                    "error": function (err) {
+
+                    }
+                });
+            }
+
             if (userDetails) {
                 userInfo = $.parseJSON(userDetails);
                 $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");

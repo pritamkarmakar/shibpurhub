@@ -33,7 +33,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="answerId">answerid to search</param>
         /// <returns></returns>
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true)]
+       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public IList<Comment> GetCommentsForAnswer(string answerId)
         {
             var result = _mongoHelper.Collection.AsQueryable().Where(a => a.AnswerId == answerId).OrderBy(a => a.PostedOnUtc).ToList();
@@ -65,10 +65,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {

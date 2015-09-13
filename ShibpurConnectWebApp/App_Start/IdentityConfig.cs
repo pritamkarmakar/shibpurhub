@@ -193,13 +193,13 @@ namespace ShibpurConnectWebApp
         }
     }
 
-    public enum SignInStatus
-    {
-        Success,
-        LockedOut,
-        RequiresTwoFactorAuthentication,
-        Failure
-    }
+    //public enum SignInStatus
+    //{
+    //    Success,
+    //    LockedOut,
+    //    RequiresTwoFactorAuthentication,
+    //    Failure
+    //}
 
     // These help with sign and two factor (will possibly be moved into identity framework itself)
     public class SignInHelper
@@ -308,7 +308,7 @@ namespace ShibpurConnectWebApp
                 var identity = new ClaimsIdentity(DefaultAuthenticationTypes.TwoFactorCookie);
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
                 AuthenticationManager.SignIn(identity);
-                return SignInStatus.RequiresTwoFactorAuthentication;
+                return SignInStatus.RequiresVerification;
             }
             await SignInAsync(user, isPersistent, false);
             return SignInStatus.Success;
@@ -340,6 +340,23 @@ namespace ShibpurConnectWebApp
                 }
             }
             return SignInStatus.Failure;
+        }
+    }
+
+    // Configure the application sign-in manager which is used in this application.  
+    public class ApplicationSignInManager : SignInManager<ApplicationUser, string>
+    {
+        public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager) :
+            base(userManager, authenticationManager) { }
+
+        public override Task<ClaimsIdentity> CreateUserIdentityAsync(ApplicationUser user)
+        {
+            return user.GenerateUserIdentityAsync((ApplicationUserManager)UserManager);
+        }
+
+        public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
+        {
+            return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
         }
     }
 }

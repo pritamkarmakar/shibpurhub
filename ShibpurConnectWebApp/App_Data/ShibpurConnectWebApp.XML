@@ -856,6 +856,12 @@
             <param name="password">password</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AccountController.Me">
+            <summary>
+            API to find the current logged-in user
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersWithCompleteProfile(System.String)">
             <summary>
             API to search users from all documents for mathing search term
