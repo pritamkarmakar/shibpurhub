@@ -20,6 +20,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Net;
 using System.Collections.Specialized;
+using System.Security.Claims;
 
 namespace ShibpurConnectWebApp.Controllers
 {
@@ -27,6 +28,7 @@ namespace ShibpurConnectWebApp.Controllers
     public class AccountController : Controller
     {
         private ApplicationUserManager _userManager;
+        private ApplicationSignInManager _signInManager;
         private ElasticSearchHelper _elasticSearchHelper;
 
         public AccountController()
@@ -52,6 +54,18 @@ namespace ShibpurConnectWebApp.Controllers
             {
                 _userManager = value;
             }
+        }
+
+        // The Authorize Action is the end point which gets called when you access any
+        // protected Web API. If the user is not logged in then they will be redirected to 
+        // the Login page. After a successful login you can call a Web API.
+        [System.Web.Mvc.HttpGet]
+        public ActionResult Authorize()
+        {
+            var claims = new ClaimsPrincipal(User).Claims.ToArray();
+            var identity = new ClaimsIdentity(claims, "Bearer");
+            AuthenticationManager.SignIn(identity);
+            return new EmptyResult();
         }
 
         //
@@ -82,6 +96,18 @@ namespace ShibpurConnectWebApp.Controllers
                     _helper = new SignInHelper(UserManager, AuthenticationManager);
                 }
                 return _helper;
+            }
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -148,7 +174,7 @@ namespace ShibpurConnectWebApp.Controllers
                     return RedirectToAction("Index", "Feed");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
-                case SignInStatus.RequiresTwoFactorAuthentication:
+                case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
@@ -444,7 +470,15 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInHelper.ExternalSignIn(loginInfo, isPersistent: false);
+            var result = SignInStatus.Failure;
+            try
+            {
+                result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            }
+            catch (Exception ex)
+            {
+                
+            }
 
             switch (result)
             {
@@ -452,7 +486,7 @@ namespace ShibpurConnectWebApp.Controllers
                     return RedirectToAction("Index", "Feed");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
-                case SignInStatus.RequiresTwoFactorAuthentication:
+                case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
                 case SignInStatus.Failure:
                 default:
@@ -581,7 +615,8 @@ namespace ShibpurConnectWebApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut();
+            //AuthenticationManager.SignOut();
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Login", "Account");
         }
 
