@@ -253,14 +253,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-                var claim = principal.FindFirst("sub");
+                var email = principal.Identity.Name;
 
                 Helper.Helper helper = new Helper.Helper();
                 var userInfo = (CustomUserInfo)null;
                 // check if claim is null (this can happen if user don't have any valid token)
-                if (claim != null)
+                if (email != null)
                 {
-                    var userResult = helper.FindUserByEmail(claim.Value);
+                    var userResult = helper.FindUserByEmail(email);
                     userInfo = await userResult;
                 }
 
@@ -496,9 +496,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // find the userinfo using the supplied bearer token
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
+
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {
@@ -557,9 +558,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // find the userinfo using the supplied bearer token
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
+
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {
@@ -627,9 +629,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // find the userinfo using the supplied bearer token
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
+
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {
@@ -708,10 +711,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {
@@ -813,10 +816,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             // retrieve user information from the bearer token
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {

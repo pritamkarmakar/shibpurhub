@@ -118,6 +118,28 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        /// <summary>
+        /// API to find the current logged-in user
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize]
+        public async Task<CustomUserInfo> Me()
+        {
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return null;
+            }
+
+            return userInfo;
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IHttpActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -128,10 +150,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var actionResult = helper.FindUserByEmail(claim.Value);
+            var actionResult = helper.FindUserByEmail(email);
             var userInfo = await actionResult;
 
             IdentityResult result = await _repo.ChangePassword(userInfo.Id, model);

@@ -112,10 +112,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("Request body is null. Please send a valid AskToAnswer object");
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {

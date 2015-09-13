@@ -46,7 +46,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="answerId">answerid to search</param>
         /// <returns></returns>
         [HttpGet]
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetAnswer(string answerId)
         {
             // validate questionId is valid hex string
@@ -72,7 +72,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // GET: api/Questions/5
         // Will return all the answers for a specific question
         [ResponseType(typeof(Answer))]
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public IHttpActionResult GetAnswers(string questionId)
         {
             // validate questionId is valid hex string
@@ -101,7 +101,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetUserAnswerCount(string userId)
         {
             try
@@ -121,7 +121,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId">userId for whom we want this list</param>
         /// <param name="page">page index</param>
         /// <returns></returns>
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetAnswersByUser(string userId, int page)
         {
             if (string.IsNullOrEmpty(userId))
@@ -183,10 +183,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("Request body is null. Please send a valid Answer object");
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
             {
@@ -209,7 +209,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     PostedOnUtc = DateTime.UtcNow,
                     QuestionId = answerdto.QuestionId,
                     UserId = userInfo.Id,
-                };              
+                };
 
                 // save the answer to the database
                 var result = _mongoHelper.Collection.Save(answer);
@@ -228,7 +228,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // check if this user has been requested to answer this question. Then we have to 
                 // update the 'AskToAnswer' collection to mark 'HasAnswered' as true
                 AskToAnswerController askToAnswerController = new AskToAnswerController();
-                AskToAnswer askToAnswer =  askToAnswerController.GetAskToAnswer(answerdto.QuestionId, userInfo.Id);
+                AskToAnswer askToAnswer = askToAnswerController.GetAskToAnswer(answerdto.QuestionId, userInfo.Id);
                 if (askToAnswer != null)
                     askToAnswerController.UpdateHasAnswered(askToAnswer);
 
@@ -292,7 +292,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             catch (MongoDB.Driver.MongoConnectionException ex)
             {
                 return BadRequest(ex.Message);
-            }          
+            }
         }
 
         public async Task<int> UpdateUpVoteCount(Answer answer)
@@ -307,10 +307,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-            var claim = principal.FindFirst("sub");
+            var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(claim.Value);
+            var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
 
             if (userInfo == null)
@@ -377,7 +377,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return true;
         }
-        
+
         [Authorize]
         [ResponseType(typeof(Answer))]
         public async Task<IHttpActionResult> EditAnswer(Answer answer)
@@ -388,7 +388,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
             if (answer == null)
                 return BadRequest("Request body is null. Please send a valid Answer object");
-            
+
             try
             {
                 var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
@@ -396,7 +396,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     return NotFound();
                 }
-                
+
                 answerInDB.AnswerText = answer.AnswerText;
                 answerInDB.LastEditedOnUtc = DateTime.UtcNow;
                 _mongoHelper.Collection.Save(answerInDB);
@@ -406,14 +406,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 // invalidate the getquestion api call for the question associated with this answer
                 cache.RemoveStartsWith("questions-getquestion-questionId=" + answer.QuestionId);
-                
+
                 return CreatedAtRoute("DefaultApi", new { id = answer.AnswerId }, answer);
-                
+
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
             {
                 return BadRequest(ex.Message);
-            } 
+            }
         }
 
         /// <summary>
@@ -424,22 +424,26 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public async void NotificationToAllFollowers(Question question, CustomUserInfo userInfo, string answerText)
         {
             EmailsController emailsController = new EmailsController();
-            foreach (var follower in question.Followers)
+            if (question.Followers != null)
             {
-                // we don't want to send the notification to the user who posted the question if he again a follower. 
-                // As we are already sending that user separate notification. Also we don't want to send notification if the follower and who posted the answer is the same user
-                if (follower != question.UserId && userInfo.Id != follower)
+                foreach (var follower in question.Followers)
                 {
-                    await emailsController.SendEmail(new Email()
+                    // we don't want to send the notification to the user who posted the question if he again a follower. 
+                    // As we are already sending that user separate notification. Also we don't want to send notification if the follower and who posted the answer is the same user
+                    if (follower != question.UserId && userInfo.Id != follower)
                     {
-                        UserId = follower,
-                        Body =
-                            "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id +
-                            "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
-                            " posted an answer to the question <a href='" + hostName + "/feed/" + question.UrlSlug +
-                            "' style='text-decoration:none'>" + question.Title + "</a><i>" + answerText + "</i>",
-                        Subject = "ShibpurHub | New answer to the question \"" + question.Title + "\""
-                    });
+                        await emailsController.SendEmail(new Email()
+                        {
+                            UserId = follower,
+                            Body =
+                                "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id +
+                                "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName +
+                                "</a>" +
+                                " posted an answer to the question <a href='" + hostName + "/feed/" + question.UrlSlug +
+                                "' style='text-decoration:none'>" + question.Title + "</a><i>" + answerText + "</i>",
+                            Subject = "ShibpurHub | New answer to the question \"" + question.Title + "\""
+                        });
+                    }
                 }
             }
         }

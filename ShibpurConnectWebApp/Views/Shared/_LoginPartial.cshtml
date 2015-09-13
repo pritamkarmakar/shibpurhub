@@ -13,7 +13,8 @@
                 <li><a href="/account/profile">Profile</a></li>
                 <li><a href="/manage">Settings</a></li>      
                 <li role="presentation" class="divider"></li>
-                <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>  
+                @*<li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>*@
+                <li><a href="javascript:sessionStorage.removeItem('accessToken');$('#logoutForm').submit();javascript:localStorage.removeItem('SC_Session_UserDetails');">Log off</a></li>
             </ul>
         </li>        
     </ul>
