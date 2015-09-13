@@ -59,11 +59,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             try
             {
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return NotFound();
-                }
-                
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
                 var claim = principal.FindFirst("sub");
 
