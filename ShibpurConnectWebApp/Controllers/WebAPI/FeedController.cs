@@ -61,7 +61,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 if (string.IsNullOrEmpty(userId))
                 {
-                    return NotFound();ß
+                    return NotFound();
                 }
                 
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
