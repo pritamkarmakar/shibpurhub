@@ -161,7 +161,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex.Message + System.Environment.NewLine + ex.StackTrace);
             }
         }
 
