@@ -1,4 +1,4 @@
-﻿using MongoDB.Driver.Builders;
+using MongoDB.Driver.Builders;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System;
@@ -55,25 +55,38 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [CacheControl()]
         [CacheOutput(ServerTimeSpan = 3600, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
-        public async Task<IHttpActionResult> GetPersonalizedFeeds(string userId, int page = 0)
+        public async Task<IHttpActionResult> GetPersonalizedFeeds(int page = 0)
         {
             try
             {
                 if (string.IsNullOrEmpty(userId))
                 {
-                    return NotFound();
+                    return NotFound();ß
                 }
+                
+                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                var claim = principal.FindFirst("sub");
+
+                var helper = new Helper.Helper();
+                var userResult = helper.FindUserByEmail(claim.Value);
+                var userDetail = await userResult;
+                if (userDetail == null)
+                {
+                    return BadRequest("No UserId is found");
+                }
+                
+                var userId = userDetail.Id;
 
                 var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Take((page + 1) * 50).ToList();                
 
-                var helper = new Helper.Helper();
-                Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
-                var userDetail = await actionResult;
+                
+                //Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                //var userDetail = await actionResult;
 
-                if(userDetail == null)
-                {
-                    return NotFound();
-                }
+                //if(userDetail == null)
+                //{
+                    //return NotFound();
+                //}
 
                 var followedUsers = userDetail.Following ?? new List<string>();
                 var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
