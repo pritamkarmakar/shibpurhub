@@ -74,7 +74,6 @@ namespace ShibpurConnectWebApp.Models
         [Display(Name = "LastName")]
         public string LastName { get; set; }
 
-        [Required]
         [Display(Name = "Current Location")]
         public string Location { get; set; }
 

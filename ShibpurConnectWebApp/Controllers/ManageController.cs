@@ -20,47 +20,6 @@ namespace ShibpurConnectWebApp.Controllers
     {
         public ManageController()
         {
-            // get the department list and send it to the view
-            DepartmentsController DP = new DepartmentsController();
-            var actionResult = DP.GetDepartments();
-            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
-
-            // if there is no departments in the db then add the default departments
-            if (departmentList != null && departmentList.Content.Count == 0)
-            {
-                var _mongoHelper = new MongoHelper<Departments>();
-                foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
-                {
-                    Departments obj = new Departments();
-                    obj.DepartmentName = department;
-                    //obj.Id = ObjectId.GenerateNewId();
-
-                    _mongoHelper.Collection.Save(obj);
-                }
-
-                // reset the departmentList
-                var actionResult2 = DP.GetDepartments();
-                departmentList = actionResult2 as OkNegotiatedContentResult<List<Departments>>;
-            }
-
-            WebAPI.TagsController categoriesController = new WebAPI.TagsController();
-            var actionResult3 = categoriesController.GetTags();
-            var categoryList = actionResult3 as OkNegotiatedContentResult<List<Categories>>;
-
-            // if there is no categories in the db then add the default categories
-            if (categoryList != null && categoryList.Content.Count == 0)
-            {
-                var _mongoHelper = new MongoHelper<Categories>();
-                foreach (var category in ConfigurationManager.AppSettings["categories"].Split(','))
-                {
-                    Categories obj = new Categories();
-                    obj.CategoryName = category;
-
-                    _mongoHelper.Collection.Save(obj);
-                }
-            }
-
-            ViewBag.Departments = departmentList.Content;
         }
 
         public ManageController(ApplicationUserManager userManager)
@@ -83,19 +42,37 @@ namespace ShibpurConnectWebApp.Controllers
 
         //
         // GET: /Manage/Index
-        public async Task<ActionResult> Index()
-        {            
-            return View();
+        public async Task<ActionResult> Index(ManageMessageId? message)
+        {
+            ViewBag.StatusMessage =
+                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
+                : message == ManageMessageId.Error ? "An error has occurred."
+                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
+                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : "";
+
+            var userId = User.Identity.GetUserId();
+            var model = new IndexViewModel
+            {
+                HasPassword = HasPassword(),
+                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
+                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
+                Logins = await UserManager.GetLoginsAsync(userId),
+                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+            };
+            return View(model);
         }
 
         //
         // GET: /Manage/RemoveLogin
-        public ActionResult RemoveLogin()
-        {
-            var linkedAccounts = UserManager.GetLogins(User.Identity.GetUserId());
-            ViewBag.ShowRemoveButton = HasPassword() || linkedAccounts.Count > 1;
-            return View(linkedAccounts);
-        }
+        //public ActionResult RemoveLogin()
+        //{
+        //    var linkedAccounts = UserManager.GetLogins(User.Identity.GetUserId());
+        //    ViewBag.ShowRemoveButton = HasPassword() || linkedAccounts.Count > 1;
+        //    return View(linkedAccounts);
+        //}
 
         //
         // POST: /Manage/RemoveLogin
@@ -259,7 +236,7 @@ namespace ShibpurConnectWebApp.Controllers
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }
             AddErrors(result);
-            return null;
+            return View(model);
         }
 
         //
@@ -287,7 +264,7 @@ namespace ShibpurConnectWebApp.Controllers
                     {
                         string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        await UserManager.SendEmailAsync(user.Id, "Hello from ShibpurHub", "Thanks for joining ShibpurHub. You have to confirm your account to use ShibpurConnect. To confirm your account please click <a href=\"" + callbackUrl + "\">here</a> <br/> <br/><br/>Regards, <br/>2kChakka");
+                        await UserManager.SendEmailAsync(user.Id, "Hello from ShibpurHub", "Thanks for joining ShibpurHub. Please click <a href=\"" + callbackUrl + "\">here</a> to confirm your account<br/>Regards,<br/>ShibpurHub Team");
                     }
                     if (user != null)
                     {

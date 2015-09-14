@@ -470,16 +470,7 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = SignInStatus.Failure;
-            try
-            {
-                result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
-            }
-            catch (Exception ex)
-            {
-                
-            }
-
+            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:

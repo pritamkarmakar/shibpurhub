@@ -1,21 +1,69 @@
 ﻿@model ShibpurConnectWebApp.Models.ManageLoginsViewModel
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>ManageLoginsViewModel</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
+@using Microsoft.Owin.Security
+@{
+    ViewBag.Title = "Manage your external logins";
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+<hgroup class="title">
+    <h1 style="font-size: 20px;">Manage your external logins</h1>
+</hgroup>
+<hr id='greyseparator' />
+<p class="text-success">@ViewBag.StatusMessage</p>
+@if (Model.CurrentLogins.Count > 0 && ViewBag.ShowRemoveButton)
+{
+    <dt>Registered Logins:</dt>
+    <table class="table">
+        <tbody>
+            @foreach (var account in Model.CurrentLogins)
+            {
+                <tr>
+                    <td style="padding: 0px; padding-bottom: 8px;">
+                        @using (Html.BeginForm("RemoveLogin", "Manage"))
+                        {
+                        @Html.AntiForgeryToken()
+                        <div>
+                            @Html.Hidden("loginProvider", account.LoginProvider)
+                            @Html.Hidden("providerKey", account.ProviderKey)
+                            @if (account.LoginProvider.ToLower() == "facebook")
+                            {
+                                <button type="submit" style="width: 205px" class="btn btn-facebook btn-sm"><i class="fa fa-facebook"></i> | Remove Facebook login</button>
+                            }
+                            else if (account.LoginProvider.ToLower() == "google")
+                            {
+                                <button type="submit" style="width: 205px" class="btn btn-google-plus btn-sm"><i class="fa fa-google-plus"></i> | Remove Google login</button>
+                            }
+                        </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@if (Model.OtherLogins.Count > 0)
+{
+    <dt>Add another service to log in:</dt>
+    using (Html.BeginForm("LinkLogin", "Manage"))
+    {
+        @Html.AntiForgeryToken()
+        <div id="socialLoginList">
+            <p>
+                @foreach (AuthenticationDescription p in Model.OtherLogins)
+                {
+                    if (p.AuthenticationType == "Google")
+                    {
+                        <button type="submit" style="width: 205px" class="btn btn-google-plus btn-sm" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-google-plus"></i> | Add Google+ login</button>
+                    }
+                    else if (p.AuthenticationType == "Facebook")
+                    {
+                        <button type="submit" style="width: 205px" class="btn btn-facebook btn-sm" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-facebook"></i> | Add Facebook login</button>
+                    }
+                    else if (p.AuthenticationType == "Twitter")
+                    {
+                        <button type="submit" style="width: 205px" class="btn btn-large btn-twitter" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-twitter"></i> | Add Twitter login</button>
+                    }
+                }
+            </p>
+        </div>
+    }
+}
