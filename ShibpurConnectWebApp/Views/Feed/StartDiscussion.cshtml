@@ -83,18 +83,18 @@
                     return;
                 }
                 // verify whether length of question description is less than 40
-                if ($.trim(advancedEditorForQuestion.getText()).length < 40) {
-                    // enable the button
-                    $('#btn_Save_Question').prop('disabled', false);
+                //if ($.trim(advancedEditorForQuestion.getText()).length < 40) {
+                //    // enable the button
+                //    $('#btn_Save_Question').prop('disabled', false);
 
-                    // remove the loading class from save button
-                    $('#btn_Save_Question > i').removeClass('fa fa-circle-o-notch fa-spin');
-                    $('#btn_Save_Question > span').text('Save');
+                //    // remove the loading class from save button
+                //    $('#btn_Save_Question > i').removeClass('fa fa-circle-o-notch fa-spin');
+                //    $('#btn_Save_Question > span').text('Save');
 
-                    // show toast error
-                    Command: toastr["error"]("Question body should be more than 40 characters long")
-                    return;
-                }
+                //    // show toast error
+                //    Command: toastr["error"]("Question body should be more than 40 characters long")
+                //    return;
+                //}
                 // disable the save button
                 $('#btn_Save_Question').prop('disabled', true);
                 // add spinner animation in the save button and change the text to 'Saving..'

@@ -15,7 +15,6 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [Serializable]
     public class CommentDTO
     {
-        [MinLength(15, ErrorMessage = "Minimum length of comment should be more than 15 characters")]
         [MaxLength(600, ErrorMessage = "Maximum 600 characters allowed in comment")]
         public string CommentText { get; set; }
 

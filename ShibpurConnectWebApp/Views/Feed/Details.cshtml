@@ -674,18 +674,18 @@
             return;
         }
         // verify whether length of answer text is less than 30
-        if ($.trim(advancedEditor.getText()).length < 30) {
-            // enable the button
-            $('.btn-submit-answer').prop('disabled', false);
+        //if ($.trim(advancedEditor.getText()).length < 30) {
+        //    // enable the button
+        //    $('.btn-submit-answer').prop('disabled', false);
 
-            // remove the loading class from save button
-            $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
-            $('.btn-submit-answer > span').text('Submit Answer');
+        //    // remove the loading class from save button
+        //    $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+        //    $('.btn-submit-answer > span').text('Submit Answer');
 
-            // toastr error notification
-            Command: toastr["error"]("Answer should be more than 30 characters long")
-            return;
-        }
+        //    // toastr error notification
+        //    Command: toastr["error"]("Answer should be more than 30 characters long")
+        //    return;
+        //}
 
         var userInfo = $.parseJSON(userDetails);
 

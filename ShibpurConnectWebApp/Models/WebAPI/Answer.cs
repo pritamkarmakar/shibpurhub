@@ -16,7 +16,6 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         [DataMember]
         [Required]
-        [MinLength(45, ErrorMessage = "Answer should be more than 30 characters long")]
         [MaxLength(10015, ErrorMessage = "Answer can be maximum 10000 characters long")]
         public string AnswerText { get; set; }
 

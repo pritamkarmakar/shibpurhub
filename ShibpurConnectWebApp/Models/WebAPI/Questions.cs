@@ -22,12 +22,10 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string QuestionId { get; set; }
         
         [Required]
-        [MinLength(20, ErrorMessage = "Minimum length of the question title should be more than 20 characters")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters allowed in question title")]
         public string Title { get; set; }
 
         [Required]
-        [MinLength(40, ErrorMessage = "Minimum length of body should be more than 40 characters")]
         [MaxLength(30000, ErrorMessage = "Maximum 30000 characters allowed in body")]
         public string Description { get; set; }
 
