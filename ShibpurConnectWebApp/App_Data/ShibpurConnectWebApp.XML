@@ -570,7 +570,7 @@
             <param name="askToAnswer"></param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetPersonalizedFeeds(System.String,System.Int32)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetPersonalizedFeeds(System.Int32)">
             <summary>
             Gets my feeds.
             </summary>

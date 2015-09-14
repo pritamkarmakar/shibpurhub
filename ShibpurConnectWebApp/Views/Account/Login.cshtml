@@ -38,32 +38,6 @@
                     localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
                 }
             });
-            // get token for this user and save in the browser local storage
-            $.ajax({
-                url: "/token?Accept=application/json&Content-Type=application/x-www-form-urlencoded",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    'grant_type': 'password',
-                    'username': userName,
-                    'password': password
-                },
-                async: false,
-                contentType: "application/json",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                success: function(result) {
-                    if (!result) {
-                        return;
-                    }
-                    localStorage.setItem("TOKEN", JSON.stringify(result));
-                }
-            });
-        });
-        $('.btn-facebook').click(function() {
-            alert("hello FB");
         });
     });
 </script>
