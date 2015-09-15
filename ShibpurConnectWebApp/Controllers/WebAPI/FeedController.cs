@@ -69,10 +69,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             try
             {
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-                var claim = principal.FindFirst("sub");
+                if (principal == null || principal.Identity == null || string.IsNullOrEmpty(principal.Identity.Name))
+                {
+                    return BadRequest("No UserId is found");
+                }
+
+                var email = principal.Identity.Name;
 
                 var helper = new Helper.Helper();
-                var userResult = helper.FindUserByEmail(claim.Value);
+                var userResult = helper.FindUserByEmail(email);
                 var userDetail = await userResult;
                 if (userDetail == null)
                 {
@@ -131,7 +136,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     var feedItem = new PersonalizedFeedItem();
 
-                    var feedContentResult = await GetFeedContent(feed.Activity, feed.ActedOnObjectId, feed.ActedOnUserId);
+                    var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
                     var feedContent = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
                     feedItem.ItemHeader = feedContent == null ? string.Empty : feedContent.Content.Header;
                     feedItem.ItemDetail = feedContent == null ? string.Empty : feedContent.Content.SimpleDetail;
@@ -167,69 +172,80 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer, 
         // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
-        private async Task<IHttpActionResult> GetFeedContent(int type, string objectId = "", string objectUserId = "")
+        private async Task<IHttpActionResult> GetFeedContent(int type, string userId, string objectId = "", string objectUserId = "")
         {
             var feedContent = new FeedContentDetail();
             feedContent.ActionName = GetActionName(type);
-            
-            if(type == 1 || type == 2 || type == 3 || type == 4 || type == 5 || type == 8)
+
+            try
             {
-                if(string.IsNullOrEmpty(objectId))
+                if (type == 1 || type == 2 || type == 3 || type == 4 || type == 5 || type == 8)
                 {
-                    return NotFound();
+                    if (string.IsNullOrEmpty(objectId))
+                    {
+                        return NotFound();
+                    }
+
+                    var isFeedAnAnswer = (type == 2 || type == 3 || type == 4 || type == 5); // Else its a Question
+                    Answer answer = null;
+                    Question question = null;
+
+                    if (isFeedAnAnswer)
+                    {
+                        answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
+                        if (answer == null)
+                        {
+                            return NotFound();
+                        }
+                    }
+
+                    var questionId = isFeedAnAnswer ? answer.QuestionId : objectId;
+
+                    var questionInfo = await _questionController.GetQuestionInfo(questionId);
+                    var questionResult = questionInfo as OkNegotiatedContentResult<Question>;
+                    question = questionResult.Content;
+
+                    feedContent.Header = question.Title;
+                    var questionUrl = "/feed/" + questionId;
+                    feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + objectId : questionUrl;
+
+                    feedContent.ViewCount = question.ViewCount;
+
+                    var answersCountResult = _questionController.GetAnswersCount(questionId);
+                    var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
+                    feedContent.AnswersCount = answersCount.Content;
+
+                    if (isFeedAnAnswer)
+                    {
+                        feedContent.SimpleDetail = answer.AnswerText;
+                        feedContent.PostedDateInUTC = answer.PostedOnUtc;
+                    }
+                    else
+                    {
+                        feedContent.SimpleDetail = question.Description;
+                        feedContent.PostedDateInUTC = question.PostedOnUtc;
+                    }
+
+
+                    return Ok<FeedContentDetail>(feedContent);
                 }
-                
-                var isFeedAnAnswer = (type == 2 || type == 3 || type == 4 || type == 5); // Else its a Question
-                Answer answer = null;
-                Question question = null;
-                
-                if(isFeedAnAnswer)
+
+                var helper = new Helper.Helper();
+                Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                var userDetail = await actionResult;
+
+                if (type == 6 || type == 7 || type == 9)
                 {
-                    answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
-                }
-                
-                var questionId = isFeedAnAnswer ? answer.QuestionId : objectId;
-
-                var questionInfo = await _questionController.GetQuestionInfo(questionId);
-                var questionResult = questionInfo as OkNegotiatedContentResult<Question>;
-                question = questionResult.Content;
-                
-                feedContent.Header = question.Title;
-                var questionUrl = "/feed/" + questionId;
-                feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + objectId : questionUrl;
-
-                feedContent.ViewCount = question.ViewCount;
-
-                var answersCountResult = _questionController.GetAnswersCount(questionId);
-                var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
-                feedContent.AnswersCount = answersCount.Content;
-                
-                if(isFeedAnAnswer)
-                {
-                    feedContent.SimpleDetail = answer.AnswerText;
-                    feedContent.PostedDateInUTC = answer.PostedOnUtc; 
-                }
-                else
-                {
-                    feedContent.SimpleDetail = question.Description;
-                    feedContent.PostedDateInUTC = question.PostedOnUtc;
+                    feedContent.Header = userDetail.FirstName + " " + userDetail.LastName;
+                    return Ok<FeedContentDetail>(feedContent);
                 }
 
-                
-                return Ok<FeedContentDetail>(feedContent);
+                return NotFound();
             }
-
-            var helper = new Helper.Helper();
-            Task<CustomUserInfo> actionResult = helper.FindUserById(objectUserId);
-            var userDetail = await actionResult;
-
-            if (type == 6 || type == 7 || type == 9)
+            catch (Exception ex)
             {
-                feedContent.Header = userDetail.FirstName + " " + userDetail.LastName;
-                return Ok<FeedContentDetail>(feedContent);
+                return NotFound();
             }
-
-            return NotFound();
         }
 
         private string GetActionText(int type)
