@@ -547,7 +547,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }                
                 
                 // if userid not present in the followerlist 
-                if (!followersList.Contains(userInfo.Id))
+                if (!questionObj.Followers.Contains(userInfo.Id))
                 {
                     questionObj.Followers.Add(userInfo.Id);
                     _mongoHelper.Collection.Save(questionObj);
