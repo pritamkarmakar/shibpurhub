@@ -2,606 +2,607 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-    <style>
-        h1, h2, h3, h4, h5, h6 {
-            margin: 0;
-            padding: 0;
-            font-weight: 700;
-        }
+<style>
+    h1, h2, h3, h4, h5, h6 {
+        margin: 0;
+        padding: 0;
+        font-weight: 700;
+    }
 
-        .content-area {
-            z-index: 190;
-            padding-top: 25px;
-            background: #ECEFF1;
-            min-height: 1000px;
-            padding-bottom: 80px;
-            overflow: hidden;
-            clear: both;
-        }
+    .content-area {
+        z-index: 190;
+        padding-top: 25px;
+        background: #ECEFF1;
+        min-height: 1000px;
+        padding-bottom: 80px;
+        overflow: hidden;
+        clear: both;
+    }
 
-        .main-content-area {
-            padding-top: 50px;
-        }
+    .main-content-area {
+        padding-top: 50px;
+    }
 
-        .row {
-            margin-right: -15px;
-            margin-left: -15px;
-        }
+    .row {
+        margin-right: -15px;
+        margin-left: -15px;
+    }
 
-        .left-side {
-            position: relative;
-        }
+    .left-side {
+        position: relative;
+    }
 
-        .feed-list .thread {
-            margin-bottom: 25px;
-        }
+    .feed-list .thread {
+        margin-bottom: 25px;
+    }
 
-        .thread {
-            position: relative;
-            font-size: 14px;
-            padding: 0 15px;
-            border: 0;
-            background: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
-            -webkit-border-radius: 0;
-            -moz-border-radius: 0;
-            border-radius: 0;
-            transition: background,.3s,ease-in-out,.3s;
-        }
+    .thread {
+        position: relative;
+        font-size: 14px;
+        padding: 0 15px;
+        border: 0;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+        transition: background,.3s,ease-in-out,.3s;
+    }
 
-        .post-header {
-            background: #FFF;
-            background: rgba(176,190,197,.16);
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ECEFF1;
-            padding: 13px 15px;
-            overflow: auto;
-        }
+    .post-header {
+        background: #FFF;
+        background: rgba(176,190,197,.16);
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ECEFF1;
+        padding: 13px 15px;
+        overflow: auto;
+    }
 
-        .headers-col {
-            padding: 0;
-        }
+    .headers-col {
+        padding: 0;
+    }
 
-        .profile-img-col {
-            padding: 0;
-            margin-right: 10px;
-            float: left;
-        }
+    .profile-img-col {
+        padding: 0;
+        margin-right: 10px;
+        float: left;
+    }
 
-        a.post-creator-image {
+    a.post-creator-image {
+        display: block;
+        width: 30px;
+        height: 30px;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #f2f2f2;
+        background-size: cover;
+        background-position: top center;
+    }
+
+    .thread .post-header .headers-col .header-text-content {
+        line-height: 1;
+        margin-bottom: 5px;
+        float: left;
+        min-width: 80%;
+    }
+
+    .thread .post-header p {
+        margin: 0;
+        padding: 0;
+        font-weight: 300;
+        color: #263238;
+        font-size: 14px;
+    }
+
+    .thread .post-header .headers-col .tagline-text-content {
+        font-size: 12px;
+        color: #78909C;
+        margin-bottom: -5px;
+        line-height: 1.4;
+        width: 85%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        float: left;
+    }
+
+    .thread .post-header .topic-icon-placeholder {
+        font-size: 12px;
+        display: block;
+        background: #f2f2f2;
+        width: 30px;
+        float: right;
+        text-align: center;
+        color: #FFF;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+        padding: 6px 0 3px 0;
+        text-decoration: none;
+    }
+
+    .thread .topic-icon-placeholder.follow {
+        background: #18bc9c;
+    }
+
+    .thread .post-header .topic-icon-placeholder i {
+        font-size: 16px;
+    }
+
+    .thread h2 {
+        font-size: 20px;
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: .12px;
+    }
+
+        .thread h2 a {
             display: block;
-            width: 30px;
-            height: 30px;
-            -webkit-border-radius: 50%;
-            -moz-border-radius: 50%;
-            border-radius: 50%;
-            overflow: hidden;
-            background-color: #f2f2f2;
-            background-size: cover;
-            background-position: top center;
-        }
-
-        .thread .post-header .headers-col .header-text-content {
-            line-height: 1;
-            margin-bottom: 5px;
-            float: left;
-            min-width: 80%;
-        }
-
-        .thread .post-header p {
-            margin: 0;
-            padding: 0;
-            font-weight: 300;
             color: #263238;
-            font-size: 14px;
+            text-decoration: none;
         }
 
-        .thread .post-header .headers-col .tagline-text-content {
-            font-size: 12px;
-            color: #78909C;
-            margin-bottom: -5px;
-            line-height: 1.4;
-            width: 85%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+    .thread .post-description {
+        margin-top: 10px;
+        margin-bottom: 15px;
+        font-weight: 300;
+    }
+
+    .post-description p {
+        color: #546E7A;
+        padding: 0;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .thread-details {
+        position: relative;
+        clear: both;
+        font-size: 1em;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-top: 1px solid #ECEFF1;
+        background: #FFF;
+    }
+
+    .thread .extra-details {
+        font-size: 12px;
+        color: #78909C;
+        padding-top: 5px;
+    }
+
+    .thread .post-link-image-container {
+        padding-right: 0;
+    }
+
+    .thread .post-link-image-small {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        width: 100%;
+        height: 120px;
+        float: left;
+        margin-bottom: 15px;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .list-inline {
+        margin: 0;
+        padding: 0;
+    }
+
+    .pull-left {
+        float: left !important;
+    }
+
+    .list-inline {
+        list-style: none;
+    }
+
+        .list-inline li {
+            margin: 0;
+            padding: 0;
             float: left;
         }
 
-        .thread .post-header .topic-icon-placeholder {
-            font-size: 12px;
-            display: block;
-            background: #f2f2f2;
-            width: 30px;
-            float: right;
-            text-align: center;
-            color: #FFF;
-            -webkit-border-radius: 50%;
-            -moz-border-radius: 50%;
-            border-radius: 50%;
-            padding: 6px 0 3px 0;
-            text-decoration: none;
-        }
+    .thread .thread-details a.thumbs {
+        display: block;
+        height: 28px;
+        margin-top: 0;
+        overflow: hidden;
+        margin-right: 10px;
+        background: #ECEFF1;
+        font-weight: 400;
+        padding: 5.2px 12px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        border-bottom: 2px solid #CFD8DC;
+        color: #455A64;
+        font-size: 1em;
+        text-decoration: none;
+        line-height: 1;
+        text-align: center;
+        -webkit-transition: all,.2s,ease-in-out,.2s;
+        -moz-transition: all,.2s,ease-in-out,.2s;
+        -ms-transition: all,.2s,ease-in-out,.2s;
+        -o-transition: all,.2s,ease-in-out,.2s;
+        transition: all,.2s,ease-in-out,.2s;
+    }
 
-        .thread .topic-icon-placeholder.follow {
-            background: #18bc9c;
-        }
+    .thread-details span.gap {
+        padding: 7.4px 4px;
+        color: #ddd;
+        font-weight: 700;
+    }
 
-        .thread .post-header .topic-icon-placeholder i {
-            font-size: 16px;
-        }
+    .thread.loadMoreContainer {
+        padding-top: 0;
+        padding-bottom: 0;
+        background: #FFF;
+    }
 
-        .thread h2 {
-            font-size: 20px;
-            font-weight: 400;
-            line-height: normal;
-            letter-spacing: .12px;
-        }
+    .loadMore {
+        display: block;
+        color: #607D8B;
+        font-weight: 400;
+        text-decoration: none;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
 
-            .thread h2 a {
-                display: block;
-                color: #263238;
-                text-decoration: none;
+    .post-description.profile dt {
+        font-weight: 500;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        scAjax({
+            "url": "feed/GetPersonalizedFeeds",
+            "data": { "page": 0 },
+            "success": function (result) {
             }
-
-        .thread .post-description {
-            margin-top: 10px;
-            margin-bottom: 15px;
-            font-weight: 300;
-        }
-
-        .post-description p {
-            color: #546E7A;
-            padding: 0;
-            margin: 0;
-            font-size: 16px;
-        }
-
-        .thread-details {
-            position: relative;
-            clear: both;
-            font-size: 1em;
-            padding-top: 10px;
-            padding-bottom: 10px;
-            border-top: 1px solid #ECEFF1;
-            background: #FFF;
-        }
-
-        .thread .extra-details {
-            font-size: 12px;
-            color: #78909C;
-            padding-top: 5px;
-        }
-
-        .thread .post-link-image-container {
-            padding-right: 0;
-        }
-
-        .thread .post-link-image-small {
-            position: relative;
-            display: block;
-            overflow: hidden;
-            width: 100%;
-            height: 120px;
-            float: left;
-            margin-bottom: 15px;
-            background-size: cover;
-            background-position: center center;
-        }
-
-        .list-inline {
-            margin: 0;
-            padding: 0;
-        }
-
-        .pull-left {
-            float: left !important;
-        }
-
-        .list-inline {
-            list-style: none;
-        }
-
-            .list-inline li {
-                margin: 0;
-                padding: 0;
-                float: left;
-            }
-
-        .thread .thread-details a.thumbs {
-            display: block;
-            height: 28px;
-            margin-top: 0;
-            overflow: hidden;
-            margin-right: 10px;
-            background: #ECEFF1;
-            font-weight: 400;
-            padding: 5.2px 12px;
-            -webkit-border-radius: 3px;
-            -moz-border-radius: 3px;
-            border-radius: 3px;
-            border-bottom: 2px solid #CFD8DC;
-            color: #455A64;
-            font-size: 1em;
-            text-decoration: none;
-            line-height: 1;
-            text-align: center;
-            -webkit-transition: all,.2s,ease-in-out,.2s;
-            -moz-transition: all,.2s,ease-in-out,.2s;
-            -ms-transition: all,.2s,ease-in-out,.2s;
-            -o-transition: all,.2s,ease-in-out,.2s;
-            transition: all,.2s,ease-in-out,.2s;
-        }
-
-        .thread-details span.gap {
-            padding: 7.4px 4px;
-            color: #ddd;
-            font-weight: 700;
-        }
-
-        .thread.loadMoreContainer {
-            padding-top: 0;
-            padding-bottom: 0;
-            background: #FFF;
-        }
-
-        .loadMore {
-            display: block;
-            color: #607D8B;
-            font-weight: 400;
-            text-decoration: none;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-        .post-description.profile dt
-        {
-            font-weight: 500;
-        }
-    </style>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            scAjax({
-                "url": "feed/GetPersonalizedFeeds",
-                "data": { "page": 0 },
-                "success": function (result) {
-                }
-            });
         });
-      </script>
+    });
+</script>
 
-    <div class="content-area">
-        <div class="container">
-            <div class="row main-content-area">
-                <div class="col-xs-12 col-md-8 left-side feed-list">
+
+<div class="container">
+    <div class="main-content-area">
+        <div class="col-xs-12 col-md-9 left-side feed-list">
+            <div class="row">
+                <div class="col-xs-12 thread">
                     <div class="row">
-                        <div class="col-xs-12 thread">
+                        <div class="col-xs-12">
+                            <div class="row post-header">
+                                <div class="col-sm-10 col-xs-8 headers-col">
+
+                                    <div class="profile-img-col hidden-xs">
+                                        <a href="#" style="background-image:url('http://i.imgur.com/bXgZRqUs.jpg#w5WTHq3ASHW8iJ5')" class="post-creator-image"></a>
+                                    </div>
+                                    <p class="header-text-content ">
+                                        <a href="#" class="name-link">Pritam Karmakar</a>
+                                        <span class="act"> asked a</span>
+                                        <a href="#" class="type-link discussion">Question</a>
+                                    </p>
+                                    <p class="tagline-text-content">QA Architect, Tibco Software Inc (2006 EE)</p>
+                                </div>
+                                <div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
+                                    <a class="topic-icon-placeholder follow" href="#">
+                                        <i class="fa fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
                             <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="row post-header">
-                                        <div class="col-sm-10 col-xs-8 headers-col">
+                                <div class="col-xs-12 col-md-12 ">
+                                    <h2>
+                                        <a href="#">Need help to create shibpurhub animated video</a>
+                                    </h2>
 
-                                            <div class="profile-img-col hidden-xs">
-                                                <a href="#" style="background-image:url('http://i.imgur.com/bXgZRqUs.jpg#w5WTHq3ASHW8iJ5')" class="post-creator-image"></a>
-                                            </div>
-                                            <p class="header-text-content ">
-                                                <a href="#" class="name-link">Pritam Karmakar</a>
-                                                <span class="act"> asked a</span>
-                                                <a href="#" class="type-link discussion">Question</a>
-                                            </p>
-                                            <p class="tagline-text-content">QA Architect, Tibco Software Inc (2006 EE)</p>
-                                        </div>
-                                        <div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                            <a class="topic-icon-placeholder follow" href="#">
-                                                <i class="fa fa-plus"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-md-12 ">
-                                            <h2>
-                                                <a href="#">Need help to create shibpurhub animated video</a>
-                                            </h2>
-
-                                            <div class="post-description">
-                                                <p>
-                                                    We have to create animated product video for ShibpurHub website. Can someone take this responsibility? Here are some websites that we can use to create free video -http://wideo.co/ https://goanimate.comhttps://www.powtoon.com
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row thread-details">
-                                <div class="col-xs-12 col-md-7">
-                                    <ul class="list-inline pull-left">
-                                        <li>
-                                            <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-xs-12 col-md-5">
-                                    <ul class="extra-details pull-right list-inline">
-                                        <li>
-                                            <span href="" class="view-count">28 views</span>
-                                        </li>
-                                        <li>
-                                            <span class="gap">•</span>
-                                        </li>
-                                        <li>
-                                            <span href="" class="answer-count">0 answers</span>
-                                        </li>
-                                        <li>
-                                            <span class="gap">•</span>
-                                        </li>
-                                        <li>
-                                            <span class="post-pub-time">Jul 31, 2015</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 thread">
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="row post-header">
-                                        <div class="col-sm-10 col-xs-8 headers-col">
-
-                                            <div class="profile-img-col hidden-xs">
-                                                <a href="#" style="background-image:url('http://i.imgur.com/aYdrZk2s.jpg#ZBgQ17x38pDdn5k')" class="post-creator-image"></a>
-                                            </div>
-                                            <p class="header-text-content ">
-                                                <a href="#" class="name-link">Manish Baheti</a>
-                                                asked a
-                                                <a href="#" class="type-link discussion">Question</a>
-                                            </p>
-                                            <p class="tagline-text-content">Senior Executive, Siemens Limited (2006 EE)</p>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-md-12 ">
-                                            <h2>
-                                                <a href="#">Why penalize for better response rate?</a>
-                                            </h2>
-
-                                            <div class="post-description">
-                                                <p>
-                                                    Our Satti babu has highest response rate (79%) yet very low reputation -- why ? Pritam is this a developer bias ... response rate of 33% but 3 times the everest reputation... we don't mind you having high reputation... but why make others minions ;)
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row thread-details">
-                                <div class="col-xs-12 col-md-7">
-                                    <ul class="list-inline pull-left">
-                                        <li>
-                                            <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
-                                        </li>
-
-                                    </ul>
-                                </div>
-                                <div class="col-xs-12 col-md-5">
-                                    <ul class="extra-details pull-right list-inline">
-                                        <li>
-                                            <span href="" class="view-count">100 views</span>
-                                        </li>
-                                        <li>
-                                            <span class="gap">•</span>
-                                        </li>
-                                        <li>
-                                            <span href="" class="answer-count">3 answers</span>
-                                        </li>
-                                        <li>
-                                            <span class="gap">•</span>
-                                        </li>
-                                        <li>
-                                            <span class="post-pub-time">Jul 10, 2015</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 thread">
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="row post-header">
-                                        <div class="col-sm-10 col-xs-8 headers-col">
-
-                                            <div class="profile-img-col hidden-xs">
-                                                <a href="#" style="background-image:url('http://i.imgur.com/Vt1KE6Rs.jpg')" class="post-creator-image"></a>
-                                            </div>
-                                            <p class="header-text-content ">
-                                                <a href="#" class="name-link">SATINATH BANERJEE</a>
-                                                answered a
-                                                <a href="#" class="type-link discussion">Question</a>
-                                            </p>
-                                            <p class="tagline-text-content">2006 EE</p>
-                                        </div>
-                                        <div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                            <a class="topic-icon-placeholder follow" href="#">
-                                                <i class="fa fa-plus"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-md-12 ">
-                                            <h2>
-                                                <a href="#">How is our new email template ?</a>
-                                            </h2>
-
-                                            <div class="post-description">
-                                                <p>
-                                                    hey Pritam....... How to check this feature?
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row thread-details">
-                                <div class="col-xs-12 col-md-7">
-                                    <ul class="list-inline pull-left">
-                                        <li>
-                                            <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
-                                        </li>
-
-                                    </ul>
-                                </div>
-                                <div class="col-xs-12 col-md-5">
-                                    <ul class="extra-details pull-right list-inline">
-                                        <li>
-                                            <span href="" class="view-count">28 views</span>
-                                        </li>
-                                        <li>
-                                            <span class="gap">•</span>
-                                        </li>
-                                        <li>
-                                            <span href="" class="answer-count">0 answers</span>
-                                        </li>
-                                        <li>
-                                            <span class="gap">•</span>
-                                        </li>
-                                        <li>
-                                            <span class="post-pub-time">Jul 31, 2015</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12 thread">
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="row post-header">
-                                        <div class="col-sm-10 col-xs-8 headers-col">
-
-                                            <div class="profile-img-col hidden-xs">
-                                                <a href="#" style="background-image:url('http://i.imgur.com/DLCo8dXs.jpg')" class="post-creator-image"></a>
-                                            </div>
-                                            <p class="header-text-content ">
-                                                <a href="#" class="name-link">Monotosh K</a>
-                                                started following
-                                                <a href="#" class="type-link discussion">Pritam Karmakar</a>
-                                            </p>
-                                            <p class="tagline-text-content">ASE, TCS (2006 EE)</p>
-                                        </div>
-                                        <!--<div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                            <a class="topic-icon-placeholder follow" href="#">
-                                                <i class="fa fa-plus"></i>
-                                            </a>
-                                        </div>-->
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 post-link-image-container">
-
-                                            <a class="post-link-image-small" target="_blank" href="#" style="background-image: url('http://i.imgur.com/bXgZRqU.jpg#w5WTHq3ASHW8iJ5')">
-                                            </a>
-
-                                        </div>
-
-                                        <div class="col-xs-12 col-md-9 ">
-                                            <h2>
-                                                <a target="_blank" href="#">Pritam Karmakar</a>
-                                            </h2>
-                                            <p class="tagline-text-content">QA Architect, Tibco Software Inc (2006 EE)</p>
-                                            <div class="post-description profile">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="text-right"><span class="pull-left userquestioncount">Questions</span></dt>
-                                                    <dd><a href="#">19</a></dd>
-                                                    <dt class="text-right"><span class="pull-left useranswercount">Answers</span></dt>
-                                                    <dd><a href="#">30</a></dd>
-                                                    <dt class="text-right"><span class="pull-left reputationcount">Reputation</span></dt>
-                                                    <dd>4200</dd>
-                                                </dl>
-                                            </div>
-                                        </div>
+                                    <div class="post-description">
+                                        <p>
+                                            We have to create animated product video for ShibpurHub website. Can someone take this responsibility? Here are some websites that we can use to create free video -http://wideo.co/ https://goanimate.comhttps://www.powtoon.com
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-xs-12 thread">
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="row post-header">
-                                        <div class="col-sm-10 col-xs-8 headers-col">
-
-                                            <div class="profile-img-col hidden-xs">
-                                                <a href="#" style="background-image:url('http://i.imgur.com/hglciIos.jpg')" class="post-creator-image"></a>
-                                            </div>
-                                            <p class="header-text-content ">
-                                                <a href="#" class="name-link">Subrata Sur</a>
-                                                joined
-                                                <a href="#" class="type-link discussion">ShibpurHub</a>
-                                            </p>
-                                            <p class="tagline-text-content">Senior Engineer, BHEL (2006 EE)</p>
-                                        </div>
-                                        <div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                            <a class="topic-icon-placeholder follow" href="#">
-                                                <i class="fa fa-plus"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 post-link-image-container">
-
-                                            <a class="post-link-image-small" target="_blank" href="#" style="background-image: url('http://i.imgur.com/hglciIo.jpg')">
-                                            </a>
-
-                                        </div>
-
-                                        <div class="col-xs-12 col-md-9 ">
-                                            <h2>
-                                                <a target="_blank" href="#">Subrata Sur</a>
-                                            </h2>
-                                            <p class="tagline-text-content">Senior Engineer, BHEL (2006 EE)</p>
-                                            <div class="post-description profile">
-                                                <dl class="dl-horizontal">
-                                                    <dt class="text-right"><span class="pull-left ">Employment</span></dt>
-                                                    <dd>Senior Engineer, BHEL | February 2008 - Present</dd>
-                                                    <dt class="text-right"><span class="pull-left ">Location</span></dt>
-                                                    <dd>Bangalore, India</dd>
-                                                    <dt class="text-right"><span class="pull-left ">Education</span></dt>
-                                                    <dd>Electrical Engineering, 2006</dd>
-                                                </dl>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="row thread-details">
+                        <div class="col-xs-12 col-md-7">
+                            <ul class="list-inline pull-left">
+                                <li>
+                                    <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
+                                </li>
+                            </ul>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12 thread text-center loadMoreContainer">
-                            <a href="#" class="loadMore" id="loadMoreBtn">
-                                <span class="toggleThis" style="display: inline;">Load More</span>
-                                <span class="toggleThis spinner" style="display: none;"><i class="fa fa-spinner fa-spin fa-fw"></i> Fetching..</span>
-                            </a>
+                        <div class="col-xs-12 col-md-5">
+                            <ul class="extra-details pull-right list-inline">
+                                <li>
+                                    <span href="" class="view-count">28 views</span>
+                                </li>
+                                <li>
+                                    <span class="gap">•</span>
+                                </li>
+                                <li>
+                                    <span href="" class="answer-count">0 answers</span>
+                                </li>
+                                <li>
+                                    <span class="gap">•</span>
+                                </li>
+                                <li>
+                                    <span class="post-pub-time">Jul 31, 2015</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 thread">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row post-header">
+                                <div class="col-sm-10 col-xs-8 headers-col">
+
+                                    <div class="profile-img-col hidden-xs">
+                                        <a href="#" style="background-image:url('http://i.imgur.com/aYdrZk2s.jpg#ZBgQ17x38pDdn5k')" class="post-creator-image"></a>
+                                    </div>
+                                    <p class="header-text-content ">
+                                        <a href="#" class="name-link">Manish Baheti</a>
+                                        asked a
+                                        <a href="#" class="type-link discussion">Question</a>
+                                    </p>
+                                    <p class="tagline-text-content">Senior Executive, Siemens Limited (2006 EE)</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 ">
+                                    <h2>
+                                        <a href="#">Why penalize for better response rate?</a>
+                                    </h2>
+
+                                    <div class="post-description">
+                                        <p>
+                                            Our Satti babu has highest response rate (79%) yet very low reputation -- why ? Pritam is this a developer bias ... response rate of 33% but 3 times the everest reputation... we don't mind you having high reputation... but why make others minions ;)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row thread-details">
+                        <div class="col-xs-12 col-md-7">
+                            <ul class="list-inline pull-left">
+                                <li>
+                                    <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <div class="col-xs-12 col-md-5">
+                            <ul class="extra-details pull-right list-inline">
+                                <li>
+                                    <span href="" class="view-count">100 views</span>
+                                </li>
+                                <li>
+                                    <span class="gap">•</span>
+                                </li>
+                                <li>
+                                    <span href="" class="answer-count">3 answers</span>
+                                </li>
+                                <li>
+                                    <span class="gap">•</span>
+                                </li>
+                                <li>
+                                    <span class="post-pub-time">Jul 10, 2015</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 thread">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row post-header">
+                                <div class="col-sm-10 col-xs-8 headers-col">
+
+                                    <div class="profile-img-col hidden-xs">
+                                        <a href="#" style="background-image:url('http://i.imgur.com/Vt1KE6Rs.jpg')" class="post-creator-image"></a>
+                                    </div>
+                                    <p class="header-text-content ">
+                                        <a href="#" class="name-link">SATINATH BANERJEE</a>
+                                        answered a
+                                        <a href="#" class="type-link discussion">Question</a>
+                                    </p>
+                                    <p class="tagline-text-content">2006 EE</p>
+                                </div>
+                                <div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
+                                    <a class="topic-icon-placeholder follow" href="#">
+                                        <i class="fa fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 ">
+                                    <h2>
+                                        <a href="#">How is our new email template ?</a>
+                                    </h2>
+
+                                    <div class="post-description">
+                                        <p>
+                                            hey Pritam....... How to check this feature?
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row thread-details">
+                        <div class="col-xs-12 col-md-7">
+                            <ul class="list-inline pull-left">
+                                <li>
+                                    <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <div class="col-xs-12 col-md-5">
+                            <ul class="extra-details pull-right list-inline">
+                                <li>
+                                    <span href="" class="view-count">28 views</span>
+                                </li>
+                                <li>
+                                    <span class="gap">•</span>
+                                </li>
+                                <li>
+                                    <span href="" class="answer-count">0 answers</span>
+                                </li>
+                                <li>
+                                    <span class="gap">•</span>
+                                </li>
+                                <li>
+                                    <span class="post-pub-time">Jul 31, 2015</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 thread">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row post-header">
+                                <div class="col-sm-10 col-xs-8 headers-col">
+
+                                    <div class="profile-img-col hidden-xs">
+                                        <a href="#" style="background-image:url('http://i.imgur.com/DLCo8dXs.jpg')" class="post-creator-image"></a>
+                                    </div>
+                                    <p class="header-text-content ">
+                                        <a href="#" class="name-link">Monotosh K</a>
+                                        started following
+                                        <a href="#" class="type-link discussion">Pritam Karmakar</a>
+                                    </p>
+                                    <p class="tagline-text-content">ASE, TCS (2006 EE)</p>
+                                </div>
+                                <!--<div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
+                                    <a class="topic-icon-placeholder follow" href="#">
+                                        <i class="fa fa-plus"></i>
+                                    </a>
+                                </div>-->
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 post-link-image-container">
+
+                                    <a class="post-link-image-small" target="_blank" href="#" style="background-image: url('http://i.imgur.com/bXgZRqU.jpg#w5WTHq3ASHW8iJ5')">
+                                    </a>
+
+                                </div>
+
+                                <div class="col-xs-12 col-md-9 ">
+                                    <h2>
+                                        <a target="_blank" href="#">Pritam Karmakar</a>
+                                    </h2>
+                                    <p class="tagline-text-content">QA Architect, Tibco Software Inc (2006 EE)</p>
+                                    <div class="post-description profile">
+                                        <dl class="dl-horizontal">
+                                            <dt class="text-right"><span class="pull-left userquestioncount">Questions</span></dt>
+                                            <dd><a href="#">19</a></dd>
+                                            <dt class="text-right"><span class="pull-left useranswercount">Answers</span></dt>
+                                            <dd><a href="#">30</a></dd>
+                                            <dt class="text-right"><span class="pull-left reputationcount">Reputation</span></dt>
+                                            <dd>4200</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 thread">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row post-header">
+                                <div class="col-sm-10 col-xs-8 headers-col">
+
+                                    <div class="profile-img-col hidden-xs">
+                                        <a href="#" style="background-image:url('http://i.imgur.com/hglciIos.jpg')" class="post-creator-image"></a>
+                                    </div>
+                                    <p class="header-text-content ">
+                                        <a href="#" class="name-link">Subrata Sur</a>
+                                        joined
+                                        <a href="#" class="type-link discussion">ShibpurHub</a>
+                                    </p>
+                                    <p class="tagline-text-content">Senior Engineer, BHEL (2006 EE)</p>
+                                </div>
+                                <div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
+                                    <a class="topic-icon-placeholder follow" href="#">
+                                        <i class="fa fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 post-link-image-container">
+
+                                    <a class="post-link-image-small" target="_blank" href="#" style="background-image: url('http://i.imgur.com/hglciIo.jpg')">
+                                    </a>
+
+                                </div>
+
+                                <div class="col-xs-12 col-md-9 ">
+                                    <h2>
+                                        <a target="_blank" href="#">Subrata Sur</a>
+                                    </h2>
+                                    <p class="tagline-text-content">Senior Engineer, BHEL (2006 EE)</p>
+                                    <div class="post-description profile">
+                                        <dl class="dl-horizontal">
+                                            <dt class="text-right"><span class="pull-left ">Employment</span></dt>
+                                            <dd>Senior Engineer, BHEL | February 2008 - Present</dd>
+                                            <dt class="text-right"><span class="pull-left ">Location</span></dt>
+                                            <dd>Bangalore, India</dd>
+                                            <dt class="text-right"><span class="pull-left ">Education</span></dt>
+                                            <dd>Electrical Engineering, 2006</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 thread text-center loadMoreContainer">
+                    <a href="#" class="loadMore" id="loadMoreBtn">
+                        <span class="toggleThis" style="display: inline;">Load More</span>
+                        <span class="toggleThis spinner" style="display: none;"><i class="fa fa-spinner fa-spin fa-fw"></i> Fetching..</span>
+                    </a>
+                </div>
+            </div>
         </div>
+        <div class="col-xs-12 col-md-3"></div>
     </div>
+</div>
+
