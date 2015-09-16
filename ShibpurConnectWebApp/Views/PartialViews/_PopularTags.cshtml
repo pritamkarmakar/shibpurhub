@@ -18,37 +18,39 @@
         });
     });
 </script>
-
 <style type="text/css">
     /*popular tag name font size*/
-    .populartagname
-    {
-        font-size:13px;
+    .populartagname {
+        font-size: 13px;
     }
-    .tagcontainermaindiv
-    {
-        padding-top: 3px;
+
+    .tagcontainermaindiv {
+        /*padding-top: 3px;*/
+         background-color: #90A4AE;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
     }
 
     /*tag container div padding*/
-    #tagcontainerdiv
-    {
-        padding:4px;
-    }     
-     /*word break for all tags*/
-    .thumbnail{
-        word-break:break-all;
+    #tagcontainerdiv {
+        padding: 4px;
+    }
+    /*word break for all tags*/
+    .thumbnail {
+        word-break: break-all;
     }
     /*question count font size in each tag*/
-    #tagquestioncount
-    {
+    #tagquestioncount {
         font-size: 10px;
     }
 </style>
-
 <div class="well tagcontainermaindiv">
-    <h5>Popular Tags</h5>
-    <hr id="bigseparator" />
+    <div class="sidebar-header">
+        <h5>Popular Tags</h5>
+    </div>
+    @*<hr id="bigseparator" />*@
     <div id="tagcloud">
     </div>
 </div>

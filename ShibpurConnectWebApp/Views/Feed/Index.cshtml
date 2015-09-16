@@ -21,19 +21,19 @@
         $('.popularuserscontainerdiv').hide();
         $('.tagcontainermaindiv').hide();
         $('.popularquestioncontainerdiv').hide();
-        scAjax({
-            "url": "questions/GetTotalQuestionCount",
-            "success": function (result) {
-                $('.questioncount').text(result);
-                $('.questioncount').after("<p>questions</p>");
-            }
-        });
+        //scAjax({
+        //    "url": "questions/GetTotalQuestionCount",
+        //    "success": function (result) {
+        //        $('.questioncount').text(result);
+        //        $('.questioncount').after("<p>questions</p>");
+        //    }
+        //});
     })
 </script>
 
 <div class="container">
     <div class="col-md-9 col-xs-12">
-        <div class="row subheader" style="border-bottom-style:solid;border-width:1px;">
+        @*<div class="row subheader" style="border-bottom-style:solid;border-width:1px;">
             <h2 class="moduleheader" style="float:left;">All Questions</h2>
             <div id="tabs" style="float:right">
                 <ul class="nav nav-pills" role="tablist">
@@ -42,13 +42,13 @@
                     <li role="presentation"><a href="#">unanswered <span class="badge">3</span></a></li>
                 </ul>
             </div>
-        </div>
+        </div>*@
         @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
     </div>
     <div class="col-md-3 col-xs-12">
-        <div class="module" id="questions-count">
+        @*<div class="module" id="questions-count">
             <div class="questioncount" style="font-size:30px"></div>           
-        </div> 
+        </div>*@ 
         @Html.Partial("~/Views/PartialViews/_LeaderBoard.cshtml")
         @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")       
         @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")   

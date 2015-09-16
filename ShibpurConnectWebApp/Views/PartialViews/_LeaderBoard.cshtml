@@ -35,21 +35,38 @@
 
 <style type="text/css">
     .popularuserscontainerdiv {
-        padding: 2px;
+        /*padding: 2px;*/
+        background-color: #4DB6AC;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+    }
+
+    .sidebar-header {
+        margin-bottom: 20px;
+        position: relative;
+        top: 5px;
+        color: #eee;
+        padding-left: 10px;
     }
 
     /*question count font size in each tag*/
     #answercount {
         font-size: 10px;
     }
+    #popularusers
+    {
+        background: #fff;
+    }
 </style>
 
 
 
 <div class="well popularuserscontainerdiv">
-    <div class="col-md-12">
+    <div class="sidebar-header">
         <h5>Top Contributors</h5>
-        <hr id="bigseparator" />
+        @*<hr id="bigseparator" />*@
     </div>
     <div id="popularusers">
     </div>

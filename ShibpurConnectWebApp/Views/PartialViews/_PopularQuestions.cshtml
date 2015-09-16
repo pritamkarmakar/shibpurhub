@@ -18,32 +18,46 @@
         });
     });
 </script>
-
 <style type="text/css">
     .popularquestioncontainerdiv {
-        padding-top: 3px;
+        /*padding-top: 3px;*/
+        background-color: #90A4AE;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
     }
 
-    #popularquestiondiv
-    {
-        padding:4px;
+    .sidebar-header {
+        margin-bottom: 20px;
+        position: relative;
+        top: 5px;
+        color: #eee;
+        padding-left: 10px;
     }
 
-    .popularquestiontitle
-    {
-        font-size:13px;
+    #popularquestiondiv {
+        padding: 4px;
     }
-   
+
+    .popularquestiontitle {
+        font-size: 13px;
+    }
+    #popularquestioncloud
+    {
+        background: #fff;
+    }
+
     /*question count font size in each tag*/
     #answercount {
         font-size: 10px;
     }
 </style>
-
-<div class="well popularquestioncontainerdiv">
-    <h5>Popular Questions</h5>
-    <hr id="bigseparator" />
+<div class="popularquestioncontainerdiv">
+    <div class="sidebar-header">
+        <h5>Popular Questions</h5>
+        @*<hr id="bigseparator" />*@
+    </div>
     <div id="popularquestioncloud">
     </div>
 </div>
-
