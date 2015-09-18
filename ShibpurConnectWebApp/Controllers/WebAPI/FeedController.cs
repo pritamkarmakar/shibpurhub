@@ -116,12 +116,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 string previousObjectId = string.Empty;
                 var distinctUserId = new List<string>();
                 
-                for(var i = 0; feedResults.Count < PAGESIZE && i < feedsFollowedByMe.Count; i++)
+                for(var i = 0; feedResults.Count < PAGESIZE && i < feedsFollowedByMe.ToList().Count; i++)
                 {
                 //foreach(var feed in feeds)
                 //{
-                    
-                    var feed = feedsFollowedByMe[i];
+                    var feeds = feedsFollowedByMe.ToList();
+                    var feed = feeds[i];
                     
                     //Ignore Upvote
                     if(feed.Activity == 3)
