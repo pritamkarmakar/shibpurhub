@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -11,6 +11,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         [DataMember]
         public int ActivityType { get; set; }
+        
+        [DataMember]
+        public string UserId { get; set; }
 
         [DataMember]
         public string UserName { get; set; }
@@ -44,6 +47,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public Dictionary<string, string> ItemValues { get; set; }
+        
+        [DataMember]
+        public IList<PersonalizedFeedItem> ChildItems { get; set; }
 
         public int ViewCount { get; set; }
 
