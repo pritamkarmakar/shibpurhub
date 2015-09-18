@@ -196,7 +196,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         feedResult.UserName = matchedUser.FullName;
                         feedResult.UserDesignation = matchedUser.CareerDetail;
-                        feedResult.UserProfileUrl = string.Format("Account/Profile?userId={0}", feed.UserId);
+                        feedResult.UserProfileUrl = string.Format("Account/Profile?userId={0}", feedResult.UserId);
                         feedResult.UserProfileImageUrl = matchedUser.ImageUrl;
                     }
                     
