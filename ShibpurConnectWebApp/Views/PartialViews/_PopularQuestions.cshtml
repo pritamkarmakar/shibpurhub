@@ -1,4 +1,4 @@
-﻿<script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function () {
         scAjax({
             "url": "questions/GetPopularQuestions?count=10",
@@ -28,13 +28,13 @@
         border: 1px solid transparent;
     }
 
-    .sidebar-header {
+    /*.sidebar-header {
         margin-bottom: 20px;
         position: relative;
         top: 5px;
         color: #eee;
         padding-left: 10px;
-    }
+    }*/
 
     #popularquestiondiv {
         padding: 4px;
@@ -53,11 +53,11 @@
         font-size: 10px;
     }
 </style>
-<div class="popularquestioncontainerdiv">
+<div class="sidebar-container">
     <div class="sidebar-header">
         <h5>Popular Questions</h5>
         @*<hr id="bigseparator" />*@
     </div>
-    <div id="popularquestioncloud">
+    <div id="popularquestioncloud" class="sidebar-content">
     </div>
 </div>

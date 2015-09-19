@@ -23,7 +23,7 @@
     }
 
     .main-content-area {
-        padding-top: 50px;
+        /*padding-top: 50px;*/
     }
 
     .row {
@@ -46,9 +46,9 @@
         border: 0;
         background: #fff;
         box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
-        -webkit-border-radius: 0;
-        -moz-border-radius: 0;
-        border-radius: 0;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
         transition: background,.3s,ease-in-out,.3s;
     }
 
@@ -161,13 +161,15 @@
     }
 
     .thread-details {
-        position: relative;
-        clear: both;
-        font-size: 1em;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        border-top: 1px solid #ECEFF1;
+        border-radius: 4px;
         background: #FFF;
+    }
+    
+    .thread-details-container
+    {
+        border-top: 1px solid #ECEFF1;
+        padding: 10px 0;
+        overflow: auto;
     }
 
     .thread .extra-details {
@@ -272,9 +274,9 @@
     });
 </script>
 
-<div class="content-area">
+
     <div class="container">
-        <div class="main-content-area">
+        
             <div class="col-xs-12 col-md-9 left-side feed-list">
                 <div class="row">
                     <div class="col-xs-12 thread">
@@ -316,7 +318,8 @@
                         </div>
 
                         <div class="row thread-details">
-                            <div class="col-xs-12 col-md-7">
+                            <div class="thread-details-container">
+                                <div class="col-xs-12 col-md-7">
                                 <ul class="list-inline pull-left">
                                     <li>
                                         <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
@@ -326,7 +329,7 @@
                                     </li>*@
                                 </ul>
                             </div>
-                            <div class="col-xs-12 col-md-5">
+                                <div class="col-xs-12 col-md-5">
                                 <ul class="extra-details pull-right list-inline">
                                     <li>
                                         <span href="" class="view-count">28 views</span>
@@ -344,6 +347,7 @@
                                         <span class="post-pub-time">Jul 31, 2015</span>
                                     </li>
                                 </ul>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -383,7 +387,8 @@
                         </div>
 
                         <div class="row thread-details">
-                            <div class="col-xs-12 col-md-7">
+                            <div class="thread-details-container">
+                                <div class="col-xs-12 col-md-7">
                                 <ul class="list-inline pull-left">
                                     <li>
                                         <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
@@ -394,7 +399,7 @@
 
                                 </ul>
                             </div>
-                            <div class="col-xs-12 col-md-5">
+                                <div class="col-xs-12 col-md-5">
                                 <ul class="extra-details pull-right list-inline">
                                     <li>
                                         <span href="" class="view-count">100 views</span>
@@ -412,6 +417,7 @@
                                         <span class="post-pub-time">Jul 10, 2015</span>
                                     </li>
                                 </ul>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -456,7 +462,8 @@
                         </div>
 
                         <div class="row thread-details">
-                            <div class="col-xs-12 col-md-7">
+                            <div class="thread-details-container">
+                                <div class="col-xs-12 col-md-7">
                                 <ul class="list-inline pull-left">
                                     <li>
                                         <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
@@ -467,7 +474,7 @@
 
                                 </ul>
                             </div>
-                            <div class="col-xs-12 col-md-5">
+                                <div class="col-xs-12 col-md-5">
                                 <ul class="extra-details pull-right list-inline">
                                     <li>
                                         <span href="" class="view-count">28 views</span>
@@ -485,6 +492,7 @@
                                         <span class="post-pub-time">Jul 31, 2015</span>
                                     </li>
                                 </ul>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -610,7 +618,6 @@
                 @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
                 @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
             </div>
-        </div>
+        
     </div>
-</div>
 
