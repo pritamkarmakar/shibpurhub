@@ -1,4 +1,4 @@
-﻿<script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function () {
         scAjax({
             "url": "users/GetLeaderBoard?count=10",
@@ -43,7 +43,7 @@
         border: 1px solid transparent;
     }
 
-    .sidebar-header {
+    /*.sidebar-header {
         margin-bottom: 20px;
         position: relative;
         top: 5px;
@@ -53,7 +53,7 @@
 
     .sidebar-header h5{
         padding-top: 10px;
-    }
+    }*/
 
     /*question count font size in each tag*/
     #answercount {
@@ -68,12 +68,12 @@
 
 
 
-<div class="popularuserscontainerdiv">
+<div class="sidebar-container">
     <div class="sidebar-header">
         <h5>Top Contributors</h5>
         @*<hr id="bigseparator" />*@
     </div>
-    <div id="popularusers">
+    <div id="popularusers" class="sidebar-content">
     </div>
 </div>
 
