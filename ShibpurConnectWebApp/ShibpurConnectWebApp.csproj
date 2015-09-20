@@ -587,6 +587,9 @@
     <Content Include="Views\Manage\ManageLogins_.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Settings\Index.cshtml" />
+    <Content Include="Views\Shared\_Layout.Mobile.cshtml" />
+    <Content Include="Views\Feed\Index.Mobile.cshtml" />
+    <Content Include="Views\PartialViews\_FeedList.Mobile.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,0 +1,53 @@
+﻿@model ShibpurConnectWebApp.Models.FeedViewModel
+@{
+    ViewBag.Title = "All Questions - ShibpurHub";
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/knockout")
+    @Scripts.Render("~/bundles/app")
+}
+
+<style type="text/css">   
+    .moduleheader {
+        font-size: 18px;
+    }    
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        // hide the right column modules, we will enable inside respective the partial view once receive the server response
+        $('.popularuserscontainerdiv').hide();
+        $('.tagcontainermaindiv').hide();
+        $('.popularquestioncontainerdiv').hide();
+        //scAjax({
+        //    "url": "questions/GetTotalQuestionCount",
+        //    "success": function (result) {
+        //        $('.questioncount').text(result);
+        //        $('.questioncount').after("<p>questions</p>");
+        //    }
+        //});
+
+        $.ajax({
+            url: "http://localhost:56136/Account/Authorize?client_id=web&response_type=token&state=%23_%3D_",
+            dataType: "json",
+            async: false,
+            processData: false,
+            success: function (result) {
+                if (result) {
+                  
+                }
+            }
+        });
+
+        
+    })
+</script>
+
+<div class="container">
+    <div class="row">
+        <h2>From Mobile</h2>
+        @Html.Partial("~/Views/PartialViews/_FeedList.Mobile.cshtml")
+    </div>
+</div>
