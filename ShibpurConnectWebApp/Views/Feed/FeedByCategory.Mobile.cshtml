@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Feed By Category - ShibpurHub";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // hide the right column modules, we will enable inside respective the partial view once receive the server response
+        $('.tagcontainermaindiv').hide();
+        $('.popularquestioncontainerdiv').hide();
+
+        var selectedtag = @Html.Raw(Json.Encode(ViewData["selectedtag"]));
+        $('#tagheading').text("Questions about " + '"' +selectedtag + '"');
+        $('.followbutton').attr('id', selectedtag);
+        $(".followbutton").attr('style', 'background-color:#E4EDF4;');
+
+        // get current user id from local storage
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        var userInfo = $.parseJSON(userDetails);
+        if(userInfo != null)
+        {
+            // find out if a user following particular tag or not. Then change the button text accordingly from 'follow' -> 'following
+            scAjax({
+                "url": "tags/FindUserTags?userId=" + userInfo.id,
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    if(result.indexOf(selectedtag) > -1)
+                    {
+                        $("#" + selectedtag + " > i").addClass('fa fa-check-circle');
+                        $("#" + selectedtag + " > span").text(' Following');
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<div>
+    <div class="container">
+        <div class="row">
+            <h4 id="tagheading"></h4>
+            <button type='submit' class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followtag(this);'><i class='fa fa-plus-circle' style='color: green;'></i><span> Follow this tag</span></button>
+            <hr id="solidseparator" />
+            @Html.Partial("~/Views/PartialViews/_FeedList.Mobile.cshtml")
+        </div>
+    </div>
+</div>
+
+
+
