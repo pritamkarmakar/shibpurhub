@@ -7,9 +7,11 @@
 }
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/details.css")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/detailsmobile.css")" />
-
+<script type="text/javascript">
+    var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
+    var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
+</script>
 <script src="@Url.Content("~/Scripts/feed/details.js")" type="text/javascript"></script>
-
 <div class="container">
     <div class="col-md-9 col-xs-12">
         <div class="question-container">
