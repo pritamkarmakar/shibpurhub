@@ -11,7 +11,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    @*<link href="~/Content/font-awesome.min.css" rel="stylesheet" />*@
+
     @Styles.Render("~/Content/css")
     @Styles.Render("~/content/themes/base/jquery")
     @Scripts.Render("~/bundles/modernizr")
@@ -37,6 +37,9 @@
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         var userInfo;
         $(document).ready(function () {
+            $('[data-toggle=offcanvas]').click(function () {
+                $('.row-offcanvas').toggleClass('active');
+            });
             // get the user details only if we have the token for this user and userDetails is null so far
             var token = sessionStorage.getItem("accessToken");
             if (token != null && userDetails == null) {
@@ -86,8 +89,8 @@
             }
 
             // we don't want to check notification when user in the login or register page. Otherwise the login page will reload again and again.
-            // previous issue: user has an invalid token in the local storage and this if condition was not here, so it was making getnewnotification api call with that token, and this api returning 401. 
-            // Then scAjax returning the user to the login page and this process was continuing 
+            // previous issue: user has an invalid token in the local storage and this if condition was not here, so it was making getnewnotification api call with that token, and this api returning 401.
+            // Then scAjax returning the user to the login page and this process was continuing
             if (window.location.pathname.toLowerCase() != "/account/login" && window.location.pathname.toLowerCase() != "/account/register") {
                 // if userinfo is null then dont execute the notification api calls
                 if (typeof userInfo != "undefined" && userInfo != null) {
@@ -305,6 +308,72 @@
     </script>
 
     <style type="text/css">
+        body {
+            padding-top: 51px;
+        }
+
+        .text-center {
+            padding-top: 20px;
+        }
+
+        .col-xs-12 {
+            background-color: #fff;
+        }
+
+        #sidebar {
+            height: 100%;
+            padding-right: 0;
+            padding-top: 20px;
+        }
+
+            #sidebar .nav {
+                width: 95%;
+            }
+
+            #sidebar li {
+                border: 0 #f2f2f2 solid;
+                border-bottom-width: 1px;
+            }
+
+        /* collapsed sidebar styles */
+        @@media screen and (max-width: 767px) {
+            .row-offcanvas {
+                position: relative;
+                -webkit-transition: all 0.25s ease-out;
+                -moz-transition: all 0.25s ease-out;
+                transition: all 0.25s ease-out;
+            }
+
+            .row-offcanvas-right .sidebar-offcanvas {
+                right: -41.6%;
+            }
+
+            .row-offcanvas-left .sidebar-offcanvas {
+                left: -41.6%;
+            }
+
+            .row-offcanvas-right.active {
+                right: 41.6%;
+            }
+
+            .row-offcanvas-left.active {
+                left: 41.6%;
+            }
+
+            .sidebar-offcanvas {
+                position: absolute;
+                top: 0;
+                width: 41.6%;
+            }
+
+            #sidebar {
+                padding-top: 0;
+            }
+        }
+
+
+
+
         /*css for the question tag*/
         .post-tag {
             color: #566e76;
@@ -438,7 +507,7 @@
         }
 
         /* Sticky footer styles
-                    -------------------------------------------------- */
+                            -------------------------------------------------- */
 
         html,
         body {
@@ -473,8 +542,8 @@
             padding-right: 15px;
         }
 
-         #footer .row {
-            margin-top:  15px;
+        #footer .row {
+            margin-top: 15px;
         }
 
 
@@ -568,58 +637,44 @@
     </style>
 </head>
 <body>
-    <div id="wrap">
-        <div class="navbar navbar-default navbar-fixed-top">
+    <div id="page-container">
+        <!-- top navbar -->
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".sidebar-nav">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    @Html.ActionLink("ShibpurHub", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            @*<li>@Html.ActionLink("Profile", "Profile", "Account")</li>*@
-
-                        <!-- Notification center-->
-                            <li id="notification_li">
-                                <span id="notification_count" style="display:none;"></span>
-                                <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
-
-                                <div id="notificationContainer">
-                                    <div id="notificationTitle">Notifications</div>
-                                    <div id="notificationsBody" class="notifications"></div>
-                                    <div id="notificationFooter"><a href="/notifications">See All</a></div>
-                                </div>
-                            </li>
-                        }
-                        <li>@Html.ActionLink("Questions", "Index", "feed")</li>
-                        <li>@Html.ActionLink("Tags", "Index", "tags")</li>
-                        <li>@Html.ActionLink("Users", "Index", "users")</li>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li>
-                                <a href="/feed/startdiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
-                            </li>
-                        }
-                    </ul>
-
-                    @Html.Partial("_LoginPartial")
+                    <a class="navbar-brand" href="#">ShibpurHub</a>
                 </div>
             </div>
         </div>
         <div class="container">
+            <div class="row row-offcanvas row-offcanvas-left">
+
+                <!-- sidebar -->
+                <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+                    <ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li>@Html.ActionLink("Questions", "Index", "feed")</li>
+                        <li>@Html.ActionLink("Tags", "Index", "tags")</li>
+                        <li>@Html.ActionLink("Users", "Index", "users")</li>
+                    </ul>
+                </div>
+
+                <!-- main area -->
+                <div class="col-xs-12 col-sm-9">
+                    @RenderBody()
+
+                </div><!-- /.col-xs-12 main -->
+            </div><!--/.row-->
             @RenderSection("emailconfirmalert", required: false)
+
         </div>
 
         @RenderSection("jambo", required: false)
-        <div class="container body-content">
-            @RenderBody()
-        </div>
         @RenderSection("scripts", required: false)
     </div>
     <div id="footer">
@@ -637,9 +692,9 @@
             </div>
         </div>
     </div>
-    <div class="scroll-top-wrapper ">
+    <div class="scroll-top-wrapper">
         <span class="scroll-top-inner">
-            <i class="fa fa-2x fa-arrow-circle-up"></i>
+            <i class="fa fa-lg fa-arrow-circle-up"></i>
         </span>
     </div>
 </body>

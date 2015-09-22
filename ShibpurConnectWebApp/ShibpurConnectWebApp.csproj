@@ -592,6 +592,7 @@
     <Content Include="Views\PartialViews\_FeedList.Mobile.cshtml" />
     <Content Include="Views\Feed\FeedByCategory.Mobile.cshtml" />
     <Content Include="Views\Feed\Details.Mobile.cshtml" />
+    <Content Include="Views\Home\Index.Mobile.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
