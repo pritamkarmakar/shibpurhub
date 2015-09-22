@@ -10,9 +10,9 @@
                 $('.tagcontainermaindiv').show();
                 $.each(result, function (key, value) {
                     if (value.questionCount > 0)
-                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
+                        $('#tagcloud').append("<div class='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span class='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " questions</span></div>");
                     else
-                        $('#tagcloud').append("<div id='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " question</span></div>");
+                        $('#tagcloud').append("<div class='tagcontainerdiv'><i class='fa fa-tags'></i><a class='populartagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span class='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + " question</span></div>");
                 });
             }
         });
@@ -34,21 +34,21 @@
     }
 
     /*tag container div padding*/
-    #tagcontainerdiv {
-        padding: 4px;
+    .tagcontainerdiv {
+        padding: 4px 0px;
     }
     /*word break for all tags*/
     .thumbnail {
         word-break: break-all;
     }
     /*question count font size in each tag*/
-    #tagquestioncount {
+    .tagquestioncount {
         font-size: 10px;
     }
 
     #tagcloud{
         background: #fff;
-        padding-top: 10px;
+        padding: 10px 0px 10px 10px;
     }
 </style>
 <div class="sidebar-container">
