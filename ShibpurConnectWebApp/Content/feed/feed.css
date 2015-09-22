@@ -34,12 +34,8 @@ div.thread {
 }
 
 div.user {
-    width: 70px;
     text-align: center;
-    height: 70px;
-    display: block;
-    float: left;
-    margin-right: 12px;
+    padding: 0;
 }
 
 /*.avatar {
