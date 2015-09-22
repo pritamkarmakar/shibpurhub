@@ -1,0 +1,113 @@
+﻿
+/*resize profile images to improve page load time*/
+img.resize {
+    width: 200px;
+    height: 40px;
+}
+
+/*question title font-face size*/
+.question-hyperlink {
+    font-size: 18px;
+}
+/*CSS form the toolbas to create question*/
+#toolbar {
+    height: 70px;
+    margin-top: 40px;
+}
+
+div.main {
+    float: left;
+    position: relative;
+    padding-left: 10px;
+}
+
+#threads {
+    clear: both;
+    float: left;
+    margin-bottom: 20px;
+}
+
+div.thread {
+    padding: 12px 0 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 0;
+    float: left;
+}
+
+div.user {
+    width: 70px;
+    text-align: center;
+    height: 70px;
+    display: block;
+    float: left;
+    margin-right: 12px;
+}
+
+/*.avatar {
+        border-radius: 50%;
+        background-color: #CCCCCA;
+        cursor: pointer;
+        -webkit-transition: opacity ease-in-out .25s 0s;
+        -moz-transition: opacity ease-in-out .25s 0s;
+        -o-transition: opacity ease-in-out .25s 0s;
+        transition: opacity ease-in-out .25s 0s;
+    }*/
+
+div.detail {
+    float: left;
+    /*break a continuous long string*/
+    word-break: break-all;
+}
+
+.detail h3 {
+    font-size: 20px;
+    line-height: 1.4;
+    margin-bottom: .5em;
+    margin-top: 0;
+}
+
+.tags {
+    padding: 0;
+    margin-top: 2%;
+}
+
+a:visited {
+    color: #0c65a5;
+}
+
+div.stat {
+    color: #808080;
+    padding-top: 10px;
+    font-size: 9pt;
+}
+
+div.stat span {
+    display: inline-block;
+    width: 100%;
+}
+
+div.stat span.answercount, div.stat span.viewcount {
+    width: 40%;
+    float: left;
+}
+
+footer {
+    float: left;
+    clear: both;
+}
+
+.pagination {
+    display: none;
+}
+
+.pagination > li > a {
+    color: #337ab7;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+.pagination > .active > a {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #337ab7;
+}

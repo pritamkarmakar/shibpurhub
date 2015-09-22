@@ -1,0 +1,364 @@
+﻿
+/*css for spamcount span*/
+span.count {
+    padding: 1px 3px;
+    background-color: rgb(238, 238, 238);
+    display: inline-block;
+    margin-left: 4px;
+    text-align: center;
+}
+
+/*css for the follow button*/
+.followquestionbutton {
+    margin-right: 12px;
+}
+
+/*css for the question edit, report links*/
+span.action_item {
+    font-size: 9pt;
+    margin-right: 12px;
+}
+
+.custom-class {
+    width: 20%;
+    /* either % (e.g. 60%) or px (400px) */
+}
+
+.modal-body {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+/*increase profile image size in ask to answer*/
+.avatarasktoanswer {
+    width: 60px;
+    height: 60px;
+}
+
+/*wrap the question body*/
+.detail {
+    word-wrap: break-word;
+}
+
+#details {
+    word-wrap: break-word;
+}
+
+/*css for questionaskedby*/
+#questionaskedby {
+    background-color: #e0eaf1;
+}
+
+div.stat {
+    color: #808080;
+    font-size: 9pt;
+}
+
+    div.stat span {
+        display: inline-block;
+        /*width: 100%;*/
+        margin-top: 5px;
+    }
+
+/*Reduce the well sm padding. we are using it to display who asked the question*/
+.well-sm {
+    padding: 5px;
+}
+/*CSS form tags*/
+.tags {
+    margin-top: 2%;
+}
+
+.post-tag {
+    color: #566e76;
+    background: #f7fdff;
+    border: 1px solid #c0d4db;
+    padding: .4em .5em;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1;
+    color: #3e6d8e;
+    background-color: #e4edf4;
+    margin: 2px 2px 2px 0;
+    text-decoration: none;
+    font-size: 12px;
+    /*white-space: nowrap;*/
+    display: inline-block;
+    border-radius: 0;
+    border: 1px solid #e4edf4;
+}
+
+div.answerlabel
+{
+    padding-left: 0;
+}
+
+/*CSS for the toolbas to create question*/
+#toolbar {
+    height: 70px;
+    margin-top: 40px;
+}
+
+/*.block {
+         border-top: 1px solid #d3d4cf;
+         padding-top: 20px;
+         margin-bottom: 29px;
+     }*/
+
+/*.column {
+         float: left;
+         width: calc(85% - 20px);
+         margin-right: 20px;
+     }*/
+
+div.detail {
+    /*min-height: 40px;*/
+}
+
+div.user {
+    /*width: 60px;*/
+    text-align: center;
+    /*height: 60px;*/
+    display: block;
+    /*float: left;*/
+    font-size: 12px;
+    padding: 0;
+}
+
+    div.user a.mark-answer {
+        margin-top: 6px;
+        padding: 2px 4px 0px 3px;
+        position: absolute;
+        top: 100%;
+        left: 30%;
+    }
+
+.comment-form textarea {
+    /*-webkit-appearance: none;
+         line-height: 20px;
+         background-color: #f9faf7;
+         border: 1px solid #D9DAD6;
+         padding: 9px 13px;
+         -moz-box-sizing: border-box;
+         -webkit-box-sizing: border-box;
+         box-sizing: border-box;
+         resize: none;
+         height: 40px;*/
+    border-radius: 5px;
+}
+
+.button, input[type=submit] {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-left: 22px;
+    padding-right: 22px;
+    height: 40px;
+    min-width: 104px;
+    border-radius: 5px;
+    border: 0;
+    font-weight: 700;
+    color: #fcfcfa;
+    background-color: #7ab21e;
+}
+
+.comment-form.active form textarea {
+    resize: vertical;
+    margin-bottom: 11px;
+    min-height: 50px;
+    height: 150px;
+    -webkit-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+    -moz-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+    -o-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+    transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
+}
+
+.comment-form.active input[type=submit] {
+    top: inherit;
+    right: 0;
+    bottom: 0;
+}
+
+#answerlist {
+    list-style-type: none;
+}
+
+li.answer {
+    padding-bottom: 15px;
+    /*overflow: auto;*/
+    border-bottom: 1px solid #e2e2e2;
+    margin-bottom: 20px;
+    /*padding-top: 15px;
+         border-bottom: 1px solid #e0e0e0;*/
+}
+
+div.answerdiv
+{
+    padding: 0;
+}
+
+    li.answer:nth-last-child(2), li.answer:last-child {
+        /*border: none;*/
+    }
+
+     li.answer:last-child {
+        border: none;
+    }
+
+.comment-list:nth-last-child(2) {
+    border: none;
+}
+
+#answerlist li:last-child {
+    padding-bottom: 0;
+}
+
+li.answer div.stat {
+    float: right !important;
+}
+
+div.stat {
+    color: #808080;
+    font-size: 9pt;
+}
+
+    div.stat span {
+        display: inline-block;
+        width: 100%;
+    }
+
+div.answer-links {
+    margin-top: 20px;
+    font-size: 10pt;
+}
+
+span.link {
+    margin-right: 20px;
+}
+
+    span.link a {
+        color: #999;
+    }
+
+        span.link a.upvote-anchor {
+            box-sizing: border-box;
+            transition: all ease-in-out 100ms;
+            border-radius: 3px;
+            box-shadow: 0 1px 1px 0 rgba(200,200,200,0.2);
+            display: inline-block;
+            font-weight: 500;
+            outline: 0;
+            padding: 3px 7px 4px 7px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            background: #e4edf4;
+            color: #3e6d8e;
+            border: 1px solid #bbcadc;
+        }
+
+.upvote-anchor span.count {
+    background: 0;
+    padding: 0;
+    margin: 0;
+    margin-left: 6px;
+    padding-left: 6px;
+    transition: all ease-in-out 100ms;
+    position: relative;
+    border-radius: 0 3px 3px 0;
+    -webkit-font-smoothing: antialiased;
+    color: #3e6d8e;
+    font-weight: bold;
+    min-width: 10px;
+    text-align: center;
+    display: inline-block;
+    float: none;
+    border-left: 1px solid #3e6d8e;
+}
+
+div.answer-comments {
+    font-size: 13px;
+    margin-top: 12px;
+    /*margin-bottom: 30px;*/
+    /*background: #f6f6f6;
+         border-bottom: 1px solid #e2e2e2;
+         border-radius: 2px;*/
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 0;
+}
+
+div.comment-box {
+    overflow: auto;
+    padding: 5px 0;
+}
+
+a.commentor {
+    float: left;
+}
+
+/* CSS for Ask to Answer*/
+
+.wantedanswersuggestion {
+    float: left;
+    width: 90%;
+    margin-bottom: 12px;
+}
+
+.upvote-span.disabled a.upvote-anchor, .upvote-span.disabled span {
+    color: #9D9C9C;
+    background-color: #DBD7D7;
+}
+
+.no-right-padding {
+    padding-right: 0;
+}
+
+.comment-list {
+    border-bottom: 1px solid #e2e2e2;
+    padding: 8px;
+    margin-right: 20px;
+}
+
+.comment-date, .comment-user {
+    font-size: 9pt;
+}
+
+.comment-user {
+    font-weight: bold;
+    padding-right: 10px;
+}
+
+.comment-text {
+    display: inline-block;
+    width: 100%;
+    /*padding: 0 10px;*/
+    word-wrap: break-word;
+}
+
+    .comment-text a {
+        display: none;
+    }
+
+/*.comment-box .input-div {
+         width: 70%;
+         float: left;
+         padding-left: 10px;
+     }*/
+
+.comment-box .buttons {
+    padding-left: 10px;
+}
+
+/*add a bottom margin after the question description*/
+.description {
+    /*margin-bottom: 20px;*/
+}
+
+.editQuesDiv, #spanEditQuestion, .edit-answer-span {
+    display: none;
+}
+
+.stat a {
+    cursor: pointer;
+}

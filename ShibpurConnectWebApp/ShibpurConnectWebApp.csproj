@@ -378,6 +378,10 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\feed\details.css" />
+    <Content Include="Content\feed\detailsmobile.css" />
+    <Content Include="Content\feed\feed.css" />
+    <Content Include="Content\feed\feedmobile.css" />
     <Content Include="Content\flatly.css" />
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
@@ -480,6 +484,9 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\date.js" />
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
+    <Content Include="Scripts\feed\details.js" />
+    <Content Include="Scripts\feed\feed.js" />
+    <Content Include="Scripts\feed\feedDetails.js" />
     <Content Include="Scripts\jquery-2.1.3.js" />
     <Content Include="Scripts\jquery-2.1.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.js" />

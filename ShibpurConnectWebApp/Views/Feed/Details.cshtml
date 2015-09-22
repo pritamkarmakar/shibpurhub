@@ -1,1422 +1,16 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 @model ShibpurConnectWebApp.Models.DiscussionThread
 @{
     //ViewBag.Title = "Feed Details";
 }
-
-<style type="text/css">
-    /*css for spamcount span*/
-    span.count {
-        padding: 1px 3px;
-        background-color: rgb(238, 238, 238);
-        display: inline-block;
-        margin-left: 4px;
-        text-align: center;
-    }
-
-    /*css for the follow button*/
-    .followquestionbutton {
-        margin-right: 12px;
-    }
-
-    /*css for the question edit, report links*/
-    span.action_item {
-        font-size: 9pt;
-        margin-right: 12px;
-    }
-
-    .custom-class {
-        width: 20%;
-        /* either % (e.g. 60%) or px (400px) */
-    }
-
-    .modal-body {
-        padding-top: 5px;
-        padding-bottom: 5px;
-    }
-    /*increase profile image size in ask to answer*/
-    .avatarasktoanswer {
-        width: 60px;
-        height: 60px;
-    }
-
-    /*wrap the question body*/
-    .detail {
-        word-wrap: break-word;
-    }
-
-    #details {
-        word-wrap: break-word;
-    }
-
-    /*css for questionaskedby*/
-    #questionaskedby {
-        background-color: #e0eaf1;
-    }
-
-    div.stat {
-        color: #808080;
-        font-size: 9pt;
-    }
-
-        div.stat span {
-            display: inline-block;
-            /*width: 100%;*/
-            margin-top: 5px;
-        }
-
-    /*Reduce the well sm padding. we are using it to display who asked the question*/
-    .well-sm {
-        padding: 5px;
-    }
-    /*CSS form tags*/
-    .tags {
-        margin-top: 2%;
-    }
-
-    .post-tag {
-        color: #566e76;
-        background: #f7fdff;
-        border: 1px solid #c0d4db;
-        padding: .4em .5em;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 11px;
-        line-height: 1;
-        color: #3e6d8e;
-        background-color: #e4edf4;
-        margin: 2px 2px 2px 0;
-        text-decoration: none;
-        font-size: 12px;
-        /*white-space: nowrap;*/
-        display: inline-block;
-        border-radius: 0;
-        border: 1px solid #e4edf4;
-    }
-
-    /*CSS for the toolbas to create question*/
-    #toolbar {
-        height: 70px;
-        margin-top: 40px;
-    }
-
-    /*.block {
-         border-top: 1px solid #d3d4cf;
-         padding-top: 20px;
-         margin-bottom: 29px;
-     }*/
-
-    /*.column {
-         float: left;
-         width: calc(85% - 20px);
-         margin-right: 20px;
-     }*/
-
-    div.detail {
-        /*min-height: 40px;*/
-    }
-
-    div.user {
-        /*width: 60px;*/
-        text-align: center;
-        /*height: 60px;*/
-        display: block;
-        float: left;
-        font-size: 12px;
-    }
-
-        div.user a.mark-answer {
-            margin-top: 6px;
-            padding: 3px 6px;
-        }
-
-    .comment-form textarea {
-        /*-webkit-appearance: none;
-         line-height: 20px;
-         background-color: #f9faf7;
-         border: 1px solid #D9DAD6;
-         padding: 9px 13px;
-         -moz-box-sizing: border-box;
-         -webkit-box-sizing: border-box;
-         box-sizing: border-box;
-         resize: none;
-         height: 40px;*/
-        border-radius: 5px;
-    }
-
-    .button, input[type=submit] {
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        padding-left: 22px;
-        padding-right: 22px;
-        height: 40px;
-        min-width: 104px;
-        border-radius: 5px;
-        border: 0;
-        font-weight: 700;
-        color: #fcfcfa;
-        background-color: #7ab21e;
-    }
-
-    .comment-form.active form textarea {
-        resize: vertical;
-        margin-bottom: 11px;
-        min-height: 50px;
-        height: 150px;
-        -webkit-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-        -moz-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-        -o-transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-        transition: all cubic-bezier(.2,.04,.02,1.49) .35s 0s;
-    }
-
-    .comment-form.active input[type=submit] {
-        top: inherit;
-        right: 0;
-        bottom: 0;
-    }
-
-    #answerlist {
-        list-style-type: none;
-    }
-
-    li.answer {
-        padding-bottom: 15px;
-        /*padding-top: 15px;
-         border-bottom: 1px solid #e0e0e0;*/
-    }
-
-        li.answer:nth-last-child(2), li.answer:last-child {
-            border: none;
-        }
-.comment-list:nth-last-child(2) {
-    border: none;
-}
-    #answerlist li:last-child {
-        padding-bottom: 0;
-    }
-
-    li.answer div.stat {
-        float: right !important;
-    }
-
-    div.stat {
-        color: #808080;
-        font-size: 9pt;
-    }
-
-        div.stat span {
-            display: inline-block;
-            width: 100%;
-        }
-
-    div.answer-links {
-        margin-top: 20px;
-        font-size: 10pt;
-    }
-
-    span.link {
-        margin-right: 20px;
-    }
-
-        span.link a {
-            color: #999;
-        }
-
-            span.link a.upvote-anchor {
-                box-sizing: border-box;
-                transition: all ease-in-out 100ms;
-                border-radius: 3px;
-                box-shadow: 0 1px 1px 0 rgba(200,200,200,0.2);
-                display: inline-block;
-                font-weight: 500;
-                outline: 0;
-                padding: 3px 7px 4px 7px;
-                text-align: center;
-                text-decoration: none;
-                cursor: pointer;
-                background: #e4edf4;
-                color: #3e6d8e;
-                border: 1px solid #bbcadc;
-            }
-
-    .upvote-anchor span.count {
-        background: 0;
-        padding: 0;
-        margin: 0;
-        margin-left: 6px;
-        padding-left: 6px;
-        transition: all ease-in-out 100ms;
-        position: relative;
-        border-radius: 0 3px 3px 0;
-        -webkit-font-smoothing: antialiased;
-        color: #3e6d8e;
-        font-weight: bold;
-        min-width: 10px;
-        text-align: center;
-        display: inline-block;
-        float: none;
-        border-left: 1px solid #3e6d8e;
-    }
-
-    div.answer-comments {
-        font-size: 13px;
-        margin-top: 12px;
-        /*margin-bottom: 30px;*/
-        /*background: #f6f6f6;
-         border: 1px solid #e2e2e2;
-         border-radius: 2px;*/
-        padding-top: 2px;
-        padding-bottom: 2px;
-    }
-
-    div.comment-box {
-        overflow: auto;
-        padding: 5px 0;
-    }
-
-    a.commentor {
-        float: left;
-    }
-
-    /* CSS for Ask to Answer*/
-
-    .wantedanswersuggestion {
-        float: left;
-        width: 90%;
-        margin-bottom: 12px;
-    }
-
-    .upvote-span.disabled a.upvote-anchor, .upvote-span.disabled span {
-        color: #9D9C9C;
-        background-color: #DBD7D7;
-    }
-
-    .no-right-padding {
-        padding-right: 0;
-    }
-
-    .comment-list {
-        border-bottom: 1px solid #e2e2e2;
-        padding: 8px;
-        margin-right: 20px;
-    }
-
-    .comment-date, .comment-user {
-        font-size: 9pt;
-    }
-
-    .comment-user {
-        font-weight: bold;
-        padding-right: 10px;
-    }
-
-    .comment-text {
-        display: inline-block;
-        width: 100%;
-        /*padding: 0 10px;*/
-        word-wrap: break-word;
-    }
-
-        .comment-text a {
-            display: none;
-        }
-
-    /*.comment-box .input-div {
-         width: 70%;
-         float: left;
-         padding-left: 10px;
-     }*/
-
-    .comment-box .buttons {
-        padding-left: 10px;
-    }
-
-    /*add a bottom margin after the question description*/
-    .description {
-        margin-bottom: 20px;
-    }
-
-    .editQuesDiv, #spanEditQuestion, .edit-answer-span {
-        display: none;
-    }
-
-    .stat a {
-        cursor: pointer;
-    }
-</style>
-
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/details.css")" />
 <script type="text/javascript">
-    var questionID = '';
-    var advancedEditor;
-    // current logged-in user
-    var userId = null;
-    // we will keep the default users that can answer this question and we will retrieve it during page load
-    var userListAskToAnswer;
-
-    // get the current logged-in user details
-    var userDetails = localStorage.getItem("SC_Session_UserDetails");
-    var userInfo = $.parseJSON(userDetails);
-    if (userInfo != null) {
-        userId = userInfo.id;
-    }
-
-    //used to reference rich textbox editor for question edit
-    var qustionRTBoxEditor;
-    var categoryArr = [];
-    $(document).ready(function () {
-        scrollToADivOnPageLoad();
-        // hide the submit answer rich text control
-        $('.wirte-answer').hide();
-
-        // hide the right column modules, we will enable inside respective the partial view once receive the server response
-        $('.tagcontainermaindiv').hide();
-        $('.popularquestioncontainerdiv').hide();
-
-        // hide 'ask to answer' module
-        $('#userToAnswer').hide();
-
-        if($('.wirte-answer .text-wrapper .editor-container').length > 0)
-        {
-            advancedEditor = new Quill('.wirte-answer .text-wrapper .editor-container', {
-                modules: {
-                    'authorship': {
-                        authorId: 'advanced',
-                        enabled: true
-                    },
-                    'toolbar': {
-                        container: '.wirte-answer .text-wrapper .toolbar-container'
-                    },
-                    'link-tooltip': true,
-                    'image-tooltip': true,
-                    'multi-cursor': true
-                },
-                styles: false,
-                theme: 'snow'
-            });
-        }
-
-
-        jQuery.support.cors = true;
-        var SERVER = "/api/";
-        questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
-
-        // set the questionID attribute of the 'Follow' button
-        $(".followquestionbutton").attr("id", questionID);
-        $(".followquestionbutton").attr('style', 'background-color:#E4EDF4;');
-
-        scAjax({
-            "url": "questions/GetQuestion",
-            "data": { "questionId": questionID },
-            "success": function (result) {
-                if (!result) {
-                    return;
-                }
-                // hide the loading div
-                $('#loadingdiv').hide();
-                var question = result;
-                $('#details').show();
-
-                // check if user following this question
-                scAjax({
-                    "url": "questions/GetQuestionFollowers?questionId=" + questionID,
-                    "type": "GET",
-                    "success": function (result) {
-                        // disable the follow button for the user who posted the original question
-                        if (userId == question.userId) {
-                            $(".followquestionbutton > i").removeClass();
-                            $(".followquestionbutton").prop('disabled', true);
-                            $(".followquestionbutton > span").text(" Follow");
-                        }
-                        else if (result != null && result.indexOf(userId) > -1) {
-                            $(".followquestionbutton > i").addClass('fa fa-check-circle');
-                            $(".followquestionbutton > span").text(" Following");
-                        }
-                        // add the count of the total followers of this question as an attribute
-                        if(result != null) {
-                            if (result.length > 0)
-                                $(".followquestionbutton > span").append("&nbsp;&nbsp;<span class='badge'>" + result.length + "</span>");
-                            $(".followquestionbutton").attr("count", result.length);
-                        }
-
-                    }
-                });
-
-                // set page title
-                document.title = question.title + " - ShibpurHub";
-                $('.header h2').text(question.title);
-                $('.header h2').append("<hr/>");
-                $('.description').html(question.description.replace("<img", "<img style='max-width:730px;'"));
-
-                var utcDate = new Date(result.postedOnUtc);
-                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
-
-
-
-                // get reputation of the user who asked this question
-                var reputation;
-                $.ajax({
-                    url: SERVER + "profile/getuserinfo",
-                    type: "GET",
-                    dataType: "json",
-                    data: { "userId": question.userId },
-                    contentType: "application/json",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-                    },
-                    success: function (userinfo) {
-                        if (!userinfo) {
-                            return;
-                        }
-                        $('#questionaskedby').show();
-                        $('#btn_Edit_Question').attr('data-question-id', questionID);
-                        // form the smaller imgur image by adding 's' before '.jpg'
-                        if (question.userProfileImage.charAt(question.userProfileImage.indexOf('.jpg') - 1) != 's') {
-                            question.userProfileImage = question.userProfileImage.replace('.jpg', 's.jpg');
-                        }
-
-                        $('#questionaskedby').append("<div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + question.userProfileImage + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='questionaskedbyuser' style='margin-left:15px;font-size:13px;' userid='" + userinfo.id + "'href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:10px'>reputation: " + userinfo.reputationCount + "</span></div><div class='stat'><span class='date'>asked: " + dateString + "</span></div>");
-                    }
-                });
-                //$('#questionaskedby').append("Asked By: <a href='" + window.location.origin + "/Account/Profile?useremail=" + question.userEmail + "'>" + question.displayName + "</a>");
-
-                isAskedByMe = question.isAskedByMe;
-                // if the logged-in user and the user who asked this question is same then show the question edit option
-                if(isLoggedInUserId(question.userId))
-                {
-                    $('#spanEditQuestion').show();
-                    setUpEditQuestion();
-                }
-
-                getAnswers(question.answers);
-                // attach the categories
-                $(question.categories).each(function (i, category) {
-                    var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory?category=" + category);
-                    $('div.tags').append(tagAnchor);
-                    categoryArr.push(category);
-                });
-
-                // show the suggested user who can answer this question using elastic search
-                scAjax({
-                    "url": "search/SearchUsers",
-                    "data": { "searchTerm": result.categories.toString() },
-                    "success": function (result) {
-                        if (!result) {
-                            return;
-                        }
-
-                        userListAskToAnswer = result;
-
-                        if (result.length == 0) {
-                            $('#userlistasktoanswer').append("<span>Sorry we haven’t found anyone to answer this question. Use above search box to request someone to answer this question</span>");
-                            // hide the loading message
-                            $('#loadingasktoanswer').hide();
-                        }
-                        else {
-                            // update the div with the user data received from the API
-                            jQuery.each(result, function (i, val) {
-                                if (val.profileImageURL != null) {
-                                    // form the smaller imgur image by adding 's' before '.jpg'
-                                    if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
-                                        val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
-                                    }
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-xs' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                                }
-                                else
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-xs' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                                // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                                scAjax({
-                                    "url": "asktoanswer/GetAskToAnswer",
-                                    "data": { "questionId": questionID, "userId": val.id },
-                                    "success": function (result) {
-                                        if (result != null) {
-                                            $('a[id$="' + val.id + '"]:first').text("Already Asked");
-                                            $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
-                                        }
-                                        //get the response rate for each user
-                                        var responseRate;
-                                        scAjax({
-                                            "url": "asktoanswer/GetResponseRate",
-                                            "data": { "userId": val.id },
-                                            "success": function (rRate) {
-                                                //wantedanswersuggestion
-                                                responseRate = rRate;
-                                                $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);
-
-                                                // hide the loading message
-                                                $('#loadingasktoanswer').hide();
-                                            }
-                                        });
-                                    }
-                                });
-
-                            });
-                        }
-                    },
-                    "error": function (XMLHttpRequest, textStatus, errorThrown) {
-                        var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
-                        // toastr notification
-                        Command: toastr["error"](errorText)
-                        // hide the loading message
-                        $('#loadingdiv').hide();
-
-                        // hide the loading message in ask to answer module
-                        $('#loadingasktoanswer').hide();
-                    }
-                });
-            },
-            "error": function (XMLHttpRequest, textStatus, errorThrown) {
-                if (XMLHttpRequest.status == "401")
-                    window.location.href = "/account/login";
-                // if it is 404 response then redirect to 404 page
-                if (XMLHttpRequest.status == "404") {
-                    window.location.href = "/errors/Http404";
-                }
-                // toastr notification
-                Command: toastr["error"]("Failed to load the question")
-                // hide the loading message
-                $('#loadingdiv').hide();
-            }
-        });
-
-        scAjax({
-            "url": "questions/IncrementViewCount",
-            "type": "POST",
-            "data": JSON.stringify({ "QuestionID": questionID }),
-            "success": function (result) {
-            }
-        });
-
-        //getAnswers();
-
-        $('.btn-submit-answer').click(function () {
-            saveAnswer();
-        });
-
-        $('textarea').focus(function () {
-            var textarea = $(this);
-            $('.comment-form').addClass('active');
-            var parentDiv = $(textarea).parent();
-            $(parentDiv).removeClass("col-md-8").addClass("col-md-12");
-            //$(parentDiv).next().addClass("col-md-offset-9");
-        });
-
-        $('.editQuesAnchor').click(function(){
-            $('.editQuesDiv').slideToggle();
-            $('.question-container').slideToggle();
-            $('#txt_question_edit').focus();
-            return false;
-        });
-    });
-
-    // function to send notification to the specific user from 'Ask to Answer' module
-    function SendNotification(elm) {
-        if(userInfo){
-            // disable the Ask button and change the test to Asked
-            $(elm).text("Asked");
-            $(elm).attr("disabled", "disabled");
-
-            // save this 'ask to answer' record in database collection
-            var asktoanswer = {
-                "AskedTo": elm.attributes["data-id"].value,
-                "AskedBy": userInfo.id,
-                "QuestionId": questionID
-            };
-            scAjax({
-                "url": "asktoanswer/postasktoanswer",
-                "type": "POST",
-                "data": JSON.stringify(asktoanswer, null, 2),
-                "success": function (result) {
-
-                }
-            });
-        }
-    }
-
-    function saveAnswer() {
-        // hide the error div
-        $('#errormessage').empty();
-        $('#errormessage').hide();
-
-        // disable the button
-        $('.btn-submit-answer').prop('disabled', true);
-
-        // add spinner animation in the save button and change the text to 'Saving..'
-        $('.btn-submit-answer > i').addClass('fa fa-circle-o-notch fa-spin');
-        $('.btn-submit-answer > span').text(' Saving...');
-
-        jQuery.support.cors = true;
-        var userDetails = localStorage.getItem("SC_Session_UserDetails");
-
-        if (!userDetails) {
-            //TO-DO: Handle if userdetail is not available in Session Storage
-            window.location.href = "/account/login";
-        }
-
-        var answer = advancedEditor.getHTML();
-
-        // verify if answer text is empty
-        if (!answer || $.trim(advancedEditor.getText()) == "") {
-            // enable the button
-            $('.btn-submit-answer').prop('disabled', false);
-
-            // remove the loading class from save button
-            $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
-            $('.btn-submit-answer > span').text('Submit Answer');
-
-            // parse the error json
-            $('#errormessage').show();
-            $('#errormessage').append("<p>Answer can't be blank</p>");
-
-            return;
-        }
-        // verify whether length of answer text is less than 30
-        //if ($.trim(advancedEditor.getText()).length < 30) {
-        //    // enable the button
-        //    $('.btn-submit-answer').prop('disabled', false);
-
-        //    // remove the loading class from save button
-        //    $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
-        //    $('.btn-submit-answer > span').text('Submit Answer');
-
-        //    // toastr error notification
-        //    Command: toastr["error"]("Answer should be more than 30 characters long")
-        //    return;
-        //}
-
-        var userInfo = $.parseJSON(userDetails);
-
-        //var SERVER = "/api/";
-        var userid = userInfo.id;
-
-        //var token = localStorage.getItem("TOKEN") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var answerObject = { "AnswerText": answer, "QuestionId": questionID };
-
-        advancedEditor.setHTML("");
-
-        //This is for Edit
-        if($('.btn-submit-answer').attr('data-answer-id'))
-        {
-            var editAnswerId = $('.btn-submit-answer').attr('data-answer-id');
-            $('.btn-submit-answer').removeAttr('data-answer-id');
-            $('#'+ editAnswerId).html(answer);
-            $('html,body').animate({scrollTop: $('#'+ editAnswerId).offset().top - 70},'slow');
-
-            answerObject.AnswerId = editAnswerId;
-            //Save the edit
-            scAjax({
-                "url": "Answers/EditAnswer",
-                "type": "POST",
-                "data": JSON.stringify(answerObject),
-                "success": function (result, data) {
-                    if (!result) {
-                        return;
-                    }
-                    // enable the button
-                    $('.btn-submit-answer').prop('disabled', false);
-
-                    // remove the loading class from save button
-                    $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
-                    $('.btn-submit-answer > span').text('Submit Answer');
-                }
-            });
-
-            return;
-        }
-
-        scAjax({
-            "url": "Answers/PostAnswer",
-            "type": "POST",
-            "data": JSON.stringify(answerObject),
-            "success": function (result, data) {
-                if (!result) {
-                    return;
-                }
-
-                // enable the button
-                $('.btn-submit-answer').prop('disabled', false);
-
-                // remove the loading class from save button
-                $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
-                $('.btn-submit-answer > span').text('Submit Answer');
-
-
-                var utcDate = new Date(result.postedOnUtc);
-                var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + "at" + utcDate.getHours() + ":" + utcDate.getMinutes();
-
-                var answerBlock = $('#answerlist li.answer.hide').clone().attr('data-answerid', result.answerId);
-                $(answerBlock).removeClass('hide');
-                // add fixed width if user add any image as part of the answer
-                $(answerBlock).find('.text').html(result.answerText.replace("<img", "<img style='max-width:530px;'"));
-                $(answerBlock).find('.userName').text(result.displayName);
-                $(answerBlock).find('.date').text(dateString);
-                $(answerBlock).find('.upvote-span').addClass('disabled');
-
-                var editAnswerSpan = $(answerBlock).find('.edit-answer-span');
-                $(editAnswerSpan).show();
-                $(editAnswerSpan).find('.edit-answer-anchor').click(function(){
-                    handleEditAnswerClick({"answerText": result.answerText, "answerId": result.answerId});
-                });
-
-                $(answerBlock).find('.answer-comments').hide();
-                $(answerBlock).find('.answer-comments .add-comment').hide();
-
-                var userNameAnchor = $(answerBlock).find('div.user a.userName');
-                $(userNameAnchor).text(userInfo.firstName + " " + userInfo.lastName);
-                var userProfileImage = $(answerBlock).find('div.user img.avatar');
-                // form the smaller imgur image by adding 's' before '.jpg'
-                if (userInfo.profileImageURL.charAt(userInfo.profileImageURL.indexOf('.jpg') - 1) != 's') {
-                    userInfo.profileImageURL = userInfo.profileImageURL.replace('.jpg', 's.jpg');
-                }
-                $(userProfileImage).attr('src', IMGURPATH + userInfo.profileImageURL);
-                if (result.userEmail != null) {
-                    var url = $(userNameAnchor).attr('href') + '?userId=' + result.userId;
-                    $(userNameAnchor).attr('href', url);
-                }
-
-                $('#answerlist').append(answerBlock);
-                $('.textarea').val('');
-                logActivity(2, result.answerId);
-
-                $(answerBlock).find('.anchor-add-comment').unbind("click").bind("click", handleAddComment);
-                $(answerBlock).find('.anchor-cancel-comment').unbind('click').bind('click', handleCancelComment);
-                $(answerBlock).find('.btn-save-comment').unbind("click").bind("click", handleSaveComment);
-
-                $(answerBlock).find('.comment-anchor').unbind("click").bind("click", handleCommentLinkClick);
-                $(answerBlock).find('.upvote-anchor').unbind("click").bind("click", handleUpvote);
-            },
-            "error": function (XMLHttpRequest, textStatus, errorThrown) {
-                var errorText = XMLHttpRequest.responseText.replace('{"message":"', " ").replace('"}', " ");
-                $("#errorLabel").text(errorText);
-
-                // enable the button
-                $('.btn-submit-answer').prop('disabled', false);
-
-                // remove the loading class from save button
-                $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
-                $('.btn-submit-answer > span').text('Submit Answer');
-
-                // parse the error json
-                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
-                $('#errormessage').show();
-                $('#errormessage').append("<p>" + errorresponse.modelState['answer.AnswerText'][0] + "</p>");
-            }
-        });
-
-    }
-
-    function getComments(answerBlock, answer) {
-        if (!answerBlock) {
-            return;
-        }
-
-        var result = answer.comments;
-        if (!result) {
-            return;
-        }
-
-        // hide the loading symbol for the answers
-        $('#loadingdiv').hide();
-
-        // show the submit answer rich text control
-        $('.wirte-answer').show();
-
-        // show the 'ask to answer module'
-        $('#userToAnswer').show();
-
-        if (result.length == 0) {
-            $(answerBlock).find('.answer-comments').hide();
-        }
-
-        $(result.reverse()).each(function (i, e) {
-
-            var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
-            $(commentBlock).removeClass('hide');
-            var commentTextSpan = $(commentBlock).find('.comment-text');
-            $(commentTextSpan).find('span').text(e.commentText);
-            if(isLoggedInUserId(e.userId))
-            {
-                var editCommentAnchor = $(commentTextSpan).find('a').show();
-
-                $(editCommentAnchor).click(function(){
-                    //first hide if any open edit comment
-                    var commentSection = $('.edit-comment:not(.hide)').parent();
-                    $(commentSection).find('.edit-comment').remove();
-                    $(commentSection).children().show();
-
-                    $('.comment-box:not(.hide)').hide();
-                    $('.add-comment:hidden').show();
-
-                    var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
-                    var editCommentInput = $(editCommentDiv).find('.txt_comment');
-                    $(editCommentInput).val(e.commentText);
-                    var editCommentButton = $(editCommentDiv).find('.btn-edit-comment');
-                    $(editCommentButton).attr('data-comment-id', e.commentId);
-                    $(commentBlock).children().hide();
-                    $(commentBlock).append(editCommentDiv);
-
-                    $(editCommentButton).click(function(){
-                        var commentText = $(editCommentInput).val();
-                        $(commentTextSpan).find('span').text(commentText);
-                        $(commentBlock).children().show();
-                        $(commentBlock).find('.edit-comment').remove();
-
-                        var commentObject = {'CommentText': commentText, 'CommentId': $(this).attr('data-comment-id')};
-
-                        scAjax({
-                            "url": "comments/editcomment",
-                            "type": "POST",
-                            "data": JSON.stringify(commentObject)
-                        });
-
-                        return false;
-                    });
-
-                    var editCommentCancel = $(editCommentDiv).find('.anchor-cancel-comment');
-                    $(editCommentCancel).click(function(){
-                        $(commentBlock).children().show();
-                        $(commentBlock).find('.edit-comment').remove();
-                        return false;
-                    });
-
-                    return false;
-                });
-
-            }
-
-            $(commentBlock).find('.comment-date').text(getDateFormatted(e.postedOnUtc));
-            $(commentBlock).find('.comment-user').text(e.displayName);
-            $(commentBlock).find('.comment-user').attr("href", "/Account/Profile?userId=" + e.userId);
-            $(answerBlock).find('.answer-comments').prepend(commentBlock);
-        });
-    }
-
-    function handleAddComment(event) {
-        event.preventDefault();
-        var anchor = $(event.target);
-
-        var commentBox = $(anchor).closest('.add-comment').siblings('.comment-box');
-        $(commentBox).show();
-        $(commentBox).find('input[type=text]').focus();
-        $(anchor).parent().hide();
-    }
-
-    function handleCommentLinkClick(event) {
-        event.preventDefault();
-        var anchor = $(this);
-        var commentBox = $(anchor).closest('li.answer').find('.answer-comments');
-        $(commentBox).slideToggle();
-        if ($(commentBox).find('.comment-list').length == 1) {
-            $(commentBox).find('.add-comment .anchor-add-comment').hide();
-            $(commentBox).find('.comment-box').show();
-        }
-    }
-
-    function handleSaveComment(event) {
-
-        // disable the button
-        $('.btn-save-comment').prop('disabled', true);
-
-        // add spinner animation in the save button and change the text to 'Saving..'
-        $('.btn-save-comment > i').addClass('fa fa-circle-o-notch fa-spin');
-        $('.btn-save-comment > span').text(' Saving...');
-
-        var button = $(event.target);
-        var commentBox = $(button).closest('.comment-box');
-        var input = $(commentBox).find('.txt_comment');
-
-        if (commentBox.hasClass("has-error")) {
-            commentBox.removeClass("has-error");
-        }
-        var comment = $(input).val();
-        // take user comment as placeholder text
-        input.attr("placeholder", comment);
-        if (!comment) {
-            if (!commentBox.hasClass("has-error")) {
-                commentBox.addClass("has-error");
-            }
-            input.attr("placeholder", "Comment can't be blank");
-
-            // enable the button
-            $('.btn-save-comment').prop('disabled', false);
-
-            // remove the loading class from save button
-            $('.btn-save-comment > i').removeClass('fa fa-circle-o-notch fa-spin');
-            $('.btn-save-comment > span').text('Save');
-
-            return;
-        }
-
-        var userDetails = localStorage.getItem("SC_Session_UserDetails");
-        if (!userDetails) {
-            //TO-DO: Handle if userdetail is not available in Session Storage
-            window.location.href = "/account/login";
-        }
-        var userInfo = $.parseJSON(userDetails);
-        var userId = userInfo.id;
-
-        var answerId = $(button).closest('li.answer').attr('data-answerid');
-        var data = { "CommentText": $.trim(comment), "AnswerId": answerId };
-        scAjax({
-            "url": "comments/postcomment",
-            "type": "POST",
-            "data": JSON.stringify(data, null, 2),
-            "success": function (result) {
-                // clear the previous comment text
-                $(input).val('');
-                // enable the button
-                $('.btn-save-comment').prop('disabled', false);
-                // remove the loading class from save button
-                $('.btn-save-comment > i').removeClass('fa fa-circle-o-notch fa-spin');
-                $('.btn-save-comment > span').text('Save');
-
-                // reset commentbox placeholder
-                input.attr("placeholder", "Add Comment");
-
-                var answerBlock = $(button).closest('li.answer');
-                var commentBlock = $(answerBlock).find('.answer-comments .comment-list.hide').clone();
-                $(commentBlock).removeClass('hide');
-                $(commentBlock).find('.comment-text').find('span').text(comment);
-                $(commentBlock).find('.comment-date').text(getDateFormatted(result.postedOnUtc));
-                $(commentBlock).find('.comment-user').text(userInfo.firstName + " " + userInfo.lastName);
-                //$(answerBlock).find('.answer-comments').append(commentBlock);
-                $(commentBlock).insertBefore($(answerBlock).find('.answer-comments .comment-list.hide'));
-
-                // retrieve email of the user who posted the answer
-                //var emailToSend = $(answerBlock).find('.user').find('a.userName').attr("href").substring($(answerBlock).find('.user').find('a.userName').attr("href").indexOf("=") + 1);
-                //var notificationToSend = $(answerBlock).attr("data-answerby");
-                //NotificationForNewComment(emailToSend, notificationToSend);
-
-                var editCommentAnchor = $(commentBlock).find('.comment-text a');
-                $(editCommentAnchor).show();
-
-                $(editCommentAnchor).click(function(){
-                    //first hide if any open edit comment
-                    var commentSection = $('.edit-comment:not(.hide)').parent();
-                    $(commentSection).find('.edit-comment').remove();
-                    $(commentSection).children().show();
-
-                    $('.comment-box:not(.hide)').hide();
-                    $('.add-comment:hidden').show();
-
-                    var editCommentDiv = $('.edit-comment.hide').clone().removeClass('hide');
-                    var editCommentInput = $(editCommentDiv).find('.txt_comment');
-                    $(editCommentInput).val($(this).siblings('span').text());
-                    var editCommentButton = $(editCommentDiv).find('.btn-edit-comment');
-                    $(editCommentButton).attr('data-comment-id', result.commentId);
-                    $(commentBlock).children().hide();
-                    $(commentBlock).append(editCommentDiv);
-
-                    $(editCommentButton).click(function(){
-                        var commentText = $(editCommentInput).val();
-                        $(commentBlock).find('.comment-text span').text(commentText);
-                        $(commentBlock).children().show();
-                        $(commentBlock).find('.edit-comment').remove();
-
-                        var commentObject = {'CommentText': commentText, 'CommentId': $(this).attr('data-comment-id')};
-
-                        scAjax({
-                            "url": "comments/editcomment",
-                            "type": "POST",
-                            "data": JSON.stringify(commentObject)
-                        });
-
-                        return false;
-                    });
-
-                    var editCommentCancel = $(editCommentDiv).find('.anchor-cancel-comment');
-                    $(editCommentCancel).click(function(){
-                        $(commentBlock).children().show();
-                        $(commentBlock).find('.edit-comment').remove();
-                        return false;
-                    });
-
-                    return false;
-                });
-            },
-            "error": function (err) {
-                // parse the error json
-                var errorresponse = jQuery.parseJSON(err.responseText);
-
-                // enable the button
-                $('.btn-save-comment').prop('disabled', false);
-
-                // remove the loading class from save button
-                $('.btn-save-comment > i').removeClass('fa fa-circle-o-notch fa-spin');
-                $('.btn-save-comment > span').text('Save');
-
-                // check if comment box has the 'has-error' class or not
-                if (!commentBox.hasClass("has-error")) {
-                    commentBox.addClass("has-error");
-                }
-
-                // toastr notification
-                Command: toastr["error"](errorresponse.modelState['comment.CommentText'][0])
-            }
-        });
-    }
-
-    function handleUpvote(event) {
-        event.preventDefault();
-        var anchor = $(event.target);
-        if ($(anchor).parent().hasClass('disabled')) {
-            return false;
-        }
-        var answerId = $(anchor).closest('li.answer').attr('data-answerid');
-        var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
-        logActivity(3, answerId, answerBy);
-
-        scAjax({
-            "url": "answers/UpdateUpVoteCount",
-            "type": "POST",
-            "data": JSON.stringify({
-                "AnswerID": answerId
-            }),
-            "success": function (result) {
-                $(anchor).find('.count').text(result);
-                $(anchor).parent().addClass('disabled');
-            }
-        });
-    }
-
-    function handleCancelComment(event) {
-        event.preventDefault();
-        var anchor = $(event.target);
-        var commentBox = $(anchor).closest('.comment-box');
-        $(commentBox).hide();
-        $(commentBox).siblings('.add-comment').show();
-        var comments = $(commentBox).siblings('.comment-list:not(.hide)');
-        if(comments.length == 0)
-        {
-            $(commentBox).closest('.answer-comments').hide();
-        }
-    }
-
-    function setUpAnswerUserActions() {
-        $('.comment-anchor').unbind("click").bind("click", handleCommentLinkClick);
-
-        $('.anchor-add-comment').unbind("click").bind("click", handleAddComment);
-
-        $('.anchor-cancel-comment').unbind('click').bind('click', handleCancelComment);
-
-        $('.btn-save-comment').unbind("click").bind("click", handleSaveComment);
-
-        $('.upvote-anchor').unbind("click").bind("click", handleUpvote);
-    }
-
-    function createAnswerHtml(answerBlock, answer) {
-        $(answerBlock).removeClass('hide').attr({ 'data-answerid': answer.answerId, 'data-answerBy': answer.userId });
-        $(answerBlock).find('.answerdiv').attr('id', answer.answerId);
-        // set a max width for any image that is part of the answer
-        $(answerBlock).find('.text').html(answer.answerText.replace("<img", "<img style='max-width:530px;'")).attr('id', answer.answerId);
-        $(answerBlock).find('.upvote-anchor .count').text(answer.upVoteCount);
-        if (answer.isUpvotedByMe) {
-            $(answerBlock).find('.upvote-span').addClass('disabled');
-        }
-        //$(answerBlock).find('.userName').text(answer.displayName);
-
-        $(answerBlock).find('.answer-comments .comment-box').hide();
-
-        var userNameAnchor = $(answerBlock).find('div.user a.userName');
-        $(userNameAnchor).text(answer.displayName);
-        if (answer.userProfileImage) {
-            var userProfileImage = $(answerBlock).find('div.user img.avatar');
-            // form the smaller imgur image by adding 's' before '.jpg'
-            if (answer.userProfileImage.charAt(answer.userProfileImage.indexOf('.jpg') - 1) != 's') {
-                answer.userProfileImage = answer.userProfileImage.replace('.jpg', 's.jpg');
-            }
-            $(userProfileImage).attr('src', IMGURPATH + answer.userProfileImage);
-        }
-        if (answer.userEmail != null) {
-            var url = $(userNameAnchor).attr('href') + '?userId=' + answer.userId;
-            $(userNameAnchor).attr('href', url);
-        }
-
-        var utcDate = new Date(answer.postedOnUtc);
-        var dateString = getDateFormatted(answer.postedOnUtc);
-        $(answerBlock).find('.date').text(dateString);
-
-        if (answer.markedAsAnswer) {
-            $(answerBlock).find('.mark-answer').removeClass('hide').addClass('btn-success');
-        }
-
-        if(isLoggedInUserId(answer.userId))
-        {
-            var span = $(answerBlock).find('.edit-answer-span');
-            $(span).show();
-            $(span).find('.edit-answer-anchor').click(function(){
-                handleEditAnswerClick(answer)
-            });
-
-        }
-
-        $('#answerlist').append(answerBlock);
-    }
-
-    function handleEditAnswerClick(answer)
-    {
-        if(!answer)
-        {
-            return;
-        }
-
-        advancedEditor.setHTML(answer.answerText);
-        $('html,body').animate({scrollTop: $('.wirte-answer').offset().top - 70},'slow');
-        $('.btn-submit-answer').attr('data-answer-id', answer.answerId);
-    }
-
-    function scrollToADivOnPageLoad()
-    {
-        var hash = window.location.hash;
-        if(hash.length > 0 && $('#'+ hash).size() > 0){
-            $('html, body').animate({ scrollTop: $(hash).offset().top - 70});
-        }
-    }
-
-    var isAskedByMe = false;
-    function getAnswers(result) {
-
-        if (!result) {
-            // hide the loading symbol for the answers
-            $('#loadingdiv').hide();
-
-            // show the submit answer rich text control
-            $('.wirte-answer').show();
-
-            // show the 'ask to answer module'
-            $('#userToAnswer').show();
-            return;
-        }
-
-        $('#answerlist').before("<div class='col-md-12'><h4>Answers:</h4><hr/></div>");
-        var save = $('#answerlist .answer.hide').detach();
-        $('#answerlist').empty().append(save);
-
-        $(result).each(function (index, answer) {
-            var answerBlock = $('#answerlist li.answer.hide').clone();
-            createAnswerHtml(answerBlock, answer);
-            if (isAskedByMe) {
-                var markAnswer = $(answerBlock).find('.mark-answer');
-                $(markAnswer).removeClass('hide').click(function () {
-                    var span = $(this);
-                    if ($(span).hasClass('btn-success')) {
-                        return;
-                    }
-
-                    var answerId = $(span).closest('li.answer').attr('data-answerid');
-                    var answerBy = $(span).closest('li.answer').attr('data-answerBy');
-                    var answers = [];
-                    answers.push({ "AnswerID": answerId, "MarkedAsAnswer": true });
-                    $('.mark-answer.btn-success').each(function (i, e) {
-                        $(e).removeClass('btn-success');
-                        var oldAnswerId = $(e).closest('li.answer').attr('data-answerid');
-                        answers.push({ "AnswerID": oldAnswerId, "MarkedAsAnswer": false });
-                    });
-
-                    $(span).addClass('btn-success');
-                    logActivity(5, answerId, answerBy);
-
-                    scAjax({
-                        "url": "answers/UpdateMarkAsAnswer",
-                        "type": "POST",
-                        "data": JSON.stringify(answers)
-                    });
-                });
-            }
-
-            getComments(answerBlock, answer);
-            setUpAnswerUserActions();
-        });
-
-        var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
-        if(answerId && answerId != "")
-        {
-            $('html,body').animate({scrollTop: $('#'+ answerId).offset().top - 20},'fast');
-        }
-    }
-
-    function setUpEditQuestion()
-    {
-        var rtContainer = $('.editQuesDiv .richtextbox-container');
-        $(rtContainer).find('.control-label').text('Question');
-        $('.editQuesDiv #txt_question_edit').val($('#questiontitle').text());
-
-        qustionRTBoxEditor = new Quill('.editQuesDiv .richtextbox-container .text-wrapper .editor-container', {
-            modules: {
-                'authorship': {
-                    authorId: 'advanced',
-                    enabled: true
-                },
-                'toolbar': {
-                    container: '.editQuesDiv .richtextbox-container .text-wrapper .toolbar-container'
-                },
-                'link-tooltip': true,
-                'image-tooltip': true,
-                'multi-cursor': true
-            },
-            styles: false,
-            theme: 'snow'
-        });
-
-        qustionRTBoxEditor.setHTML($('.description').html());
-
-        $('#btn_Edit_Question').click(function(){
-            var data = {
-                "questionId" : $(this).attr('data-question-id'),
-                "title": $('#txt_question_edit').val(),
-                "description": qustionRTBoxEditor.getHTML(),
-                "categories": categoryArr
-            };
-
-            scAjax({
-                "url": "questions/EditQuestion",
-                "type": "POST",
-                "data": JSON.stringify(data, null, 2),
-                "success": function (result) {
-                    if (!result) {
-                        return;
-                    }
-                }
-            });
-
-            $('.editQuesDiv').toggle();
-            $('.header h2').text($('#txt_question_edit').val());
-            $('.description').html(qustionRTBoxEditor.getHTML());
-            $('.question-container').slideToggle();
-        });
-
-        $('#btn_Cancel_Edit_Question').click(function() {
-            $('.editQuesDiv').toggle();
-            $('.question-container').slideToggle();
-        });
-    }
-
-    // This method will execute when user will type user details in the 'Ask To Answer' serach box
-    $(function () {
-        $('#usernametext').keyup(function (event) {
-            var searchValue = $(this).val();
-            setTimeout(function () {
-                if (searchValue == $('#usernametext').val() && searchValue != null && searchValue != "") {
-                    //alert(searchValue);
-                    scAjax({
-                        "url": "search/SearchUsersByNameEmail",
-                        "data": { "userDetails": searchValue },
-                        "success": function (result) {
-                            if (!result) {
-                                return;
-                            }
-
-                            // clear the previous users
-                            $('#userlistasktoanswer').empty();
-
-                            if (result.length == 0) {
-                                $('#userlistasktoanswer').append("<span>Sorry no matching profile available</span>");
-                                // hide the loading message
-                                $('#loadingasktoanswer').hide();
-                            }
-                            else {
-                                // update the div with the user data received from the API
-                                jQuery.each(result, function (i, val) {
-                                    if (val.profileImageURL != null) {
-                                        // form the smaller imgur image by adding 's' before '.jpg'
-                                        if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
-                                            val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
-                                        }
-                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-xs' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                                    }
-                                    else
-                                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage col-md-2 col-xs-3'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo col-md-8 col-xs-8' style='float:left;'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-xs' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                                    // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                                    scAjax({
-                                        "url": "asktoanswer/GetAskToAnswer",
-                                        "data": { "questionId": questionID, "userId": val.id },
-                                        "success": function (result) {
-                                            if (result != null) {
-                                                $('a[id$="' + val.id + '"]:first').text("Already Asked");
-                                                $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
-                                            }
-                                            //get the response rate for each user
-                                            var responseRate;
-                                            scAjax({
-                                                "url": "asktoanswer/GetResponseRate",
-                                                "data": { "userId": val.id },
-                                                "success": function (rRate) {
-                                                    //wantedanswersuggestion
-                                                    responseRate = rRate;
-                                                    $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);
-
-                                                    // hide the loading message
-                                                    $('#loadingasktoanswer').hide();
-                                                }
-                                            });
-                                        }
-                                    });
-
-                                });
-                            }
-                        }
-                    });
-                }
-                else if (searchValue == '') {
-                    // user have cleared all text from the text field so load all previous users
-                    // clear the existing users
-                    $('#userlistasktoanswer').empty();
-
-                    if (userListAskToAnswer.length == 0) {
-                        $('#userlistasktoanswer').append("<span>Sorry we haven't found anyone to answer this question. Use above search box to request someone to answer this question</span>");
-                        // hide the loading message
-                        $('#loadingasktoanswer').hide();
-                    }
-                    else {
-                        // update the div with the user data received from the API
-                        jQuery.each(userListAskToAnswer, function (i, val) {
-                            // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                            if (val.profileImageURL != null) {
-                                // form the smaller imgur image by adding 's' before '.jpg'
-                                if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
-                                    val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
-                                }
-                                $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-xs' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                            }
-                            else
-                                $('#userlistasktoanswer').append("<div class='wantedanswersuggestion' id='" + val.id + "'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br/><span id='reputationcount' style='margin-left:15px;font-size:12px'>Reputation: " + val.reputationCount + "</span><br/><span id='" + val.id + "' style='margin-left:15px;font-size:12px'></span></div><div class='askbuton'><a id='" + val.id + "' data-id='" + val.id + "'class='btn btn-primary btn-xs' style='float:right;' onclick='SendNotification(this)'>Ask</a></div></div><hr id='smallseparator'/>");
-                            // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                            scAjax({
-                                "url": "asktoanswer/GetAskToAnswer",
-                                "data": { "questionId": questionID, "userId": val.id },
-                                "success": function (result) {
-                                    if (result != null) {
-                                        $('a[id$="' + val.id + '"]:first').text("Already Asked");
-                                        $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
-                                    }
-                                    //get the response rate for each user
-                                    var responseRate;
-                                    scAjax({
-                                        "url": "asktoanswer/GetResponseRate",
-                                        "data": { "userId": val.id },
-                                        "success": function (rRate) {
-                                            //wantedanswersuggestion
-                                            responseRate = rRate;
-                                            $('span[id$="' + val.id + '"]:first').text("Response Rate: " + rRate);
-
-                                            // hide the loading message
-                                            $('#loadingasktoanswer').hide();
-                                        }
-                                    });
-                                }
-                            });
-
-                        });
-                    }
-                }
-            }, 400);
-        });
-    });
+    var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
+    var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-
+<script src="@Url.Content("~/Scripts/feed/details.js")" type="text/javascript"></script>
 <div class="container">
     <div class="col-md-9 col-xs-12">
         <div class="question-container">
@@ -1430,13 +24,12 @@
                     <div class="col-md-6" style="margin-top: 20px">
                         @if (User.Identity.IsAuthenticated)
                         {
-                        <button type='submit' class='btn btn-xs followquestionbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followquestion(this);'><i class='fa fa-plus-circle' style='color: green;'></i><span> Follow </span></button>
-                        <span class="action_item" id="spanEditQuestion"><i class="fa fa-pencil">&nbsp;</i><a href="#" class="editQuesAnchor">Edit</a></span>
-                        <span class="action_item"><i class="fa fa-flag" style="color: rgb(234, 113, 113);">&nbsp;</i><a href="#" onclick="togglemodal();">Report<span class="count">1000</span></a></span>
+                            <button type='submit' class='btn btn-xs followquestionbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followquestion(this);'><i class='fa fa-plus-circle' style='color: green;'></i><span> Follow </span></button>
+                            <span class="action_item" id="spanEditQuestion"><i class="fa fa-pencil">&nbsp;</i><a href="#" class="editQuesAnchor">Edit</a></span>
+                            <span class="action_item"><i class="fa fa-flag" style="color: rgb(234, 113, 113);">&nbsp;</i><a href="#" onclick="togglemodal();">Report<span class="count">1000</span></a></span>
                         }
                     </div>
                     <div class="stat col-md-2">
-
                     </div>
                     <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
                 </div>
@@ -1467,34 +60,33 @@
         <div id="moduleanswers">
             @*<h4>Answers:</h4><hr />*@
             <ul id="answerlist" class="list-group">
-                <li class="hide answer">
-                    <div class="col-md-12 answerdiv" style="margin-top:30px;">
-                        <div class="user col-md-2">
+                <li class="hide answer col-md-12">
+                    <div class="col-md-12 answerdiv" style="margin-top:20px;">
+                        <div class="user col-md-1">
                             <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                            <a class="userName col-md-12" href="\Account\Profile"></a>
-                            <a class="btn btn-default btn-sm mark-answer hide col-md-4 col-md-offset-4" title="Mark as answer">
+                            <a class="userName" href="\Account\Profile"></a>
+                            <a class="btn btn-default btn-sm mark-answer hide col-md-4" title="Mark as answer">
                                 <i class="fa fa-check-square-o fa-lg"></i>
                             </a>
                         </div>
-                        <div class="detail col-md-10">
+                        <div class="detail col-md-11">
                             <div class="text"></div>
-
                             <div class="answer-links">
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                <span class="link upvote-span">
-                                    <a class="upvote-anchor" href="#">
-                                        Upvote
-                                        <span class="count">0</span>
-                                    </a>
-                                </span>
-                                <span class="link comment-span">
-                                    <a class="comment-anchor" href="#">Comment</a>
-                                    <span class="comment-count"></span>
-                                </span>
-                                <span class="link edit-answer-span">
-                                    <a class="edit-answer-anchor" href="#">Edit</a>
-                                </span>
+                                    <span class="link upvote-span">
+                                        <a class="upvote-anchor" href="#">
+                                            Upvote
+                                            <span class="count">0</span>
+                                        </a>
+                                    </span>
+                                    <span class="link comment-span">
+                                        <a class="comment-anchor" href="#">Comment</a>
+                                        <span class="comment-count"></span>
+                                    </span>
+                                    <span class="link edit-answer-span">
+                                        <a class="edit-answer-anchor" href="#">Edit</a>
+                                    </span>
                                 }
                                 <div class="stat">
                                     <span class="date"></span>
@@ -1502,162 +94,165 @@
                             </div>
                         </div>
                     </div>
-                    <div class="well answer-comments col-md-10 col-md-offset-2">
-                        <div class="comment-list hide">
-                            <a class="comment-user"></a>
-                            <span class="comment-date"></span>
-                            <span class="comment-text">
-                                <span></span>
-                                @if (User.Identity.IsAuthenticated)
-                                {<a href="#"> Edit</a>}
-                            </span>
-                        </div>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                        <div class="add-comment twelvepxfont">
-                            <a href="#" class="anchor-add-comment add">Add Comment</a>
-                        </div>
-                        }
-                        <div class="comment-box">
-                            @*<a class="commentor col-md-1" href="#">
-                                    <img height="25" width="25" src="/Content/images/profile-image.jpg">
-                                </a>*@
-                            <div class="input-div col-md-10" style="padding: 0;">
-                                <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
-                                @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
+                    <div class="col-md-12">
+
+                        <div class="well answer-comments col-md-11 col-md-offset-1">
+                            <div class="comment-list hide">
+                                <a class="comment-user"></a>
+                                <span class="comment-date"></span>
+                                <span class="comment-text">
+                                    <span></span>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {<a href="#"> Edit</a>}
+                                </span>
                             </div>
-                            <div class="col-md-2" style="padding: 2px 0px 0px 6px;">
-                                @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
-                                <button type="submit" class="btn btn-sm btn-primary btn-save-comment btn-xs">
-                                    <i></i><span>Save</span>
-                                </button>
-                                <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <div class="add-comment twelvepxfont">
+                                    <a href="#" class="anchor-add-comment add">Add Comment</a>
+                                </div>
+                            }
+                            <div class="comment-box">
+                                @*<a class="commentor col-md-1" href="#">
+                    <img height="25" width="25" src="/Content/images/profile-image.jpg">
+                </a>*@
+                                <div class="input-div col-md-10" style="padding: 0;">
+                                    <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
+                                    @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
+                                </div>
+                                <div class="col-md-2" style="padding: 2px 0px 0px 6px;">
+                                    @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
+                                    <button type="submit" class="btn btn-sm btn-primary btn-save-comment btn-xs">
+                                        <i></i><span>Save</span>
+                                    </button>
+                                    <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </li>
+
             </ul>
         </div>
-
         <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none" id="errormessage">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <strong>Error!</strong>
         </div>
         @if (User.Identity.IsAuthenticated)
         {
-        <div class="wirte-answer col-md-12 col-xs-12" style="margin-top:40px; display:none;">
-            @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
-            <div class="text-wrapper col-md-12">
-                <div class="toolbar-container">
-                    <span class="ql-format-group">
-                        <select title="Size" class="ql-size">
-                            <option value="10px">Small</option>
-                            <option value="13px" selected>Normal</option>
-                            <option value="18px">Large</option>
-                            <option value="32px">Huge</option>
-                        </select>
-                    </span>
-                    <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
-                        <select title="Text Color" class="ql-color">
-                            <option value="rgb(0, 0, 0)" selected></option>
-                            <option value="rgb(230, 0, 0)"></option>
-                            <option value="rgb(255, 153, 0)"></option>
-                            <option value="rgb(255, 255, 0)"></option>
-                            <option value="rgb(0, 138, 0)"></option>
-                            <option value="rgb(0, 102, 204)"></option>
-                            <option value="rgb(153, 51, 255)"></option>
-                            <option value="rgb(255, 255, 255)"></option>
-                            <option value="rgb(250, 204, 204)"></option>
-                            <option value="rgb(255, 235, 204)"></option>
-                            <option value="rgb(255, 255, 204)"></option>
-                            <option value="rgb(204, 232, 204)"></option>
-                            <option value="rgb(204, 224, 245)"></option>
-                            <option value="rgb(235, 214, 255)"></option>
-                            <option value="rgb(187, 187, 187)"></option>
-                            <option value="rgb(240, 102, 102)"></option>
-                            <option value="rgb(255, 194, 102)"></option>
-                            <option value="rgb(255, 255, 102)"></option>
-                            <option value="rgb(102, 185, 102)"></option>
-                            <option value="rgb(102, 163, 224)"></option>
-                            <option value="rgb(194, 133, 255)"></option>
-                            <option value="rgb(136, 136, 136)"></option>
-                            <option value="rgb(161, 0, 0)"></option>
-                            <option value="rgb(178, 107, 0)"></option>
-                            <option value="rgb(178, 178, 0)"></option>
-                            <option value="rgb(0, 97, 0)"></option>
-                            <option value="rgb(0, 71, 178)"></option>
-                            <option value="rgb(107, 36, 178)"></option>
-                            <option value="rgb(68, 68, 68)"></option>
-                            <option value="rgb(92, 0, 0)"></option>
-                            <option value="rgb(102, 61, 0)"></option>
-                            <option value="rgb(102, 102, 0)"></option>
-                            <option value="rgb(0, 55, 0)"></option>
-                            <option value="rgb(0, 41, 102)"></option>
-                            <option value="rgb(61, 20, 102)"></option>
-                        </select><span class="ql-format-separator"></span>
-                        <select title="Background Color" class="ql-background">
-                            <option value="rgb(0, 0, 0)"></option>
-                            <option value="rgb(230, 0, 0)"></option>
-                            <option value="rgb(255, 153, 0)"></option>
-                            <option value="rgb(255, 255, 0)"></option>
-                            <option value="rgb(0, 138, 0)"></option>
-                            <option value="rgb(0, 102, 204)"></option>
-                            <option value="rgb(153, 51, 255)"></option>
-                            <option value="rgb(255, 255, 255)" selected></option>
-                            <option value="rgb(250, 204, 204)"></option>
-                            <option value="rgb(255, 235, 204)"></option>
-                            <option value="rgb(255, 255, 204)"></option>
-                            <option value="rgb(204, 232, 204)"></option>
-                            <option value="rgb(204, 224, 245)"></option>
-                            <option value="rgb(235, 214, 255)"></option>
-                            <option value="rgb(187, 187, 187)"></option>
-                            <option value="rgb(240, 102, 102)"></option>
-                            <option value="rgb(255, 194, 102)"></option>
-                            <option value="rgb(255, 255, 102)"></option>
-                            <option value="rgb(102, 185, 102)"></option>
-                            <option value="rgb(102, 163, 224)"></option>
-                            <option value="rgb(194, 133, 255)"></option>
-                            <option value="rgb(136, 136, 136)"></option>
-                            <option value="rgb(161, 0, 0)"></option>
-                            <option value="rgb(178, 107, 0)"></option>
-                            <option value="rgb(178, 178, 0)"></option>
-                            <option value="rgb(0, 97, 0)"></option>
-                            <option value="rgb(0, 71, 178)"></option>
-                            <option value="rgb(107, 36, 178)"></option>
-                            <option value="rgb(68, 68, 68)"></option>
-                            <option value="rgb(92, 0, 0)"></option>
-                            <option value="rgb(102, 61, 0)"></option>
-                            <option value="rgb(102, 102, 0)"></option>
-                            <option value="rgb(0, 55, 0)"></option>
-                            <option value="rgb(0, 41, 102)"></option>
-                            <option value="rgb(61, 20, 102)"></option>
-                        </select><span class="ql-format-separator"></span>
+            <div class="wirte-answer col-md-12 col-xs-12" style="margin-top:40px; display:none; padding-left: 0;">
+                @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
+                <div class="text-wrapper col-md-12">
+                    <div class="toolbar-container">
+                        <span class="ql-format-group">
+                            <select title="Size" class="ql-size">
+                                <option value="10px">Small</option>
+                                <option value="13px" selected>Normal</option>
+                                <option value="18px">Large</option>
+                                <option value="32px">Huge</option>
+                            </select>
+                        </span>
+                        <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
+                            <select title="Text Color" class="ql-color">
+                                <option value="rgb(0, 0, 0)" selected></option>
+                                <option value="rgb(230, 0, 0)"></option>
+                                <option value="rgb(255, 153, 0)"></option>
+                                <option value="rgb(255, 255, 0)"></option>
+                                <option value="rgb(0, 138, 0)"></option>
+                                <option value="rgb(0, 102, 204)"></option>
+                                <option value="rgb(153, 51, 255)"></option>
+                                <option value="rgb(255, 255, 255)"></option>
+                                <option value="rgb(250, 204, 204)"></option>
+                                <option value="rgb(255, 235, 204)"></option>
+                                <option value="rgb(255, 255, 204)"></option>
+                                <option value="rgb(204, 232, 204)"></option>
+                                <option value="rgb(204, 224, 245)"></option>
+                                <option value="rgb(235, 214, 255)"></option>
+                                <option value="rgb(187, 187, 187)"></option>
+                                <option value="rgb(240, 102, 102)"></option>
+                                <option value="rgb(255, 194, 102)"></option>
+                                <option value="rgb(255, 255, 102)"></option>
+                                <option value="rgb(102, 185, 102)"></option>
+                                <option value="rgb(102, 163, 224)"></option>
+                                <option value="rgb(194, 133, 255)"></option>
+                                <option value="rgb(136, 136, 136)"></option>
+                                <option value="rgb(161, 0, 0)"></option>
+                                <option value="rgb(178, 107, 0)"></option>
+                                <option value="rgb(178, 178, 0)"></option>
+                                <option value="rgb(0, 97, 0)"></option>
+                                <option value="rgb(0, 71, 178)"></option>
+                                <option value="rgb(107, 36, 178)"></option>
+                                <option value="rgb(68, 68, 68)"></option>
+                                <option value="rgb(92, 0, 0)"></option>
+                                <option value="rgb(102, 61, 0)"></option>
+                                <option value="rgb(102, 102, 0)"></option>
+                                <option value="rgb(0, 55, 0)"></option>
+                                <option value="rgb(0, 41, 102)"></option>
+                                <option value="rgb(61, 20, 102)"></option>
+                            </select><span class="ql-format-separator"></span>
+                            <select title="Background Color" class="ql-background">
+                                <option value="rgb(0, 0, 0)"></option>
+                                <option value="rgb(230, 0, 0)"></option>
+                                <option value="rgb(255, 153, 0)"></option>
+                                <option value="rgb(255, 255, 0)"></option>
+                                <option value="rgb(0, 138, 0)"></option>
+                                <option value="rgb(0, 102, 204)"></option>
+                                <option value="rgb(153, 51, 255)"></option>
+                                <option value="rgb(255, 255, 255)" selected></option>
+                                <option value="rgb(250, 204, 204)"></option>
+                                <option value="rgb(255, 235, 204)"></option>
+                                <option value="rgb(255, 255, 204)"></option>
+                                <option value="rgb(204, 232, 204)"></option>
+                                <option value="rgb(204, 224, 245)"></option>
+                                <option value="rgb(235, 214, 255)"></option>
+                                <option value="rgb(187, 187, 187)"></option>
+                                <option value="rgb(240, 102, 102)"></option>
+                                <option value="rgb(255, 194, 102)"></option>
+                                <option value="rgb(255, 255, 102)"></option>
+                                <option value="rgb(102, 185, 102)"></option>
+                                <option value="rgb(102, 163, 224)"></option>
+                                <option value="rgb(194, 133, 255)"></option>
+                                <option value="rgb(136, 136, 136)"></option>
+                                <option value="rgb(161, 0, 0)"></option>
+                                <option value="rgb(178, 107, 0)"></option>
+                                <option value="rgb(178, 178, 0)"></option>
+                                <option value="rgb(0, 97, 0)"></option>
+                                <option value="rgb(0, 71, 178)"></option>
+                                <option value="rgb(107, 36, 178)"></option>
+                                <option value="rgb(68, 68, 68)"></option>
+                                <option value="rgb(92, 0, 0)"></option>
+                                <option value="rgb(102, 61, 0)"></option>
+                                <option value="rgb(102, 102, 0)"></option>
+                                <option value="rgb(0, 55, 0)"></option>
+                                <option value="rgb(0, 41, 102)"></option>
+                                <option value="rgb(61, 20, 102)"></option>
+                            </select><span class="ql-format-separator"></span>
 
-                    </span><span class="ql-format-group">
-                        <span title="List" class="ql-format-button ql-list"></span>
-                        <span class="ql-format-separator"></span>
-                        <span title="Bullet" class="ql-format-button ql-bullet"></span>
-                        <span class="ql-format-separator"></span>
-                        <select title="Text Alignment" class="ql-align">
-                            <option value="left" selected></option>
-                            <option value="center"></option>
-                            <option value="right"></option>
-                            <option value="justify"></option>
-                        </select>
-                    </span>
-                    <span class="ql-format-group">
-                        <span title="Link" class="ql-format-button ql-link"></span>
-                        <span class="ql-format-separator"></span>
-                        <span title="Image" class="ql-format-button ql-image"></span>
-                    </span>
+                        </span><span class="ql-format-group">
+                            <span title="List" class="ql-format-button ql-list"></span>
+                            <span class="ql-format-separator"></span>
+                            <span title="Bullet" class="ql-format-button ql-bullet"></span>
+                            <span class="ql-format-separator"></span>
+                            <select title="Text Alignment" class="ql-align">
+                                <option value="left" selected></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-format-group">
+                            <span title="Link" class="ql-format-button ql-link"></span>
+                            <span class="ql-format-separator"></span>
+                            <span title="Image" class="ql-format-button ql-image"></span>
+                        </span>
+                    </div>
+                    <div class="editor-container"></div>
                 </div>
-                <div class="editor-container"></div>
+                @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
+                <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-xs" style=" margin-top: 15px;">
+                    <i></i><span>Submit Answer</span>
+                </button>
             </div>
-            @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
-            <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-xs" style=" margin-top: 15px;">
-                <i></i><span>Submit Answer</span>
-            </button>
-        </div>
         }
         <!--div to show Ask to Answer module-->
         <div class="well panel panel-default col-md-12 col-xs-12" id="userToAnswer" style="margin-top:30px;display:none">
@@ -1671,7 +266,6 @@
             </div>
             <hr id="bigseparator" />
             <div id="userlistasktoanswer">
-
             </div>
             <!--div for loading message for the ask to answer module-->
             <div id="loadingasktoanswer">
@@ -1697,11 +291,9 @@
         </div>
     </div>
 </div>
-
 <div id="loadingdiv">
     <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
 </div>
-
 <!--modal to show report spam options-->
 <div class="modal" id="reportspammodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display:none;">
     <div class="modal-dialog custom-class">
@@ -1709,7 +301,6 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="togglemodal();">&times;</button>
                 <span class="modal-title" id="myModalLabel">Reason for reporting this question</span>
-
             </div>
             <div class="modal-body">
                 <div class="radio">
