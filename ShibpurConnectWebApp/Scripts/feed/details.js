@@ -1,6 +1,4 @@
-﻿
-
-var advancedEditor;
+﻿var advancedEditor;
 // current logged-in user
 var userId = null;
 // we will keep the default users that can answer this question and we will retrieve it during page load
@@ -160,7 +158,7 @@ $(document).ready(function () {
                     userListAskToAnswer = result;
 
                     if (result.length == 0) {
-                        $('#userlistasktoanswer').append("<span>Sorry we haven’t found anyone to answer this question. Use above search box to request someone to answer this question</span>");
+                        $('#userlistasktoanswer').append("<span>Sorry we have not found anyone to answer this question. Use above search box to request someone to answer this question</span>");
                         // hide the loading message
                         $('#loadingasktoanswer').hide();
                     }

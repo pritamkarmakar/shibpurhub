@@ -1,5 +1,4 @@
-﻿
-function getMonth(month) {
+﻿function getMonth(month) {
     var monthArray = {
         "0": "Jan",
         "1": "Feb",
