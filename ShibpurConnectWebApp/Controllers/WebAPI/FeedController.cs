@@ -227,9 +227,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     // TO-DO: Do the same for child items
                 }
                 
-                var orderedFeedResults = feedResults.OrderBy(a => a.ActivityType).ThenByDescending(b => b.PostedDateInUTC).ToList();
+                //var orderedFeedResults = feedResults.OrderBy(a => a.ActivityType).ThenByDescending(b => b.PostedDateInUTC).ToList();
 
-                return Ok(orderedFeedResults);
+                return Ok(feedResults);
             }
             catch (Exception ex)
             {
