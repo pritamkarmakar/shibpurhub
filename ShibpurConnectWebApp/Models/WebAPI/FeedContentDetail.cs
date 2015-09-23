@@ -6,7 +6,8 @@ using System.Web;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     public class FeedContentDetail
-    {       
+    {
+        public string LogId { get; set; }
 
         public string Header { get; set; }
 

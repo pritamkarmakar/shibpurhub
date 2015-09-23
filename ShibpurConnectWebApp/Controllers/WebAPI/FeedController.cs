@@ -63,7 +63,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="page">The page.</param>
         /// <returns></returns>
         [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 3600, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 20, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetPersonalizedFeeds(int page = 0)
         {
             try
@@ -115,7 +115,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var feedResults = new List<PersonalizedFeedItem>();
                 string previousObjectId = string.Empty;
                 var distinctUserId = new List<string>();
-                
+
+                var lstLogsWithContent = new List<UserActivityLogWithContent>();
+                foreach (var feedFollowedByMe in feedsFollowedByMe)
+                {
+                    var logWithContent = new UserActivityLogWithContent(feedFollowedByMe);
+                    lstLogsWithContent.Add(logWithContent);
+                }
+
+                var allfeedsWithContentResult = await GetAllFeedContents(lstLogsWithContent);
+                var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<FeedContentDetail>>;
+                var allfeedsWithContent = z.Content ?? new List<FeedContentDetail>();
+
                 for(var i = 0; feedResults.Count < PAGESIZE && i < feedsFollowedByMe.ToList().Count; i++)
                 {
                 //foreach(var feed in feeds)
@@ -136,19 +147,31 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         distinctUserId.Add(feed.UserId);
                     }
 
-                    var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
-                    var feedContent = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
-                    feedItem.ItemHeader = feedContent == null ? string.Empty : feedContent.Content.Header;
-                    feedItem.ItemDetail = feedContent == null ? string.Empty : feedContent.Content.SimpleDetail;
-                    feedItem.TargetAction = feedContent == null ? string.Empty : feedContent.Content.ActionName;
-                    feedItem.TargetActionUrl = feedContent == null ? string.Empty : feedContent.Content.ActionUrl;
+                    FeedContentDetail feedContent = null;
+
+                    if (feed.Activity == 6 || feed.Activity == 7 || feed.Activity == 9)
+                    {
+                        var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
+                        var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
+                        feedContent = y.Content;
+                    }
+                    else
+                    {
+                        feedContent = allfeedsWithContent.FirstOrDefault(a => a.LogId == feed.ActivityLogId);
+                    }
+
+
+                    feedItem.ItemHeader = feedContent == null ? string.Empty : feedContent.Header;
+                    feedItem.ItemDetail = feedContent == null ? string.Empty : feedContent.SimpleDetail;
+                    feedItem.TargetAction = feedContent == null ? string.Empty : feedContent.ActionName;
+                    feedItem.TargetActionUrl = feedContent == null ? string.Empty : feedContent.ActionUrl;
 
                     feedItem.ActionText = GetActionText(feed.Activity);
                     feedItem.ActivityType = feed.Activity;
                     
-                    feedItem.ViewCount = feedContent == null ? 0 : feedContent.Content.ViewCount;
-                    feedItem.AnswersCount = feedContent == null ? 0 : feedContent.Content.AnswersCount;
-                    feedItem.PostedDateInUTC = feedContent == null ? DateTime.Now : feedContent.Content.PostedDateInUTC;
+                    feedItem.ViewCount = feedContent == null ? 0 : feedContent.ViewCount;
+                    feedItem.AnswersCount = feedContent == null ? 0 : feedContent.AnswersCount;
+                    feedItem.PostedDateInUTC = feedContent == null ? DateTime.Now : feedContent.PostedDateInUTC;
                     
                     
                     
@@ -211,65 +234,146 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        private async Task<IHttpActionResult> GetAllFeedContents(IList<UserActivityLogWithContent> logs)
+        {
+            try
+            {
+                var answerIds = logs.Where(a => a.Activity == 2 || a.Activity == 4 || a.Activity == 5).Select(a => a.ActedOnObjectId).ToList();
+                var answers = from a in _mongoAnswerHelper.Collection.AsQueryable()
+                              where answerIds.Contains(a.AnswerId)
+                              select a;
+
+                var questionIds = logs.Where(a => a.Activity == 1 || a.Activity == 8).Select(a => a.ActedOnObjectId).ToList();
+                var questionIdsFromAnswers = from o in answers.ToList()
+                                             select o.QuestionId;
+                questionIds.AddRange(questionIdsFromAnswers.ToList());
+
+                var questions = from b in _mongoQustionHelper.Collection.AsQueryable()
+                                where questionIds.Contains(b.QuestionId)
+                                select b;
+
+                var feedContents = new List<FeedContentDetail>();
+                foreach (var feed in logs)
+                {
+                    var feedContent = new FeedContentDetail();
+                    feedContent.ActionName = GetActionName(feed.Activity);
+                    feedContent.LogId = feed.ActivityLogId;
+
+                    Answer answer = null;
+                    Question question = null;
+                    var isFeedAnAnswer = (feed.Activity == 2 || feed.Activity == 4 || feed.Activity == 5); // Else its a Question
+
+                    if (isFeedAnAnswer)
+                    {
+                        answer = answers.FirstOrDefault(a => a.AnswerId == feed.ActedOnObjectId);
+                        if (answer != null)
+                        {
+                            question = questions.FirstOrDefault(b => b.QuestionId == answer.QuestionId);
+                        }
+                    }
+
+                    if (feed.Activity == 1 || feed.Activity == 8)
+                    {
+                        question = questions.FirstOrDefault(b => b.QuestionId == feed.ActedOnObjectId);
+                    }
+
+                    if (question != null)
+                    {
+                        feedContent.Header = question.Title;
+                        var questionUrl = "/feed/" + question.QuestionId;
+                        feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + feed.ActedOnObjectId : questionUrl;
+
+                        feedContent.ViewCount = question.ViewCount;
+
+                        var answersCountResult = _questionController.GetAnswersCount(question.QuestionId);
+                        var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
+                        feedContent.AnswersCount = answersCount.Content;
+
+                        feedContent.SimpleDetail = question.Description;
+                        feedContent.PostedDateInUTC = question.PostedOnUtc;
+                    }
+
+                    if (isFeedAnAnswer && answer != null)
+                    {
+                        feedContent.SimpleDetail = answer.AnswerText;
+                        feedContent.PostedDateInUTC = answer.PostedOnUtc;
+                    }
+
+                    feedContents.Add(feedContent);
+                }
+
+                return Ok<IList<FeedContentDetail>>(feedContents);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message + System.Environment.NewLine + e.StackTrace);
+            }
+        }
+
         // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer, 
         // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
         private async Task<IHttpActionResult> GetFeedContent(int type, string userId, string objectId = "", string objectUserId = "")
         {
+            //int type = feed.Activity;
+            //string userId = feed.UserId; 
+            //string objectId = feed.ActedOnObjectId; 
+            //string objectUserId = feed.ActedOnUserId;
+
             var feedContent = new FeedContentDetail();
             feedContent.ActionName = GetActionName(type);
 
             try
             {
-                if (type == 1 || type == 2 || type == 4 || type == 5 || type == 8)
-                {
-                    if (string.IsNullOrEmpty(objectId))
-                    {
-                        return NotFound();
-                    }
+                //if (type == 1 || type == 2 || type == 4 || type == 5 || type == 8)
+                //{
+                //    if (string.IsNullOrEmpty(objectId))
+                //    {
+                //        return NotFound();
+                //    }
 
-                    var isFeedAnAnswer = (type == 2 || type == 4 || type == 5); // Else its a Question
-                    Answer answer = null;
-                    Question question = null;
+                //    var isFeedAnAnswer = (type == 2 || type == 4 || type == 5); // Else its a Question
+                //    Answer answer = null;
+                //    Question question = null;
 
-                    if (isFeedAnAnswer)
-                    {
-                        answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
-                        if (answer == null)
-                        {
-                            return NotFound();
-                        }
-                    }
+                //    if (isFeedAnAnswer)
+                //    {
+                //        //answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
+                //        if (answer == null)
+                //        {
+                //            return NotFound();
+                //        }
+                //    }
 
-                    var questionId = isFeedAnAnswer ? answer.QuestionId : objectId;
+                //    var questionId = isFeedAnAnswer ? answer.QuestionId : objectId;
 
-                    var questionInfo = await _questionController.GetQuestionInfo(questionId);
-                    var questionResult = questionInfo as OkNegotiatedContentResult<Question>;
-                    question = questionResult.Content;
+                //    //var questionInfo = await _questionController.GetQuestionInfo(questionId);
+                //    //var questionResult = questionInfo as OkNegotiatedContentResult<Question>;
+                //    //question = questionResult.Content;
 
-                    feedContent.Header = question.Title;
-                    var questionUrl = "/feed/" + questionId;
-                    feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + objectId : questionUrl;
+                //    feedContent.Header = question.Title;
+                //    var questionUrl = "/feed/" + questionId;
+                //    feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + objectId : questionUrl;
 
-                    feedContent.ViewCount = question.ViewCount;
+                //    feedContent.ViewCount = question.ViewCount;
 
-                    var answersCountResult = _questionController.GetAnswersCount(questionId);
-                    var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
-                    feedContent.AnswersCount = answersCount.Content;
+                //    var answersCountResult = _questionController.GetAnswersCount(questionId);
+                //    var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
+                //    feedContent.AnswersCount = answersCount.Content;
 
-                    if (isFeedAnAnswer)
-                    {
-                        feedContent.SimpleDetail = answer.AnswerText;
-                        feedContent.PostedDateInUTC = answer.PostedOnUtc;
-                    }
-                    else
-                    {
-                        feedContent.SimpleDetail = question.Description;
-                        feedContent.PostedDateInUTC = question.PostedOnUtc;
-                    }
+                //    if (isFeedAnAnswer)
+                //    {
+                //        feedContent.SimpleDetail = answer.AnswerText;
+                //        feedContent.PostedDateInUTC = answer.PostedOnUtc;
+                //    }
+                //    else
+                //    {
+                //        feedContent.SimpleDetail = question.Description;
+                //        feedContent.PostedDateInUTC = question.PostedOnUtc;
+                //    }
 
 
-                    return Ok<FeedContentDetail>(feedContent);
-                }
+                //    return Ok<FeedContentDetail>(feedContent);
+                //}
 
                 var helper = new Helper.Helper();
                 Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
