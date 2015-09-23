@@ -101,7 +101,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
 
                 var feedsFollowedByMe = from x in allFeeds
-                                        where followedUsers.Contains(x.UserId) || followedQuestions.Contains(x.ActedOnObjectId) 
+                                        where followedUsers.Contains(x.UserId) || 
+                                              (followedQuestions.Contains(x.ActedOnObjectId) && x.UserId != userId)
                                         select x;
 
                 //foreach(var feed in feedsFollowedByMe)
@@ -225,8 +226,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     
                     // TO-DO: Do the same for child items
                 }
+                
+                var orderedFeedResults = feedResults.OrderBy(a => a.ActivityType).ThenByDescending(b => b.PostedDateInUTC).ToList();
 
-                return Ok(feedResults);
+                return Ok(orderedFeedResults);
             }
             catch (Exception ex)
             {
