@@ -135,8 +135,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var feeds = feedsFollowedByMe.ToList();
                     var feed = feeds[i];
                     
-                    //Ignore Upvote
-                    if(feed.Activity == 3)
+                    //Ignore Upvote, Update profile image
+                    if(feed.Activity == 3 || feed.Activity == 9)
                     {
                         continue;
                     }
@@ -150,7 +150,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     FeedContentDetail feedContent = null;
 
-                    if (feed.Activity == 6 || feed.Activity == 7 || feed.Activity == 9)
+                    if (feed.Activity == 6 || feed.Activity == 7)
                     {
                         var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
                         var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
@@ -317,74 +317,25 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
         private async Task<IHttpActionResult> GetFeedContent(int type, string userId, string objectId = "", string objectUserId = "")
         {
-            //int type = feed.Activity;
-            //string userId = feed.UserId; 
-            //string objectId = feed.ActedOnObjectId; 
-            //string objectUserId = feed.ActedOnUserId;
-
             var feedContent = new FeedContentDetail();
-            feedContent.ActionName = GetActionName(type);
 
             try
             {
-                //if (type == 1 || type == 2 || type == 4 || type == 5 || type == 8)
-                //{
-                //    if (string.IsNullOrEmpty(objectId))
-                //    {
-                //        return NotFound();
-                //    }
-
-                //    var isFeedAnAnswer = (type == 2 || type == 4 || type == 5); // Else its a Question
-                //    Answer answer = null;
-                //    Question question = null;
-
-                //    if (isFeedAnAnswer)
-                //    {
-                //        //answer = _mongoAnswerHelper.Collection.AsQueryable().FirstOrDefault(m => m.AnswerId == objectId);
-                //        if (answer == null)
-                //        {
-                //            return NotFound();
-                //        }
-                //    }
-
-                //    var questionId = isFeedAnAnswer ? answer.QuestionId : objectId;
-
-                //    //var questionInfo = await _questionController.GetQuestionInfo(questionId);
-                //    //var questionResult = questionInfo as OkNegotiatedContentResult<Question>;
-                //    //question = questionResult.Content;
-
-                //    feedContent.Header = question.Title;
-                //    var questionUrl = "/feed/" + questionId;
-                //    feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + objectId : questionUrl;
-
-                //    feedContent.ViewCount = question.ViewCount;
-
-                //    var answersCountResult = _questionController.GetAnswersCount(questionId);
-                //    var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
-                //    feedContent.AnswersCount = answersCount.Content;
-
-                //    if (isFeedAnAnswer)
-                //    {
-                //        feedContent.SimpleDetail = answer.AnswerText;
-                //        feedContent.PostedDateInUTC = answer.PostedOnUtc;
-                //    }
-                //    else
-                //    {
-                //        feedContent.SimpleDetail = question.Description;
-                //        feedContent.PostedDateInUTC = question.PostedOnUtc;
-                //    }
-
-
-                //    return Ok<FeedContentDetail>(feedContent);
-                //}
-
-                var helper = new Helper.Helper();
-                Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
-                var userDetail = await actionResult;
-
-                if (type == 6 || type == 7 || type == 9)
+                if (type == 6 || type == 7)
                 {
+                    if(string.IsNullOrEmpty(objectUserId))
+                    {
+                        return NotFound();
+                    }
+
+                    var helper = new Helper.Helper();
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(objectUserId);
+                    var userDetail = await actionResult;
+
                     feedContent.Header = userDetail.FirstName + " " + userDetail.LastName;
+                    feedContent.ActionName = userDetail.FirstName + " " + userDetail.LastName;
+                    feedContent.ActionUrl = string.Format("Account/Profile?userId={0}", userDetail.Id);
+
                     return Ok<FeedContentDetail>(feedContent);
                 }
 

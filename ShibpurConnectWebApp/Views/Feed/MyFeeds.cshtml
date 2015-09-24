@@ -208,7 +208,7 @@
 
         .list-inline li {
             margin: 0;
-            padding: 0;
+            padding: 0 5px;
             float: left;
         }
 
@@ -261,6 +261,18 @@
     .post-description.profile dt {
         font-weight: 500;
     }
+
+    #loading{
+        text-align: center;
+    }
+
+    #loading span
+    {
+        display:inline-block;
+        vertical-align: top;
+        padding-top: 5px;
+        padding-left: 10px;
+    }
 </style>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -268,16 +280,62 @@
             "url": "feed/GetPersonalizedFeeds",
             "data": { "page": 0 },
             "success": function (result) {
+                if(!result)
+                {
+                    return;
+                }
+
+                
+                $(result).each(function (index, feed) {
+                    if (feed.itemHeader) {
+                        var htmlItem = $('div.item.hide').clone().removeClass('hide');
+
+                        var creatorImage = $(htmlItem).find('.post-creator-image');
+                        $(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url(http://i.imgur.com/" + feed.userProfileImageUrl + ")");
+
+                        $(htmlItem).find('a.name-link').text(feed.userName).attr("href", feed.userProfileUrl);
+
+                        $(htmlItem).find('span.action').text(feed.actionText);
+
+                        $(htmlItem).find('a.target').text(feed.targetAction).attr("href", feed.targetActionUrl);
+
+                        $(htmlItem).find('p.designation').text(feed.userDesignation);
+
+                        $(htmlItem).find('h2.title').text(feed.itemHeader).attr("href", feed.targetActionUrl);
+
+                        $(htmlItem).find('div.post-description p').html(feed.itemDetail);
+
+                        $(htmlItem).find('div.post-description img').addClass("col-md-12");
+
+                        if (feed.activityType == 6 || feed.activityType == 7) {
+                            $(htmlItem).find('div.thread-details').hide();
+                        }
+
+                        $(htmlItem).find('span.view-count').text(feed.viewCount + " views");
+                        $(htmlItem).find('span.answer-count').text(feed.answersCount + " answers");
+                        $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(feed.postedDateInUTC));
+
+                        $("div.feed-list").append(htmlItem);
+                    }
+                });
+
+                var loadMoreDiv = $("div.feed-list .load").clone().removeClass('hide');
+                $("div.feed-list").append(loadMoreDiv);
+
+                $("#loading").hide();
             }
         });
     });
 </script>
 
 
-    <div class="container">
+    <div class="container">       
         
             <div class="col-xs-12 col-md-9 left-side feed-list">
-                <div class="row">
+                <div id="loading">
+                    <i class="fa fa-refresh fa-spin fa-2x"></i><span>Please wait while we prepare your feeds...</span>
+                </div>
+                <div class="row item hide">
                     <div class="col-xs-12 thread">
                         <div class="row">
                             <div class="col-xs-12">
@@ -285,24 +343,20 @@
                                     <div class="col-sm-10 col-xs-8 headers-col">
 
                                         <div class="profile-img-col hidden-xs">
-                                            <a href="#" style="background-image:url('http://i.imgur.com/bXgZRqUs.jpg#w5WTHq3ASHW8iJ5')" class="post-creator-image"></a>
+                                            <a href="#" class="post-creator-image"></a>
                                         </div>
                                         <p class="header-text-content ">
                                             <a href="#" class="name-link">Pritam Karmakar</a>
-                                            <span class="act"> asked a</span>
-                                            <a href="#" class="type-link discussion">Question</a>
+                                            <span class="action"> asked a</span>
+                                            <a href="#" class="type-link discussion target">Question</a>
                                         </p>
-                                        <p class="tagline-text-content">QA Architect, Tibco Software Inc (2006 EE)</p>
+                                        <p class="tagline-text-content designation"></p>
                                     </div>
-                                    @*<div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                        <a class="topic-icon-placeholder follow" href="#">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </div>*@
+
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 col-md-12 ">
-                                        <h2>
+                                        <h2 class="title">
                                             <a href="#">Need help to create shibpurhub animated video</a>
                                         </h2>
 
@@ -319,291 +373,34 @@
                         <div class="row thread-details">
                             <div class="thread-details-container">
                                 <div class="col-xs-12 col-md-7">
-                                <ul class="list-inline pull-left">
-                                    <li>
-                                        <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                    </li>
-                                    @*<li>
-                                        <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
-                                    </li>*@
-                                </ul>
-                            </div>
+                                    <ul class="list-inline pull-left">
+                                        <li>
+                                            <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
+                                        </li>
+
+                                    </ul>
+                                </div>
                                 <div class="col-xs-12 col-md-5">
-                                <ul class="extra-details pull-right list-inline">
-                                    <li>
-                                        <span href="" class="view-count">28 views</span>
-                                    </li>
-                                    <li>
-                                        <span class="gap">•</span>
-                                    </li>
-                                    <li>
-                                        <span href="" class="answer-count">0 answers</span>
-                                    </li>
-                                    <li>
-                                        <span class="gap">•</span>
-                                    </li>
-                                    <li>
-                                        <span class="post-pub-time">Jul 31, 2015</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12 thread">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row post-header">
-                                    <div class="col-sm-10 col-xs-8 headers-col">
+                                    <ul class="extra-details pull-right list-inline">
+                                        <li>
+                                            <span class="view-count"></span>
+                                        </li>
 
-                                        <div class="profile-img-col hidden-xs">
-                                            <a href="#" style="background-image:url('http://i.imgur.com/aYdrZk2s.jpg#ZBgQ17x38pDdn5k')" class="post-creator-image"></a>
-                                        </div>
-                                        <p class="header-text-content ">
-                                            <a href="#" class="name-link">Manish Baheti</a>
-                                            asked a
-                                            <a href="#" class="type-link discussion">Question</a>
-                                        </p>
-                                        <p class="tagline-text-content">Senior Executive, Siemens Limited (2006 EE)</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-12 ">
-                                        <h2>
-                                            <a href="#">Why penalize for better response rate?</a>
-                                        </h2>
+                                        <li>
+                                            <span class="answer-count"></span>
+                                        </li>
 
-                                        <div class="post-description">
-                                            <p>
-                                                Our Satti babu has highest response rate (79%) yet very low reputation -- why ? Pritam is this a developer bias ... response rate of 33% but 3 times the everest reputation... we don't mind you having high reputation... but why make others minions ;)
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row thread-details">
-                            <div class="thread-details-container">
-                                <div class="col-xs-12 col-md-7">
-                                <ul class="list-inline pull-left">
-                                    <li>
-                                        <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                    </li>
-                                    @*<li>
-                                        <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
-                                    </li>*@
-
-                                </ul>
-                            </div>
-                                <div class="col-xs-12 col-md-5">
-                                <ul class="extra-details pull-right list-inline">
-                                    <li>
-                                        <span href="" class="view-count">100 views</span>
-                                    </li>
-                                    <li>
-                                        <span class="gap">•</span>
-                                    </li>
-                                    <li>
-                                        <span href="" class="answer-count">3 answers</span>
-                                    </li>
-                                    <li>
-                                        <span class="gap">•</span>
-                                    </li>
-                                    <li>
-                                        <span class="post-pub-time">Jul 10, 2015</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12 thread">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row post-header">
-                                    <div class="col-sm-10 col-xs-8 headers-col">
-
-                                        <div class="profile-img-col hidden-xs">
-                                            <a href="#" style="background-image:url('http://i.imgur.com/Vt1KE6Rs.jpg')" class="post-creator-image"></a>
-                                        </div>
-                                        <p class="header-text-content ">
-                                            <a href="#" class="name-link">SATINATH BANERJEE</a>
-                                            answered a
-                                            <a href="#" class="type-link discussion">Question</a>
-                                        </p>
-                                        <p class="tagline-text-content">2006 EE</p>
-                                    </div>
-                                    @*<div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                        <a class="topic-icon-placeholder follow" href="#">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </div>*@
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-12 ">
-                                        <h2>
-                                            <a href="#">How is our new email template ?</a>
-                                        </h2>
-
-                                        <div class="post-description">
-                                            <p>
-                                                hey Pritam....... How to check this feature?
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row thread-details">
-                            <div class="thread-details-container">
-                                <div class="col-xs-12 col-md-7">
-                                <ul class="list-inline pull-left">
-                                    <li>
-                                        <a href="#" class="thumbs thumbs-up " data-allowed="true" data-type="up"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                    </li>
-                                    @*<li>
-                                        <a href="#" class="thumbs thumbs-down "><i class="fa fa-arrow-down"></i></a>
-                                    </li>*@
-
-                                </ul>
-                            </div>
-                                <div class="col-xs-12 col-md-5">
-                                <ul class="extra-details pull-right list-inline">
-                                    <li>
-                                        <span href="" class="view-count">28 views</span>
-                                    </li>
-                                    <li>
-                                        <span class="gap">•</span>
-                                    </li>
-                                    <li>
-                                        <span href="" class="answer-count">0 answers</span>
-                                    </li>
-                                    <li>
-                                        <span class="gap">•</span>
-                                    </li>
-                                    <li>
-                                        <span class="post-pub-time">Jul 31, 2015</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-12 thread">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row post-header">
-                                    <div class="col-sm-10 col-xs-8 headers-col">
-
-                                        <div class="profile-img-col hidden-xs">
-                                            <a href="#" style="background-image:url('http://i.imgur.com/DLCo8dXs.jpg')" class="post-creator-image"></a>
-                                        </div>
-                                        <p class="header-text-content ">
-                                            <a href="#" class="name-link">Monotosh K</a>
-                                            started following
-                                            <a href="#" class="type-link discussion">Pritam Karmakar</a>
-                                        </p>
-                                        <p class="tagline-text-content">ASE, TCS (2006 EE)</p>
-                                    </div>
-                                    <!--<div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                        <a class="topic-icon-placeholder follow" href="#">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </div>-->
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3 post-link-image-container">
-
-                                        <a class="post-link-image-small" target="_blank" href="#" style="background-image: url('http://i.imgur.com/bXgZRqU.jpg#w5WTHq3ASHW8iJ5')">
-                                        </a>
-
-                                    </div>
-
-                                    <div class="col-xs-12 col-md-9 ">
-                                        <h2>
-                                            <a target="_blank" href="#">Pritam Karmakar</a>
-                                        </h2>
-                                        <p class="tagline-text-content">QA Architect, Tibco Software Inc (2006 EE)</p>
-                                        <div class="post-description profile">
-                                            <dl class="dl-horizontal">
-                                                <dt class="text-right"><span class="pull-left userquestioncount">Questions</span></dt>
-                                                <dd><a href="#">19</a></dd>
-                                                <dt class="text-right"><span class="pull-left useranswercount">Answers</span></dt>
-                                                <dd><a href="#">30</a></dd>
-                                                <dt class="text-right"><span class="pull-left reputationcount">Reputation</span></dt>
-                                                <dd>4200</dd>
-                                            </dl>
-                                        </div>
-                                    </div>
+                                        <li>
+                                            <span class="post-pub-time">Jul 31, 2015</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-xs-12 thread">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row post-header">
-                                    <div class="col-sm-10 col-xs-8 headers-col">
-
-                                        <div class="profile-img-col hidden-xs">
-                                            <a href="#" style="background-image:url('http://i.imgur.com/hglciIos.jpg')" class="post-creator-image"></a>
-                                        </div>
-                                        <p class="header-text-content ">
-                                            <a href="#" class="name-link">Subrata Sur</a>
-                                            joined
-                                            <a href="#" class="type-link discussion">ShibpurHub</a>
-                                        </p>
-                                        <p class="tagline-text-content">Senior Engineer, BHEL (2006 EE)</p>
-                                    </div>
-                                    @*<div class="col-sm-2  col-xs-4 headers-col extra-col text-right">
-                                        <a class="topic-icon-placeholder follow" href="#">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </div>*@
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3 post-link-image-container">
-
-                                        <a class="post-link-image-small" target="_blank" href="#" style="background-image: url('http://i.imgur.com/hglciIo.jpg')">
-                                        </a>
-
-                                    </div>
-
-                                    <div class="col-xs-12 col-md-9 ">
-                                        <h2>
-                                            <a target="_blank" href="#">Subrata Sur</a>
-                                        </h2>
-                                        <p class="tagline-text-content">Senior Engineer, BHEL (2006 EE)</p>
-                                        <div class="post-description profile">
-                                            <dl class="dl-horizontal">
-                                                <dt class="text-right"><span class="pull-left ">Employment</span></dt>
-                                                <dd>Senior Engineer, BHEL | February 2008 - Present</dd>
-                                                <dt class="text-right"><span class="pull-left ">Location</span></dt>
-                                                <dd>Bangalore, India</dd>
-                                                <dt class="text-right"><span class="pull-left ">Education</span></dt>
-                                                <dd>Electrical Engineering, 2006</dd>
-                                            </dl>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
+                <div class="row load hide">
                     <div class="col-xs-12 thread text-center loadMoreContainer">
                         <a href="#" class="loadMore" id="loadMoreBtn">
                             <span class="toggleThis" style="display: inline;">Load More</span>
