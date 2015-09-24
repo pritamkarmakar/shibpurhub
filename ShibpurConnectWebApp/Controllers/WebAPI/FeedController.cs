@@ -283,7 +283,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     if (question != null)
                     {
                         feedContent.Header = question.Title;
-                        var questionUrl = "/feed/" + question.QuestionId;
+                        var questionUrl = "/feed/" + question.UrlSlug;
                         feedContent.ActionUrl = isFeedAnAnswer ? questionUrl + "/" + feed.ActedOnObjectId : questionUrl;
 
                         feedContent.ViewCount = question.ViewCount;
@@ -334,7 +334,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     feedContent.Header = userDetail.FirstName + " " + userDetail.LastName;
                     feedContent.ActionName = userDetail.FirstName + " " + userDetail.LastName;
-                    feedContent.ActionUrl = string.Format("Account/Profile?userId={0}", userDetail.Id);
+                    feedContent.ActionUrl = string.Format("/Account/Profile?userId={0}", userDetail.Id);
 
                     return Ok<FeedContentDetail>(feedContent);
                 }
