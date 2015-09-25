@@ -59,12 +59,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <summary>
         /// Gets my feeds.
         /// </summary>
-        /// <param name="userId">My user identifier.</param>
         /// <param name="page">The page.</param>
+        /// <param name="alreadyShown">The alrady shown.</param>
         /// <returns></returns>
         [CacheControl()]
         [CacheOutput(ServerTimeSpan = 20, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
-        public async Task<IHttpActionResult> GetPersonalizedFeeds(int page = 0)
+        public async Task<IHttpActionResult> GetPersonalizedFeeds(int page = 0, int alreadyShown = 0)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 
                 var userId = userDetail.Id;
 
-                var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(page * PAGESIZE).Take(50).ToList();                
+                var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(alreadyShown).Take(100).ToList();                
 
                 
                 //Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
@@ -100,10 +100,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var followedUsers = userDetail.Following ?? new List<string>();
                 var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
 
-                var feedsFollowedByMe = from x in allFeeds
+                var allFeedsFollowedByMe = from x in allFeeds
                                         where followedUsers.Contains(x.UserId) || 
                                               (followedQuestions.Contains(x.ActedOnObjectId) && x.UserId != userId)
                                         select x;
+
+                var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList(); 
 
                 //foreach(var feed in feedsFollowedByMe)
                 //{
@@ -112,6 +114,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 //allFeeds.AddRange(feedsFollowedByMe);
 
                 //var feeds = feedsFollowedByMe.Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
+
+                
 
                 var feedResults = new List<PersonalizedFeedItem>();
                 string previousObjectId = string.Empty;
@@ -128,12 +132,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<FeedContentDetail>>;
                 var allfeedsWithContent = z.Content ?? new List<FeedContentDetail>();
 
+                var processedItemCount = page == 0 ? 0 : alreadyShown;
                 for(var i = 0; feedResults.Count < PAGESIZE && i < feedsFollowedByMe.ToList().Count; i++)
                 {
                 //foreach(var feed in feeds)
                 //{
+                    processedItemCount += 1;
+
                     var feeds = feedsFollowedByMe.ToList();
                     var feed = feeds[i];
+
+                    if(feed == null)
+                    {
+                        continue;
+                    }
                     
                     //Ignore Upvote, Update profile image
                     if(feed.Activity == 3 || feed.Activity == 9)
@@ -154,6 +166,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
                         var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
+                        if(y == null)
+                        {
+                            continue;
+                        }
+
                         feedContent = y.Content;
                     }
                     else
@@ -176,7 +193,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     
                     
                     
-                    if(previousObjectId == feed.ActedOnObjectId)
+                    if(!string.IsNullOrEmpty(previousObjectId) && previousObjectId == feed.ActedOnObjectId)
                     {
                         if(feedItem.ChildItems == null)
                         {
@@ -190,7 +207,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         feedResults.Add(feedItem);
                     }
                     
-                    previousObjectId = feed.ActedOnObjectId;
+                    previousObjectId = feed.ActedOnObjectId;                    
                 //}
                 }
                 
@@ -229,7 +246,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 
                 //var orderedFeedResults = feedResults.OrderBy(a => a.ActivityType).ThenByDescending(b => b.PostedDateInUTC).ToList();
 
-                return Ok(feedResults);
+                var feedresultSet = new FeedReult
+                {
+                    AlreadyProcessedItemCount = processedItemCount,
+                    FeedItems = feedResults
+                };
+
+                return Ok(feedresultSet);
             }
             catch (Exception ex)
             {
@@ -451,5 +474,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return NotFound();
             }
         }
+    }
+
+    public class FeedReult
+    {
+        public int AlreadyProcessedItemCount { get; set; }
+
+        public IList<PersonalizedFeedItem> FeedItems { get; set; }
     }
 }
