@@ -236,6 +236,19 @@
         -o-transition: all,.2s,ease-in-out,.2s;
         transition: all,.2s,ease-in-out,.2s;
     }
+    
+    .thread .thread-details a.thumbs:hover {
+        background: #CFD8DC;
+        border: 0;
+    }
+    
+    .thread .thread-details a.thumbs.active
+    {
+        background: #4DB6AC;
+        border-bottom: 2px solid #009688;
+        color: #fff;
+    }
+    
 
     .upvote-ul, .follow-ul
     {
@@ -329,10 +342,44 @@
 
                         if (feed.activityType == 1 || feed.activityType == 8) {
                             $(htmlItem).find('.follow-ul').show();
+                            var followButton = $(htmlItem).find('.follow-ul a.thumbs');
+                            $(followButton).click(function(){
+                                var button = $(this);
+                                var textSpan = $(button).find('span');
+                                var icon = $(button).find('i.fa');
+                                if($(button).hasClass('active'))
+                                {
+                                    $(button).removeClass('active');
+                                    $(textSpan).text('Follow');
+                                    $(icon).removeClass('fa-check').addClass('fa-circle-plus');
+                                }
+                                else
+                                {
+                                    $(button).addClass('active');
+                                    $(textSpan).text('Following');
+                                    $(icon).removeClass('fa-circle-plus').addClass('fa-check');
+                                }
+                            });
                         }
 
                         if (feed.activityType == 2 || feed.activityType == 5) {
                             $(htmlItem).find('.upvote-ul').show();
+                            var upvoteButton = $(htmlItem).find('.follow-ul a.thumbs');
+                            $(upvoteButton).click(function(){
+                                var button = $(this);
+                                var textSpan = $(button).find('span');
+                                
+                                if($(button).hasClass('active'))
+                                {
+                                    $(button).removeClass('active');
+                                    $(textSpan).text('Upvote');
+                                }
+                                else
+                                {
+                                    $(button).addClass('active');
+                                    $(textSpan).text('Upvoted');
+                                }
+                            });
                         }
 
                         $(htmlItem).find('span.view-count').text(feed.viewCount + " views");

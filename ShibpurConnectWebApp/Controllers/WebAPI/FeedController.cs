@@ -128,7 +128,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     lstLogsWithContent.Add(logWithContent);
                 }
 
-                var allfeedsWithContentResult = await GetAllFeedContents(lstLogsWithContent);
+                var allfeedsWithContentResult = await GetAllFeedContents(lstLogsWithContent, userId);
                 var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<FeedContentDetail>>;
                 var allfeedsWithContent = z.Content ?? new List<FeedContentDetail>();
 
@@ -191,7 +191,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     feedItem.AnswersCount = feedContent == null ? 0 : feedContent.AnswersCount;
                     feedItem.PostedDateInUTC = feedContent == null ? DateTime.Now : feedContent.PostedDateInUTC;
                     
-                    
+                    feedItem.FollowedByCount = feedContent == null ? 0 : feedContent.FollowedByCount;
+                    feedItem.IsFollowedByme = feedContent == null ? false : feedContent.IsFollowedByme;
+                    feedItem.UpvoteCount = feedContent == null ? 0 : feedContent.UpvoteCount;
+                    feedItem.IsUpvotedByme = feedContent == null ? false : feedContent.IsUpvotedByme;
                     
                     if(!string.IsNullOrEmpty(previousObjectId) && previousObjectId == feed.ActedOnObjectId)
                     {
@@ -260,7 +263,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        private async Task<IHttpActionResult> GetAllFeedContents(IList<UserActivityLogWithContent> logs)
+        private async Task<IHttpActionResult> GetAllFeedContents(IList<UserActivityLogWithContent> logs, string loggedInUserId)
         {
             try
             {
@@ -295,6 +298,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         if (answer != null)
                         {
                             question = questions.FirstOrDefault(b => b.QuestionId == answer.QuestionId);
+                            if(answer.UpvotedByUserIds == null)
+                            {
+                                feedContent.UpvoteCount = 0;
+                                feedContent.IsUpvotedByme = false;
+                            }
+                            else
+                            {
+                                feedContent.UpvoteCount = answer.UpvotedByUserIds.Count;
+                                feedContent.IsUpvotedByme = answer.UpvotedByUserIds.Any(a => a == loggedInUserId);
+                            }
                         }
                     }
 
@@ -317,6 +330,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                         feedContent.SimpleDetail = question.Description;
                         feedContent.PostedDateInUTC = question.PostedOnUtc;
+                        
+                        if(question.Followers == null)
+                        {
+                            feedContent.FollowedByCount = 0;
+                            feedContent.IsFollowedByme = false;
+                        }
+                        else
+                        {
+                            feedContent.FollowedByCount = question.Followers.Count;
+                            feedContent.IsFollowedByme = question.Followers.Any(a => a == loggedInUserId);
+                        }
                     }
 
                     if (isFeedAnAnswer && answer != null)
