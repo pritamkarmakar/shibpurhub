@@ -474,7 +474,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var userActivityController = new UserActivityController();
             userActivityController.PostAnActivity(log);
         }
-        }
+        
     }
 }
 
