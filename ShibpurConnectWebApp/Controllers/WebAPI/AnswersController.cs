@@ -321,13 +321,33 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var answerInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.AnswerId == answer.AnswerId).FirstOrDefault();
             if (answerInDB != null)
             {
-                var upCount = answerInDB.UpVoteCount + 1;
-                answerInDB.UpVoteCount = upCount;
-                if (answerInDB.UpvotedByUserIds == null)
+                var upCount = answerInDB.UpVoteCount;
+                if(answerInDB.UpvotedByUserIds != null && answerInDB.UpvotedByUserIds.Any(a => a == userInfo.Id))
                 {
-                    answerInDB.UpvotedByUserIds = new List<string>();
+                    upCount = upCount == 0 ? 0 : upCount - 1;
+                    answerInDB.UpvotedByUserIds.Remove(userInfo.Id);
                 }
-                answerInDB.UpvotedByUserIds.Add(userInfo.Id);
+                else
+                {
+                    upCount += 1;
+                    if (answerInDB.UpvotedByUserIds == null)
+                    {
+                        answerInDB.UpvotedByUserIds = new List<string>();
+                    }
+                    answerInDB.UpvotedByUserIds.Add(userInfo.Id);
+                    
+                    var userActivityLog = new UserActivityLog
+                    {
+                        Activity = 3,
+                        UserId = userInfo.Id,
+                        ActedOnObjectId = answer.AnswerId,
+                        ActedOnUserId = answer.UserId
+                    };
+                    
+                    UpdateUserActivityLog(userActivityLog);
+                }
+                
+                answerInDB.UpVoteCount = upCount;
                 _mongoHelper.Collection.Save(answerInDB);
                 return upCount;
             }
@@ -446,6 +466,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     }
                 }
             }
+        }
+        
+        private void UpdateUserActivityLog(UserActivityLog log)
+        {
+            //Call WebApi to log activity
+            var userActivityController = new UserActivityController();
+            userActivityController.PostAnActivity(log);
+        }
         }
     }
 }

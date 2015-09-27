@@ -1,4 +1,4 @@
-﻿var advancedEditor;
+var advancedEditor;
 // current logged-in user
 var userId = null;
 // we will keep the default users that can answer this question and we will retrieve it during page load
@@ -713,8 +713,8 @@ function handleUpvote(event) {
         return false;
     }
     var answerId = $(anchor).closest('li.answer').attr('data-answerid');
-    var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
-    logActivity(3, answerId, answerBy);
+    //var answerBy = $(anchor).closest('li.answer').attr('data-answerBy');
+    //logActivity(3, answerId, answerBy);
 
     scAjax({
         "url": "answers/UpdateUpVoteCount",
