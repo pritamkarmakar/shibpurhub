@@ -346,6 +346,8 @@
                             if(feed.isFollowedByme)
                             {
                                 $(followButton).addClass('active');
+                                $(followButton).find('span').text('Following');
+                                $(followButton).find('i.fa').removeClass('fa-plus-circle').addClass('fa-check');
                             }
                             $(followButton).click(function(event){
                                 event.preventDefault();
@@ -374,6 +376,7 @@
                             if(feed.isUpvotedByme)
                             {
                                 $(upvoteButton).addClass('active');
+                                $(upvoteButton).find('span').text('Upvoted');
                             }
                             $(upvoteButton).click(function(event){
                                 event.preventDefault();
