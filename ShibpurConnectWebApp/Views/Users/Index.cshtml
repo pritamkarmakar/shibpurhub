@@ -108,6 +108,13 @@
         -o-transition: background,.2s,fade,.2s;
         transition: background,.2s,fade,.2s;
     }
+    .profile h3 
+    {
+        font-size: 1em;
+        color: #1F9684;
+        font-weight: 600;
+        margin-top: 10px;
+    }
 
 </style>
 
@@ -137,7 +144,7 @@
                     if (userinfo.profileImageURL == null)
                         $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url (/Content/images/profile-image.jpg)'></div><div class='userinfo' ><span class='name'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></a></div>")
                     else
-                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url (" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' ><span class='name'><a class='userName'  href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></a></div>")
+                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url (" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>userinfo.firstName + " " + userinfo.lastName</h3><span style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                 });
             }
         });
