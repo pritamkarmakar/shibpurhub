@@ -353,20 +353,20 @@
                                 {
                                     $(button).removeClass('active');
                                     $(textSpan).text('Follow');
-                                    $(icon).removeClass('fa-check').addClass('fa-circle-plus');
+                                    $(icon).removeClass('fa-check').addClass('fa-plus-circle');
                                 }
                                 else
                                 {
                                     $(button).addClass('active');
                                     $(textSpan).text('Following');
-                                    $(icon).removeClass('fa-circle-plus').addClass('fa-check');
+                                    $(icon).removeClass('fa-plus-circle').addClass('fa-check');
                                 }
                             });
                         }
 
                         if (feed.activityType == 2 || feed.activityType == 5) {
                             $(htmlItem).find('.upvote-ul').show();
-                            var upvoteButton = $(htmlItem).find('.follow-ul a.thumbs');
+                            var upvoteButton = $(htmlItem).find('.upvote-ul a.thumbs');
                             $(upvoteButton).click(function(event){
                                 event.preventDefault();
 
