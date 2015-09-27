@@ -16,7 +16,7 @@
 
     #userlist
     {
-        margin-top:40px;
+        margin-top:20px;
     }
 
     .moduleheader {
@@ -115,6 +115,22 @@
         font-weight: 600;
         margin-top: 10px;
     }
+    
+    .profile span
+    {
+        color: #455A64;
+    }
+    
+    .profile:hover
+    {
+        colo: #fff;
+        background: #1F9684;
+    }
+    
+    .profile:hover h3, .profile:hover span
+    {
+        colo: #fff;
+    }
 
 </style>
 
@@ -142,9 +158,9 @@
 
                 $(result).each(function (i, userinfo) {
                     if (userinfo.profileImageURL == null)
-                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; color: #455A64;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
+                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                     else
-                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; color: #455A64;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
+                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                 });
             }
         });
@@ -182,9 +198,9 @@
                                 // update the div with the user data received from the API
                                 $(result).each(function (i, userinfo) {
                                     if (userinfo.profileImageURL == null)
-                                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; color: #455A64;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
+                                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                                     else
-                                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; color: #455A64;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
+                                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                                 });
                             }
                         }
@@ -205,9 +221,9 @@
                     else {
                         $(allusers).each(function (i, userinfo) {
                             if (userinfo.profileImageURL == null)
-                                $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; color: #455A64;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
+                                $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                             else
-                                $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; color: #455A64;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
+                                $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + " " + userinfo.lastName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                         });
                     }
                 }
@@ -218,7 +234,8 @@
 
 <div>
     <div class="col-md-12">
-        <div class="row subheader" style="border-bottom-style:dotted">
+
+        <div class="row subheader" style="border-bottom-style:dotted; display: none">
             <h2 class="moduleheader" style="float:left;">Users</h2>
             <div id="tabs" style="float:right">
                 <ul class="nav nav-pills" role="tablist">
@@ -228,9 +245,10 @@
                 </ul>
             </div>
         </div>
+
         <div class="row">
             <div class="row">
-                <form role="search" style="margin-top:20px;">                  
+                <form role="search" >                  
                     <div class="input-group input-group-sm" id="the-basics">
                         <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">
                         @*<div class="input-group-btn">
