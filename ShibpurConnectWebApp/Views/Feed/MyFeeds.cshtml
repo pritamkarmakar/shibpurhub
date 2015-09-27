@@ -343,7 +343,9 @@
                         if (feed.activityType == 1 || feed.activityType == 8) {
                             $(htmlItem).find('.follow-ul').show();
                             var followButton = $(htmlItem).find('.follow-ul a.thumbs');
-                            $(followButton).click(function(){
+                            $(followButton).click(function(event){
+                                event.preventDefault();
+
                                 var button = $(this);
                                 var textSpan = $(button).find('span');
                                 var icon = $(button).find('i.fa');
@@ -365,7 +367,9 @@
                         if (feed.activityType == 2 || feed.activityType == 5) {
                             $(htmlItem).find('.upvote-ul').show();
                             var upvoteButton = $(htmlItem).find('.follow-ul a.thumbs');
-                            $(upvoteButton).click(function(){
+                            $(upvoteButton).click(function(event){
+                                event.preventDefault();
+
                                 var button = $(this);
                                 var textSpan = $(button).find('span');
                                 
