@@ -141,7 +141,7 @@ function createAllQuestions(questions)
         var tempdescription = question.description.substring(0, 250);
         $(htmlItem).find('div.post-description p').html(tempdescription);
 
-        if (question.viewCount && Squestion.viewCount > 1)
+        if (question.viewCount && question.viewCount > 1)
         {
             $(htmlItem).find('span.view-count').text(question.viewCount + " views");
         }
