@@ -135,7 +135,7 @@ function createAllQuestions(questions, page)
 
         $(htmlItem).find('span.action').text(" asked a ");
 
-        var questionUrl = '/feed/' + question.urlSlug || question.questionId;
+        var questionUrl = '/feed/' + question.urlSlug == null ? question.questionId : question.urlSlug;
         $(htmlItem).find('a.target').text("Question").attr("href", questionUrl);
 
         //$(htmlItem).find('p.designation').text(feed.userDesignation);
