@@ -126,7 +126,7 @@ function createAllQuestions(questions)
         var htmlItem = $('div.item.hide').clone().removeClass('hide');
 
         var creatorImage = $(htmlItem).find('.post-creator-image');
-        $(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+        $(creatorImage).attr("href", "\Account\Profile" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
 
         $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "\Account\Profile" + question.userId);
 
