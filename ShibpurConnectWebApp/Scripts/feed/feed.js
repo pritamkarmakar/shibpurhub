@@ -1,4 +1,4 @@
-﻿function getMonth(month) {
+function getMonth(month) {
     var monthArray = {
         "0": "Jan",
         "1": "Feb",
@@ -53,7 +53,8 @@ function loadQuestions(pageNumber) {
                 var questions = result;
                 var totalPages = questions[0].totalPages || 0;
                 buildPagination(totalPages);
-                createQuestions(questions);
+                //createQuestions(questions);
+                createAllQuestions(questions)
                 $('.pagination').show();
             }
         });
@@ -73,7 +74,8 @@ function loadQuestions(pageNumber) {
                     var totalPages = questions[0].totalPages || 0;
                     buildPagination(totalPages);
                 }
-                createQuestions(questions);
+                //createQuestions(questions);
+                createAllQuestions(questions)
                 $('.pagination').show();
             },
             "error": function (err) {
@@ -112,6 +114,69 @@ function buildPagination(pages) {
             return false;
         });
     }
+}
+
+function createAllQuestions(questions)
+{
+    if (!questions) {
+        return;
+    }
+    
+    $(questions).each(function (index, question) {
+        var htmlItem = $('div.item.hide').clone().removeClass('hide');
+
+        var creatorImage = $(htmlItem).find('.post-creator-image');
+        $(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+
+        $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "\Account\Profile" + question.userId);
+
+        $(htmlItem).find('span.action').text(" asked a ");
+
+        $(htmlItem).find('a.target').text("Question").attr("href", question.urlSlug);
+
+        //$(htmlItem).find('p.designation').text(feed.userDesignation);
+
+        $(htmlItem).find('h2.title').text(question.title).attr("href", '/feed/' + question.urlSlug || question.questionId);
+
+        var tempdescription = question.description.substring(0, 250);
+        $(htmlItem).find('div.post-description p').html(tempdescription);
+
+        if (question.viewCount && Squestion.viewCount > 1)
+        {
+            $(htmlItem).find('span.view-count').text(question.viewCount + " views");
+        }
+        
+        var answerCount = question.answerCount || 0;
+        if (answerCount > 1) {
+            $(htmlItem).find('span.answer-count').text(answerCount + " answers");
+        }
+        
+        $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
+        
+        $("div.feed-list").append(htmlItem);
+        
+        $(htmlItem).find('.follow-ul').show();
+        var followButton = $(htmlItem).find('.follow-ul a.thumbs');
+        $(followButton).click(function(event){
+            event.preventDefault();
+
+            var button = $(this);
+            var textSpan = $(button).find('span');
+            var icon = $(button).find('i.fa');
+            if($(button).hasClass('active'))
+            {
+                $(button).removeClass('active');
+                $(textSpan).text('Follow');
+                $(icon).removeClass('fa-check').addClass('fa-plus-circle');
+            }
+            else
+            {
+                $(button).addClass('active');
+                $(textSpan).text('Following');
+                $(icon).removeClass('fa-plus-circle').addClass('fa-check');
+            }
+        });
+    });
 }
 
 function createQuestions(questions) {
