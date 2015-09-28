@@ -381,6 +381,7 @@
     <Content Include="Content\feed\details.css" />
     <Content Include="Content\feed\detailsmobile.css" />
     <Content Include="Content\feed\feed.css" />
+    <Content Include="Content\feed\feedlistV1.css" />
     <Content Include="Content\feed\feedmobile.css" />
     <Content Include="Content\flatly.css" />
     <Content Include="Content\cosmo.css" />

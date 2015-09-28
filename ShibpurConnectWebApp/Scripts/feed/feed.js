@@ -1,4 +1,4 @@
-function getMonth(month) {
+﻿function getMonth(month) {
     var monthArray = {
         "0": "Jan",
         "1": "Feb",
@@ -20,6 +20,7 @@ function getMonth(month) {
 $(document).ready(function () {
 
     loadQuestions(0);
+
     $('.pagination li a').click(function () {
         var anchor = $(this);
         $('.pagination').hide();
@@ -34,6 +35,8 @@ $(document).ready(function () {
 });
 
 function loadQuestions(pageNumber) {
+    $('#currentPage').val(pageNumber);
+
     var url = window.location.href;
     if (url.indexOf("FeedByCategory") > 1) {
         var splitArr = url.split('/');
@@ -52,9 +55,9 @@ function loadQuestions(pageNumber) {
                 $('#loadingdiv').hide();
                 var questions = result;
                 var totalPages = questions[0].totalPages || 0;
-                buildPagination(totalPages);
+                //buildPagination(totalPages);
                 //createQuestions(questions);
-                createAllQuestions(questions)
+                createAllQuestions(questions, pageNumber)
                 $('.pagination').show();
             }
         });
@@ -72,10 +75,10 @@ function loadQuestions(pageNumber) {
                 var questions = result;
                 if (pageNumber == 0) {
                     var totalPages = questions[0].totalPages || 0;
-                    buildPagination(totalPages);
+                    //buildPagination(totalPages);
                 }
                 //createQuestions(questions);
-                createAllQuestions(questions)
+                createAllQuestions(questions, pageNumber)
                 $('.pagination').show();
             },
             "error": function (err) {
@@ -116,7 +119,7 @@ function buildPagination(pages) {
     }
 }
 
-function createAllQuestions(questions)
+function createAllQuestions(questions, page)
 {
     if (!questions) {
         return;
@@ -132,13 +135,18 @@ function createAllQuestions(questions)
 
         $(htmlItem).find('span.action').text(" asked a ");
 
-        $(htmlItem).find('a.target').text("Question").attr("href", question.urlSlug);
+        var questionUrl = '/feed/' + question.urlSlug || question.questionId;
+        $(htmlItem).find('a.target').text("Question").attr("href", questionUrl);
 
         //$(htmlItem).find('p.designation').text(feed.userDesignation);
 
-        $(htmlItem).find('h2.title').text(question.title).attr("href", '/feed/' + question.urlSlug || question.questionId);
+        $(htmlItem).find('h2.title a').text(question.title).attr("href", questionUrl);;
 
-        var tempdescription = question.description.substring(0, 250);
+        var tempdescription = question.description;
+        if (tempdescription.length > 300)
+        {
+            tempdescription = tempdescription.substring(0, 300) + " ...";
+        }
         $(htmlItem).find('div.post-description p').html(tempdescription);
         $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
 
@@ -154,7 +162,12 @@ function createAllQuestions(questions)
         
         $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
         
-        $("div.feed-list").append(htmlItem);
+        if (!page) {
+            $("div.feed-list").append(htmlItem);
+        }
+        else {
+            $(htmlItem).insertBefore("div.row.load:not('.hide')");
+        }
         
         $(htmlItem).find('.follow-ul').show();
         var followButton = $(htmlItem).find('.follow-ul a.thumbs');
@@ -178,6 +191,27 @@ function createAllQuestions(questions)
             }
         });
     });
+
+    if (!page) {
+        var loadMoreDiv = $("div.feed-list .load").clone().removeClass('hide');
+        $("div.feed-list").append(loadMoreDiv);
+
+        $('a.loadMore').click(function (event) {
+            event.preventDefault();
+
+            $('.toggleThis.loadlabel').hide();
+            $('.toggleThis.spinner').show();
+
+            var currentPage = parseInt($('#currentPage').val());
+            loadQuestions(currentPage + 1);
+        });
+
+        $("#loading").hide();
+    }
+    else {
+        $('.toggleThis.loadlabel').show();
+        $('.toggleThis.spinner').hide();
+    }
 }
 
 function createQuestions(questions) {
