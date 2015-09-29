@@ -40,4 +40,26 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         //e.g. Pritam asked a qustion: Who is the...
         public string DisplayText { get; set; }
     }
+
+    public class UserActivityLogWithContent : UserActivityLog
+    {
+        public UserActivityLogWithContent()
+        {
+
+        }
+
+        public UserActivityLogWithContent(UserActivityLog userActivityLog)
+        {
+            this.ActedOnObjectId = userActivityLog.ActedOnObjectId;
+            this.ActedOnUserId = userActivityLog.ActedOnUserId;
+            this.Activity = userActivityLog.Activity;
+            this.ActivityLogId = userActivityLog.ActivityLogId;
+            this.UserId = userActivityLog.UserId;
+            this.HappenedAtUTC = userActivityLog.HappenedAtUTC;
+        }
+
+        public Answer Answer { get; set; }
+
+        public Question Question { get; set; }
+    }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,7 +6,8 @@ using System.Web;
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
     public class FeedContentDetail
-    {       
+    {
+        public string LogId { get; set; }
 
         public string Header { get; set; }
 
@@ -23,5 +24,13 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public DateTime? PostedDateInUTC { get; set; }
 
         public int AnswersCount { get; set; }
+        
+        public int FollowedByCount { get; set; }
+        
+        public bool IsFollowedByme { get; set; }
+        
+        public int UpvoteCount { get; set; }
+        
+        public bool IsUpvotedByme { get; set; }
     }
 }

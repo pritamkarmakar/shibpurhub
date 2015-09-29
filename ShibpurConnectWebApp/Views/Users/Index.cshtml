@@ -1,4 +1,4 @@
-﻿@model ShibpurConnectWebApp.Models.WebAPI.UserProfile
+@model ShibpurConnectWebApp.Models.WebAPI.UserProfile
 
 @{
     ViewBag.Title = "All Users - ShibpurHub";
@@ -6,14 +6,17 @@
 }
 
 <style type="text/css">
+    body{
+        background: #ECEFF1;
+    }
     .user
     {
-        margin-bottom:20px;
+        /*margin-bottom:20px;*/
     }
 
     #userlist
     {
-        margin-top:40px;
+        margin-top:20px;
     }
 
     .moduleheader {
@@ -74,6 +77,60 @@
         .tt-suggestion p {
             margin: 0;
         }
+    .profileimage
+    {
+        width: 90px;
+        height: 90px;
+        margin: auto;
+        overflow: hidden;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-radius: 50px;
+        background-color: #f2f2f2;
+        background-size: cover;
+        background-position: top center;
+        text-align: center;
+    }
+    div.user .profile
+    {
+        display: block;
+        background: #FFF;
+        padding: 10px;
+        -webkit-box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+        -moz-box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+        box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+        margin: 10px 0;
+        text-decoration: none;
+        text-align: center;
+        -webkit-transition: background,.2s,fade,.2s;
+        -moz-transition: background,.2s,fade,.2s;
+        -ms-transition: background,.2s,fade,.2s;
+        -o-transition: background,.2s,fade,.2s;
+        transition: background,.2s,fade,.2s;
+    }
+    .profile h3 
+    {
+        font-size: .9em;
+        color: #1F9684;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+    
+    div.user .profile span
+    {
+        color: #455A64;
+    }
+    
+    div.user a.profile:hover
+    {
+        color: #fff;
+        background: #1F9684;
+    }
+    
+    div.user a.profile:hover h3, div.user a.profile:hover span
+    {
+        color: #fff;
+    }
 
 </style>
 
@@ -101,9 +158,9 @@
 
                 $(result).each(function (i, userinfo) {
                     if (userinfo.profileImageURL == null)
-                        $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                        $('#userlist').append("<div class='user col-md-2 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + "</h3><span style='font-size:12px;'>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                     else
-                        $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                        $('#userlist').append("<div class='user col-md-2 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                 });
             }
         });
@@ -141,9 +198,9 @@
                                 // update the div with the user data received from the API
                                 $(result).each(function (i, userinfo) {
                                     if (userinfo.profileImageURL == null)
-                                        $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                                        $('#userlist').append("<div class='user col-md-2 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                                     else
-                                        $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                                        $('#userlist').append("<div class='user col-md-2 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                                 });
                             }
                         }
@@ -164,9 +221,9 @@
                     else {
                         $(allusers).each(function (i, userinfo) {
                             if (userinfo.profileImageURL == null)
-                                $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                                $('#userlist').append("<div class='user col-md-2 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><h3>" +userinfo.firstName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                             else
-                                $('#userlist').append("<div class='user col-md-3'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
+                                $('#userlist').append("<div class='user col-md-2 col-xs-12 col-sm-6'><a class='profile' href='/Account/Profile?userId=" + userinfo.id + "'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><h3>" +userinfo.firstName + "</h3><span style='font-size:12px; '>Reputation: " + userinfo.reputationCount + "</span></a></div>")
                         });
                     }
                 }
@@ -177,7 +234,8 @@
 
 <div>
     <div class="col-md-12">
-        <div class="row subheader" style="border-bottom-style:dotted">
+
+        <div class="row subheader" style="border-bottom-style:dotted; display: none">
             <h2 class="moduleheader" style="float:left;">Users</h2>
             <div id="tabs" style="float:right">
                 <ul class="nav nav-pills" role="tablist">
@@ -187,9 +245,10 @@
                 </ul>
             </div>
         </div>
+
         <div class="row">
             <div class="row">
-                <form role="search" style="margin-top:20px;">                  
+                <form role="search" >                  
                     <div class="input-group input-group-sm" id="the-basics">
                         <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">
                         @*<div class="input-group-btn">
