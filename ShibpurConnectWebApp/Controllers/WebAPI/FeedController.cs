@@ -21,6 +21,7 @@ using ShibpurConnectWebApp.Providers;
 using WebApi.OutputCache.V2;
 using System.Text.RegularExpressions;
 using System.Configuration;
+using WebApi.OutputCache.Core.Cache;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -56,17 +57,55 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _educationalHistoriesController = new EducationalHistoriesController();
         }
 
+        /// <summary>
+        /// Gets my feeds.
+        /// </summary>
+        /// <param name="loggedInUserId">The logged in user identifier.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="alreadyShown">The alrady shown.</param>
+        /// <returns></returns>
         [CacheControl()]
         [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
-        private async Task<IHttpActionResult> GetPersonalizedFeedsCached(string userId, IList<string> followingUsers, IList<string> followingQuestions, int page = 0, int alreadyShown = 0)
+        public async Task<IHttpActionResult> GetPersonalizedFeeds(string loggedInUserId, int page = 0, int alreadyShown = 0)
         {
             try
             {
+                //ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                //if (principal == null || principal.Identity == null || string.IsNullOrEmpty(principal.Identity.Name))
+                //{
+                //    return BadRequest("No UserId is found");
+                //}
+
+                //var email = principal.Identity.Name;
+
+                if(string.IsNullOrEmpty(loggedInUserId))
+                {
+                    return BadRequest("No UserId is found");
+                }
+
                 var helper = new Helper.Helper();
+                var userResult = helper.FindUserById(loggedInUserId);
+                var userDetail = await userResult;
+                if (userDetail == null)
+                {
+                    return BadRequest("No User is found");
+                }
+
+                var userId = userDetail.Id;                
+
                 var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(alreadyShown).Take(100).ToList();
 
-                var followedUsers = followingUsers ?? new List<string>();
-                var followedQuestions = followingQuestions ?? new List<string>();
+
+                //Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                //var userDetail = await actionResult;
+
+                //if(userDetail == null)
+                //{
+                //return NotFound();
+                //}
+
+                var followedUsers = userDetail.Following ?? new List<string>();
+                var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
 
                 var allFeedsFollowedByMe = from x in allFeeds
                                            where followedUsers.Contains(x.UserId) ||
@@ -74,6 +113,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                            select x;
 
                 var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
+
+                //foreach(var feed in feedsFollowedByMe)
+                //{
+                //    allFeeds.Remove(feed);
+                //}
+                //allFeeds.AddRange(feedsFollowedByMe);
+
+                //var feeds = feedsFollowedByMe.Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
+
 
 
                 var feedResults = new List<PersonalizedFeedItem>();
@@ -215,50 +263,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 };
 
                 return Ok(feedresultSet);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message + System.Environment.NewLine + ex.StackTrace);
-            }
-        }
-
-        /// <summary>
-        /// Gets my feeds.
-        /// </summary>
-        /// <param name="page">The page.</param>
-        /// <param name="alreadyShown">The alrady shown.</param>
-        /// <returns></returns>
-        
-        public async Task<IHttpActionResult> GetPersonalizedFeeds(int page = 0, int alreadyShown = 0)
-        {
-            try
-            {
-                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-                if (principal == null || principal.Identity == null || string.IsNullOrEmpty(principal.Identity.Name))
-                {
-                    return BadRequest("No UserId is found");
-                }
-
-                var email = principal.Identity.Name;
-
-                var helper = new Helper.Helper();
-                var userResult = helper.FindUserByEmail(email);
-                var userDetail = await userResult;
-                if (userDetail == null)
-                {
-                    return BadRequest("No UserId is found");
-                }
-                
-                var userId = userDetail.Id;
-
-                var allfeedsWithContentResult = await GetPersonalizedFeedsCached(userId, 
-                                                                                userDetail.Following, 
-                                                                                userDetail.FollowedQuestions, 
-                                                                                page, 
-                                                                                alreadyShown);
-                var allFeedResults = allfeedsWithContentResult as OkNegotiatedContentResult<FeedReult>;
-                var result = allFeedResults == null ? new FeedReult() : allFeedResults.Content;
-                return Ok(result);
             }
             catch (Exception ex)
             {

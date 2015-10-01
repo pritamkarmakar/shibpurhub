@@ -314,6 +314,7 @@
     <Compile Include="Controllers\WebAPI\StatusController.cs" />
     <Compile Include="Controllers\WebAPI\UserActivityController.cs" />
     <Compile Include="Controllers\WebAPI\UsersController.cs" />
+    <Compile Include="Controllers\WebAPI\WebApiCacheHelper.cs" />
     <Compile Include="Controllers\WebAPI\WebsiteAlertController.cs" />
     <Compile Include="Helper\MongoHelper.cs" />
     <Compile Include="Helper\ElasticSearchHelper.cs" />

@@ -11,12 +11,16 @@
 
     function loadFeeds(page)
     {
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        var userInfo = $.parseJSON(userDetails);        
+        var loggedInUserId = userInfo == null ? "" : userInfo.id;
+
         $('#currentPage').val(page);
         var alreadyShown = parseInt($('#alreadyShown').val()) || 0;
 
         scAjax({
             "url": "feed/GetPersonalizedFeeds",
-            "data": { "page": page || 0, "alreadyShown": alreadyShown },
+            "data": { "loggedInUserId": loggedInUserId, "page": page || 0, "alreadyShown": alreadyShown },
             "success": function (result) {
                 if (!result) {
                     return;

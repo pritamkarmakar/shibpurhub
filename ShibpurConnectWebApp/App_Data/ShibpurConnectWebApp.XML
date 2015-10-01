@@ -570,10 +570,11 @@
             <param name="askToAnswer"></param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetPersonalizedFeeds(System.Int32,System.Int32)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetPersonalizedFeeds(System.String,System.Int32,System.Int32)">
             <summary>
             Gets my feeds.
             </summary>
+            <param name="loggedInUserId">The logged in user identifier.</param>
             <param name="page">The page.</param>
             <param name="alreadyShown">The alrady shown.</param>
             <returns></returns>

@@ -287,6 +287,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + question.UserId);
                 cache.RemoveStartsWith("notifications-getnotifications-userId=" + question.UserId);
 
+                //Invalidate personalized feed cache
+                var userIdToInvalidate = question.Followers == null ? new List<string>() : question.Followers;
+                userIdToInvalidate.Add(userInfo.Id);
+                BackgroundJob.Enqueue(() => WebApiCacheHelper.InvalidatePersonalizedFeedCache(userIdToInvalidate));
+
                 return CreatedAtRoute("DefaultApi", new { id = answer.QuestionId }, answer);
             }
             catch (MongoDB.Driver.MongoConnectionException ex)
@@ -473,7 +478,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             //Call WebApi to log activity
             var userActivityController = new UserActivityController();
             userActivityController.PostAnActivity(log);
-        }
+        }        
         
     }
 }

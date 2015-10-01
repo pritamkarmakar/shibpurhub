@@ -21,6 +21,7 @@ using ShibpurConnectWebApp.Providers;
 using WebApi.OutputCache.V2;
 using System.Text.RegularExpressions;
 using System.Configuration;
+using Hangfire;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -366,7 +367,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="questionId">question id</param>
         /// <returns></returns>
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public IHttpActionResult GetAnswersCount(string questionId)
         {
             try
@@ -544,8 +545,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 if (followersList == null)
                 {
                     questionObj.Followers = new List<string>();
-                }                
-                
+                }
+
                 // if userid not present in the followerlist 
                 if (!questionObj.Followers.Contains(userInfo.Id))
                 {
@@ -558,7 +559,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     return Ok("Successfully followed this question");
                 }
                 else
-                    return Ok("you are already following this question");               
+                    return Ok("you are already following this question");
 
             }
 
@@ -818,6 +819,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // invalidate the GetAnswersCount api for this question
             cache.RemoveStartsWith("questions-getquestionsbyuser-userId=" + userInfo.Id);
+
+            //Invalidate personalized feed cache
+            var userIdToInvalidate = userInfo.Followers == null ? new List<string>() : userInfo.Followers;
+            userIdToInvalidate.Add(userInfo.Id);
+            BackgroundJob.Enqueue(() => WebApiCacheHelper.InvalidatePersonalizedFeedCache(userIdToInvalidate));
 
             // if mongo failed to save the data then send error
             if (!result.Ok)
