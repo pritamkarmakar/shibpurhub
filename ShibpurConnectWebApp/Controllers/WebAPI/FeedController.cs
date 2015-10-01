@@ -56,14 +56,179 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _educationalHistoriesController = new EducationalHistoriesController();
         }
 
+        [CacheControl()]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        private async Task<IHttpActionResult> GetPersonalizedFeedsCached(string userId, IList<string> followingUsers, IList<string> followingQuestions, int page = 0, int alreadyShown = 0)
+        {
+            try
+            {
+                var helper = new Helper.Helper();
+                var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(alreadyShown).Take(100).ToList();
+
+                var followedUsers = followingUsers ?? new List<string>();
+                var followedQuestions = followingQuestions ?? new List<string>();
+
+                var allFeedsFollowedByMe = from x in allFeeds
+                                           where followedUsers.Contains(x.UserId) ||
+                                                 (followedQuestions.Contains(x.ActedOnObjectId) && x.UserId != userId)
+                                           select x;
+
+                var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
+
+
+                var feedResults = new List<PersonalizedFeedItem>();
+                string previousObjectId = string.Empty;
+                var distinctUserId = new List<string>();
+
+                var lstLogsWithContent = new List<UserActivityLogWithContent>();
+                foreach (var feedFollowedByMe in feedsFollowedByMe)
+                {
+                    var logWithContent = new UserActivityLogWithContent(feedFollowedByMe);
+                    lstLogsWithContent.Add(logWithContent);
+                }
+
+                var allfeedsWithContentResult = await GetAllFeedContents(lstLogsWithContent, userId);
+                var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<FeedContentDetail>>;
+                var allfeedsWithContent = z.Content ?? new List<FeedContentDetail>();
+
+                var processedItemCount = page == 0 ? 0 : alreadyShown;
+                for (var i = 0; feedResults.Count < PAGESIZE && i < feedsFollowedByMe.ToList().Count; i++)
+                {
+                    //foreach(var feed in feeds)
+                    //{
+                    processedItemCount += 1;
+
+                    var feeds = feedsFollowedByMe.ToList();
+                    var feed = feeds[i];
+
+                    if (feed == null)
+                    {
+                        continue;
+                    }
+
+                    //Ignore Upvote, Update profile image
+                    if (feed.Activity == 3 || feed.Activity == 9)
+                    {
+                        continue;
+                    }
+
+                    var feedItem = new PersonalizedFeedItem();
+                    feedItem.UserId = feed.UserId;
+                    if (!distinctUserId.Contains(feed.UserId))
+                    {
+                        distinctUserId.Add(feed.UserId);
+                    }
+
+                    FeedContentDetail feedContent = null;
+
+                    if (feed.Activity == 6 || feed.Activity == 7)
+                    {
+                        var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
+                        var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
+                        if (y == null)
+                        {
+                            continue;
+                        }
+
+                        feedContent = y.Content;
+                    }
+                    else
+                    {
+                        feedContent = allfeedsWithContent.FirstOrDefault(a => a.LogId == feed.ActivityLogId);
+                    }
+
+
+                    feedItem.ItemHeader = feedContent == null ? string.Empty : feedContent.Header;
+                    feedItem.ItemDetail = feedContent == null ? string.Empty : feedContent.SimpleDetail;
+                    feedItem.TargetAction = feedContent == null ? string.Empty : feedContent.ActionName;
+                    feedItem.TargetActionUrl = feedContent == null ? string.Empty : feedContent.ActionUrl;
+
+                    feedItem.ActionText = GetActionText(feed.Activity);
+                    feedItem.ActivityType = feed.Activity;
+
+                    feedItem.ViewCount = feedContent == null ? 0 : feedContent.ViewCount;
+                    feedItem.AnswersCount = feedContent == null ? 0 : feedContent.AnswersCount;
+                    feedItem.PostedDateInUTC = feedContent == null ? DateTime.Now : feedContent.PostedDateInUTC;
+
+                    feedItem.FollowedByCount = feedContent == null ? 0 : feedContent.FollowedByCount;
+                    feedItem.IsFollowedByme = feedContent == null ? false : feedContent.IsFollowedByme;
+                    feedItem.UpvoteCount = feedContent == null ? 0 : feedContent.UpvoteCount;
+                    feedItem.IsUpvotedByme = feedContent == null ? false : feedContent.IsUpvotedByme;
+
+                    if (!string.IsNullOrEmpty(previousObjectId) && previousObjectId == feed.ActedOnObjectId)
+                    {
+                        if (feedItem.ChildItems == null)
+                        {
+                            feedItem.ChildItems = new List<PersonalizedFeedItem>();
+                        }
+
+                        feedItem.ChildItems.Add(feedItem);
+                    }
+                    else
+                    {
+                        feedResults.Add(feedItem);
+                    }
+
+                    previousObjectId = feed.ActedOnObjectId;
+                    //}
+                }
+
+                //var userIds = feeds.Select(a => a.UserId).Distinct();
+                var userDetails = new Dictionary<string, FeedUserDetail>();
+
+                foreach (var id in distinctUserId)
+                {
+                    Task<CustomUserInfo> result = helper.FindUserById(id);
+                    var userDetailInList = await result;
+                    var user = new FeedUserDetail
+                    {
+                        FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,
+                        ImageUrl = userDetailInList.ProfileImageURL
+                    };
+                    var careerTextResult = await GetDesignationText(userDetailInList.Email);
+                    var careerText = careerTextResult as OkNegotiatedContentResult<string>;
+                    user.CareerDetail = careerText == null ? string.Empty : careerText.Content;
+
+                    userDetails.Add(id, user);
+                }
+
+                foreach (var feedResult in feedResults)
+                {
+                    var matchedUser = userDetails[feedResult.UserId];
+                    if (matchedUser != null)
+                    {
+                        feedResult.UserName = matchedUser.FullName;
+                        feedResult.UserDesignation = matchedUser.CareerDetail;
+                        feedResult.UserProfileUrl = "/Account/Profile?userId=" + feedResult.UserId;
+                        feedResult.UserProfileImageUrl = matchedUser.ImageUrl;
+                    }
+
+                    // TO-DO: Do the same for child items
+                }
+
+                //var orderedFeedResults = feedResults.OrderBy(a => a.ActivityType).ThenByDescending(b => b.PostedDateInUTC).ToList();
+
+                var feedresultSet = new FeedReult
+                {
+                    AlreadyProcessedItemCount = processedItemCount,
+                    FeedItems = feedResults
+                };
+
+                return Ok(feedresultSet);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message + System.Environment.NewLine + ex.StackTrace);
+            }
+        }
+
         /// <summary>
         /// Gets my feeds.
         /// </summary>
         /// <param name="page">The page.</param>
         /// <param name="alreadyShown">The alrady shown.</param>
         /// <returns></returns>
-        [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 20, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        
         public async Task<IHttpActionResult> GetPersonalizedFeeds(int page = 0, int alreadyShown = 0)
         {
             try
@@ -86,176 +251,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 
                 var userId = userDetail.Id;
 
-                var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(alreadyShown).Take(100).ToList();                
-
-                
-                //Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
-                //var userDetail = await actionResult;
-
-                //if(userDetail == null)
-                //{
-                    //return NotFound();
-                //}
-
-                var followedUsers = userDetail.Following ?? new List<string>();
-                var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
-
-                var allFeedsFollowedByMe = from x in allFeeds
-                                        where followedUsers.Contains(x.UserId) || 
-                                              (followedQuestions.Contains(x.ActedOnObjectId) && x.UserId != userId)
-                                        select x;
-
-                var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList(); 
-
-                //foreach(var feed in feedsFollowedByMe)
-                //{
-                //    allFeeds.Remove(feed);
-                //}
-                //allFeeds.AddRange(feedsFollowedByMe);
-
-                //var feeds = feedsFollowedByMe.Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
-
-                
-
-                var feedResults = new List<PersonalizedFeedItem>();
-                string previousObjectId = string.Empty;
-                var distinctUserId = new List<string>();
-
-                var lstLogsWithContent = new List<UserActivityLogWithContent>();
-                foreach (var feedFollowedByMe in feedsFollowedByMe)
-                {
-                    var logWithContent = new UserActivityLogWithContent(feedFollowedByMe);
-                    lstLogsWithContent.Add(logWithContent);
-                }
-
-                var allfeedsWithContentResult = await GetAllFeedContents(lstLogsWithContent, userId);
-                var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<FeedContentDetail>>;
-                var allfeedsWithContent = z.Content ?? new List<FeedContentDetail>();
-
-                var processedItemCount = page == 0 ? 0 : alreadyShown;
-                for(var i = 0; feedResults.Count < PAGESIZE && i < feedsFollowedByMe.ToList().Count; i++)
-                {
-                //foreach(var feed in feeds)
-                //{
-                    processedItemCount += 1;
-
-                    var feeds = feedsFollowedByMe.ToList();
-                    var feed = feeds[i];
-
-                    if(feed == null)
-                    {
-                        continue;
-                    }
-                    
-                    //Ignore Upvote, Update profile image
-                    if(feed.Activity == 3 || feed.Activity == 9)
-                    {
-                        continue;
-                    }
-                    
-                    var feedItem = new PersonalizedFeedItem();
-                    feedItem.UserId = feed.UserId;
-                    if(!distinctUserId.Contains(feed.UserId))
-                    {
-                        distinctUserId.Add(feed.UserId);
-                    }
-
-                    FeedContentDetail feedContent = null;
-
-                    if (feed.Activity == 6 || feed.Activity == 7)
-                    {
-                        var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
-                        var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
-                        if(y == null)
-                        {
-                            continue;
-                        }
-
-                        feedContent = y.Content;
-                    }
-                    else
-                    {
-                        feedContent = allfeedsWithContent.FirstOrDefault(a => a.LogId == feed.ActivityLogId);
-                    }
-
-
-                    feedItem.ItemHeader = feedContent == null ? string.Empty : feedContent.Header;
-                    feedItem.ItemDetail = feedContent == null ? string.Empty : feedContent.SimpleDetail;
-                    feedItem.TargetAction = feedContent == null ? string.Empty : feedContent.ActionName;
-                    feedItem.TargetActionUrl = feedContent == null ? string.Empty : feedContent.ActionUrl;
-
-                    feedItem.ActionText = GetActionText(feed.Activity);
-                    feedItem.ActivityType = feed.Activity;
-                    
-                    feedItem.ViewCount = feedContent == null ? 0 : feedContent.ViewCount;
-                    feedItem.AnswersCount = feedContent == null ? 0 : feedContent.AnswersCount;
-                    feedItem.PostedDateInUTC = feedContent == null ? DateTime.Now : feedContent.PostedDateInUTC;
-                    
-                    feedItem.FollowedByCount = feedContent == null ? 0 : feedContent.FollowedByCount;
-                    feedItem.IsFollowedByme = feedContent == null ? false : feedContent.IsFollowedByme;
-                    feedItem.UpvoteCount = feedContent == null ? 0 : feedContent.UpvoteCount;
-                    feedItem.IsUpvotedByme = feedContent == null ? false : feedContent.IsUpvotedByme;
-                    
-                    if(!string.IsNullOrEmpty(previousObjectId) && previousObjectId == feed.ActedOnObjectId)
-                    {
-                        if(feedItem.ChildItems == null)
-                        {
-                            feedItem.ChildItems = new List<PersonalizedFeedItem>();
-                        }
-                        
-                        feedItem.ChildItems.Add(feedItem);
-                    }
-                    else
-                    {
-                        feedResults.Add(feedItem);
-                    }
-                    
-                    previousObjectId = feed.ActedOnObjectId;                    
-                //}
-                }
-                
-                //var userIds = feeds.Select(a => a.UserId).Distinct();
-                var userDetails = new Dictionary<string, FeedUserDetail>();
-                
-                foreach (var id in distinctUserId)
-                {
-                    Task<CustomUserInfo> result = helper.FindUserById(id);
-                    var userDetailInList = await result;
-                    var user = new FeedUserDetail
-                    {
-                        FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,                        
-                        ImageUrl = userDetailInList.ProfileImageURL
-                    };
-                    var careerTextResult = await GetDesignationText(userDetailInList.Email);
-                    var careerText = careerTextResult as OkNegotiatedContentResult<string>;
-                    user.CareerDetail = careerText == null ? string.Empty : careerText.Content;
-
-                    userDetails.Add(id, user);
-                }
-                
-                foreach(var feedResult in feedResults)
-                {
-                    var matchedUser = userDetails[feedResult.UserId];
-                    if(matchedUser != null)
-                    {
-                        feedResult.UserName = matchedUser.FullName;
-                        feedResult.UserDesignation = matchedUser.CareerDetail;
-                        feedResult.UserProfileUrl = "/Account/Profile?userId=" + feedResult.UserId;
-                        feedResult.UserProfileImageUrl = matchedUser.ImageUrl;
-                    }
-                    
-                    // TO-DO: Do the same for child items
-                }
-                
-                //var orderedFeedResults = feedResults.OrderBy(a => a.ActivityType).ThenByDescending(b => b.PostedDateInUTC).ToList();
-
-                var feedresultSet = new FeedReult
-                {
-                    AlreadyProcessedItemCount = processedItemCount,
-                    FeedItems = feedResults
-                };
-
-                return Ok(feedresultSet);
+                var allfeedsWithContentResult = await GetPersonalizedFeedsCached(userId, 
+                                                                                userDetail.Following, 
+                                                                                userDetail.FollowedQuestions, 
+                                                                                page, 
+                                                                                alreadyShown);
+                var allFeedResults = allfeedsWithContentResult as OkNegotiatedContentResult<FeedReult>;
+                var result = allFeedResults == null ? new FeedReult() : allFeedResults.Content;
+                return Ok(result);
             }
             catch (Exception ex)
             {
