@@ -1,0 +1,105 @@
+﻿@using ShibpurConnectWebApp.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log In - ShibpurHub";
+}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // disable jquery validation
+        $('.loginform').validate();
+        $(".loginform").removeAttr("novalidate");
+        $('.btn-login').click(function() {
+
+            var userName = $('.email').val();
+            var password = $('.password').val();
+            jQuery.support.cors = true;
+            var SERVER = "/api/";
+            var token = localStorage.getItem("TOKEN") || "UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT";
+            var data = { "userEmail": userName, "password": password };
+            $.ajax({
+                url: SERVER + "account/FindUser",
+                type: "GET",
+                dataType: "json",
+                data: data,
+                async: false,
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function(result) {
+                    if (!result) {
+                        return;
+                    }
+                    localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
+                }
+            });
+        });
+    });
+</script>
+
+<style type="text/css">
+    .here {
+    height: 150px;
+  border-left:1px solid #d3d3d3;
+    position:relative;
+        text-align: center;
+}
+</style>
+
+<div class="container" style="margin-top:30px">
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div>
+            <div class="panel panel-default">
+                <div style="margin-left: 28px; margin-top: 15px;">
+                    <span style="font-size: 24px;">Login</span>
+                </div>
+                <div class="panel-body">
+                    <div class="col-xs-12">
+                        <section id="socialLoginForm">
+                            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel {ReturnUrl = ViewBag.ReturnUrl})
+                        </section>
+                    </div>
+                    <div class="col-xs-12">
+                        <p>Or</p>
+                    </div>
+                    <div class="col-xs-12">
+                        @using (Html.BeginForm("Login", "Account", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {@class = "loginform"}))
+                        {
+                            @*<span style="font-size: 18px;">@ViewBag.Title</span><hr style="margin-top: 10px; margin-bottom: 10px;" />*@
+                            @Html.AntiForgeryToken()
+                            @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" class="sr-only">Email address</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                                    @Html.TextBoxFor(m => m.Email, new {@class = "form-control email", @placeholder = "Enter email", @type = "email", id = "exampleInputEmail1", @required = "required"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1" class="sr-only">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
+                                    @*<input type="password" class="form-control password" id="exampleInputPassword1"
+                        placeholder="Password">*@
+                                    @Html.PasswordFor(m => m.Password, new {@class = "form-control password", @placeholder = "Password", @required = "required"})
+                                </div>
+                                <a href="/Account/ForgotPassword" class="pull-right small">Forgot password?</a>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                    Stay signed in
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-sm btn-login">Sign in</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
