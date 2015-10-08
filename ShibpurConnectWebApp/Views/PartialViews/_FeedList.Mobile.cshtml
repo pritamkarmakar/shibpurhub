@@ -1,15 +1,12 @@
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedmobile.css")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css")" />
 
-
 <script type="text/javascript">
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-
 <script src="@Url.Content("~/Scripts/feed/feed.js?v=1.5")" type="text/javascript"></script>
-
-<div class="main">    
+<div class="main">
     <div class="feed-list" id="threads">
         <!--div for loading message for the question list-->
         <div class="row item hide">
@@ -56,7 +53,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="col-xs-7 col-md-10">
+                        <div class="col-xs-7 col-md-10 hidden-xs">
                             <ul class="extra-details pull-right list-inline">
                                 <li>
                                     <span class="view-count"></span>
@@ -82,10 +79,9 @@
             </div>
         </div>
     </div>
-   
-    <input type="hidden" id="currentPage" value="0" />   
-</div>
 
+    <input type="hidden" id="currentPage" value="0" />
+</div>
 <div id="loadingdiv">
     <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
-</div> 
+</div>

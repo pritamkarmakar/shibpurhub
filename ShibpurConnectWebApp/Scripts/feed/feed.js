@@ -148,6 +148,7 @@ function createAllQuestions(questions, page)
             tempdescription = tempdescription.substring(0, 300) + " ...";
         }
         $(htmlItem).find('div.post-description p').html(tempdescription);
+        $(htmlItem).find('p.designation').text(question.careerDetail);
         $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
 
         if (question.viewCount && question.viewCount > 1)

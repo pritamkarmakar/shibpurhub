@@ -94,6 +94,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         public long TotalPages { get; set; }
 
+        [DataMember]
+        public string CareerDetail { get; set; }
+
         public QuestionViewModel Copy(Question question)
         {
             return new QuestionViewModel

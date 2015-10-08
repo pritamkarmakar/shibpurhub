@@ -226,16 +226,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 foreach (var id in distinctUserId)
                 {
-                    Task<CustomUserInfo> result = helper.FindUserById(id);
+                    Task<CustomUserInfo> result = helper.FindUserById(id, true);
                     var userDetailInList = await result;
                     var user = new FeedUserDetail
                     {
                         FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,
                         ImageUrl = userDetailInList.ProfileImageURL
                     };
-                    var careerTextResult = await GetDesignationText(userDetailInList.Email);
-                    var careerText = careerTextResult as OkNegotiatedContentResult<string>;
-                    user.CareerDetail = careerText == null ? string.Empty : careerText.Content;
+                    //var careerTextResult = await GetDesignationText(userDetailInList.Email);
+                    //var careerText = careerTextResult as OkNegotiatedContentResult<string>;
+                    //user.CareerDetail = careerText == null ? string.Empty : careerText.Content;
+
+                    user.CareerDetail = userDetailInList.Designation + " " +
+                        (string.IsNullOrEmpty(userDetailInList.EducationInfo) ? string.Empty : (                        
+                        string.IsNullOrEmpty(userDetailInList.Designation) ? userDetailInList.EducationInfo :
+                            "(" + userDetailInList.EducationInfo + ")")
+                        );
 
                     userDetails.Add(id, user);
                 }

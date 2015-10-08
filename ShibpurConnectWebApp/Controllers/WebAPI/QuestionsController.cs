@@ -92,7 +92,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var helper = new Helper.Helper();
                 foreach (var userId in userIds)
                 {
-                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
                     var userDetail = await actionResult;
                     userDetails.Add(userId, userDetail);
                 }
@@ -156,7 +156,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var helper = new Helper.Helper();
                 foreach (var userId in userIds)
                 {
-                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
                     var userDetail = await actionResult;
                     userDetails.Add(userId, userDetail);
                 }
@@ -908,6 +908,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 UserEmail = userData.Email,
                 UserProfileImage = userData.ProfileImageURL,
                 DisplayName = userData.FirstName + " " + userData.LastName,
+                CareerDetail = userData.Designation + " " +
+                        (string.IsNullOrEmpty(userData.EducationInfo) ? string.Empty : 
+                        (string.IsNullOrEmpty(userData.Designation) ? userData.EducationInfo :
+                            "(" + userData.EducationInfo + ")")
+                        ),
                 UrlSlug = question.UrlSlug
             };
         }

@@ -1,18 +1,16 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Your personalized feed - ShibpurHub";
 }
-
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css")" />
-
 <script type="text/javascript">
     $(document).ready(function () {
-        loadFeeds(0);        
+        loadFeeds(0);
     });
 
-    function loadFeeds(page)
-    {
+    function loadFeeds(page) {
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
-        var userInfo = $.parseJSON(userDetails);        
+        var userInfo = $.parseJSON(userDetails);
         var loggedInUserId = userInfo == null ? "" : userInfo.id;
 
         $('#currentPage').val(page);
@@ -50,7 +48,7 @@
 
                         $(htmlItem).find('div.post-description img').addClass("col-md-12");
 
-                        // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer, 
+                        // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer,
                         // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
                         if (feed.activityType == 6 || feed.activityType == 7) {
                             $(htmlItem).find('div.thread-details').hide();
@@ -59,26 +57,23 @@
                         if (feed.activityType == 1 || feed.activityType == 8) {
                             $(htmlItem).find('.follow-ul').show();
                             var followButton = $(htmlItem).find('.follow-ul a.thumbs');
-                            if(feed.isFollowedByme)
-                            {
+                            if (feed.isFollowedByme) {
                                 $(followButton).addClass('active');
                                 $(followButton).find('span').text('Following');
                                 $(followButton).find('i.fa').removeClass('fa-plus-circle').addClass('fa-check');
                             }
-                            $(followButton).click(function(event){
+                            $(followButton).click(function (event) {
                                 event.preventDefault();
 
                                 var button = $(this);
                                 var textSpan = $(button).find('span');
                                 var icon = $(button).find('i.fa');
-                                if($(button).hasClass('active'))
-                                {
+                                if ($(button).hasClass('active')) {
                                     $(button).removeClass('active');
                                     $(textSpan).text('Follow');
                                     $(icon).removeClass('fa-check').addClass('fa-plus-circle');
                                 }
-                                else
-                                {
+                                else {
                                     $(button).addClass('active');
                                     $(textSpan).text('Following');
                                     $(icon).removeClass('fa-plus-circle').addClass('fa-check');
@@ -89,24 +84,21 @@
                         if (feed.activityType == 2 || feed.activityType == 5) {
                             $(htmlItem).find('.upvote-ul').show();
                             var upvoteButton = $(htmlItem).find('.upvote-ul a.thumbs');
-                            if(feed.isUpvotedByme)
-                            {
+                            if (feed.isUpvotedByme) {
                                 $(upvoteButton).addClass('active');
                                 $(upvoteButton).find('span').text('Upvoted');
                             }
-                            $(upvoteButton).click(function(event){
+                            $(upvoteButton).click(function (event) {
                                 event.preventDefault();
 
                                 var button = $(this);
                                 var textSpan = $(button).find('span');
-                                
-                                if($(button).hasClass('active'))
-                                {
+
+                                if ($(button).hasClass('active')) {
                                     $(button).removeClass('active');
                                     $(textSpan).text('Upvote');
                                 }
-                                else
-                                {
+                                else {
                                     $(button).addClass('active');
                                     $(textSpan).text('Upvoted');
                                 }
@@ -120,8 +112,7 @@
                         if (!page) {
                             $("div.feed-list").append(htmlItem);
                         }
-                        else
-                        {
+                        else {
                             $(htmlItem).insertBefore("div.row.load:not('.hide')");
                         }
                     }
@@ -143,8 +134,7 @@
 
                     $("#loading").hide();
                 }
-                else
-                {
+                else {
                     $('.toggleThis.loadlabel').show();
                     $('.toggleThis.spinner').hide();
                 }
@@ -153,97 +143,88 @@
     }
 </script>
 
+<div class="container">
 
-    <div class="container">       
-        
-            <div class="col-xs-12 col-md-9 left-side feed-list">
-                <div id="loading">
-                    <i class="fa fa-refresh fa-spin fa-2x"></i><span>Please wait while we prepare your feed...</span>
-                </div>
-                <div class="row item hide">
-                    <div class="col-xs-12 thread">
+    <div class="col-md-9 col-xs-12 left-side feed-list">
+        <div id="loading">
+            <i class="fa fa-refresh fa-spin fa-2x"></i><span>Please wait while we prepare your feed...</span>
+        </div>
+        <div class="row item hide">
+            <div class="col-xs-12 thread">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="row post-header">
+                            <div class="col-sm-12 col-xs-12 headers-col">
+                                <div class="profile-img-col">
+                                    <a href="#" class="post-creator-image"></a>
+                                </div>
+                                <p class="header-text-content ">
+                                    <a href="#" class="name-link">Pritam Karmakar</a>
+                                    <span class="action"> asked a</span>
+                                    <a href="#" class="type-link discussion target">Question</a>
+                                </p>
+                                <p class="tagline-text-content designation"></p>
+                            </div>
+                        </div>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row post-header">
-                                    <div class="col-sm-12 col-xs-12 headers-col">
+                            <div class="col-xs-12 col-md-12 ">
+                                <h2 class="title">
+                                    <a href="#">Need help to create shibpurhub animated video</a>
+                                </h2>
+                                <div class="post-description">
+                                    <p>
 
-                                        <div class="profile-img-col">
-                                            <a href="#" class="post-creator-image"></a>
-                                        </div>
-                                        <p class="header-text-content ">
-                                            <a href="#" class="name-link">Pritam Karmakar</a>
-                                            <span class="action"> asked a</span>
-                                            <a href="#" class="type-link discussion target">Question</a>
-                                        </p>
-                                        <p class="tagline-text-content designation"></p>
-                                    </div>
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-12 ">
-                                        <h2 class="title">
-                                            <a href="#">Need help to create shibpurhub animated video</a>
-                                        </h2>
-
-                                        <div class="post-description">
-                                            <p>
-                                                
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row thread-details">
-                            <div class="thread-details-container">
-                                <div class="col-xs-12 col-md-2">
-                                    <ul class="list-inline pull-left upvote-ul">
-                                        <li>
-                                            <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                        </li>
-                                    </ul>
-                                    <ul class="list-inline pull-left follow-ul">
-                                        <li>
-                                            <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-plus-circle"></i> <span>Follow</span></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-xs-12 col-md-10">
-                                    <ul class="extra-details pull-right list-inline">
-                                        <li>
-                                            <span class="view-count"></span>
-                                        </li>
-
-                                        <li>
-                                            <span class="answer-count"></span>
-                                        </li>
-
-                                        <li>
-                                            <span class="post-pub-time">Jul 31, 2015</span>
-                                        </li>
-                                    </ul>
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="row load hide">
-                    <div class="col-xs-12 thread text-center loadMoreContainer">
-                        <a href="#" class="loadMore" id="loadMoreBtn">
-                            <span class="toggleThis loadlabel" style="display: inline;">Load more</span>
-                            <span class="toggleThis spinner" style="display: none;"><i class="fa fa-spinner fa-spin fa-fw"></i> Loading more..</span>
-                        </a>
+                <div class="row thread-details">
+                    <div class="thread-details-container">
+                        <div class="col-xs-12 col-md-2">
+                            <ul class="list-inline pull-left upvote-ul">
+                                <li>
+                                    <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline pull-left follow-ul">
+                                <li>
+                                    <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-plus-circle"></i> <span>Follow</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-12 col-md-10 hidden-xs">
+                            <ul class="extra-details pull-right list-inline">
+                                <li>
+                                    <span class="view-count"></span>
+                                </li>
+                                <li>
+                                    <span class="answer-count"></span>
+                                </li>
+                                <li>
+                                    <span class="post-pub-time">Jul 31, 2015</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-3">
-                @Html.Partial("~/Views/PartialViews/_LeaderBoard.cshtml")
-                @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
-                @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
+        </div>
+        <div class="row load hide">
+            <div class="col-xs-12 thread text-center loadMoreContainer">
+                <a href="#" class="loadMore" id="loadMoreBtn">
+                    <span class="toggleThis loadlabel" style="display: inline;">Load more</span>
+                    <span class="toggleThis spinner" style="display: none;"><i class="fa fa-spinner fa-spin fa-fw"></i> Loading more..</span>
+                </a>
             </div>
-        <input type="hidden" id="currentPage" value="0" />
-        <input type="hidden" id="alreadyShown" value="0" />
+        </div>
     </div>
-
+    <div class="col-xs-12 col-md-3">
+        @Html.Partial("~/Views/PartialViews/_LeaderBoard.cshtml")
+        @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
+        @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
+    </div>
+    <input type="hidden" id="currentPage" value="0" />
+    <input type="hidden" id="alreadyShown" value="0" />
+</div>

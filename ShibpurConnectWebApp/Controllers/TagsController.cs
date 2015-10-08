@@ -13,5 +13,10 @@ namespace ShibpurConnectWebApp.Controllers
         {
             return View();
         }
+
+        public ActionResult NewTags()
+        {
+            return View();
+        }
     }
 }

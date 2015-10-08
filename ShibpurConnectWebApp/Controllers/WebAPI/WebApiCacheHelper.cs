@@ -56,7 +56,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             foreach(var id in userIds)
             {
                 var key = "feed-getpersonalizedfeeds-loggedInUserId=" + id;
-                userIds.Add(key);
+                keys.Add(key);
             }
 
             InvalidateCacheByKeys(keys);

@@ -123,7 +123,7 @@ namespace ShibpurConnectWebApp.Helper
             return "Succeed";
         }
 
-        public async Task<CustomUserInfo> FindUserByEmail(string userEmail)
+        public async Task<CustomUserInfo> FindUserByEmail(string userEmail, bool needEmploymentAndEducationDetails = false)
         {
             using (AuthRepository _repo = new AuthRepository())
             {
@@ -135,6 +135,31 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
+                    var educationInfo = string.Empty;
+                    var designation = string.Empty;
+                    if (needEmploymentAndEducationDetails)
+                    {
+                        var _mongoEducationalHistoriesHelper = new MongoHelper<EducationalHistories>();
+                        var educationalHistories = _mongoEducationalHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).OrderByDescending(b => b.GraduateYear).ToList();
+                        if (educationalHistories != null && educationalHistories.Count > 0)
+                        {
+                            educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
+                        }
+
+                        var _mongEmploymentHistoriesHelper = new MongoHelper<EmploymentHistories>();
+                        var employmentHistories = _mongEmploymentHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).ToList();
+                        if (employmentHistories != null && employmentHistories.Count > 0)
+                        {
+                            var currentJob = employmentHistories.FirstOrDefault(b => !b.To.HasValue);
+                            if (currentJob == null)
+                            {
+                                currentJob = employmentHistories.FirstOrDefault();
+                            }
+                            designation = currentJob == null ? string.Empty :
+                                currentJob.Title + ", " + currentJob.CompanyName;
+                        }
+                    }
+
                     return new CustomUserInfo()
                     {
                         Email = user.Email,
@@ -149,14 +174,16 @@ namespace ShibpurConnectWebApp.Helper
                         Tags = user.Tags,
                         Followers = user.Followers,
                         Following = user.Following,
-                        FollowedQuestions = user.FollowedQuestions
+                        FollowedQuestions = user.FollowedQuestions,
+                        Designation = designation,
+                        EducationInfo = educationInfo
                     };
 
                 }
             }
         }
 
-        internal async Task<CustomUserInfo> FindUserById(string userId)
+        internal async Task<CustomUserInfo> FindUserById(string userId, bool needEmploymentAndEducationDetails = false)
         {
             using (AuthRepository _repo = new AuthRepository())
             {
@@ -168,6 +195,31 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
+                    var educationInfo = string.Empty;
+                    var designation = string.Empty;
+                    if (needEmploymentAndEducationDetails)
+                    {
+                        var _mongoEducationalHistoriesHelper = new MongoHelper<EducationalHistories>();
+                        var educationalHistories = _mongoEducationalHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).OrderByDescending(b => b.GraduateYear).ToList();
+                        if (educationalHistories != null && educationalHistories.Count > 0)
+                        {
+                            educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
+                        }
+
+                        var _mongEmploymentHistoriesHelper = new MongoHelper<EmploymentHistories>();
+                        var employmentHistories = _mongEmploymentHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).ToList();
+                        if (employmentHistories != null && employmentHistories.Count > 0)
+                        {
+                            var currentJob = employmentHistories.FirstOrDefault(b => !b.To.HasValue);
+                            if (currentJob == null)
+                            {
+                                currentJob = employmentHistories.FirstOrDefault();
+                            }
+                            designation = currentJob == null ? string.Empty :
+                                currentJob.Title + ", " + currentJob.CompanyName;
+                        }
+                    }
+
                     return new CustomUserInfo()
                     {
                         Email = user.Email,
@@ -181,7 +233,9 @@ namespace ShibpurConnectWebApp.Helper
                         Tags = user.Tags,
                         Followers = user.Followers,
                         Following = user.Following,
-                        FollowedQuestions = user.FollowedQuestions
+                        FollowedQuestions = user.FollowedQuestions,
+                        Designation = designation,
+                        EducationInfo = educationInfo
                     };
 
                 }
@@ -294,7 +348,7 @@ namespace ShibpurConnectWebApp.Helper
 
             // if mongo failed to save the data then send null response
             if (!result.Ok)
-                return null;                
+                return null;
 
             return new Categories { CategoryId = category.CategoryId, CategoryName = category.CategoryName };
         }
