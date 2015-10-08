@@ -1,1 +1,16 @@
-﻿
+﻿li.answer {
+    padding-bottom: 0px;
+    /*overflow: auto;*/
+    border-bottom: 0px solid #e2e2e2;
+    margin-top: 40px;
+     margin-bottom: 0px;
+}
+
+div.stat span {
+    margin-top: 0px;
+}
+
+div.answer-comments {
+    padding-bottom: 0px;
+    margin-bottom: 20px;
+}

@@ -97,6 +97,7 @@ $(document).ready(function () {
             $('.header h2').text(question.title);
             $('.header h2').append("<hr/>");
             $('.description').html(question.description.replace("<img", "<img style='max-width:730px;'"));
+            $('.description').find('img').addClass("col-md-12 col-xs-12");
 
             var utcDate = new Date(result.postedOnUtc);
             var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();

@@ -2,9 +2,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @model ShibpurConnectWebApp.Models.DiscussionThread
-@{
-    //ViewBag.Title = "Feed Details";
-}
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/details.css")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/detailsmobile.css")" />
 <script type="text/javascript">
@@ -12,284 +9,275 @@
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
 <script src="@Url.Content("~/Scripts/feed/details.js")" type="text/javascript"></script>
-<div class="container">
-    <div class="col-md-9 col-xs-12">
-        <div class="question-container">
-            <div class="header col-md-12">
-                <h2 style="font-size:22px;" id="questiontitle"></h2>
-            </div>
-            <div id="details" style="display:none">
-                <div>
-                    <div class="description col-md-12 col-xs-12"></div>
-                    <div class="tags col-md-12 col-xs-12"></div>
-                    <div class="col-md-6" style="margin-top: 20px">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <button type='submit' class='btn btn-xs followquestionbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followquestion(this);'><i class='fa fa-plus-circle' style='color: green;'></i><span> Follow </span></button>
-                            <span class="action_item" id="spanEditQuestion"><i class="fa fa-pencil">&nbsp;</i><a href="#" class="editQuesAnchor">Edit</a></span>
-                            <span class="action_item"><i class="fa fa-flag" style="color: rgb(234, 113, 113);">&nbsp;</i><a href="#" onclick="togglemodal();">Report<span class="count">1000</span></a></span>
-                        }
-                    </div>
-                    <div class="stat col-md-2">
-                    </div>
-                    <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
+<div>
+    <div class="question-container">
+        <div class="header">
+            <h2 style="font-size:22px;" id="questiontitle"></h2>
+        </div>
+        <div id="details" style="display:none">
+            <div>
+                <div class="description"></div>
+                <div class="tags col-md-12 col-xs-12"></div>
+                <div class="col-md-6" style="margin-top: 20px">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <button type='submit' class='btn btn-xs followquestionbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followquestion(this);'><i class='fa fa-plus-circle' style='color: green;'></i><span> Follow </span></button>
+                        <span class="action_item" id="spanEditQuestion"><i class="fa fa-pencil">&nbsp;</i><a href="#" class="editQuesAnchor">Edit</a></span>
+                        <span class="action_item"><i class="fa fa-flag" style="color: rgb(234, 113, 113);">&nbsp;</i><a href="#" onclick="togglemodal();">Report<span class="count">1000</span></a></span>
+                    }
                 </div>
+                <div class="stat col-md-2">
+                </div>
+                <div id="questionaskedby" class="well-sm col-md-2.25" style="float:right;display:none;"></div>
             </div>
         </div>
-        <!-- EDIT QUESTION START-->
-        <div class="editQuesDiv col-md-12 col-xs-12">
-            <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
-                <label class="control-label col-md-3" for="Question">Question title</label>
-                <div id="questiontitlediv">
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <input class="form-control" id="txt_question_edit" type="text" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @{ Html.RenderPartial("_RichTextBox"); }
-            <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
-                <i></i><span>Save question</span>
-            </button>
-            <button type="submit" id="btn_Cancel_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
-                <i></i><span>Cancel</span>
-            </button>
-        </div>
-        <!-- EDIT QUESTION END-->
-        <br /><br />
-        <div id="moduleanswers">
-            @*<h4>Answers:</h4><hr />*@
-            <ul id="answerlist" class="list-group">
-                <li class="hide answer col-md-12">
-                    <div class="col-md-12 answerdiv" style="margin-top:20px;">
-                        <div class="user col-md-1">
-                            <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
-                            <a class="userName" href="\Account\Profile"></a>
-                            <a class="btn btn-default btn-sm mark-answer hide col-md-4" title="Mark as answer">
-                                <i class="fa fa-check-square-o fa-lg"></i>
-                            </a>
-                        </div>
-                        <div class="detail col-md-11">
-                            <div class="text"></div>
-                            <div class="answer-links">
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <span class="link upvote-span">
-                                        <a class="upvote-anchor" href="#">
-                                            Upvote
-                                            <span class="count">0</span>
-                                        </a>
-                                    </span>
-                                    <span class="link comment-span">
-                                        <a class="comment-anchor" href="#">Comment</a>
-                                        <span class="comment-count"></span>
-                                    </span>
-                                    <span class="link edit-answer-span">
-                                        <a class="edit-answer-anchor" href="#">Edit</a>
-                                    </span>
-                                }
-                                <div class="stat">
-                                    <span class="date"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    </div>
+    <!-- EDIT QUESTION START-->
+    <div class="editQuesDiv col-md-12 col-xs-12">
+        <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
+            <label class="control-label col-md-3" for="Question">Question title</label>
+            <div id="questiontitlediv">
+                <div class="form-group">
                     <div class="col-md-12">
-
-                        <div class="well answer-comments col-md-11 col-md-offset-1">
-                            <div class="comment-list hide">
-                                <a class="comment-user"></a>
-                                <span class="comment-date"></span>
-                                <span class="comment-text">
-                                    <span></span>
-                                    @if (User.Identity.IsAuthenticated)
-                                    {<a href="#"> Edit</a>}
-                                </span>
-                            </div>
+                        <input class="form-control" id="txt_question_edit" type="text" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @{ Html.RenderPartial("_RichTextBox"); }
+        <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
+            <i></i><span>Save question</span>
+        </button>
+        <button type="submit" id="btn_Cancel_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
+            <i></i><span>Cancel</span>
+        </button>
+    </div>
+    <!-- EDIT QUESTION END-->
+    <br /><br />
+    <div id="moduleanswers">
+        @*<h4>Answers:</h4><hr />*@
+        <ul id="answerlist" class="list-group">
+            <li class="hide answer">
+                <div class="answerdiv" style="margin-top:20px;">
+                    <div class="user col-xs-2">
+                        <img class="avatar" width="40" height="40" src="/Content/images/profile-image.jpg">
+                        <a class="userName" href="\Account\Profile"></a>
+                        <a class="btn btn-default btn-sm mark-answer hide col-xs-6" title="Mark as answer">
+                            <i class="fa fa-check-square-o fa-lg"></i>
+                        </a>
+                    </div>
+                    <div class="detail col-xs-10">
+                        <div class="text"></div>
+                        <div class="answer-links">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <div class="add-comment twelvepxfont">
-                                    <a href="#" class="anchor-add-comment add">Add Comment</a>
-                                </div>
+                                <span class="link upvote-span">
+                                    <a class="upvote-anchor" href="#">
+                                        Upvote
+                                        <span class="count">0</span>
+                                    </a>
+                                </span>
+                                <span class="link comment-span">
+                                    <a class="comment-anchor" href="#">Comment</a>
+                                    <span class="comment-count"></span>
+                                </span>
+                                <span class="link edit-answer-span">
+                                    <a class="edit-answer-anchor" href="#">Edit</a>
+                                </span>
                             }
-                            <div class="comment-box">
-                                @*<a class="commentor col-md-1" href="#">
-                                        <img height="25" width="25" src="/Content/images/profile-image.jpg">
-                                    </a>*@
-                                <div class="input-div col-md-10" style="padding: 0;">
-                                    <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
-                                    @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
-                                </div>
-                                <div class="col-md-2" style="padding: 2px 0px 0px 6px;">
-                                    @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
-                                    <button type="submit" class="btn btn-sm btn-primary btn-save-comment btn-xs">
-                                        <i></i><span>Save</span>
-                                    </button>
-                                    <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
-                                </div>
+                            <div class="stat">
+                                <span class="date"></span>
                             </div>
                         </div>
                     </div>
-                </li>
-
-            </ul>
-        </div>
-        <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none" id="errormessage">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Error!</strong>
-        </div>
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div class="wirte-answer col-md-12 col-xs-12" style="margin-top:40px; display:none; padding-left: 0;">
-                @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
-                <div class="text-wrapper col-md-12">
-                    <div class="toolbar-container">
-                        <span class="ql-format-group">
-                            <select title="Size" class="ql-size">
-                                <option value="10px">Small</option>
-                                <option value="13px" selected>Normal</option>
-                                <option value="18px">Large</option>
-                                <option value="32px">Huge</option>
-                            </select>
-                        </span>
-                        <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
-                            <select title="Text Color" class="ql-color">
-                                <option value="rgb(0, 0, 0)" selected></option>
-                                <option value="rgb(230, 0, 0)"></option>
-                                <option value="rgb(255, 153, 0)"></option>
-                                <option value="rgb(255, 255, 0)"></option>
-                                <option value="rgb(0, 138, 0)"></option>
-                                <option value="rgb(0, 102, 204)"></option>
-                                <option value="rgb(153, 51, 255)"></option>
-                                <option value="rgb(255, 255, 255)"></option>
-                                <option value="rgb(250, 204, 204)"></option>
-                                <option value="rgb(255, 235, 204)"></option>
-                                <option value="rgb(255, 255, 204)"></option>
-                                <option value="rgb(204, 232, 204)"></option>
-                                <option value="rgb(204, 224, 245)"></option>
-                                <option value="rgb(235, 214, 255)"></option>
-                                <option value="rgb(187, 187, 187)"></option>
-                                <option value="rgb(240, 102, 102)"></option>
-                                <option value="rgb(255, 194, 102)"></option>
-                                <option value="rgb(255, 255, 102)"></option>
-                                <option value="rgb(102, 185, 102)"></option>
-                                <option value="rgb(102, 163, 224)"></option>
-                                <option value="rgb(194, 133, 255)"></option>
-                                <option value="rgb(136, 136, 136)"></option>
-                                <option value="rgb(161, 0, 0)"></option>
-                                <option value="rgb(178, 107, 0)"></option>
-                                <option value="rgb(178, 178, 0)"></option>
-                                <option value="rgb(0, 97, 0)"></option>
-                                <option value="rgb(0, 71, 178)"></option>
-                                <option value="rgb(107, 36, 178)"></option>
-                                <option value="rgb(68, 68, 68)"></option>
-                                <option value="rgb(92, 0, 0)"></option>
-                                <option value="rgb(102, 61, 0)"></option>
-                                <option value="rgb(102, 102, 0)"></option>
-                                <option value="rgb(0, 55, 0)"></option>
-                                <option value="rgb(0, 41, 102)"></option>
-                                <option value="rgb(61, 20, 102)"></option>
-                            </select><span class="ql-format-separator"></span>
-                            <select title="Background Color" class="ql-background">
-                                <option value="rgb(0, 0, 0)"></option>
-                                <option value="rgb(230, 0, 0)"></option>
-                                <option value="rgb(255, 153, 0)"></option>
-                                <option value="rgb(255, 255, 0)"></option>
-                                <option value="rgb(0, 138, 0)"></option>
-                                <option value="rgb(0, 102, 204)"></option>
-                                <option value="rgb(153, 51, 255)"></option>
-                                <option value="rgb(255, 255, 255)" selected></option>
-                                <option value="rgb(250, 204, 204)"></option>
-                                <option value="rgb(255, 235, 204)"></option>
-                                <option value="rgb(255, 255, 204)"></option>
-                                <option value="rgb(204, 232, 204)"></option>
-                                <option value="rgb(204, 224, 245)"></option>
-                                <option value="rgb(235, 214, 255)"></option>
-                                <option value="rgb(187, 187, 187)"></option>
-                                <option value="rgb(240, 102, 102)"></option>
-                                <option value="rgb(255, 194, 102)"></option>
-                                <option value="rgb(255, 255, 102)"></option>
-                                <option value="rgb(102, 185, 102)"></option>
-                                <option value="rgb(102, 163, 224)"></option>
-                                <option value="rgb(194, 133, 255)"></option>
-                                <option value="rgb(136, 136, 136)"></option>
-                                <option value="rgb(161, 0, 0)"></option>
-                                <option value="rgb(178, 107, 0)"></option>
-                                <option value="rgb(178, 178, 0)"></option>
-                                <option value="rgb(0, 97, 0)"></option>
-                                <option value="rgb(0, 71, 178)"></option>
-                                <option value="rgb(107, 36, 178)"></option>
-                                <option value="rgb(68, 68, 68)"></option>
-                                <option value="rgb(92, 0, 0)"></option>
-                                <option value="rgb(102, 61, 0)"></option>
-                                <option value="rgb(102, 102, 0)"></option>
-                                <option value="rgb(0, 55, 0)"></option>
-                                <option value="rgb(0, 41, 102)"></option>
-                                <option value="rgb(61, 20, 102)"></option>
-                            </select><span class="ql-format-separator"></span>
-
-                        </span><span class="ql-format-group">
-                            <span title="List" class="ql-format-button ql-list"></span>
-                            <span class="ql-format-separator"></span>
-                            <span title="Bullet" class="ql-format-button ql-bullet"></span>
-                            <span class="ql-format-separator"></span>
-                            <select title="Text Alignment" class="ql-align">
-                                <option value="left" selected></option>
-                                <option value="center"></option>
-                                <option value="right"></option>
-                                <option value="justify"></option>
-                            </select>
-                        </span>
-                        <span class="ql-format-group">
-                            <span title="Link" class="ql-format-button ql-link"></span>
-                            <span class="ql-format-separator"></span>
-                            <span title="Image" class="ql-format-button ql-image"></span>
-                        </span>
-                    </div>
-                    <div class="editor-container"></div>
                 </div>
-                @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
-                <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-xs" style=" margin-top: 15px;">
-                    <i></i><span>Submit Answer</span>
-                </button>
-            </div>
-        }
-        <!--div to show Ask to Answer module-->
-        <div class="well panel panel-default col-md-12 col-xs-12" id="userToAnswer" style="margin-top:30px;display:none">
-            <h4>Ask to Answer</h4>
-            <div>
-                <form role="search">
-                    <div class="form-group">
-                        <input type="text" id="usernametext" class="form-control" placeholder="Search a specific user to answer your question" aria-describedby="sizing-addon3" style="width:90%">
+                <div class="well answer-comments col-xs-10 col-xs-offset-2">
+                        <div class="comment-list hide">
+                            <a class="comment-user"></a>
+                            <span class="comment-date"></span>
+                            <span class="comment-text">
+                                <span></span>
+                                @if (User.Identity.IsAuthenticated)
+                                {<a href="#"> Edit</a>}
+                            </span>
+                        </div>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="add-comment twelvepxfont">
+                                <a href="#" class="anchor-add-comment add">Add Comment</a>
+                            </div>
+                        }
+                        <div class="comment-box">
+                            @*<a class="commentor col-md-1" href="#">
+                                    <img height="25" width="25" src="/Content/images/profile-image.jpg">
+                                </a>*@
+                            <div class="input-div col-xs-10" style="padding: 0;">
+                                <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required></textarea>
+                                @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
+                            </div>
+                            <div class="col-xs-2" style="padding: 2px 0px 0px 6px;">
+                                @* <input type="button" class="btn btn-sm btn-primary btn-save-comment" id="btn_Save" value="Comment">*@
+                                <button type="submit" class="btn btn-sm btn-primary btn-save-comment btn-xs">
+                                    <i></i><span>Save</span>
+                                </button>
+                                <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
+                            </div>
+                        </div>
                     </div>
-                </form>
-            </div>
-            <hr id="bigseparator" />
-            <div id="userlistasktoanswer">
-            </div>
-            <!--div for loading message for the ask to answer module-->
-            <div id="loadingasktoanswer">
-                <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
-            </div>
-        </div>
+            </li>
+
+        </ul>
     </div>
-    <div class="col-md-3 col-xs-12">
-        @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
-        @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
+    <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none" id="errormessage">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Error!</strong>
     </div>
-    <div class="edit-comment hide" style="overflow: auto;">
-        <div class="input-div col-md-10" style="padding: 0;">
-            <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required> </textarea>
-            @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
-        </div>
-        <div class="col-md-2" style="padding: 2px 0px 0px 6px;">
-            @* <input type="button" class="btn btn-sm btn-primary btn-edit-comment" value="Comment">*@
-            <button type="submit" class="btn btn-sm btn-primary btn-edit-comment btn-xs">
-                <i></i><span>Save</span>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="wirte-answer col-md-12 col-xs-12" style="margin-top:40px; display:none; padding-left: 0;">
+            @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
+            <div class="text-wrapper col-xs-12">
+                <div class="toolbar-container">
+                    <span class="ql-format-group">
+                        <select title="Size" class="ql-size">
+                            <option value="10px">Small</option>
+                            <option value="13px" selected>Normal</option>
+                            <option value="18px">Large</option>
+                            <option value="32px">Huge</option>
+                        </select>
+                    </span>
+                    <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
+                        <select title="Text Color" class="ql-color">
+                            <option value="rgb(0, 0, 0)" selected></option>
+                            <option value="rgb(230, 0, 0)"></option>
+                            <option value="rgb(255, 153, 0)"></option>
+                            <option value="rgb(255, 255, 0)"></option>
+                            <option value="rgb(0, 138, 0)"></option>
+                            <option value="rgb(0, 102, 204)"></option>
+                            <option value="rgb(153, 51, 255)"></option>
+                            <option value="rgb(255, 255, 255)"></option>
+                            <option value="rgb(250, 204, 204)"></option>
+                            <option value="rgb(255, 235, 204)"></option>
+                            <option value="rgb(255, 255, 204)"></option>
+                            <option value="rgb(204, 232, 204)"></option>
+                            <option value="rgb(204, 224, 245)"></option>
+                            <option value="rgb(235, 214, 255)"></option>
+                            <option value="rgb(187, 187, 187)"></option>
+                            <option value="rgb(240, 102, 102)"></option>
+                            <option value="rgb(255, 194, 102)"></option>
+                            <option value="rgb(255, 255, 102)"></option>
+                            <option value="rgb(102, 185, 102)"></option>
+                            <option value="rgb(102, 163, 224)"></option>
+                            <option value="rgb(194, 133, 255)"></option>
+                            <option value="rgb(136, 136, 136)"></option>
+                            <option value="rgb(161, 0, 0)"></option>
+                            <option value="rgb(178, 107, 0)"></option>
+                            <option value="rgb(178, 178, 0)"></option>
+                            <option value="rgb(0, 97, 0)"></option>
+                            <option value="rgb(0, 71, 178)"></option>
+                            <option value="rgb(107, 36, 178)"></option>
+                            <option value="rgb(68, 68, 68)"></option>
+                            <option value="rgb(92, 0, 0)"></option>
+                            <option value="rgb(102, 61, 0)"></option>
+                            <option value="rgb(102, 102, 0)"></option>
+                            <option value="rgb(0, 55, 0)"></option>
+                            <option value="rgb(0, 41, 102)"></option>
+                            <option value="rgb(61, 20, 102)"></option>
+                        </select><span class="ql-format-separator"></span>
+                        <select title="Background Color" class="ql-background">
+                            <option value="rgb(0, 0, 0)"></option>
+                            <option value="rgb(230, 0, 0)"></option>
+                            <option value="rgb(255, 153, 0)"></option>
+                            <option value="rgb(255, 255, 0)"></option>
+                            <option value="rgb(0, 138, 0)"></option>
+                            <option value="rgb(0, 102, 204)"></option>
+                            <option value="rgb(153, 51, 255)"></option>
+                            <option value="rgb(255, 255, 255)" selected></option>
+                            <option value="rgb(250, 204, 204)"></option>
+                            <option value="rgb(255, 235, 204)"></option>
+                            <option value="rgb(255, 255, 204)"></option>
+                            <option value="rgb(204, 232, 204)"></option>
+                            <option value="rgb(204, 224, 245)"></option>
+                            <option value="rgb(235, 214, 255)"></option>
+                            <option value="rgb(187, 187, 187)"></option>
+                            <option value="rgb(240, 102, 102)"></option>
+                            <option value="rgb(255, 194, 102)"></option>
+                            <option value="rgb(255, 255, 102)"></option>
+                            <option value="rgb(102, 185, 102)"></option>
+                            <option value="rgb(102, 163, 224)"></option>
+                            <option value="rgb(194, 133, 255)"></option>
+                            <option value="rgb(136, 136, 136)"></option>
+                            <option value="rgb(161, 0, 0)"></option>
+                            <option value="rgb(178, 107, 0)"></option>
+                            <option value="rgb(178, 178, 0)"></option>
+                            <option value="rgb(0, 97, 0)"></option>
+                            <option value="rgb(0, 71, 178)"></option>
+                            <option value="rgb(107, 36, 178)"></option>
+                            <option value="rgb(68, 68, 68)"></option>
+                            <option value="rgb(92, 0, 0)"></option>
+                            <option value="rgb(102, 61, 0)"></option>
+                            <option value="rgb(102, 102, 0)"></option>
+                            <option value="rgb(0, 55, 0)"></option>
+                            <option value="rgb(0, 41, 102)"></option>
+                            <option value="rgb(61, 20, 102)"></option>
+                        </select><span class="ql-format-separator"></span>
+
+                    </span><span class="ql-format-group">
+                        <span title="List" class="ql-format-button ql-list"></span>
+                        <span class="ql-format-separator"></span>
+                        <span title="Bullet" class="ql-format-button ql-bullet"></span>
+                        <span class="ql-format-separator"></span>
+                        <select title="Text Alignment" class="ql-align">
+                            <option value="left" selected></option>
+                            <option value="center"></option>
+                            <option value="right"></option>
+                            <option value="justify"></option>
+                        </select>
+                    </span>
+                    <span class="ql-format-group">
+                        <span title="Link" class="ql-format-button ql-link"></span>
+                        <span class="ql-format-separator"></span>
+                        <span title="Image" class="ql-format-button ql-image"></span>
+                    </span>
+                </div>
+                <div class="editor-container"></div>
+            </div>
+            @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
+            <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-xs" style=" margin-top: 15px;">
+                <i></i><span>Submit Answer</span>
             </button>
-            <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
         </div>
+    }
+    <!--div to show Ask to Answer module-->
+    <div class="well panel panel-default col-md-12 col-xs-12" id="userToAnswer" style="margin-top:30px;display:none">
+        <h4>Ask to Answer</h4>
+        <div>
+            <form role="search">
+                <div class="form-group">
+                    <input type="text" id="usernametext" class="form-control" placeholder="Search a specific user to answer your question" aria-describedby="sizing-addon3" style="width:90%">
+                </div>
+            </form>
+        </div>
+        <hr id="bigseparator" />
+        <div id="userlistasktoanswer">
+        </div>
+        <!--div for loading message for the ask to answer module-->
+        <div id="loadingasktoanswer">
+            <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+        </div>
+    </div>
+</div>
+<div class="edit-comment hide" style="overflow: auto;">
+    <div class="input-div col-xs-10" style="padding: 0;">
+        <textarea class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required> </textarea>
+        @*<input class="form-control input-sm txt_comment" id="commenttextbox" placeholder="Add comment" type="text" required>*@
+    </div>
+    <div class="col-xs-2" style="padding: 2px 0px 0px 6px;">
+        @* <input type="button" class="btn btn-sm btn-primary btn-edit-comment" value="Comment">*@
+        <button type="submit" class="btn btn-sm btn-primary btn-edit-comment btn-xs">
+            <i></i><span>Save</span>
+        </button>
+        <a href="#" class="anchor-cancel-comment twelvepxfont">Cancel</a>
     </div>
 </div>
 <div id="loadingdiv">
