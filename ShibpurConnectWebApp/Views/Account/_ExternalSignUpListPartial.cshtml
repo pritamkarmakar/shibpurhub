@@ -1,6 +1,12 @@
 ﻿@model ShibpurConnectWebApp.Models.ExternalLoginListViewModel
 @using Microsoft.Owin.Security
 
+<style type="text/css">
+    .btn-facebook {
+        margin-top: 10px;
+    }
+</style>
+
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() == 0)
@@ -23,17 +29,16 @@
                     {
                         if (p.AuthenticationType == "Google")
                         {
-                            <button type="submit" style="width: 205px" class="btn btn-sm btn-google-plus" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-google-plus"></i> | Sign up with Google</button>
+                            <button type="submit" class="btn btn-sm btn-google-plus col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-google-plus"></i> | Sign up with Google</button>
                         }
                         else if (p.AuthenticationType == "Facebook")
                         {
-                            <button type="submit" style="width: 205px" class="btn btn-sm btn-facebook" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-facebook"></i> | Sign up with Facebook</button>
+                            <button type="submit" class="btn btn-sm btn-facebook col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-facebook"></i> | Sign up with Facebook</button>
                         }
                         else if (p.AuthenticationType == "Twitter")
                         {
-                            <button type="submit" style="width: 197px" class="btn btn-sm btn-twitter" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-twitter"></i> | Sign up with Twitter</button>
+                            <button type="submit" class="btn btn-sm btn-twitter col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-twitter"></i> | Sign up with Twitter</button>
                         }
-                        <br />                        <br />
                     }
                 </p>
             </div>

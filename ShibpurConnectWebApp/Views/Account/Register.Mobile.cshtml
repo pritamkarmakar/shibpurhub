@@ -1,0 +1,103 @@
+﻿@using ShibpurConnectWebApp.Models
+@model ShibpurConnectWebApp.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Sign Up - ShibpurHub";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // disable jquery validation
+        $(".registerform").validate();
+        $(".registerform").removeAttr("novalidate");
+    });
+</script>
+
+<style type="text/css">
+
+    .colorgraph {
+        height: 5px;
+        border-top: 0;
+        background: #c4e17f;
+        border-radius: 5px;
+        background-image: -webkit-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+        background-image: -moz-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+        background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+        background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+    }
+</style>
+
+@section emailconfirmalert {
+    @if (TempData["error"] != null && !string.IsNullOrEmpty(TempData["error"].ToString()))
+    {
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Error!</strong> @TempData["error"].
+        </div>
+    }
+}
+
+<div class="container">
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div>
+        <div class="panel panel-default">
+            <div style="margin-left: 28px; margin-top: 15px;">
+                <span style="font-size: 24px;">Sign Up</span>
+            </div>
+            <div class="panel-body">
+                <div class="col-xs-12">
+                    <section id="socialLoginForm">
+                        @Html.Partial("_ExternalSignUpListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                    </section>
+                </div>
+                <div class="col-xs-12">
+                    <p>Or</p>
+                </div>
+                <div class="col-md-12">
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal registerform", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "First Name", @type = "text", @tabindex = "1", id = "exampleInputEmail1", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Last Name", @type = "text", @tabindex = "2", id = "exampleInputEmail1", @required = "required" })
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @type = "email", @placeholder = "Email Address", @tabindex = "4", id = "exampleInputEmail1", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @tabindex = "5", @placeholder = "Password", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control password", @tabindex = "6", @placeholder = "Confirm Password", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            By clicking <strong class="label label-primary">Register</strong>, you agree to the <a href="/legal/tos">Terms and Conditions</a> set out by this site, including our Cookie Use.
+                        </div>
+                        <div>
+                            <input type="submit" value="Register" class="btn btn-success btn-block btn-sm" tabindex="7">
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

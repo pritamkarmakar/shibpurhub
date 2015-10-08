@@ -1,6 +1,13 @@
 ﻿@model ShibpurConnectWebApp.Models.ExternalLoginListViewModel
 @using Microsoft.Owin.Security
 
+<style type="text/css">
+    .btn-facebook {
+        margin-top: 10px;
+    }
+</style>
+
+
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() == 0)
@@ -33,7 +40,6 @@
                         {
                             <button type="submit" class="btn btn-large btn-twitter col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-twitter"></i> | Sign in with Twitter</button>
                         }
-                        <br />                        <br />
                     }
                 </p>
             </div>
