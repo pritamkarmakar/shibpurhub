@@ -123,7 +123,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             questionVm.TotalPages = totalPages;
                             questionVm.IsFollowedByMe = userInfo != null && 
                                                         question.Followers != null && 
-                                                        question.Followers.Contains(userInfo.Id)
+                                                        question.Followers.Contains(userInfo.Id);
                             result.Add(questionVm);
                         }
                     }
@@ -192,7 +192,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
                             questionVm.IsFollowedByMe = userInfo != null && 
                                                         question.Followers != null && 
-                                                        question.Followers.Contains(userInfo.Id)
+                                                        question.Followers.Contains(userInfo.Id);
                             result.Add(questionVm);
                         }
                     }
