@@ -173,7 +173,7 @@ function createAllQuestions(questions, page)
         $(htmlItem).find('.follow-ul').show();
         var followButton = $(htmlItem).find('.follow-ul a.thumbs');
         $(followButton).attr('data-questionId', question.questionId);
-        if (question.isFollowedByme) 
+        if (question.isFollowedByMe) 
         {
             $(followButton).addClass('active');
             $(followButton).find('span').text('Following');
