@@ -528,6 +528,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
+        [InvalidateCacheOutput("GetQuestions")]
         public async Task<IHttpActionResult> FollowQuestion(string questionId)
         {
             if (string.IsNullOrEmpty(questionId))
@@ -595,6 +596,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
+        [InvalidateCacheOutput("GetQuestions")]
         public async Task<IHttpActionResult> UnfollowQuestion(string questionId)
         {
             if (string.IsNullOrEmpty(questionId))
