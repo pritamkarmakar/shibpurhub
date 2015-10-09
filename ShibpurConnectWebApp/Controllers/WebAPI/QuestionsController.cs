@@ -88,12 +88,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 var questions = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
                 
-                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-                var email = principal.Identity.Name;
-    
                 Helper.Helper helper = new Helper.Helper();
-                var userResult = helper.FindUserByEmail(email);
-                var userInfo = await userResult;
+                
+                //ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                //var email = principal.Identity.Name;
+                //var userResult = helper.FindUserByEmail(email);
+                //var userInfo = await userResult;
                 
                 var userIds = questions.Select(a => a.UserId).Distinct();
                 var userDetails = new Dictionary<string, CustomUserInfo>();
@@ -121,10 +121,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             var questionVm = GetQuestionViewModel(question, userData);
                             questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
                             questionVm.TotalPages = totalPages;
-                            questionVm.IsFollowedByMe = userInfo != null && 
-                                                        question.Followers != null && 
-                                                        question.Followers.Contains(userInfo.Id);
-                            questionVm.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
+                            //questionVm.IsFollowedByMe = userInfo != null && 
+                            //                            question.Followers != null && 
+                            //                            question.Followers.Contains(userInfo.Id);
+                            //questionVm.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
                             result.Add(questionVm);
                         }
                     }
@@ -162,13 +162,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 var questions = matchedQuestions.OrderByDescending(a => a.PostedOnUtc).Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
-
-                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-                var email = principal.Identity.Name;
-    
                 Helper.Helper helper = new Helper.Helper();
-                var userResult = helper.FindUserByEmail(email);
-                var userInfo = await userResult;
+
+                //ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                //var email = principal.Identity.Name;
+                //var userResult = helper.FindUserByEmail(email);
+                //var userInfo = await userResult;
                 
                 var userIds = questions.Select(a => a.UserId).Distinct();
                 var userDetails = new Dictionary<string, CustomUserInfo>();
@@ -191,10 +190,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             var questionVm = GetQuestionViewModel(question, userData);
                             questionVm.TotalPages = matchedQuestions.Count % PAGESIZE == 0 ? matchedQuestions.Count / PAGESIZE : (matchedQuestions.Count / PAGESIZE) + 1;
                             questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
-                            questionVm.IsFollowedByMe = userInfo != null && 
-                                                        question.Followers != null && 
-                                                        question.Followers.Contains(userInfo.Id);
-                            questionVm.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
+                            //questionVm.IsFollowedByMe = userInfo != null && 
+                            //                            question.Followers != null && 
+                            //                            question.Followers.Contains(userInfo.Id);
+                            //questionVm.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
                             result.Add(questionVm);
                         }
                     }
@@ -530,7 +529,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("GetQuestions")]
         public async Task<IHttpActionResult> FollowQuestion(string questionId)
         {
             if (string.IsNullOrEmpty(questionId))
@@ -598,7 +596,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [InvalidateCacheOutput("GetQuestions")]
         public async Task<IHttpActionResult> UnfollowQuestion(string questionId)
         {
             if (string.IsNullOrEmpty(questionId))

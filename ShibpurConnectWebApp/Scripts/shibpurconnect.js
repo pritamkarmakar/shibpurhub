@@ -10,8 +10,7 @@ $(window).on('onunload', function () {
 $(document).ready(function () {
     jQuery.support.cors = true;
     var userID = $("#hdnUserID").val();
-    if(userID)
-    {
+    if (userID) {
         $.ajax({
             url: SERVER + "Account/Register",
             type: "POST",
@@ -24,8 +23,7 @@ $(document).ready(function () {
             dataType: "json",
             processData: false,
             success: function (result) {
-                if(result)
-                {
+                if (result) {
                     //alert(result.data);
                 }
 
@@ -34,8 +32,7 @@ $(document).ready(function () {
     }
 });
 
-function getApiToken()
-{   
+function getApiToken() {
     var token = localStorage.getItem("TOKEN");
     if (!token) {
         alert("Hi");
@@ -63,10 +60,8 @@ function getApiToken()
     return token;
 }
 
-function scAjax(options)
-{
-    try
-    {
+function scAjax(options) {
+    try {
         //var token = $.parseJSON(localStorage.getItem("TOKEN"));
         var server = "/api/";
         var ajaxOptions = {
@@ -81,13 +76,11 @@ function scAjax(options)
                 'Authorization': 'Bearer ' + sessionStorage.getItem("accessToken")
             },
             success: function (result) {
-                if(options.success && typeof options.success == "function")
-                {
+                if (options.success && typeof options.success == "function") {
                     options.success(result);
                 }
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown)
-            {
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 // if the request become unauthorize then redirect user 
                 // to login page (this will happen once token will get expire)
                 if (XMLHttpRequest.status == "401")
@@ -99,42 +92,37 @@ function scAjax(options)
             }
         };
 
-        if(options.data)
-        {
+        if (options.data) {
             ajaxOptions.data = options.data;
         }
 
         $.ajax(ajaxOptions);
     }
-    catch(e)
-    {
+    catch (e) {
         console.log(e.name + ": " + e.message);
     }
 }
- 
-function getDateFormatted(date)
-{
+
+function getDateFormatted(date) {
     var utcDate = new Date(date);
     var hour = utcDate.getHours();
-    if (hour < 10)
-    {
-        hour = "0" + hour;        
+    if (hour < 10) {
+        hour = "0" + hour;
     }
 
     var minutes = utcDate.getMinutes();
-    if (minutes < 10)
-    {
+    if (minutes < 10) {
         minutes = "0" + minutes;
     }
 
-    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + " at " +hour +":" + minutes;
+    var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear() + " at " + hour + ":" + minutes;
     return dateString;
 }
 
 function getDateFormattedByMonthYear(date) {
     var utcDate = new Date(date);
     var hour = utcDate.getHours();
-    
+
     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();
     return dateString;
 }
@@ -206,7 +194,7 @@ function SendNotificationForWebSiteError(error) {
         "type": "POST",
         "data": JSON.stringify(alertdata, null, 2),
         "success": function (result) {
-            
+
         }
     });
 
@@ -249,7 +237,7 @@ function followtag(event) {
 
                 Command: toastr["success"]("Successfully subscribed to " + tagname);
             },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {               
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 if (XMLHttpRequest.status == "401")
                     window.location.href = "/account/login";
                 else
@@ -300,11 +288,11 @@ function changetextonmouseover(event) {
 }
 
 // mouseover effect for 'Account/Profile' page user follow button
-function changeuserfollowonmouseover(event) { 
+function changeuserfollowonmouseover(event) {
     if ($("#" + event.id + " > span").text().trim().toLowerCase() == "following") {
         $("#" + event.id + " > i").removeClass('fa fa-check-circle');
-        $("#" + event.id + " > i").addClass('fa fa-minus-circle');         
-        
+        $("#" + event.id + " > i").addClass('fa fa-minus-circle');
+
         $("#" + event.id).removeClass();
         $("#" + event.id).addClass('btn btn-xs btn-danger');
         $("#" + event.id + " > span").text(" Unfollow");
@@ -330,7 +318,7 @@ function changetextonmouseout(event) {
         //$("#" + event.id + " > span").text(" Following");
         $("#" + event.id + " > i").attr('style', 'color:green;');
 
-        if(event.attributes["count"] != null)
+        if (event.attributes["count"] != null)
             $("#" + event.id + " > span").html(" Following" + "&nbsp;&nbsp;<span class='badge'>" + event.attributes["count"].nodeValue + "</span>");
         else {
             $("#" + event.id + " > span").text(" Following");
@@ -347,8 +335,8 @@ function changetextonmouseout(event) {
 function changeuserfollowonmouseout(event) {
     if ($("#" + event.id + " > span").text().trim().toLowerCase() == "unfollow") {
         $("#" + event.id + " > i").removeClass('fa fa-minus-circle');
-        $("#" + event.id + " > i").addClass('fa fa-check-circle');  
-       
+        $("#" + event.id + " > i").addClass('fa fa-check-circle');
+
         $("#" + event.id).removeClass();
         $("#" + event.id).addClass('btn btn-xs btn-success');
         $("#" + event.id + " > span").text(" Following");
@@ -362,8 +350,7 @@ function changeuserfollowonmouseout(event) {
 }
 
 // method to report spam for a question
-function reportspam()
-{
+function reportspam() {
     var data = {
         "QuestionId": questionID,
         "SpamType": $("input[name=spamtyperadio]:checked").val()
@@ -395,12 +382,11 @@ function reportspam()
         }
     });
 
-    
+
 }
 
 // method to close the report spam modal dialog
-function togglemodal()
-{
+function togglemodal() {
     $('#reportspammodal').toggle();
 }
 
@@ -423,7 +409,7 @@ function followuser(obj, profileId) {
                 $("#" + obj.id + "> span").text(' Following');
             }
         },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {            
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             if (XMLHttpRequest.status == "401")
                 window.location.href = "/account/login";
             else
@@ -478,18 +464,15 @@ function buildPagination(pages) {
 }
 
 var LOGGEDINUSERDETAILS;
-function isLoggedInUserId(userId)
-{
-    if(!userId)
-    {
+function isLoggedInUserId(userId) {
+    if (!userId) {
         return false;
     }
-    
-    if(LOGGEDINUSERDETAILS == null)
-    {
+
+    if (LOGGEDINUSERDETAILS == null) {
         LOGGEDINUSERDETAILS = localStorage.getItem("SC_Session_UserDetails");
     }
-    
+
     var userInfo = $.parseJSON(LOGGEDINUSERDETAILS);
 
     // check if userInfo is null, this can happen when local storage doesn't have the userinfo
@@ -497,10 +480,10 @@ function isLoggedInUserId(userId)
     if (userInfo != null && userInfo.id == userId) {
         return true;
     }
-    
+
     return false;
 }
-    
+
 // method to follow a question
 function followquestion(obj) {
     if ($("#" + obj.id + " > span").text().trim().toLowerCase().search("follow") == 0) {
@@ -575,31 +558,77 @@ function followquestion(obj) {
     }
 }
 
-function updateFollowQuestion(follow, questionId, success)
-{
-    if(follow)
-    {
+function updateFollowQuestion(follow, questionId, success) {
+    if (follow) {
         scAjax({
-                "url": "questions/followquestion?questionId=" + questionId,
-                "type": "POST",
-                "success": function (result) {
+            "url": "questions/followquestion?questionId=" + questionId,
+            "type": "POST",
+            "success": function (result) {
                 if (!result) {
                     return;
                 }
                 success();
-                }
+            }
         });
         return;
     }
-    
+
     scAjax({
-                "url": "questions/unfollowquestion?questionId=" + questionId,
-                "type": "POST",
-                "success": function (result) {
-                if (!result) {
-                    return;
+        "url": "questions/unfollowquestion?questionId=" + questionId,
+        "type": "POST",
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+            success();
+        }
+    });
+}
+
+function updateQnAStatus(questionIds, answerIds)
+{
+    var userDetails = localStorage.getItem("SC_Session_UserDetails");
+    var userInfo = $.parseJSON(userDetails);
+    if (userInfo == null)
+    {
+        return;
+    }
+
+    var loggedInUserId = userInfo.id;
+
+    scAjax({
+        "url": "feed/GetPersonalizedQAStatus",
+        "data": { "userId": loggedInUserId, "questionIds": questionIds, "answerIds": answerIds },
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+
+            $(result).each(function (i, item) {
+                var button = $("#" + item.id);
+
+                if (item.isQuestion) {
+                    if (!item.isAskedByMe) {
+                        $(button).closest('.follow-ul').show();
+                    }
+
+                    if (item.isFollowedByMe) {
+                        $(button).addClass('active');
+                        $(button).find('span').text('Following');
+                        $(button).find('i.fa').removeClass('fa-plus-circle').addClass('fa-check');
+                    }
+
+                    return true;
                 }
-                success();
+
+                if (!item.isAnsweredByMe) {
+                    $(button).closest('.upvote-ul').show();
                 }
+                if (item.isUpvotedByme) {
+                    $(button).addClass('active');
+                    $(button).find('span').text('Upvoted');
+                }
+            });
+        }
     });
 }

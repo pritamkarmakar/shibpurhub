@@ -78,7 +78,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 //var email = principal.Identity.Name;
 
-                if(string.IsNullOrEmpty(loggedInUserId))
+                if (string.IsNullOrEmpty(loggedInUserId))
                 {
                     return BadRequest("No UserId is found");
                 }
@@ -91,7 +91,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     return BadRequest("No User is found");
                 }
 
-                var userId = userDetail.Id;                
+                var userId = userDetail.Id;
 
                 var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(alreadyShown).Take(100).ToList();
 
@@ -238,7 +238,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     //user.CareerDetail = careerText == null ? string.Empty : careerText.Content;
 
                     user.CareerDetail = userDetailInList.Designation + " " +
-                        (string.IsNullOrEmpty(userDetailInList.EducationInfo) ? string.Empty : (                        
+                        (string.IsNullOrEmpty(userDetailInList.EducationInfo) ? string.Empty : (
                         string.IsNullOrEmpty(userDetailInList.Designation) ? userDetailInList.EducationInfo :
                             "(" + userDetailInList.EducationInfo + ")")
                         );
@@ -311,7 +311,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         if (answer != null)
                         {
                             question = questions.FirstOrDefault(b => b.QuestionId == answer.QuestionId);
-                            if(answer.UpvotedByUserIds == null)
+                            if (answer.UpvotedByUserIds == null)
                             {
                                 feedContent.UpvoteCount = 0;
                                 feedContent.IsUpvotedByme = false;
@@ -333,7 +333,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         feedContent.Header = question.Title;
                         var questionUrl = "/feed/" + question.UrlSlug;
-                        feedContent.ActionUrl = isFeedAnAnswer ?  "/feed/" + question.QuestionId +"/"+ feed.ActedOnObjectId : questionUrl;
+                        feedContent.ActionUrl = isFeedAnAnswer ? "/feed/" + question.QuestionId + "/" + feed.ActedOnObjectId : questionUrl;
 
                         feedContent.ViewCount = question.ViewCount;
 
@@ -343,8 +343,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                         feedContent.SimpleDetail = question.Description;
                         feedContent.PostedDateInUTC = question.PostedOnUtc;
-                        
-                        if(question.Followers == null)
+
+                        if (question.Followers == null)
                         {
                             feedContent.FollowedByCount = 0;
                             feedContent.IsFollowedByme = false;
@@ -367,7 +367,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 return Ok<IList<FeedContentDetail>>(feedContents);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message + System.Environment.NewLine + e.StackTrace);
             }
@@ -383,7 +383,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 if (type == 6 || type == 7)
                 {
-                    if(string.IsNullOrEmpty(objectUserId))
+                    if (string.IsNullOrEmpty(objectUserId))
                     {
                         return NotFound();
                     }
@@ -409,7 +409,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         private string GetActionText(int type)
         {
-            if(type == 1)
+            if (type == 1)
             {
                 return " asked a ";
             }
@@ -470,7 +470,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         private async Task<IHttpActionResult> GetDesignationText(string email)
         {
             var text = string.Empty;
-            if(string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email))
             {
                 return NotFound();
             }
@@ -506,7 +506,57 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 return Ok<string>(text);
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IHttpActionResult> GetPersonalizedQAStatus(string userId, [FromUri] IList<string> questionIds = null, [FromUri] IList<string> answerIds = null)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            try
+            {
+                var statuses = new List<PersonalizedQAStatus>();
+
+                if (questionIds != null && questionIds.Count > 0)
+                {
+                    var questions = from q in _mongoQustionHelper.Collection.AsQueryable<Question>().ToList()
+                                    where questionIds.Contains(q.QuestionId)
+                                    select q;
+                    foreach(var question in questions.ToList())
+                    {
+                        var qstatus = new PersonalizedQAStatus(question.QuestionId, true);
+                        qstatus.IsAskedByMe = question.UserId == userId;
+                        qstatus.IsFollowedByMe = question.Followers != null && question.Followers.Contains(userId);
+
+                        statuses.Add(qstatus);
+                    }
+                }
+
+                if (answerIds != null && answerIds.Count > 0)
+                {
+                    var answers = from a in _mongoAnswerHelper.Collection.AsQueryable<Answer>().ToList()
+                                  where questionIds.Contains(a.AnswerId)
+                                  select a;
+
+                    foreach (var answer in answers.ToList())
+                    {
+                        var astatus = new PersonalizedQAStatus(answer.AnswerId, false);
+                        astatus.IsAnsweredByMe = answer.UserId == userId;
+                        astatus.IsUpvotedByMe = answer.UpvotedByUserIds != null && answer.UpvotedByUserIds.Contains(userId);
+
+                        statuses.Add(astatus);
+                    }
+                }
+
+                return Ok<IList<PersonalizedQAStatus>>(statuses);
+            }
+            catch (Exception ex)
             {
                 return NotFound();
             }
@@ -518,5 +568,29 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public int AlreadyProcessedItemCount { get; set; }
 
         public IList<PersonalizedFeedItem> FeedItems { get; set; }
+    }
+
+    /// <summary>
+    /// Question and Answer status of an user
+    /// </summary>
+    public class PersonalizedQAStatus
+    {
+        public PersonalizedQAStatus(string id, bool isQuestion)
+        {
+            this.Id = id;
+            this.IsQuestion = isQuestion;
+        }
+
+        public string Id { get; set; }
+
+        public bool IsFollowedByMe { get; set; }
+
+        public bool IsAskedByMe { get; set; }
+
+        public bool IsAnsweredByMe { get; set; }
+
+        public bool IsUpvotedByMe { get; set; }
+
+        public bool IsQuestion { get; set; }
     }
 }

@@ -579,6 +579,11 @@
             <param name="alreadyShown">The alrady shown.</param>
             <returns></returns>
         </member>
+        <member name="T:ShibpurConnectWebApp.Controllers.WebAPI.PersonalizedQAStatus">
+            <summary>
+            Question and Answer status of an user
+            </summary>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.GetTags">
             <summary>
             Get all existing categories

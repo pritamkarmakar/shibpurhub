@@ -119,13 +119,17 @@ function buildPagination(pages) {
     }
 }
 
+var questionIds;
 function createAllQuestions(questions, page)
 {
     if (!questions) {
         return;
     }
     
+    questionIds = [];
     $(questions).each(function (index, question) {
+        questionIds.push(question.questionId);
+
         var htmlItem = $('div.item.hide').clone().removeClass('hide');
 
         var creatorImage = $(htmlItem).find('.post-creator-image');
@@ -170,17 +174,17 @@ function createAllQuestions(questions, page)
             $(htmlItem).insertBefore("div.row.load:not('.hide')");
         }
         
-        if(!question.isAskedByMe)
-        {
-            $(htmlItem).find('.follow-ul').show();
+        //if(!question.isAskedByMe)
+        //{
+            //$(htmlItem).find('.follow-ul').show();
             var followButton = $(htmlItem).find('.follow-ul a.thumbs');
-            $(followButton).attr('data-questionId', question.questionId);
-            if (question.isFollowedByMe) 
-            {
-                $(followButton).addClass('active');
-                $(followButton).find('span').text('Following');
-                $(followButton).find('i.fa').removeClass('fa-plus-circle').addClass('fa-check');
-            }
+            $(followButton).attr({ 'data-questionId': question.questionId, 'id': question.questionId });
+            //if (question.isFollowedByMe) 
+            //{
+            //    $(followButton).addClass('active');
+            //    $(followButton).find('span').text('Following');
+            //    $(followButton).find('i.fa').removeClass('fa-plus-circle').addClass('fa-check');
+            //}
             
             $(followButton).click(function(event){
                 event.preventDefault();
@@ -208,7 +212,7 @@ function createAllQuestions(questions, page)
                     });
                 }
             });
-       }
+       //}
     });
 
     if (!page) {
@@ -231,6 +235,8 @@ function createAllQuestions(questions, page)
         $('.toggleThis.loadlabel').show();
         $('.toggleThis.spinner').hide();
     }
+
+    updateQnAStatus(questionIds, []);
 }
 
 function createQuestions(questions) {
