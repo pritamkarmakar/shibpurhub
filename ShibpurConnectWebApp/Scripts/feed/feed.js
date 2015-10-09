@@ -173,6 +173,13 @@ function createAllQuestions(questions, page)
         $(htmlItem).find('.follow-ul').show();
         var followButton = $(htmlItem).find('.follow-ul a.thumbs');
         $(followButton).attr('data-questionId', question.questionId);
+        if (question.isFollowedByme) 
+        {
+            $(followButton).addClass('active');
+            $(followButton).find('span').text('Following');
+            $(followButton).find('i.fa').removeClass('fa-plus-circle').addClass('fa-check');
+        }
+        
         $(followButton).click(function(event){
             event.preventDefault();
 
@@ -180,12 +187,14 @@ function createAllQuestions(questions, page)
             var questionId = $(button).attr('data-questionId');
             var textSpan = $(button).find('span');
             var icon = $(button).find('i.fa');
+            $(icon).addClass('fa-circle-o-notch fa-spin');
+            
             if($(button).hasClass('active'))
             {
                 updateFollowQuestion(false, questionId, function(){
                     $(button).removeClass('active');
                     $(textSpan).text('Follow');
-                    $(icon).removeClass('fa-check').addClass('fa-plus-circle');
+                    $(icon).removeClass('fa-check fa-circle-o-notch fa-spin').addClass('fa-plus-circle');
                 });
             }
             else
@@ -193,7 +202,7 @@ function createAllQuestions(questions, page)
                 updateFollowQuestion(true, questionId, function(){
                     $(button).addClass('active');
                     $(textSpan).text('Following');
-                    $(icon).removeClass('fa-plus-circle').addClass('fa-check');
+                    $(icon).removeClass('fa-plus-circle fa-circle-o-notch fa-spin').addClass('fa-check');
                 });
             }
         });

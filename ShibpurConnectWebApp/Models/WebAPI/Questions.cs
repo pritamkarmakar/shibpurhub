@@ -96,6 +96,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public string CareerDetail { get; set; }
+        
+        [DataMember]
+        public bool IsFollowedByMe { get; set; }
 
         public QuestionViewModel Copy(Question question)
         {
