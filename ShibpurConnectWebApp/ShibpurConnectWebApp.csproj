@@ -603,6 +603,7 @@
     <Content Include="Views\Home\Index.Mobile.cshtml" />
     <Content Include="Views\Account\Login.Mobile.cshtml" />
     <Content Include="Views\Account\Register.Mobile.cshtml" />
+    <Content Include="Views\Feed\MyFeeds.Mobile.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
