@@ -574,3 +574,32 @@ function followquestion(obj) {
         });
     }
 }
+
+function updateFollowQuestion(follow, questionId, success)
+{
+    if(follow)
+    {
+        scAjax({
+                "url": "questions/followquestion?questionId=" + questionId,
+                "type": "POST",
+                "success": function (result) {
+                if (!result) {
+                    return;
+                }
+                success();
+                }
+        });
+        return;
+    }
+    
+    scAjax({
+                "url": "questions/unfollowquestion?questionId=" + questionId,
+                "type": "POST",
+                "success": function (result) {
+                if (!result) {
+                    return;
+                }
+                success();
+                }
+    });
+}

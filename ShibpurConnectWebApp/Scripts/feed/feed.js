@@ -131,7 +131,7 @@ function createAllQuestions(questions, page)
         var creatorImage = $(htmlItem).find('.post-creator-image');
         $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
 
-        $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId" + question.userId);
+        $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId=" + question.userId);
 
         $(htmlItem).find('span.action').text(" asked a ");
 
@@ -172,23 +172,29 @@ function createAllQuestions(questions, page)
         
         $(htmlItem).find('.follow-ul').show();
         var followButton = $(htmlItem).find('.follow-ul a.thumbs');
+        $(followButton).attr('data-questionId', question.questionId);
         $(followButton).click(function(event){
             event.preventDefault();
 
             var button = $(this);
+            var questionId = $(button).attr('data-questionId');
             var textSpan = $(button).find('span');
             var icon = $(button).find('i.fa');
             if($(button).hasClass('active'))
             {
-                $(button).removeClass('active');
-                $(textSpan).text('Follow');
-                $(icon).removeClass('fa-check').addClass('fa-plus-circle');
+                updateFollowQuestion(false, questionId, function(){
+                    $(button).removeClass('active');
+                    $(textSpan).text('Follow');
+                    $(icon).removeClass('fa-check').addClass('fa-plus-circle');
+                });
             }
             else
-            {
-                $(button).addClass('active');
-                $(textSpan).text('Following');
-                $(icon).removeClass('fa-plus-circle').addClass('fa-check');
+            { 
+                updateFollowQuestion(true, questionId, function(){
+                    $(button).addClass('active');
+                    $(textSpan).text('Following');
+                    $(icon).removeClass('fa-plus-circle').addClass('fa-check');
+                });
             }
         });
     });
@@ -295,3 +301,5 @@ function updateAnswerCount(questionId, span) {
         }
     });
 }
+
+
