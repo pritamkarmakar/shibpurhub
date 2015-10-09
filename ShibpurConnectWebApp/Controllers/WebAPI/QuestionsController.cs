@@ -124,6 +124,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             questionVm.IsFollowedByMe = userInfo != null && 
                                                         question.Followers != null && 
                                                         question.Followers.Contains(userInfo.Id);
+                            questionVM.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
                             result.Add(questionVm);
                         }
                     }
@@ -193,6 +194,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             questionVm.IsFollowedByMe = userInfo != null && 
                                                         question.Followers != null && 
                                                         question.Followers.Contains(userInfo.Id);
+                            questionVM.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
                             result.Add(questionVm);
                         }
                     }
