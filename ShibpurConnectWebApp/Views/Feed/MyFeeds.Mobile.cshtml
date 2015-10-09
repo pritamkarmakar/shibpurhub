@@ -2,6 +2,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Your personalized feed - ShibpurHub";
 }
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedmobile.css")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css")" />
 <script type="text/javascript">
     $(document).ready(function () {
@@ -147,7 +148,7 @@
 
     <div class="left-side feed-list">
         <div id="loading">
-            <i class="fa fa-refresh fa-spin fa-2x"></i><span>Please wait while we prepare your feed...</span>
+            <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
         </div>
         <div class="row item hide">
             <div class="col-xs-12 thread">
