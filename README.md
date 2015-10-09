@@ -1,5 +1,5 @@
 # ShibpurConnect
-[IIEST] (http://en.wikipedia.org/wiki/Indian_Institute_of_Engineering_Science_and_Technology,_Shibpur) student's welfare web-application, see our progress here http://shibpur.azurewebsites.net/
+[IIEST] (http://en.wikipedia.org/wiki/Indian_Institute_of_Engineering_Science_and_Technology,_Shibpur) student's welfare web-application, see our progress here https://www.shibpurhub.com
 
 ### Git Configuration:
 Need to do it only once and if you haven't used Git before
@@ -72,5 +72,3 @@ var userES = client.Search<CustomUserInfo>(v => v
                     .Query(l => l.Term("userId", user.Id)));
 
 ```
-
- 
