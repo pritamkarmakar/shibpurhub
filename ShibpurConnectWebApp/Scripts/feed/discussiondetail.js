@@ -108,6 +108,42 @@ function createQuestion(question)
         "success": function (result) {
         }
     });
+    
+    // hide the loading symbol for the answers
+    $('#loadingdiv').hide();
+
+    // show the submit answer rich text control
+    $('.wirte-answer').show();
+
+    // show the 'ask to answer module'
+    $('#userToAnswer').show();
+        
+    var answers = question.answers;
+    if (!answers) {
+        return;
+    }
+    
+    $(answers).each(function (index, answer) {
+        createAnswer(answer);
+    });
+}
+
+function createAnswer(answer)
+{
+    var htmlItem = $('div.item.answer.hide').clone().removeClass('hide');
+
+    var creatorImage = $(htmlItem).find('.post-creator-image');
+    $(creatorImage).attr("href", "/Account/Profile?userId" + answer.userId).css('background-image', "url(http://i.imgur.com/" + answer.userProfileImage + ")");
+
+    $(htmlItem).find('a.name-link').text(answer.displayName).attr("href", "/Account/Profile?userId=" + answer.userId);
+    
+    $(htmlItem).find('div.post-description p').html(answer.answerText);
+    $(htmlItem).find('p.designation').text(answer.careerDetail);
+    $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
+    
+    $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(answer.postedOnUtc));
+    
+    $("div.feed-list").append(htmlItem);
 }
 
 function showAskToAnswer(question)
