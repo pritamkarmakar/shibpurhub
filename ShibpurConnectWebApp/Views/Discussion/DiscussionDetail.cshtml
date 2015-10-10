@@ -36,6 +36,24 @@
     padding-top: 3px;
     padding-right: 15px;
 }
+.img-container
+{
+    display: block;
+    width: 34px;
+    height: 34px;
+    margin: auto;
+    overflow: hidden;
+    margin-top: 2px;
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    border-radius: 18px;
+    background-color: #B6B6B6;
+    background-size: cover;
+    background-position: top center;
+}
+.answer.thread{
+    padding: 0;
+}
 </style>
 
 <script type="text/javascript">
@@ -108,8 +126,8 @@
             </div>
         </div>
         
-        <div class="row item answer hide">
-            <div class="col-xs-12 thread">
+        <div class="row item answer thread hide">
+            <div class="col-xs-12">
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="row post-header">
@@ -190,7 +208,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 post-comment hidden-xs hidden-sm">
+                
+            </div>
+            <div class="col-xs-12 post-comment hidden-xs hidden-sm">
                     <div class="row">
                         <div class="col-xs-1 comment-photo-container">
                             <a href="#" class="img-container" style="background-image: url('/Content/images/profile-image.jpg');"></a>
@@ -206,7 +226,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
 </div>
         <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none" id="errormessage">
