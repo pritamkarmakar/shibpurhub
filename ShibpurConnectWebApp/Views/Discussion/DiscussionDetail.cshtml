@@ -8,6 +8,10 @@
 .upvote-ul, .follow-ul {
     display: block;
 }
+.text-wrapper
+{
+    background-color: #fff;
+}
 </style>
 
 <script type="text/javascript">
@@ -18,11 +22,11 @@
 
 <div class="container">
 
-    <div class="col-md-9 left-side feed-list">
+    <div class="col-md-9">
         <div id="loadingdiv">
             <i class="fa fa-refresh fa-spin"></i><span> Loading...</span>
         </div>
-
+<div class="feed-list">
         <div class="row item question hide">
             <div class="col-xs-12 thread">
                 <div class="row">
@@ -80,8 +84,8 @@
             </div>
         </div>
         
-        <div class="row item hide">
-            <div class="col-xs-12 thread answer">
+        <div class="row item answer hide">
+            <div class="col-xs-12 thread">
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="row post-header">
@@ -180,7 +184,7 @@
                 </div>
             </div>
         </div>
-
+</div>
         <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none" id="errormessage">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <strong>Error!</strong>
