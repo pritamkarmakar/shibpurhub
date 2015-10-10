@@ -12,6 +12,30 @@
 {
     background-color: #fff;
 }
+.answer .thread-details-container {
+    border-bottom: 1px solid #ECEFF1;
+}
+.post-comment
+{
+    background-color: #FAFAFA;
+    font-weight: 300;
+    padding: 8px 10px;
+    color: #777;
+    -webkit-transition: background,.3s,ease-in-out,.3s;
+    -moz-transition: background,.3s,ease-in-out,.3s;
+    -ms-transition: background,.3s,ease-in-out,.3s;
+    -o-transition: background,.3s,ease-in-out,.3s;
+    transition: background,.3s,ease-in-out,.3s;
+}
+.comment-photo-container
+{
+    padding: 0;
+}
+.commnent-text
+{
+    padding-top: 3px;
+    padding-right: 15px;
+}
 </style>
 
 <script type="text/javascript">
@@ -136,7 +160,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 reply">
+                <div class="col-xs-12 reply hide">
                     <div class="row">
                         <div class="col-xs-1 reply-photo-container">
                             <a href="#" class="img-container" style="background-image: url('')"></a>
@@ -166,13 +190,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 single-reply hidden-xs hidden-sm">
+                <div class="col-xs-12 post-comment hidden-xs hidden-sm">
                     <div class="row">
-                        <div class="col-xs-1 reply-photo-container">
-                            <a href="#" class="img-container" style="background-image: url('');"></a>
+                        <div class="col-xs-1 comment-photo-container">
+                            <a href="#" class="img-container" style="background-image: url('/Content/images/profile-image.jpg');"></a>
                         </div>
-                        <div class="col-xs-11 reply-photo-container">
-                            <div class="reply-text">
+                        <div class="col-xs-11 comment-photo-container">
+                            <div class="comment-text">
                                 <div class="form-group">
                                     <textarea placeholder="Reply to this comment" rows="1" 
                                               class="form-control replyField" data-reply-to="56163190ad669c4758e3a30e" 
