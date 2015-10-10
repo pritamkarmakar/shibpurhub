@@ -188,3 +188,11 @@ function handleAjaxError(XMLHttpRequest, textStatus, errorThrown)
     // hide the loading message in ask to answer module
     $('#loadingasktoanswer').hide();
 }
+
+function scrollToADivOnPageLoad()
+{
+    var hash = window.location.hash;
+    if(hash.length > 0 && $('#'+ hash).size() > 0){
+        $('html, body').animate({ scrollTop: $(hash).offset().top - 70});
+    }
+}
