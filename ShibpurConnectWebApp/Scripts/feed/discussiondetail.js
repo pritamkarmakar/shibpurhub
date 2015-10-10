@@ -3,12 +3,14 @@ var advancedEditor;
 var userId = null;
 // we will keep the default users that can answer this question and we will retrieve it during page load
 var userListAskToAnswer;
+var myImageUrl = "/Content/images/profile-image.jpg";
 
 // get the current logged-in user details
 var userDetails = localStorage.getItem("SC_Session_UserDetails");
 var userInfo = $.parseJSON(userDetails);
 if (userInfo != null) {
     userId = userInfo.id;
+    myImageUrl = "http://i.imgur.com/" + userInfo.profileImageURL;
 }
 
 //used to reference rich textbox editor for question edit
@@ -144,6 +146,8 @@ function createAnswer(answer)
     $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(answer.postedOnUtc));
     
     $("div.feed-list").append(htmlItem);
+    
+    $('.myimg').css('background-image',"url("+ myImageUrl +")");
 }
 
 function showAskToAnswer(question)
