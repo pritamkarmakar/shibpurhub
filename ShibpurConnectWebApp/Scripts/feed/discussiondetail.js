@@ -119,7 +119,7 @@ function createQuestion(question)
     advancedEditor.on('text-change', function(delta, source) {
         if(!$('.toolbar-container').is(":visible"))
         {
-            $('.toolbar-container').show("slide", {"direction": "up"});
+            $('.toolbar-container').show("slide", {"direction": "down"});
         }
     });
     
