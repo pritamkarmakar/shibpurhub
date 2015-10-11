@@ -19,7 +19,7 @@ var categoryArr = [];
 $(document).ready(function () {
     scrollToADivOnPageLoad();
     // hide the submit answer rich text control
-    $('.wirte-answer').hide();
+    $('.submit-answer-container').hide();
 
     // hide the right column modules, we will enable inside respective the partial view once receive the server response
     $('.tagcontainermaindiv').hide();
@@ -28,16 +28,16 @@ $(document).ready(function () {
     // hide 'ask to answer' module
     $('#userToAnswer').hide();
 
-    if($('.wirte-answer .text-wrapper .editor-container').length > 0)
+    if($('.write-answer .text-wrapper .editor-container').length > 0)
     {
-        advancedEditor = new Quill('.wirte-answer .text-wrapper .editor-container', {
+        advancedEditor = new Quill('.write-answer .text-wrapper .editor-container', {
             modules: {
                 'authorship': {
                     authorId: 'advanced',
                     enabled: true
                 },
                 'toolbar': {
-                    container: '.wirte-answer .text-wrapper .toolbar-container'
+                    container: '.write-answer .text-wrapper .toolbar-container'
                 },
                 'link-tooltip': true,
                 'image-tooltip': true,
@@ -115,10 +115,14 @@ function createQuestion(question)
     $('#loadingdiv').hide();
 
     // show the submit answer rich text control
-    $('.wirte-answer').show();
-    $('.editor-container').focus(function(){
-        $('.toolbar-container').show("slide", {"direction": "up"});
+    $('.submit-answer-container').show();
+    advancedEditor.on('text-change', function(delta, source) {
+        if(!$('.toolbar-container').is(":visible"))
+        {
+            $('.toolbar-container').show("slide", {"direction": "up"});
+        }
     });
+    
 
     // show the 'ask to answer module'
     $('#userToAnswer').show();
