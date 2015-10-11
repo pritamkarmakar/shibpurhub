@@ -164,6 +164,8 @@ function createComment(comment)
     var answerId = comment.answerId;
     var htmlItem = $('#'+ answerId +" .comments .post-comment.hide").clone().removeClass('hide');
     
+    $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
+    
     $(htmlItem).find('.commentContent p').text(comment.commentText);
     $(htmlItem).find('a.comment-author-name').text(comment.displayName).attr("href", "/Account/Profile?userId=" + comment.userId);
     

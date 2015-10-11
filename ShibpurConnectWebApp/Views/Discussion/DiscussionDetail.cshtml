@@ -72,7 +72,11 @@
 .comment-details {
     margin-top: 8px;
 }
-.comment-details a {
+.comments .post-comment
+{
+    border-bottom: 1px solid #ECEFF1;
+}
+.comment-details a, .comment-details span {
     display: block;
     margin-right: 5px;
     color: #BABABA;
@@ -80,13 +84,14 @@
     text-decoration: none;
     font-weight: 300;
 }
+
 </style>
 
 <script type="text/javascript">
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=1.3")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=1.4")" type="text/javascript"></script>
 
 <div class="container">
 
@@ -229,8 +234,8 @@
                                     
                                     <li><a href="#" class="comment-author-name"></a></li>
                                     <li><span class="comment-time"></span></li>
-                                    <li><a href="#" class="comment-time user-control editCommentBtn"><i class="fa fa-pencil"></i> edit</a></li>
-                                    <li><a href="#" class="comment-time user-control deleteCommentBtn" ><i class="fa fa-trash"></i> delete</a></li>
+                                    <li><a href="#" class="editCommentBtn hide"><i class="fa fa-pencil"></i> edit</a></li>
+                                    <li><a href="#" class="deleteCommentBtn hide" ><i class="fa fa-trash"></i> delete</a></li>
 
                                 </ul>
                             </div>

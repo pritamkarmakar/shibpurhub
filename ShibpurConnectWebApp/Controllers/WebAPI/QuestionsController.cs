@@ -369,6 +369,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         {
                             var userData = userDetails[comment.UserId];
                             comment.DisplayName = userData.FirstName + " " + userData.LastName;
+                            comment.UserProfileImage = userData.ProfileImageURL;
                         }
                     }
                 }
