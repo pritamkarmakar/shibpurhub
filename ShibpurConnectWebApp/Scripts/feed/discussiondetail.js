@@ -99,7 +99,7 @@ function createQuestion(question)
     }
     $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
     
-    $("div.feed-list").append(htmlItem);
+    $("div.question-container").append(htmlItem);
     
     showAskToAnswer(question);
     
@@ -116,6 +116,9 @@ function createQuestion(question)
 
     // show the submit answer rich text control
     $('.wirte-answer').show();
+    $('.editor-container').focus(function(){
+        $('.toolbar-container').show("slide", {"direction": "up"});
+    });
 
     // show the 'ask to answer module'
     $('#userToAnswer').show();
@@ -145,7 +148,7 @@ function createAnswer(answer)
     
     $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(answer.postedOnUtc));
     
-    $("div.feed-list").append(htmlItem);
+    $("div.answer-container").append(htmlItem);
     
     $('.myimg').css('background-image',"url("+ myImageUrl +")");
     
