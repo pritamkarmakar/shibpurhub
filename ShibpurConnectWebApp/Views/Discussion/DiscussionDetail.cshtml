@@ -63,13 +63,30 @@
 {
     margin-bottom: 0;
 }
+.comment-text p {
+    padding: 0;
+    margin: 0;
+    color: #303030;
+    margin-bottom: 10px;
+}
+.comment-details {
+    margin-top: 8px;
+}
+.comment-details a {
+    display: block;
+    margin-right: 5px;
+    color: #BABABA;
+    font-size: .8em;
+    text-decoration: none;
+    font-weight: 300;
+}
 </style>
 
 <script type="text/javascript">
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=1.2")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=1.3")" type="text/javascript"></script>
 
 <div class="container">
 
@@ -187,37 +204,39 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 reply hide">
+                
+                
+            </div>
+            <div class="comments">
+                <div class="col-xs-12 post-comment hide">
                     <div class="row">
-                        <div class="col-xs-1 reply-photo-container">
+                        <div class="col-xs-1 comment-photo-container">
                             <a href="#" class="img-container" style="background-image: url('')"></a>
                         </div>
-                        <div class="col-xs-11 reply-photo-container">
-                            <div class="reply-text">
+                        <div class="col-xs-11 comment-photo-container">
+                            <div class="comment-text">
                                 <input type="hidden" value="xzxzxzxzxzxz" class="initial-content">
 
-                                <div class="replyContent show"><p>xzxzxzxzxzxz</p></div>
+                                <div class="commentContent show"><p>xzxzxzxzxzxz</p></div>
 
                                 <div class="form-group">
-                                    <!--<input type="text" class="editReplyField form-control hide" value="xzxzxzxzxzxz" data-comment-id="56163190ad669c4758e3a30e" data-reply-id="56182ee0b5a8eb3658dfcf66"/>-->
-                                    <textarea class=" form-control hide" data-comment-id="56163190ad669c4758e3a30e" data-reply-id="56182ee0b5a8eb3658dfcf66" style="overflow: hidden; word-wrap: break-word; height: 74px;">xzxzxzxzxzxz</textarea>
+                                    
+                                    <textarea class="form-control hide" data-comment-id="56163190ad669c4758e3a30e" 
+                                     style="overflow: hidden; word-wrap: break-word; height: 74px;">xzxzxzxzxzxz</textarea>
                                 </div>
 
-                                <ul class="list-inline reply-details">
-                                    <!--<li><a href="#" class="reply-upvote"><i class="fa fa-arrow-up"></i> Upvote</a></li>-->
-                                    <li><a href="#" class="reply-author-name">munna msd</a></li>
-                                    <li><a href="#" class="reply-time">in a few seconds</a></li>
-
-                                    <li><a href="#" class="reply-time user-control editReplyBtn"><i class="fa fa-pencil"></i> edit</a></li>
-
-                                    <li><a href="#" class="reply-time user-control deleteReplyBtn" data-comment-id="56163190ad669c4758e3a30e" data-reply-id="56182ee0b5a8eb3658dfcf66"><i class="fa fa-trash"></i> delete</a></li>
+                                <ul class="list-inline comment-details">
+                                    
+                                    <li><a href="#" class="comment-author-name"></a></li>
+                                    <li><span class="comment-time"></span></li>
+                                    <li><a href="#" class="comment-time user-control editCommentBtn"><i class="fa fa-pencil"></i> edit</a></li>
+                                    <li><a href="#" class="comment-time user-control deleteCommentBtn" ><i class="fa fa-trash"></i> delete</a></li>
 
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
             <div class="col-xs-12 post-comment hidden-xs hidden-sm">
                     <div class="row">
