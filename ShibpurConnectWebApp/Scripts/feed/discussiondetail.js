@@ -342,7 +342,7 @@ function saveAnswer() {
             answer.displayName = userInfo.firstName + " " + userInfo.lastName;
             createAnswer(answer);
             
-            $('html, body').animate({ scrollTop: $(answer.answerId).offset().top - 70});
+            $('html, body').animate({ scrollTop: $("#"+ answer.answerId).offset().top - 70});
         }
     });
 }
