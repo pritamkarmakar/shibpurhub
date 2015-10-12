@@ -276,7 +276,7 @@ function enableOrDisableSubmitAnswer(enable)
     if(enable)
     { 
         // enable the button
-        $('.btn-submit-answer').prop('disabled', false);
+        $('.btn-submit-answer').prop('disabled', false).removeClass("disabled");
 
         // remove the loading class from save button
         $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
@@ -285,7 +285,7 @@ function enableOrDisableSubmitAnswer(enable)
     else
     {
         // disable the button
-        $('.btn-submit-answer').prop('disabled', true);
+        $('.btn-submit-answer').prop('disabled', true).addClass("disabled");
     
         // add spinner animation in the save button and change the text to 'Saving..'
         $('.btn-submit-answer > i').addClass('fa fa-circle-o-notch fa-spin');
@@ -319,9 +319,6 @@ function saveAnswer() {
     }
     
     var userInfo = $.parseJSON(userDetails);
-
-    //var SERVER = "/api/";
-    var userid = userInfo.id;
     
     var answerObject = { "AnswerText": answer, "QuestionId": questionID };
 
@@ -335,10 +332,17 @@ function saveAnswer() {
             if (!result) {
                 return;
             }
-
+            
+            var answer = result;
             enableOrDisableSubmitAnswer(true);
-            logActivity(2, result.answerId);
-            createAnswer(result);
+            logActivity(2, answer.answerId);
+            
+            answer.userId = userInfo.id;
+            answer.userProfileImage = userInfo.profileImageURL;
+            answer.displayName = userInfo.firstName + " " + userInfo.lastName;
+            createAnswer(answer);
+            
+            $('html, body').animate({ scrollTop: $(answer.answerId).offset().top - 70});
         }
     });
 }
