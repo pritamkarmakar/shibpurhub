@@ -123,6 +123,9 @@ function createQuestion(question)
         }
     });
     
+    $('.btn-submit-answer').click(function () {
+        saveAnswer();
+    });
 
     // show the 'ask to answer module'
     $('#userToAnswer').show();
