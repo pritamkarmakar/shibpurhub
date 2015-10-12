@@ -267,3 +267,75 @@ function scrollToADivOnPageLoad()
         $('html, body').animate({ scrollTop: $(hash).offset().top - 70});
     }
 }
+
+function enableOrDisableSubmitAnswer(enable)
+{
+    if(enable)
+    { 
+        // enable the button
+        $('.btn-submit-answer').prop('disabled', false);
+
+        // remove the loading class from save button
+        $('.btn-submit-answer > i').removeClass('fa fa-circle-o-notch fa-spin');
+        $('.btn-submit-answer > span').text('Submit Answer');
+    }
+    else
+    {
+        // disable the button
+        $('.btn-submit-answer').prop('disabled', true);
+    
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('.btn-submit-answer > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('.btn-submit-answer > span').text(' Saving...');
+    }
+}
+
+function saveAnswer() {
+    // hide the error div
+    $('#errormessage').empty().hide();
+    
+    enableOrDisableSubmitAnswer(false);
+
+    jQuery.support.cors = true;
+    var userDetails = localStorage.getItem("SC_Session_UserDetails");
+
+    if (!userDetails) {
+        //TO-DO: Handle if userdetail is not available in Session Storage
+        window.location.href = "/account/login";
+    }
+
+    var answer = advancedEditor.getHTML();
+
+    // verify if answer text is empty
+    if (!answer || $.trim(advancedEditor.getText()) == "") {
+        enableOrDisableSubmitAnswer(true);
+
+        // parse the error json
+        $('#errormessage').show().append("<p>Answer can't be blank</p>");
+        return;
+    }
+    
+    var userInfo = $.parseJSON(userDetails);
+
+    //var SERVER = "/api/";
+    var userid = userInfo.id;
+    
+    var answerObject = { "AnswerText": answer, "QuestionId": questionID };
+
+    advancedEditor.setHTML("");
+    
+    scAjax({
+        "url": "Answers/PostAnswer",
+        "type": "POST",
+        "data": JSON.stringify(answerObject),
+        "success": function (result, data) {
+            if (!result) {
+                return;
+            }
+
+            enableOrDisableSubmitAnswer(true);
+            logActivity(2, result.answerId);
+            createAnswer(result);
+        }
+    });
+}
