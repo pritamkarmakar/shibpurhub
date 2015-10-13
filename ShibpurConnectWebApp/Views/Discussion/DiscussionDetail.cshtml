@@ -114,13 +114,37 @@
     font-size: 1.3em;
     margin-bottom: 10px;
 }
+
+    .wantedanswersuggestion {
+        background: #FFF;
+        padding-top: 10px;
+        -webkit-box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+        -moz-box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+        box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+        margin: 10px;
+        text-decoration: none;
+    }
+
+    .wantedanswersuggestion .btn {
+        margin: 0 auto;
+    }
+    .userContainer
+    {
+        overflow: auto;
+        margin-bottom: 10px;
+    }
+
+    .askbuton {
+        padding: 10px;
+        border-top: 1px solid #ECEFF1;
+    }
 </style>
 
 <script type="text/javascript">
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=2.6")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=2.7")" type="text/javascript"></script>
 
 <div class="container">
 
@@ -434,7 +458,7 @@
                 </form>
             </div>
             <hr id="bigseparator" />
-            <div id="userlistasktoanswer">
+            <div class="col-md-12 col-xs-12" id="userlistasktoanswer">
             </div>
             <!--div for loading message for the ask to answer module-->
             <div id="loadingasktoanswer">
