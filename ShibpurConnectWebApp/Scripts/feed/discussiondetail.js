@@ -177,14 +177,16 @@ function createAnswer(answer)
             }
             
             var postComment = {};
-            postComment.commentText = $(this).val();
-            postComment.answerId = answerId;
+            postComment.commentText = commentText;
+            postComment.answerId = answer.answerId;
             postComment.userId = userInfo.id;
             postComment.userProfileImage = userInfo.profileImageURL;
             postComment.displayName = userInfo.firstName + " " + userInfo.lastName;
             postComment.postedOnUtc = new Date();
             
             saveComment(postComment);
+            
+            $(this).val("");
         }
     });
 }
