@@ -139,6 +139,7 @@
     .askbuton {
         padding: 10px;
         border-top: 1px solid #ECEFF1;
+        padding-left: 0;
     }
     .profileimage, .userinfo
     {
@@ -154,7 +155,7 @@
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=3.0")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=3.1")" type="text/javascript"></script>
 
 <div class="container">
 

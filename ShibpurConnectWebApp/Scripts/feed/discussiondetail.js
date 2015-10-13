@@ -277,7 +277,7 @@ function showAskToAnswer(question)
                                 "success": function (rRate) {
                                     //wantedanswersuggestion
                                     responseRate = rRate;
-                                    $('span[id$="' + val.id + '"]:first').text("Response: " + rRate);
+                                    $('span[id$="' + val.id + '"]:first').text("Response rate: " + rRate);
 
                                     // hide the loading message
                                     $('#loadingasktoanswer').hide();
@@ -466,7 +466,7 @@ $(function () {
                                             "success": function (rRate) {
                                                 //wantedanswersuggestion
                                                 responseRate = rRate;
-                                                $('span[id$="' + val.id + '"]:first').text("Response: " + rRate);
+                                                $('span[id$="' + val.id + '"]:first').text("Response rate: " + rRate);
 
                                                 // hide the loading message
                                                 $('#loadingasktoanswer').hide();
@@ -520,7 +520,7 @@ $(function () {
                                     "success": function (rRate) {
                                         //wantedanswersuggestion
                                         responseRate = rRate;
-                                        $('span[id$="' + val.id + '"]:first').text("Response: " + rRate);
+                                        $('span[id$="' + val.id + '"]:first').text("Response rate: " + rRate);
 
                                         // hide the loading message
                                         $('#loadingasktoanswer').hide();
