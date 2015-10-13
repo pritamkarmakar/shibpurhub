@@ -165,11 +165,31 @@ function createAnswer(answer)
     }
     
     $(comments).each(function (index, comment) {
-        createComment(comment, true);
+        createComment(comment);
+    });
+    
+    $('#'+ answer.answerId).find('textarea.write-comment').bind('keyup',function (event){
+        if (event.keyCode === 13){
+            var commentText = $(this).val();
+            if(!commentText || commentText == "")
+            {
+                return;
+            }
+            
+            var postComment = {};
+            postComment.commentText = $(this).val();
+            postComment.answerId = answerId;
+            postComment.userId = userInfo.id;
+            postComment.userProfileImage = userInfo.profileImageURL;
+            postComment.displayName = userInfo.firstName + " " + userInfo.lastName;
+            postComment.postedOnUtc = new Date();
+            
+            saveComment(postComment);
+        }
     });
 }
 
-function createComment(comment, isFirstTime)
+function createComment(comment)
 {
     var answerId = comment.answerId;
     var htmlItem = $('#'+ answerId +" .comments .post-comment.hide").clone().removeClass('hide');
@@ -182,29 +202,6 @@ function createComment(comment, isFirstTime)
     $(htmlItem).find('span.comment-time').text(getDateFormattedByMonthYear(comment.postedOnUtc));
     
     $('#'+ answerId +" .comments").append(htmlItem);
-    
-    if(isFirstTime)
-    {
-        $('#'+ answerId).find('textarea.write-comment').bind('keyup',function (event){
-            if (event.keyCode === 13){
-                var commentText = $(this).val();
-                if(!commentText || commentText == "")
-                {
-                    return;
-                }
-                
-                var postComment = {};
-                postComment.commentText = $(this).val();
-                postComment.answerId = answerId;
-                postComment.userId = userInfo.id;
-                postComment.userProfileImage = userInfo.profileImageURL;
-                postComment.displayName = userInfo.firstName + " " + userInfo.lastName;
-                postComment.postedOnUtc = new Date();
-                
-                saveComment(postComment);
-            }
-        });
-    }
 }
 
 function showAskToAnswer(question)
