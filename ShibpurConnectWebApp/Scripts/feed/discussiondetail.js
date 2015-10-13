@@ -185,7 +185,7 @@ function createComment(comment, isFirstTime)
     
     if(isFirstTime)
     {
-        $(htmlItem).find('textarea.write-comment').bind('keypress',function (event){
+        $('#'+ answerId).find('textarea.write-comment').bind('keyup',function (event){
             if (event.keyCode === 13){
                 var commentText = $(this).val();
                 if(!commentText || commentText == "")
