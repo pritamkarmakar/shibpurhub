@@ -266,8 +266,8 @@ function showAskToAnswer(question)
                         "data": { "questionId": questionID, "userId": val.id },
                         "success": function (result) {
                             if (result != null) {
-                                $('a[id$="' + val.id + '"]:first').text("Already Asked");
-                                $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
+                                $('button[id$="' + val.id + '"]:first').text("Already Asked");
+                                $('button[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
                             }
                             //get the response rate for each user
                             var responseRate;
@@ -455,8 +455,8 @@ $(function () {
                                     "data": { "questionId": questionID, "userId": val.id },
                                     "success": function (result) {
                                         if (result != null) {
-                                            $('a[id$="' + val.id + '"]:first').text("Already Asked");
-                                            $('a[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
+                                            $('button[id$="' + val.id + '"]:first').text("Already Asked");
+                                            $('button[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
                                         }
                                         //get the response rate for each user
                                         var responseRate;
