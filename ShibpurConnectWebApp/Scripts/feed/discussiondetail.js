@@ -165,11 +165,11 @@ function createAnswer(answer)
     }
     
     $(comments).each(function (index, comment) {
-        createComment(comment);
+        createComment(comment, true);
     });
 }
 
-function createComment(comment)
+function createComment(comment, isFirstTime)
 {
     var answerId = comment.answerId;
     var htmlItem = $('#'+ answerId +" .comments .post-comment.hide").clone().removeClass('hide');
@@ -182,6 +182,29 @@ function createComment(comment)
     $(htmlItem).find('span.comment-time').text(getDateFormattedByMonthYear(comment.postedOnUtc));
     
     $('#'+ answerId +" .comments").append(htmlItem);
+    
+    if(isFirstTime)
+    {
+        $(htmlItem).find('textarea.write-comment').bind('keypress',function (event){
+            if (event.keyCode === 13){
+                var commentText = $(this).val();
+                if(!commentText || commentText == "")
+                {
+                    return;
+                }
+                
+                var postComment = {};
+                postComment.commentText = $(this).val();
+                postComment.answerId = answerId;
+                postComment.userId = userInfo.id;
+                postComment.userProfileImage = userInfo.profileImageURL;
+                postComment.displayName = userInfo.firstName + " " + userInfo.lastName;
+                postComment.postedOnUtc = new Date();
+                
+                saveComment(postComment);
+            }
+        });
+    }
 }
 
 function showAskToAnswer(question)
@@ -343,6 +366,25 @@ function saveAnswer() {
             createAnswer(answer);
             
             $('html, body').animate({ scrollTop: $("#"+ answer.answerId).offset().top - 70});
+        }
+    });
+}
+
+function saveComment(comment)
+{
+    if(!comment)
+    {
+        return;
+    }
+    
+    createComment(comment);
+    var data = { "CommentText": $.trim(comment.commentText), "AnswerId": comment.answerId };
+    scAjax({
+        "url": "comments/postcomment",
+        "type": "POST",
+        "data": JSON.stringify(data, null, 2),
+        "success": function (result) {
+            
         }
     });
 }
