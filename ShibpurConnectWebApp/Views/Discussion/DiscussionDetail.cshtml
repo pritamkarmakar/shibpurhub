@@ -123,6 +123,8 @@
         box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
         margin: 10px 10px 10px 0;
         text-decoration: none;
+        float: left;
+        width: 32%;
     }
 
     .wantedanswersuggestion .btn {
@@ -152,7 +154,7 @@
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=2.8")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=2.9")" type="text/javascript"></script>
 
 <div class="container">
 
@@ -461,11 +463,11 @@
             <div>
                 <form role="search">
                     <div class="form-group">
-                        <input type="text" id="usernametext" class="form-control" placeholder="Search a specific user to answer your question" aria-describedby="sizing-addon3" style="width:90%">
+                        <input type="text" id="usernametext" class="form-control" placeholder="Search a specific user to answer your question" aria-describedby="sizing-addon3" style="width:99%">
                     </div>
                 </form>
             </div>
-            <hr id="bigseparator" />
+            
             <div class="col-md-12 col-xs-12" id="userlistasktoanswer">
             </div>
             <!--div for loading message for the ask to answer module-->
