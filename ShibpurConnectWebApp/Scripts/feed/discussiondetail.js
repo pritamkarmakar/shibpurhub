@@ -111,7 +111,7 @@ function createQuestion(question)
     
     $(followButton).click(function(event){
           event.preventDefault();
-          followquestion(question.questionId);
+          followQuestion(question.questionId);
     });
     
     showAskToAnswer(question);
