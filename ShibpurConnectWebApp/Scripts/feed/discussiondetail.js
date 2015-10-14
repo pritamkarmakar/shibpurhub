@@ -99,7 +99,20 @@ function createQuestion(question)
     }
     $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
     
+    var followButton = $(htmlItem).find('.follow-ul a.thumbs');
+    $(followButton).attr({ 'data-questionId': question.questionId, 'id': question.questionId });
+    
+    if(!(question.userId == userId || question.isAskedByMe))
+    {
+        $(htmlItem).find('.follow-ul').show();
+    }
+    
     $("div.question-container").append(htmlItem);
+    
+    $(followButton).click(function(event){
+          event.preventDefault();
+          followquestion(question.questionId);
+    });
     
     showAskToAnswer(question);
     
@@ -154,6 +167,11 @@ function createAnswer(answer)
     $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
     
     $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(answer.postedOnUtc));
+    
+    if(!(answer.userId == userId || answer.isAnsweredByMe))
+    {
+        $(htmlItem).find('.upvote-ul').show();
+    }
     
     $("div.answer-container").append(htmlItem);
     
@@ -412,7 +430,31 @@ function saveComment(comment)
     });
 }
 
-
+function followQuestion(questionId)
+{
+    var button = $("#" + questionId);
+    //var questionId = $(button).attr('data-questionId');
+    var textSpan = $(button).find('span');
+    var icon = $(button).find('i.fa');
+    $(icon).addClass('fa-circle-o-notch fa-spin');
+    
+    if($(button).hasClass('active'))
+    {
+        updateFollowQuestion(false, questionId, function(){
+            $(button).removeClass('active');
+            $(textSpan).text('Follow');
+            $(icon).removeClass('fa-check fa-circle-o-notch fa-spin').addClass('fa-plus-circle');
+        });
+    }
+    else
+    { 
+        updateFollowQuestion(true, questionId, function(){
+            $(button).addClass('active');
+            $(textSpan).text('Following');
+            $(icon).removeClass('fa-plus-circle fa-circle-o-notch fa-spin').addClass('fa-check');
+        });
+    }
+}
 
 // This method will execute when user will type user details in the 'Ask To Answer' serach box
 $(function () {

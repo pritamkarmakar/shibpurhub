@@ -279,7 +279,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var email = principal.Identity.Name;
 
                 Helper.Helper helper = new Helper.Helper();
-                var userInfo = (CustomUserInfo)null;
+                CustomUserInfo userInfo = null;
                 // check if claim is null (this can happen if user don't have any valid token)
                 if (email != null)
                 {
@@ -299,7 +299,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var questionUserDetail = await actionResult1;
                 userDetails.Add(question.UserId, questionUserDetail);
                 questionVM.UserEmail = questionUserDetail.Email;
-                questionVM.DisplayName = questionUserDetail.FirstName;
+                questionVM.DisplayName = questionUserDetail.FirstName + " " + questionUserDetail.LastName;
                 questionVM.UserProfileImage = questionUserDetail.ProfileImageURL;
 
                 if (answers.Count() == 0)
