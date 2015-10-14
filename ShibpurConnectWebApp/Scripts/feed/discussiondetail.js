@@ -159,6 +159,10 @@ function createQuestion(question)
     });
 
     updateQnAStatus(questionIds, answerIds);
+
+    if (answerId && answerId != "") {
+        $('html,body').animate({ scrollTop: $('#' + answerId).offset().top - 70 }, 'fast');
+    }
 }
 
 function createAnswer(answer)
@@ -218,6 +222,8 @@ function createAnswer(answer)
             $(this).val("");
         }
     });
+
+    
 }
 
 function createComment(comment)
