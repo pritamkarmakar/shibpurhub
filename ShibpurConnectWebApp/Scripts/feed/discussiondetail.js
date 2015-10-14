@@ -102,7 +102,11 @@ function createQuestion(question)
     var followButton = $(htmlItem).find('.follow-ul a.thumbs');
     $(followButton).attr({ 'data-questionId': question.questionId, 'id': question.questionId });
     
-    if(!(question.userId == userId || question.isAskedByMe))
+    var questionIds = [];
+    questionIds.push(question.questionId);
+    
+
+    if(!question.isAskedByMe)
     {
         $(htmlItem).find('.follow-ul').show();
     }
@@ -148,9 +152,13 @@ function createQuestion(question)
         return;
     }
     
+    var answerIds = [];
     $(answers).each(function (index, answer) {
+        answerIds.push(answer.answerId);
         createAnswer(answer);
     });
+
+    updateQnAStatus(questionIds, answerIds);
 }
 
 function createAnswer(answer)
@@ -168,12 +176,15 @@ function createAnswer(answer)
     
     $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(answer.postedOnUtc));
     
-    if(!(answer.userId == userId || answer.isAnsweredByMe))
-    {
-        $(htmlItem).find('.upvote-ul').show();
-    }
+    var upvoteButton = $(htmlItem).find('.upvote-ul a.thumbs');
+    $(upvoteButton).attr({ 'data-answerId': answer.answerId, 'id': answer.answerId });
     
     $("div.answer-container").append(htmlItem);
+
+    $(upvoteButton).click(function (event) {
+        event.preventDefault();
+        updateUpVote(answer.answerId);
+    });
     
     $('.myimg').css('background-image',"url("+ myImageUrl +")");
     
@@ -454,6 +465,39 @@ function followQuestion(questionId)
             $(icon).removeClass('fa-plus-circle fa-circle-o-notch fa-spin').addClass('fa-check');
         });
     }
+}
+
+function updateUpVote(answerId, success) {
+    var upvoteButton = $(".upvote-ul a[data-answerId='" + answerId + "']");    
+
+    if ($(upvoteButton).hasClass('active')) {
+        $(upvoteButton).attr('tutle', 'You have already upvoted this answer.');
+        return;
+    }
+
+    var textSpan = $(upvoteButton).find('span');
+    var icon = $(upvoteButton).find('i.fa');
+    $(icon).addClass('fa-circle-o-notch fa-spin');
+
+    scAjax({
+        "url": "answers/UpdateUpVoteCount",
+        "type": "POST",
+        "data": JSON.stringify({
+            "AnswerID": answerId
+        }),
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+            if (success && typeof success === 'function') {
+                success();
+            }
+
+            $(upvoteButton).addClass('active');
+            $(textSpan).text('Upvoted');
+            $(icon).removeClass('fa-arrow-up fa-circle-o-notch fa-spin').addClass('fa-thumbs-up');
+        }
+    });
 }
 
 // This method will execute when user will type user details in the 'Ask To Answer' serach box

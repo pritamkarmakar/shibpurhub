@@ -541,7 +541,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 if (answerIds != null && answerIds.Count > 0)
                 {
                     var answers = from a in _mongoAnswerHelper.Collection.AsQueryable<Answer>().ToList()
-                                  where questionIds.Contains(a.AnswerId)
+                                  where answerIds.Contains(a.AnswerId)
                                   select a;
 
                     foreach (var answer in answers.ToList())

@@ -290,6 +290,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var questionVM = new QuestionViewModel().Copy(question);
                 questionVM.IsAnonymous = userInfo == null;
                 questionVM.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
+                questionVM.IsFollowedByMe = userInfo != null &&
+                                            question.Followers != null &&
+                                            question.Followers.Contains(userInfo.Id);
 
                 var _answerMongoHelper = new MongoHelper<Answer>();
                 var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderByDescending(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();

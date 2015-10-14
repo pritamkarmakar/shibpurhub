@@ -139,7 +139,7 @@ function createAllQuestions(questions, page)
 
         $(htmlItem).find('span.action').text(" asked a ");
 
-        var questionUrl = '/feed/' + (question.urlSlug == null ? question.questionId : question.urlSlug);
+        var questionUrl = '/discussion/' + (question.urlSlug == null ? question.questionId : question.urlSlug);
         $(htmlItem).find('a.target').text("Question").attr("href", questionUrl);
 
         //$(htmlItem).find('p.designation').text(feed.userDesignation);
@@ -269,9 +269,9 @@ function createQuestions(questions) {
         }
         //$(thread).find('div.user').attr('onclick', "window.location='.././Account/Profile?userEmail=" + question.userEmail + "'");
         if (question.urlSlug != null)
-            $(thread).find('div.detail a').text(question.title).attr('href', '/feed/' + question.urlSlug);
+            $(thread).find('div.detail a').text(question.title).attr('href', '/discussion/' + question.urlSlug);
         else
-            $(thread).find('div.detail a').text(question.title).attr('href', '/feed/' + question.questionId);
+            $(thread).find('div.detail a').text(question.title).attr('href', '/discussion/' + question.questionId);
         $(thread).find('div.detail a').attr('class', 'question-hyperlink');
         // extract only text from the question description, if user has image in the question description we will be able to remove those
         var tempdescription = '<p>' + question.description + '</p>';

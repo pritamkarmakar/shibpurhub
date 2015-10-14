@@ -382,6 +382,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\feed\details.css" />
     <Content Include="Content\feed\detailsmobile.css" />
+    <Content Include="Content\feed\discussion.css" />
+    <Content Include="Content\feed\discussionmobile.css" />
     <Content Include="Content\feed\feed.css" />
     <Content Include="Content\feed\feedlistV1.css" />
     <Content Include="Content\feed\feedmobile.css" />
@@ -607,6 +609,7 @@
     <Content Include="Views\Account\Register.Mobile.cshtml" />
     <Content Include="Views\Feed\MyFeeds.Mobile.cshtml" />
     <Content Include="Views\Discussion\DiscussionDetail.cshtml" />
+    <Content Include="Views\Discussion\DiscussionDetail.Mobile.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

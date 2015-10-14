@@ -341,15 +341,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     }
                     answerInDB.UpvotedByUserIds.Add(userInfo.Id);
                     
-                    var userActivityLog = new UserActivityLog
-                    {
-                        Activity = 3,
-                        UserId = userInfo.Id,
-                        ActedOnObjectId = answer.AnswerId,
-                        ActedOnUserId = answer.UserId
-                    };
+                    //var userActivityLog = new UserActivityLog
+                    //{
+                    //    Activity = 3,
+                    //    UserId = userInfo.Id,
+                    //    ActedOnObjectId = answer.AnswerId,
+                    //    ActedOnUserId = answer.UserId
+                    //};
                     
-                    UpdateUserActivityLog(userActivityLog);
+                    ////UpdateUserActivityLog(userActivityLog);
+                    //BackgroundJob.Enqueue(() => UpdateUserActivityLog(userActivityLog));
                 }
                 
                 answerInDB.UpVoteCount = upCount;
