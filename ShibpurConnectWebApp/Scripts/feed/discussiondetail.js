@@ -233,7 +233,7 @@ function createComment(comment)
     
     $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
     
-    $(htmlItem).find('.commentContent p').text(comment.commentText);
+    $(htmlItem).find('.commentContent p').html(comment.commentText);
     $(htmlItem).find('a.comment-author-name').text(comment.displayName).attr("href", "/Account/Profile?userId=" + comment.userId);
     
     $(htmlItem).find('span.comment-time').text(getDateFormattedByMonthYear(comment.postedOnUtc));

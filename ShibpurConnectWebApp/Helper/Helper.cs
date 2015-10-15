@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
+using System.Collections.Generic;
 
 namespace ShibpurConnectWebApp.Helper
 {
@@ -20,6 +21,43 @@ namespace ShibpurConnectWebApp.Helper
         // Bearer token to access the Web API
         public string token = string.Empty;
         TokenApi tokenAPi = null;
+
+        private static Dictionary<string, string> Icons;
+        private const string TWITTEREMOJIPATH = "https://twemoji.maxcdn.com/72x72/";
+        static Helper()
+        {
+            Icons = new Dictionary<string, string>
+            {
+               { ":)", TWITTEREMOJIPATH + "1f600.png"},
+               { ":(", TWITTEREMOJIPATH + "1f626.png"},
+               { ":-)", TWITTEREMOJIPATH + "1f603.png"},
+               { ":D", TWITTEREMOJIPATH + "1f604.png"},
+               { ":X", TWITTEREMOJIPATH + "1f621.png"},
+               { ":P", TWITTEREMOJIPATH + "1f61c.png"},
+            };
+        }
+
+        public static string GetEmojiedString(string original)
+        {
+            if(string.IsNullOrEmpty(original))
+            {
+                return string.Empty;
+            }
+
+            string transformed = original;
+            string htmlFormattedEmoji = "<span><img draggable='false' class='emoji' src={0}></span>";
+            foreach(var key in Icons.Keys)
+            {
+                if(original.Contains(key))
+                {
+                    var html = string.Format(htmlFormattedEmoji, Icons[key]);
+                    transformed = original.Replace(key, html);
+                    original = transformed;
+                }
+            }
+
+            return transformed;
+        }
 
         /// <summary>
         /// Method to retrieve the response of a http GET request

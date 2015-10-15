@@ -234,27 +234,27 @@
                             }
                                 // if notification type is 'received answer' then execute this
                             else if (val.notificationType == 2) {
-                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.answeredBy + "'>" + notificationContent.displayName + "</a> wrote an answer to your question '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.answeredBy + "'>" + notificationContent.displayName + "</a> wrote an answer to your question '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
                                 // if notification type is 'received comment' then execute this
                             else if (val.notificationType == 3) {
-                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your answer in '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your answer in '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
 
                                 // if notification type is 'ask to answer' then execute this
                             else if (val.notificationType == 4) {
-                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
 
                                 // if notification type is 'received comment in question' then execute this
                             else if (val.notificationType == 5) {
-                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your question '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithColor = "<div class='well' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your question '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
@@ -268,25 +268,25 @@
                             }
                                 // if notification type is 'received answer' then execute this
                             else if (val.notificationType == 2) {
-                                var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.answeredBy + "'>" + notificationContent.displayName + "</a> wrote an answer to your question '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.answeredBy + "'>" + notificationContent.displayName + "</a> wrote an answer to your question '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
                                 // if notification type is 'received comment' then execute this
                             else if (val.notificationType == 3) {
-                                var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your answer in '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your answer in '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
                                 // if notification type is 'ask to answer' then execute this
                             else if (val.notificationType == 4) {
-                                var notificationContentWithoutColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithoutColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.askedBy + "'>" + notificationContent.displayName + "</a> requested you to answer '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithoutColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
                                 // if notification type is 'received comment in question' then execute this
                             else if (val.notificationType == 5) {
-                                var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/feed/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your question '" + notificationContent.questionTitle + "'</div>";
+                                var notificationContentWithColor = "<div class='well whitewell' id='lessbottommargin' onclick=\"MarkItRead(" + "'/discussion/" + notificationContent.questionTitle + "','" + val.notificationId + "')\"><div class='profileimage' style='float:left;margin-right:8px;margin-left:8px;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + notificationContent.profileImage + "'></img></div><div id='askedby'><a href='" + window.location.origin + "/Account/Profile?userId=" + notificationContent.commentedBy + "'>" + notificationContent.displayName + "</a> wrote a comment in your question '" + notificationContent.questionTitle + "'</div>";
                                 $("#notificationsBody").append(notificationContentWithColor);
                                 $("#notificationsBody").append("<hr id='nomarginhr'/>");
                             }
@@ -592,6 +592,12 @@
             background: #fff;
             padding-top: 10px;
             overflow: auto;
+        }
+        img.emoji
+        {
+            height: 20px !important;
+            width: 20px !important;
+            padding: 0 !important;
         }
     </style>
 </head>
