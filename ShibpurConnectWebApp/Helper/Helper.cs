@@ -45,7 +45,7 @@ namespace ShibpurConnectWebApp.Helper
             }
 
             string transformed = original;
-            string htmlFormattedEmoji = "<span><img draggable='false' class='emoji' src={0}></span>";
+            string htmlFormattedEmoji = "<span class='emoji-span'><img draggable='false' class='emoji' src={0}></span>";
             foreach(var key in Icons.Keys)
             {
                 if(original.Contains(key))
