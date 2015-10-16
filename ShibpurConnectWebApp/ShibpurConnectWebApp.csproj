@@ -606,6 +606,7 @@
     <Content Include="Views\Account\Register.Mobile.cshtml" />
     <Content Include="Views\Feed\MyFeeds.Mobile.cshtml" />
     <Content Include="Views\Discussion\DiscussionDetail.cshtml" />
+    <Content Include="Views\Account\Profile.Mobile.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
