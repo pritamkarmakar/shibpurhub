@@ -332,8 +332,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     if (question != null)
                     {
                         feedContent.Header = question.Title;
-                        var questionUrl = "/feed/" + question.UrlSlug;
-                        feedContent.ActionUrl = isFeedAnAnswer ? "/feed/" + question.QuestionId + "/" + feed.ActedOnObjectId : questionUrl;
+                        var questionUrl = "/discussion/" + question.UrlSlug;
+                        feedContent.ActionUrl = isFeedAnAnswer ? "/discussion/" + question.QuestionId + "/" + feed.ActedOnObjectId : questionUrl;
 
                         feedContent.ViewCount = question.ViewCount;
 
@@ -541,7 +541,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 if (answerIds != null && answerIds.Count > 0)
                 {
                     var answers = from a in _mongoAnswerHelper.Collection.AsQueryable<Answer>().ToList()
-                                  where questionIds.Contains(a.AnswerId)
+                                  where answerIds.Contains(a.AnswerId)
                                   select a;
 
                     foreach (var answer in answers.ToList())

@@ -279,7 +279,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var email = principal.Identity.Name;
 
                 Helper.Helper helper = new Helper.Helper();
-                var userInfo = (CustomUserInfo)null;
+                CustomUserInfo userInfo = null;
                 // check if claim is null (this can happen if user don't have any valid token)
                 if (email != null)
                 {
@@ -290,6 +290,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var questionVM = new QuestionViewModel().Copy(question);
                 questionVM.IsAnonymous = userInfo == null;
                 questionVM.IsAskedByMe = userInfo != null && question.UserId == userInfo.Id;
+                questionVM.IsFollowedByMe = userInfo != null &&
+                                            question.Followers != null &&
+                                            question.Followers.Contains(userInfo.Id);
 
                 var _answerMongoHelper = new MongoHelper<Answer>();
                 var answers = _answerMongoHelper.Collection.AsQueryable().Where(a => a.QuestionId == questionId).OrderByDescending(a => a.MarkedAsAnswer).ThenBy(b => b.PostedOnUtc).ToList();
@@ -299,7 +302,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var questionUserDetail = await actionResult1;
                 userDetails.Add(question.UserId, questionUserDetail);
                 questionVM.UserEmail = questionUserDetail.Email;
-                questionVM.DisplayName = questionUserDetail.FirstName;
+                questionVM.DisplayName = questionUserDetail.FirstName + " " + questionUserDetail.LastName;
                 questionVM.UserProfileImage = questionUserDetail.ProfileImageURL;
 
                 if (answers.Count() == 0)
@@ -323,7 +326,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         cvm.UserId = comment.UserId;
                         cvm.AnswerId = comment.AnswerId;
                         cvm.CommentId = comment.CommentId;
-                        cvm.CommentText = comment.CommentText;
+                        cvm.CommentText = Helper.Helper.GetEmojiedString(comment.CommentText);
                         cvm.PostedOnUtc = comment.PostedOnUtc;
                         cvm.IsCommentedByMe = userInfo != null && comment.UserId == userInfo.Id;
                         answerComments.Add(cvm);
@@ -369,6 +372,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         {
                             var userData = userDetails[comment.UserId];
                             comment.DisplayName = userData.FirstName + " " + userData.LastName;
+                            comment.UserProfileImage = userData.ProfileImageURL;
                         }
                     }
                 }
@@ -921,7 +925,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 QuestionId = question.QuestionId,
                 Title = question.Title,
-                Description = question.Description,
+                Description = Helper.Helper.GetEmojiedString(question.Description),
                 UserId = question.UserId,
                 HasAnswered = question.HasAnswered,
                 PostedOnUtc = question.PostedOnUtc,

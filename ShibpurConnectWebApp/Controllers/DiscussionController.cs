@@ -35,7 +35,7 @@ namespace ShibpurConnectWebApp.Controllers
                 ViewData["answerId"] = answerId;
             }
 
-            return View("Details");
+            return View("DiscussionDetail");
         }
     }
 }

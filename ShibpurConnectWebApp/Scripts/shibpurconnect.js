@@ -585,12 +585,12 @@ function updateFollowQuestion(follow, questionId, success) {
     });
 }
 
-function updateQnAStatus(questionIds, answerIds)
-{
+
+
+function updateQnAStatus(questionIds, answerIds) {
     var userDetails = localStorage.getItem("SC_Session_UserDetails");
     var userInfo = $.parseJSON(userDetails);
-    if (userInfo == null)
-    {
+    if (userInfo == null) {
         return;
     }
 
@@ -605,9 +605,10 @@ function updateQnAStatus(questionIds, answerIds)
             }
 
             $(result).each(function (i, item) {
-                var button = $("#" + item.id);
+                var button;
 
                 if (item.isQuestion) {
+                    button = $("a.thumbs#" + item.id);
                     if (!item.isAskedByMe) {
                         $(button).closest('.follow-ul').show();
                     }
@@ -617,16 +618,17 @@ function updateQnAStatus(questionIds, answerIds)
                         $(button).find('span').text('Following');
                         $(button).find('i.fa').removeClass('fa-plus-circle').addClass('fa-check');
                     }
-
-                    return true;
                 }
-
-                if (!item.isAnsweredByMe) {
-                    $(button).closest('.upvote-ul').show();
-                }
-                if (item.isUpvotedByme) {
-                    $(button).addClass('active');
-                    $(button).find('span').text('Upvoted');
+                else {
+                    button = $("a[data-answerId='" + item.id + "']");
+                    if (!item.isAnsweredByMe) {
+                        $(button).closest('.upvote-ul').show();
+                    }
+                    if (item.isUpvotedByMe) {
+                        $(button).addClass('active');
+                        $(button).find('span').text('Upvoted');
+                        $(button).find('i.fa').removeClass('fa-arrow-up').addClass('fa-thumbs-up');
+                    }
                 }
             });
         }

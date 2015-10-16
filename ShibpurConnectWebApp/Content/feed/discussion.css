@@ -1,0 +1,159 @@
+﻿
+.text-wrapper {
+    background-color: #fff;
+}
+
+.answer .thread-details-container {
+    border-bottom: 1px solid #ECEFF1;
+}
+
+.post-comment {
+    background-color: #FAFAFA;
+    font-weight: 300;
+    padding: 8px 10px;
+    color: #777;
+    -webkit-transition: background,.3s,ease-in-out,.3s;
+    -moz-transition: background,.3s,ease-in-out,.3s;
+    -ms-transition: background,.3s,ease-in-out,.3s;
+    -o-transition: background,.3s,ease-in-out,.3s;
+    transition: background,.3s,ease-in-out,.3s;
+}
+
+.comment-photo-container {
+    padding: 0;
+}
+
+.comment-text {
+    padding-top: 3px;
+    padding-right: 15px;
+}
+
+    .comment-text textarea, .comment-text .form-control {
+        border-radius: 2px;
+        border: 1px solid #ddd;
+    }
+
+.img-container {
+    display: block;
+    width: 34px;
+    height: 34px;
+    margin: auto;
+    overflow: hidden;
+    margin-top: 2px;
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    border-radius: 18px;
+    background-color: #B6B6B6;
+    background-size: cover;
+    background-position: top center;
+}
+
+.answer.thread {
+    padding: 0;
+}
+
+.answer .post-header {
+    margin-bottom: 0;
+}
+
+.comment-text p {
+    padding: 0;
+    margin: 0;
+    color: #303030;
+    margin-bottom: 10px;
+}
+
+.comment-details {
+    margin-top: 8px;
+}
+
+.comments .post-comment {
+    border-bottom: 1px solid #ECEFF1;
+}
+
+.comment-details a, .comment-details span {
+    display: block;
+    margin-right: 5px;
+    color: #BABABA;
+    font-size: .8em;
+    text-decoration: none;
+    font-weight: 300;
+}
+
+.comment-details li {
+    padding: 0;
+}
+
+.submit-answer-container {
+    display: none;
+}
+
+.btn-submit-answer {
+    background-color: #8bc34a;
+    border: 0;
+}
+
+    .btn-submit-answer.disabled {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+
+.toolbar-container {
+    display: none;
+}
+
+.answer-header, .section-header {
+    color: #838383;
+    text-align: center;
+    font-weight: 300;
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+@media (min-width: 992px) {
+    .wantedanswersuggestion {
+        width: 32%;
+    }
+}
+
+.wantedanswersuggestion {
+    background: #FFF;
+    padding-top: 10px;
+    -webkit-box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+    -moz-box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+    box-shadow: rgba(0,0,0,.0980392) 0 2px 4px,rgba(0,0,0,.0980392) 0 0 3px;
+    margin: 10px 10px 10px 0;
+    text-decoration: none;
+    float: left;
+}
+
+.wantedanswersuggestion .btn {
+    margin: 0 auto;
+}
+
+.userContainer {
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+.askbuton {
+    padding: 10px;
+    border-top: 1px solid #ECEFF1;
+    padding-left: 0;
+}
+
+.userContainer .profileimage, .userContainer .userinfo {
+    padding: 0;
+}
+
+.userContainer .userinfo {
+    padding-left: 10px;
+}
+
+.wantedanswersuggestion span.name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width: 98%;
+}

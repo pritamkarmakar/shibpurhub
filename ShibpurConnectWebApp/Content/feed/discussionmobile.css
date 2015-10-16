@@ -1,0 +1,11 @@
+﻿.detail-container
+{
+    position: relative;
+    top: 60px;
+}
+
+#usernametext{
+    font-size: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+}

@@ -106,7 +106,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
             {
                 QuestionId = question.QuestionId,
                 Title = question.Title,
-                Description = question.Description,
+                Description = Helper.Helper.GetEmojiedString(question.Description),
                 UserId = question.UserId,
                 HasAnswered = question.HasAnswered,
                 PostedOnUtc = question.PostedOnUtc,

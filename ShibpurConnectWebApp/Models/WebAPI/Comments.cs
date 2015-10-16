@@ -52,5 +52,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string DisplayName { get; set; }
         
         public bool IsCommentedByMe { get; set; }
+        
+        public string UserProfileImage { get; set; }
     }
 }
