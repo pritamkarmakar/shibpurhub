@@ -1,8 +1,9 @@
-@using ShibpurConnectWebApp.Models.WebAPI
-@model Question
+﻿
 @{
-    ViewBag.Title = "Ask A Question - ShibpurHub";
+    ViewBag.Title = "PostJob - ShibpurHub";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <script src='@Scripts.Url("~/bundles/select2")' async> </script>
 <script type="text/javascript">
     var advancedEditorForQuestion;
@@ -30,7 +31,7 @@
         //$('#select_categories').tokenInput("/api/categories/GetCategories");
 
         scAjax({
-            "url": "tags/gettags",
+            "url": "skillsets/getskillsets",
             "success": function (result) {
                 if (!result) {
                     return;
@@ -38,7 +39,7 @@
 
                 var categories = result;
                 $(categories).each(function (i, category) {
-                    var option = $('<option>').text(category.categoryName).val(category.categoryId);
+                    var option = $('<option>').text(category.skillSetName).val(category.skillSetId);
                     $('#select_categories').append(option);
                 });
             }
@@ -46,10 +47,10 @@
 
         // enable select2 in the categories dropdown
         $('#select_categories').select2({
-            placeholder: "Tags",
+            placeholder: "Add multiple (,) separated skillsets",
             maximumSelectionLength: 5,
             tags: true,
-            tokenSeparators: [',', ' ', ';', '\n', '\t']
+            tokenSeparators: [',', ';', '\n', '\t']
 
         });
 
@@ -79,22 +80,10 @@
                     $('#btn_Save_Question > span').text('Save');
 
                     // show toast error
-                    Command: toastr["error"]("Question body can't be empty")
+                    Command: toastr["error"]("Question body can't be empty");
                     return;
                 }
-                // verify whether length of question description is less than 40
-                //if ($.trim(advancedEditorForQuestion.getText()).length < 40) {
-                //    // enable the button
-                //    $('#btn_Save_Question').prop('disabled', false);
-
-                //    // remove the loading class from save button
-                //    $('#btn_Save_Question > i').removeClass('fa fa-circle-o-notch fa-spin');
-                //    $('#btn_Save_Question > span').text('Save');
-
-                //    // show toast error
-                //    Command: toastr["error"]("Question body should be more than 40 characters long")
-                //    return;
-                //}
+                
                 // disable the save button
                 $('#btn_Save_Question').prop('disabled', true);
                 // add spinner animation in the save button and change the text to 'Saving..'
@@ -110,13 +99,13 @@
                 });
 
                 var data = {
-                    "title": question,
-                    "description": questiondescription,
-                    "categories": categoryArr
+                    "jobtitle": question,
+                    "jobdescription": questiondescription,
+                    "skillsets": categoryArr
                 };
 
                 scAjax({
-                    "url": "questions/PostQuestions",
+                    "url": "career/postjob",
                     "type": "POST",
                     "data": JSON.stringify(data, null, 2),
                     "success": function (result) {
@@ -124,8 +113,7 @@
                             return;
                         }
 
-                        document.location.href = "/feed/" + result.questionId;
-                        //logActivity(1, result.questionId);
+                        document.location.href = "/career/" + result.jobId;
                     },
                     "error": function (err) {
                         var errorMessage = "";
@@ -192,30 +180,30 @@
         padding-left: 15px;
         padding-bottom: 10px;
     }
-    .select2 
-    {
+
+    .select2 {
         width: 100% !important;
     }
 </style>
 
-<h3>Question details</h3>
+<h3>Post A Job</h3>
 <hr />
 <div class="panel-body">
 
     <form action="#" class="form-horizontal" method="post" role="form" id="newquestionform">
         <div class="col-md-9 col-xs-12">
             <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
-                <label class="control-label" for="Question">Question title</label>
+                <label class="control-label" for="Question">Job title</label>
                 <div class="col-md-12" id="questiontitlediv">
                     <div class="form-group">
                         <div class="col-md-12">
-                            <input class="form-control" id="txt_question" placeholder="What is your question?" type="text" required>
+                            <input class="form-control" id="txt_question" placeholder="Job title" type="text" required>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label" for="DetailedText">Question body</label>
+                <label class="control-label" for="DetailedText">Job Description</label>
                 <div class="col-md-12">
                     @*<textarea class="form-control" id="txtarea_description" placeholder="Please provide details about your question" rows="3" required></textarea>*@
                     <div class="wirte-question">
@@ -330,7 +318,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label" for="Categories">Question tagging</label>
+                <label class="control-label" for="Categories">Skillsets required</label>
                 <div class="col-md-12" id="questiontagsdiv">
                     <div class="form-group">
                         <div class="col-md-12">
@@ -343,11 +331,11 @@
             <div class="form-group">
                 <div class="col-md-12">
                     <button type="submit" id="btn_Save_Question" class="btn btn-primary">
-                        <i></i><span>Post question</span>
+                        <i></i><span>Post job</span>
                     </button>
                 </div>
             </div>
-            </div>
-</form>
+        </div>
+    </form>
 </div>
 

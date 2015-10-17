@@ -289,6 +289,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AboutController.cs" />
+    <Compile Include="Controllers\CareerController.cs" />
     <Compile Include="Controllers\DiscussionController.cs" />
     <Compile Include="Controllers\LegalController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
@@ -301,7 +302,9 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\WebAPI\AnswersController.cs" />
     <Compile Include="Controllers\WebAPI\AskToAnswerController.cs" />
+    <Compile Include="Controllers\WebAPI\CareerController.cs" />
     <Compile Include="Controllers\WebAPI\FeedController.cs" />
+    <Compile Include="Controllers\WebAPI\SkillSetsController.cs" />
     <Compile Include="Controllers\WebAPI\TagsController.cs" />
     <Compile Include="Controllers\WebAPI\CategoryTaggingController.cs" />
     <Compile Include="Controllers\WebAPI\DepartmentsController.cs" />
@@ -357,9 +360,11 @@
     <Compile Include="Models\WebAPI\FeedContentDetail.cs" />
     <Compile Include="Models\WebAPI\FeedUserDetail.cs" />
     <Compile Include="Models\WebAPI\ImageInfo.cs" />
+    <Compile Include="Models\WebAPI\JobDTO.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
     <Compile Include="Models\WebAPI\PersonalizedFeedItem.cs" />
     <Compile Include="Models\WebAPI\QuestionSpam.cs" />
+    <Compile Include="Models\WebAPI\SkillSets.cs" />
     <Compile Include="Models\WebAPI\UserActivityLog.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />
     <Compile Include="Controllers\WebAPI\ProfileController.cs" />
@@ -609,9 +614,10 @@
     <Content Include="Views\Account\Register.Mobile.cshtml" />
     <Content Include="Views\Feed\MyFeeds.Mobile.cshtml" />
     <Content Include="Views\Discussion\DiscussionDetail.cshtml" />
-
     <Content Include="Views\Account\Profile.Mobile.cshtml" />
     <Content Include="Views\Discussion\DiscussionDetail.Mobile.cshtml" />
+    <Content Include="Views\Career\Index.cshtml" />
+    <Content Include="Views\Career\PostJob.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

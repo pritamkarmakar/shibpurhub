@@ -427,7 +427,7 @@ function saveAnswer() {
 
             $('#answerlist').append(answerBlock);
             $('.textarea').val('');
-            logActivity(2, result.answerId);
+            //logActivity(2, result.answerId);
 
             $(answerBlock).find('.anchor-add-comment').unbind("click").bind("click", handleAddComment);
             $(answerBlock).find('.anchor-cancel-comment').unbind('click').bind('click', handleCancelComment);
@@ -865,7 +865,7 @@ function getAnswers(result) {
                 });
 
                 $(span).addClass('btn-success');
-                logActivity(5, answerId, answerBy);
+                //logActivity(5, answerId, answerBy);
 
                 scAjax({
                     "url": "answers/UpdateMarkAsAnswer",

@@ -416,7 +416,7 @@ function saveAnswer() {
             
             var answer = result;
             enableOrDisableSubmitAnswer(true);
-            logActivity(2, answer.answerId);
+            //logActivity(2, answer.answerId);
             
             answer.userId = userInfo.id;
             answer.userProfileImage = userInfo.profileImageURL;

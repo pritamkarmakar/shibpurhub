@@ -392,6 +392,24 @@ namespace ShibpurConnectWebApp.Helper
         }
 
         /// <summary>
+        /// Method to post a new skillset, this is not in api as we don't want end user to create skillset using api
+        /// It will be called while posting a new question
+        /// </summary>
+        /// <param name="skillSets">SkillSets object</param>
+        /// <returns></returns>
+        public async Task<SkillSets> PostSkillSet(SkillSets skillSets)
+        {
+            MongoHelper _mongoHelper = new MongoHelper("skillsets");
+            var result = _mongoHelper.Collection.Save(skillSets);
+
+            // if mongo failed to save the data then send null response
+            if (!result.Ok)
+                return null;
+
+            return new SkillSets { SkillSetId = skillSets.SkillSetId, SkillSetName = skillSets.SkillSetName };
+        }
+
+        /// <summary>
         /// internal method to update the QuestionSpamDTO collection
         /// </summary>
         /// <param name="questionSpamDto"></param>

@@ -840,6 +840,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // save the question to the database
             var result = _mongoHelper.Collection.Save(questionToPost);
 
+            // post user activity for this new question
+            var userActivityLog = new UserActivityLog
+            {
+                Activity = 1,
+                UserId = userInfo.Id,
+                ActedOnObjectId = questionToPost.QuestionId,
+                ActedOnUserId = string.Empty
+            };
+
+            UpdateUserActivityLog(userActivityLog);
+
             // invalidate the cache for the action those will get impacted due to this new answer post
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 

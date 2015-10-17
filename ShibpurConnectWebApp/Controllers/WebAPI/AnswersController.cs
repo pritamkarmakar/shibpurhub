@@ -214,6 +214,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // save the answer to the database
                 var result = _mongoHelper.Collection.Save(answer);
 
+                // post user activity for this new answer
+                var userActivityLog = new UserActivityLog
+                {
+                    Activity = 2,
+                    UserId = userInfo.Id,
+                    ActedOnObjectId = answer.AnswerId,
+                    ActedOnUserId = string.Empty
+                };
+
+                UpdateUserActivityLog(userActivityLog);
+
                 // if mongo failed to save the data then send error
                 if (!result.Ok)
                     return InternalServerError();
@@ -384,11 +395,24 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return 0;
         }
 
-        public bool UpdateMarkAsAnswer(List<Answer> answers)
+        [Authorize]
+        public async Task<IHttpActionResult> UpdateMarkAsAnswer(List<Answer> answers)
         {
             if (answers == null || answers.Count == 0)
             {
-                return false;
+                return BadRequest(ModelState);
+            }
+
+            // retrieve the user information who triggered this
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
             }
 
             foreach (var answer in answers)
@@ -399,9 +423,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     answerInDB.MarkedAsAnswer = answer.MarkedAsAnswer;
                 }
                 _mongoHelper.Collection.Save(answerInDB);
+
+                // post user activity for this new answer
+                var userActivityLog = new UserActivityLog
+                {
+                    Activity = 5,
+                    UserId = userInfo.Id,
+                    ActedOnObjectId = answer.AnswerId,
+                    ActedOnUserId = answer.UserId
+                };
+
+                UpdateUserActivityLog(userActivityLog);
             }
 
-            return true;
+            return CreatedAtRoute("DefaultApi", null, true);
         }
 
         [Authorize]

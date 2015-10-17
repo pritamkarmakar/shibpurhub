@@ -302,30 +302,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             else
                 return Ok(userInfo.Tags);
         }
-
-        /// <summary>
-        /// Add a new category
-        /// </summary>
-        /// <param name="category">Categories object</param>
-        /// <returns></returns>
-        //[ResponseType(typeof(Categories))]
-        //[InvalidateCacheOutput("GetPopularTags")]
-        //public IHttpActionResult PostTag(Categories category)
-        //{
-        //    if (!ModelState.IsValid || category == null)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var result = _mongoHelper.Collection.Save(category);
-
-        //    // if mongo failed to save the data then send error
-        //    if (!result.Ok)
-        //        return InternalServerError(new Exception("Failed to save the category in the database"));
-
-        //   return CreatedAtRoute("DefaultApi", new { id = category.CategoryId }, category);
-        //}
-
+        
         /// <summary>
         /// Delete a category
         /// </summary>
