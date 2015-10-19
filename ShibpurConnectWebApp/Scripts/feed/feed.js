@@ -274,7 +274,7 @@ function createQuestions(questions) {
             $(thread).find('div.detail a').text(question.title).attr('href', '/discussion/' + question.questionId);
         $(thread).find('div.detail a').attr('class', 'question-hyperlink');
         // extract only text from the question description, if user has image in the question description we will be able to remove those
-        var tempdescription = '<p>' + question.description + '</p>';
+        var tempdescription = getEmojiedString('<p>' + question.description + '</p>');
         $(thread).find('div.detail .excerpt').append($(tempdescription).text().substring(0, 250));
         $(thread).find('div.stat span.date').text(dateString);
         //updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));

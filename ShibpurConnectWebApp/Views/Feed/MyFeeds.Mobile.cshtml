@@ -45,7 +45,7 @@
 
                         $(htmlItem).find('h2.title a').text(feed.itemHeader).attr("href", feed.targetActionUrl);
 
-                        $(htmlItem).find('div.post-description p').html(feed.itemDetail);
+                        $(htmlItem).find('div.post-description p').html(getEmojiedString(feed.itemDetail));
 
                         $(htmlItem).find('div.post-description img').addClass("col-md-12");
 
