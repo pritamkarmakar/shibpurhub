@@ -570,6 +570,19 @@
             <param name="askToAnswer"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CareerController.PostJob(ShibpurConnectWebApp.Models.WebAPI.JobDTO)">
+            <summary>
+            API to post a new job
+            </summary>
+            <param name="jobDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CareerController.UpdateUserActivityLog(ShibpurConnectWebApp.Models.WebAPI.UserActivityLog)">
+            <summary>
+            Updates the user activity log.
+            </summary>
+            <param name="log">The log.</param>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetPersonalizedFeeds(System.String,System.Int32,System.Int32)">
             <summary>
             Gets my feeds.
@@ -583,6 +596,19 @@
             <summary>
             Question and Answer status of an user
             </summary>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SkillSetsController.GetSkillSets">
+            <summary>
+            Get all existing skillsets
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SkillSetsController.GetSkillSet(System.String)">
+            <summary>
+            Get details about a specific skillset
+            </summary>
+            <param name="categoryName">category name</param>
+            <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.TagsController.GetTags">
             <summary>
@@ -980,6 +1006,14 @@
             <param name="category">Categories object</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Helper.Helper.PostSkillSet(ShibpurConnectWebApp.Models.WebAPI.SkillSets)">
+            <summary>
+            Method to post a new skillset, this is not in api as we don't want end user to create skillset using api
+            It will be called while posting a new question
+            </summary>
+            <param name="skillSets">SkillSets object</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Helper.Helper.ReportSpam(ShibpurConnectWebApp.Models.WebAPI.QuestionSpamAudit)">
             <summary>
             internal method to update the QuestionSpamDTO collection
@@ -1080,6 +1114,11 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.ImageInfo">
             <summary>
             Model for user profile image
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobDTO">
+            <summary>
+            Data model to post a new job opportunity
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.Notifications">

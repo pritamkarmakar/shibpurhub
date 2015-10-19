@@ -87,7 +87,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
                 AnswerId = answer.AnswerId,
                 UserId = answer.UserId,
                 QuestionId = answer.QuestionId,
-                AnswerText = Helper.Helper.GetEmojiedString(answer.AnswerText),
+                AnswerText = answer.AnswerText,
                 DownVoteCount = answer.DownVoteCount,
                 MarkedAsAnswer = answer.MarkedAsAnswer,
                 PostedOnUtc = answer.PostedOnUtc,

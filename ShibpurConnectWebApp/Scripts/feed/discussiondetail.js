@@ -165,6 +165,7 @@ function createQuestion(question)
     }
 }
 
+
 function createAnswer(answer)
 {
     var htmlItem = $('div.item.answer.hide').clone().removeClass('hide').attr('id', answer.answerId);
@@ -174,7 +175,8 @@ function createAnswer(answer)
 
     $(htmlItem).find('a.name-link').text(answer.displayName).attr("href", "/Account/Profile?userId=" + answer.userId);
     
-    $(htmlItem).find('div.post-description p').html(answer.answerText);
+    var answerText = getEmojiedString(answer.answerText);
+    $(htmlItem).find('div.post-description p').html(answerText);
     $(htmlItem).find('p.designation').text(answer.careerDetail);
     $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
     
@@ -233,7 +235,8 @@ function createComment(comment)
     
     $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
     
-    $(htmlItem).find('.commentContent p').html(comment.commentText);
+    var commentText = getEmojiedString(comment.commentText);
+    $(htmlItem).find('.commentContent p').html(commentText);
     $(htmlItem).find('a.comment-author-name').text(comment.displayName).attr("href", "/Account/Profile?userId=" + comment.userId);
     
     $(htmlItem).find('span.comment-time').text(getDateFormattedByMonthYear(comment.postedOnUtc));

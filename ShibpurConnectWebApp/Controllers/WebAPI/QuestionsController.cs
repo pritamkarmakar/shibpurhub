@@ -326,7 +326,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         cvm.UserId = comment.UserId;
                         cvm.AnswerId = comment.AnswerId;
                         cvm.CommentId = comment.CommentId;
-                        cvm.CommentText = Helper.Helper.GetEmojiedString(comment.CommentText);
+                        cvm.CommentText = comment.CommentText;
                         cvm.PostedOnUtc = comment.PostedOnUtc;
                         cvm.IsCommentedByMe = userInfo != null && comment.UserId == userInfo.Id;
                         answerComments.Add(cvm);
@@ -936,7 +936,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 QuestionId = question.QuestionId,
                 Title = question.Title,
-                Description = Helper.Helper.GetEmojiedString(question.Description),
+                Description = question.Description,
                 UserId = question.UserId,
                 HasAnswered = question.HasAnswered,
                 PostedOnUtc = question.PostedOnUtc,
