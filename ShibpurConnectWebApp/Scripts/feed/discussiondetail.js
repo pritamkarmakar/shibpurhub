@@ -115,7 +115,7 @@ function createQuestion(question)
     $(question.categories).each(function(i,e){
         var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + e).text(e);
         var li = $('<li>').append(anchor);
-        $(htmlItem).append(li);
+        $(tagListUL).append(li);
     });
     
     $("div.question-container").append(htmlItem);
