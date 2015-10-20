@@ -316,6 +316,7 @@ div.post-description img {
 }
 
 .tags-area a {
+    padding: 5px 20px;
     display: block;
     color: #FFF;
     font-weight: 300;
