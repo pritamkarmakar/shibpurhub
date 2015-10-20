@@ -292,12 +292,21 @@ function createQuestions(questions) {
             $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " view");
         //$(thread).find('div.stat span.answercount').text((question.comments || "0") + " answers");
 
+        var tagListUL = $(thread).find('.tagsList');
         if (question.categories) {
-            $(question.categories).each(function (i, category) {
-                var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory?category=" + category);
-                $(thread).find('div.tags').append(tagAnchor);
+            $(question.categories).each(function (i, category) {               
+                var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + category).text(category);
+                var li = $('<li>').append(anchor);
+                $(tagListUL).append(li);
             });
         }
+
+        
+        $(question.categories).each(function (i, e) {
+            var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + e).text(e);
+            var li = $('<li>').append(anchor);
+            $(tagListUL).append(li);
+        });
 
         $('#threads').append(thread);
     });
