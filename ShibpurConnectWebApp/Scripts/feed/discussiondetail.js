@@ -111,6 +111,13 @@ function createQuestion(question)
         $(htmlItem).find('.follow-ul').show();
     }
     
+    var tagListUL = $(htmlItem).find('.tagsList');
+    $(question.categories).each(function(i,e){
+        var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + e).text(e);
+        var li = $('<li>').append(anchor);
+        $(htmlItem).append(li);
+    });
+    
     $("div.question-container").append(htmlItem);
     
     $(followButton).click(function(event){

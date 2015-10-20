@@ -3,14 +3,14 @@
     ViewBag.Title = "Dicussion - ShibpurHub";
 }
 
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.0")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/discussion.css")" />
 
 <script type="text/javascript">
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=3.7")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=3.8")" type="text/javascript"></script>
 
 <div class="detail-container">
 
