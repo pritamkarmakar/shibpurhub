@@ -166,6 +166,14 @@ function createAllQuestions(questions, page)
         }
         
         $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
+
+        var tagListUL = $(htmlItem).find('.tagsList');        
+        $(question.categories).each(function (i, category) {
+            var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + category).text(category);
+            var li = $('<li>').append(anchor);
+            $(tagListUL).append(li);
+        });
+        
         
         if (!page) {
             $("div.feed-list").append(htmlItem);
@@ -292,14 +300,7 @@ function createQuestions(questions) {
             $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " view");
         //$(thread).find('div.stat span.answercount').text((question.comments || "0") + " answers");
 
-        var tagListUL = $(thread).find('.tagsList');
-        if (question.categories) {
-            $(question.categories).each(function (i, category) {               
-                var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + category).text(category);
-                var li = $('<li>').append(anchor);
-                $(tagListUL).append(li);
-            });
-        }
+        
 
         
         $(question.categories).each(function (i, e) {
