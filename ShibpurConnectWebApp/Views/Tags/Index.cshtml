@@ -42,6 +42,77 @@
         margin-left: auto;
         margin-right: auto;
     }
+    
+    /* NEW TAGS*/
+    .tag{
+        border: solid 1px #ddd;
+       
+        padding: 5px 0;
+        
+    }
+    .tag-count
+    {
+        display: inline-block;
+    }
+    .tag-button
+    {
+        padding-top: 8px;
+    }
+    .list-inline {
+        list-style: none;
+    }
+    .pull-left {
+        float: left !important;
+    }
+    .list-inline li 
+    {
+        margin: 0;
+        padding: 0 5px;
+        float: left;
+    }
+    a.tagname
+    {
+        width: 100%;
+    }
+    a.thumbs 
+    {
+        display: block;
+        height: 28px;
+        margin-top: 0;
+        overflow: hidden;
+        margin-right: 10px;
+        background: #ECEFF1;
+        font-weight: 400;
+        padding: 7.2px 8px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        border-bottom: 2px solid #CFD8DC;
+        color: #455A64;
+        font-size: 12px;
+        text-decoration: none;
+        line-height: 1;
+        text-align: center;
+        -webkit-transition: all,.2s,ease-in-out,.2s;
+        -moz-transition: all,.2s,ease-in-out,.2s;
+        -ms-transition: all,.2s,ease-in-out,.2s;
+        -o-transition: all,.2s,ease-in-out,.2s;
+        transition: all,.2s,ease-in-out,.2s;
+}
+    a.thumbs:hover {
+        background: #CFD8DC;
+        border: 0;
+    }
+
+    a.thumbs.active {
+        background: #4DB6AC;
+        border-bottom: 2px solid #009688;
+        color: #fff;
+    }
+.follow-ul
+{
+    display: none;
+}
 </style>
 
 <script type="text/javascript">
@@ -62,7 +133,7 @@
 
                 $.each(result, function (key, value) {
                     // create the tag div based on whether there is a logged in user or not
-                    if (userInfo == null) {
+                    /*if (userInfo == null) {
                         if (value.questionCount > 0)
                             $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><p id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;questions</p></div></div>");
                         else
@@ -73,7 +144,23 @@
                             $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;questions</span><button type='submit' id=" + value.categoryName + " class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followtag(this);'><i class='fa fa-plus-circle' style='color:green'></i><span> Follow</span></button></div></div>");
                         else
                             $('#taglist').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value.categoryName + "'> " + value.categoryName + "</a><span id='tagquestioncount'>&nbsp;&nbsp;" + value.questionCount + "&nbsp;question</span><button type='submit' id=" + value.categoryName + " onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followtag(this);' class='btn btn-xs followbutton'><i class='fa fa-plus-circle' style='color:green'></i><span> Follow</span></button></div></div>");
+                    }*/
+                    
+                    var tagItem = $('#taglist .row .tag.hide').clone().removeClass('hide');
+                    $(tagItem).find('a.tagname').text(value.categoryName).attr({'href': '/Feed/FeedByCategory?category=' + value.categoryName});
+                    $(tagItem).find('span.tag-count').text(value.questionCount);
+                    var followButton = $(tagItem).find('.follow-ul a.thumbs');
+                    $(followButton).attr({ 'id': value.categoryName });
+                    if (userInfo != null)
+                    {
+                        $(tagItem).find('.follow-ul').show();
                     }
+                    $('#taglist .row').append(tagItem);
+                    
+                    $(followButton).click(function(event){
+                            event.preventDefault();
+                            followtag(this);
+                    });
                 });
               
                 if (userInfo != null)
@@ -86,8 +173,16 @@
                                 return;
                             }
                             $.each(result, function (key, value) {
-                                $("#" + value + " > i").addClass('fa fa-check-circle');
-                                $("#" + value + " > span").text(' Following');
+                                //$("#" + value + " > i").addClass('fa fa-check-circle');
+                                //$("#" + value + " > span").text(' Following');
+                                
+                                var button = $("#" + value );
+                                var textSpan = $(button).find('span');
+                                var icon = $(button).find('i.fa');
+                                
+                                $(button).addClass('active');
+                                $(textSpan).text('Following');
+                                $(icon).removeClass('fa-plus-circle fa-circle-o-notch fa-spin').addClass('fa-check');
                             });                           
                         }
                     });
@@ -99,9 +194,28 @@
 
 
 <div class="taglistcontainer">
-    <h4>All Tags</h4><hr/>
-    <hr id="bigseparator" />
+    <h4>All Tags</h4>
     <div id="taglist" >
+        <div class="row">
+        <div class="col-md-4 col-xs-6 tag hide">
+            <div class="col-md-12 col-xs-12">
+                <div class="col-md-7 tag-detail">
+                    <div>
+                        <i class="fa fa-tags fa-lg"></i>
+                        <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
+                    </div>
+                    <span class="tag-count">31 questions</span>
+                </div>
+                <div class="col-md-5 tag-button">
+                    <ul class="list-inline pull-left follow-ul">
+                        <li>
+                            <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-plus-circle"></i> <span>Follow</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
     </div>
     <div id="loadingtags">
         <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
