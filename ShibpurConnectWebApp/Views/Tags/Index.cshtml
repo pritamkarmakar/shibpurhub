@@ -156,7 +156,19 @@
                     }*/
                     
                     var tagItem = $('#taglist .row .tag.hide').clone().removeClass('hide');
-                    if(key == 1 || key % 3 == 0)
+                    var row;
+                    if(key < 3)
+                    {
+                        row = 0;
+                    }
+                    else
+                    {
+                        if(key % 3 == 0)
+                        {
+                            row += 1;
+                        }
+                    }
+                    if(key == 1 || key == (row * 3) + 1)
                     {
                         $(tagItem).addClass('sideborder');
                     }
