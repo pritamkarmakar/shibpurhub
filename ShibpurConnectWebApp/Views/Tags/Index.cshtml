@@ -44,15 +44,24 @@
     }
     
     /* NEW TAGS*/
-    .tag{
+    #taglist .row
+    {
         border: solid 1px #ddd;
-       
-        padding: 5px 0;
-        
+        margin: 0;
+    }
+    .tag{
+        border-bottom: solid 1px #ddd;
+        padding: 6px 0;
+    }
+    .tag.sideborder
+    {
+        border-right: solid 1px #ddd;
+        border-left: solid 1px #ddd;
     }
     .tag-count
     {
         display: inline-block;
+        font-size: 11px;
     }
     .tag-button
     {
@@ -147,8 +156,12 @@
                     }*/
                     
                     var tagItem = $('#taglist .row .tag.hide').clone().removeClass('hide');
+                    if(key == 1 || key % 3 == 0)
+                    {
+                        $(tagItem).addClass('sideborder');
+                    }
                     $(tagItem).find('a.tagname').text(value.categoryName).attr({'href': '/Feed/FeedByCategory?category=' + value.categoryName});
-                    $(tagItem).find('span.tag-count').text(value.questionCount);
+                    $(tagItem).find('span.tag-count').text(value.questionCount + " questions");
                     var followButton = $(tagItem).find('.follow-ul a.thumbs');
                     $(followButton).attr({ 'id': value.categoryName });
                     if (userInfo != null)
