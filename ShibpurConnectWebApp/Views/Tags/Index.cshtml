@@ -53,6 +53,10 @@
         border-bottom: solid 1px #ddd;
         padding: 6px 0;
     }
+    .tag:nth-last-child(1), .tag:nth-last-child(2), .tag:nth-last-child(3)
+    {
+        border: 0;
+    }
     .tag.sideborder
     {
         border-right: solid 1px #ddd;
@@ -139,7 +143,8 @@
 
                 // hide the loading div
                 $('#loadingtags').hide();
-
+                
+                var row = 0;
                 $.each(result, function (key, value) {
                     // create the tag div based on whether there is a logged in user or not
                     /*if (userInfo == null) {
@@ -156,7 +161,7 @@
                     }*/
                     
                     var tagItem = $('#taglist .row .tag.hide').clone().removeClass('hide');
-                    var row;
+                    
                     if(key < 3)
                     {
                         row = 0;
@@ -226,7 +231,7 @@
             <div class="col-md-12 col-xs-12">
                 <div class="col-md-7 tag-detail">
                     <div>
-                        <i class="fa fa-tags fa-lg"></i>
+                        <i class="fa fa-tags"></i>
                         <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
                     </div>
                     <span class="tag-count">31 questions</span>
