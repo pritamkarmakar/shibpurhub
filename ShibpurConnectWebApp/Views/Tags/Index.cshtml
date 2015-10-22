@@ -53,9 +53,9 @@
         border-bottom: solid 1px #ddd;
         padding: 6px 0;
     }
-    .tag:nth-last-child(1), .tag:nth-last-child(2), .tag:nth-last-child(3)
+    .tag.lastrow
     {
-        border: 0;
+        border-bottom: 0;
     }
     .tag.sideborder
     {
@@ -145,6 +145,7 @@
                 $('#loadingtags').hide();
                 
                 var row = 0;
+                var totalRows = Math.round(result.length / 3) - 1;
                 $.each(result, function (key, value) {
                     // create the tag div based on whether there is a logged in user or not
                     /*if (userInfo == null) {
@@ -176,6 +177,11 @@
                     if(key == 1 || key == (row * 3) + 1)
                     {
                         $(tagItem).addClass('sideborder');
+                    }
+                    
+                    if(row == totalRows)
+                    {
+                        $(tagItem).addClass('lastrow');
                     }
                     $(tagItem).find('a.tagname').text(value.categoryName).attr({'href': '/Feed/FeedByCategory?category=' + value.categoryName});
                     $(tagItem).find('span.tag-count').text(value.questionCount + " questions");
