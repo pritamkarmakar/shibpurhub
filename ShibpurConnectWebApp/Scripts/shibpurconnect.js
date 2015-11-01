@@ -634,3 +634,33 @@ function updateQnAStatus(questionIds, answerIds) {
         }
     });
 }
+
+var TWITTEREMOJIPATH = "https://twemoji.maxcdn.com/72x72/";
+var Icons =
+            [
+               { "Emoji": ":)", "Path": TWITTEREMOJIPATH + "1f600.png" },
+               { "Emoji": ":(", "Path": TWITTEREMOJIPATH + "1f626.png" },
+               { "Emoji": ":-)", "Path": TWITTEREMOJIPATH + "1f603.png" },
+               { "Emoji": ":D", "Path": TWITTEREMOJIPATH + "1f604.png" },
+               { "Emoji": ":X", "Path": TWITTEREMOJIPATH + "1f621.png" },
+               { "Emoji": ":P", "Path": TWITTEREMOJIPATH + "1f61c.png" },
+            ];
+
+function getEmojiedString(original) {
+    if (!original) {
+        return "";
+    }
+
+    var transformed = original;
+    var htmlFormattedEmoji = "<span class='emoji-span'><img draggable='false' class='emoji' src={0}></span>";
+
+    $.each(Icons, function (i, icon) {
+        if (original.indexOf(icon.Emoji) > -1) {
+            var html = htmlFormattedEmoji.replace("{0}", icon.Path);
+            transformed = original.replace(icon.Emoji, html);
+            original = transformed;
+        }
+    });
+
+    return transformed;
+}

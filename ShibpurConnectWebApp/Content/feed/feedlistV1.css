@@ -287,3 +287,85 @@ a.post-creator-image {
 div.post-description img {
     padding-bottom: 15px;
 }
+
+.tags-area {
+    position: absolute;
+    z-index: 100;
+    top: 60px;
+    right: 0;
+    margin: 0;
+    font-size: 13px;
+}
+
+.tags-container {
+    padding: 0;
+}
+
+.list-unstyled, .list-unstyled li {
+    margin: 0;
+    padding: 0;
+}
+
+.tags-area li:nth-child(1) {
+    border-right: 6px solid #009688;
+}
+
+.tags-area li {
+    height: 28px;
+    list-style: none;
+}
+
+.tags-area a {
+    padding: 5px 20px;
+    display: block;
+    color: #FFF;
+    font-weight: 300;
+    background: rgba(0,150,136,.8);
+    margin: 0;
+    position: relative;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1em;
+    -webkit-transition: background,.2s,ease-in-out,.2s;
+    -moz-transition: background,.2s,ease-in-out,.2s;
+    -ms-transition: background,.2s,ease-in-out,.2s;
+    -o-transition: background,.2s,ease-in-out,.2s;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s ease-in-out .2s,opacity .2s ease-in-out;
+}
+
+.tags-area li:nth-child(2) a {
+    background: #3FAFA5;
+}
+
+.tags-area li:nth-child(3) a {
+    background: #4BB4AA;
+}
+
+.tags-area li:nth-child(4) a {
+    background: #58B9B0;
+}
+
+.tags-area li:nth-child(5) a {
+    background: #65BFB6;
+}
+
+.tags-area a span {
+    display: inline-block;
+    padding: 5px 20px;
+}
+
+.tags-area:hover li {
+    border-right: 6px solid #009688;
+}
+
+.tags-area:hover a {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+    .tags-area:hover a:hover {
+        background: #555;
+    }

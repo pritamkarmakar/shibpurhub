@@ -166,6 +166,14 @@ function createAllQuestions(questions, page)
         }
         
         $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
+
+        var tagListUL = $(htmlItem).find('.tagsList');        
+        $(question.categories).each(function (i, category) {
+            var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + category).text(category);
+            var li = $('<li>').append(anchor);
+            $(tagListUL).append(li);
+        });
+        
         
         if (!page) {
             $("div.feed-list").append(htmlItem);
@@ -274,7 +282,7 @@ function createQuestions(questions) {
             $(thread).find('div.detail a').text(question.title).attr('href', '/discussion/' + question.questionId);
         $(thread).find('div.detail a').attr('class', 'question-hyperlink');
         // extract only text from the question description, if user has image in the question description we will be able to remove those
-        var tempdescription = '<p>' + question.description + '</p>';
+        var tempdescription = getEmojiedString('<p>' + question.description + '</p>');
         $(thread).find('div.detail .excerpt').append($(tempdescription).text().substring(0, 250));
         $(thread).find('div.stat span.date').text(dateString);
         //updateAnswerCount(question.questionId, $(thread).find('div.stat span.answercount'));
@@ -292,12 +300,14 @@ function createQuestions(questions) {
             $(thread).find('div.stat span.viewcount').html("<b>" + question.viewCount + "</b>" + " view");
         //$(thread).find('div.stat span.answercount').text((question.comments || "0") + " answers");
 
-        if (question.categories) {
-            $(question.categories).each(function (i, category) {
-                var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory?category=" + category);
-                $(thread).find('div.tags').append(tagAnchor);
-            });
-        }
+        
+
+        
+        $(question.categories).each(function (i, e) {
+            var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + e).text(e);
+            var li = $('<li>').append(anchor);
+            $(tagListUL).append(li);
+        });
 
         $('#threads').append(thread);
     });
