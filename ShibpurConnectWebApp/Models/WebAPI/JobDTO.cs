@@ -33,6 +33,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string[] SkillSets { get; set; }
     }
 
+    /// <summary>
+    /// Data model to save the job in the database
+    /// </summary>
     [Serializable]
     public class Job : JobDTO
     {
@@ -54,5 +57,21 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public DateTime? LastEditedOnUtc { get; set; }
+    }
+
+    /// <summary>
+    /// We will use this model to send from the API. It has the firstname and lastname of the user
+    /// </summary>
+    [Serializable]
+    public class JobViewModel : Job
+    {
+        [DataMember]
+        public string DisplayName { get; set; }
+
+        [DataMember]
+        public string UserProfileImage { get; set; }
+
+        [DataMember]
+        public string CareerDetail { get; set; }
     }
 }

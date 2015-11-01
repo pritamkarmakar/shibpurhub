@@ -385,6 +385,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\career\career.css" />
+    <Content Include="Content\career\jobdetails.css" />
     <Content Include="Content\feed\details.css" />
     <Content Include="Content\feed\detailsmobile.css" />
     <Content Include="Content\feed\discussion.css" />
@@ -492,6 +494,9 @@
     <Content Include="Scripts\app\_run.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\career\career.js" />
+    <Content Include="Scripts\career\details--.js" />
+    <Content Include="Scripts\career\jobdetails.js" />
     <Content Include="Scripts\date.js" />
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
     <Content Include="Scripts\feed\details.js" />
@@ -618,6 +623,8 @@
     <Content Include="Views\Discussion\DiscussionDetail.Mobile.cshtml" />
     <Content Include="Views\Career\Index.cshtml" />
     <Content Include="Views\Career\PostJob.cshtml" />
+    <Content Include="Views\Career\Details--.cshtml" />
+    <Content Include="Views\Career\JobDetails.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -12,6 +12,13 @@ namespace ShibpurConnectWebApp.Controllers
         public ActionResult PostJob(FormCollection collection)
         {
             return View();
-        } 
+        }
+
+        public ActionResult JobDetails(string jobId)
+        {
+            ViewData["jobId"] = jobId;
+
+            return View();
+        }
     }
 }

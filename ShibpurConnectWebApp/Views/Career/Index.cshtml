@@ -2,6 +2,95 @@
     ViewBag.Title = "Career - ShibpurHub";
 }
 
-<h2>Career</h2>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/career/career.css")" />
+<script src="@Url.Content("~/Scripts/career/career.js?v=2.2")" type="text/javascript"></script>
 
-<a href="/career/postjob" class="btn btn-success"><b>Post A Job</b></a>
+<div class="main">
+    <div class="job-list col-md-9" id="threads">
+        <div class="row item hide">
+            <div class="col-xs-12 thread">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="row post-header">
+                            <div class="col-sm-12 col-xs-12 headers-col">
+                                <div class="profile-img-col">
+                                    <a href="#" class="post-creator-image"></a>
+                                </div>
+                                <p class="header-text-content ">
+                                    <a href="#" class="name-link">Pritam Karmakar</a>
+                                    <span class="action"> posted</span>
+                                    @*<a href="#" class="type-link discussion target">Question</a>*@
+                                </p>
+                                <p class="tagline-text-content designation"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 ">
+                                <h2 class="jobtitle">
+                                    <a href="#">Need help to create shibpurhub animated video</a>
+                                </h2>
+                                <div class="jobdescription">
+                                    <p>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row thread-details">
+                    <div class="thread-details-container">
+                        <div class="col-xs-6 col-md-3">
+                            <ul class="list-inline pull-left upvote-ul">
+                                <li>
+                                    <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline pull-left follow-ul">
+                                <li>
+                                    <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-plus-circle"></i> <span>Follow</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-5">
+                            <ul class="list-inline">
+                                <li class="jobskills">
+                                    @*<i class="fa fa-tags">Java</i>*@
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-6 col-md-4">
+                            <ul class="extra-details pull-right list-inline">                                
+                                <li>
+                                    <span class="jobstatus"></span>
+                                </li>
+                                <li>
+                                    <span class="view-count"></span>
+                                </li>
+                                <li>
+                                    <span class="post-pub-time">Jul 31, 2015</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row load hide">
+            <div class="col-xs-12 thread text-center loadMoreContainer">
+                <a href="#" class="loadMore" id="loadMoreBtn">
+                    <span class="toggleThis loadlabel" style="display: inline;">Load more</span>
+                    <span class="toggleThis spinner" style="display: none;"><i class="fa fa-spinner fa-spin fa-fw"></i> Loading more..</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <a href="/career/postjob" class="btn btn-success"><b>Post A Job</b></a>
+    </div>
+    <input type="hidden" id="currentPage" value="0" />
+</div>
+<div id="loadingdiv">
+    <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+</div>
+

@@ -14,6 +14,7 @@ using System.Web.Http.Results;
 using Hangfire;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using WebApi.OutputCache.V2;
@@ -24,11 +25,118 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     public class CareerController : ApiController
     {
         private MongoHelper<Job> _mongoHelper;
+        private string jobPageSize = ConfigurationManager.AppSettings["jobPageSize"];
         private int maxSkillSetLength = Convert.ToInt16(ConfigurationManager.AppSettings["maxskillsetlength"]);
 
         public CareerController()
         {
             _mongoHelper = new MongoHelper<Job>();
+        }
+
+        /// <summary>
+        /// API to get available jobs
+        /// </summary>
+        /// <param name="page">page number to get the jobs</param>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public async Task<IHttpActionResult> GetJobs(int page = 0)
+        {
+            int pageSize = Convert.ToInt16(jobPageSize);
+            var joblist = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).Skip(page * pageSize).Take(pageSize).ToList();
+
+            // retrieve all the user information who posted these jobs
+            Helper.Helper helper = new Helper.Helper();
+            var userIds = joblist.Select(a => a.UserId).Distinct();
+            var userDetails = new Dictionary<string, CustomUserInfo>();
+
+            foreach (var userId in userIds)
+            {
+                Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
+                var userDetail = await actionResult;
+                userDetails.Add(userId, userDetail);
+            }
+
+            var result = new List<JobViewModel>();
+            foreach (var job in joblist)
+            {
+                var jobDTO = new JobViewModel();
+                jobDTO.Followers = job.Followers;
+                jobDTO.UserId = job.UserId;
+                jobDTO.HasClosed = job.HasClosed;
+                jobDTO.JobDescription = job.JobDescription;
+                jobDTO.JobId = job.JobId;
+                jobDTO.JobTitle = job.JobTitle;
+                jobDTO.LastEditedOnUtc = job.LastEditedOnUtc;
+                jobDTO.PostedOnUtc = job.PostedOnUtc;
+                jobDTO.SkillSets = job.SkillSets;
+                jobDTO.SpamCount = job.SpamCount;
+                jobDTO.ViewCount = job.ViewCount;
+                jobDTO.DisplayName = userDetails[job.UserId].FirstName + " " + userDetails[job.UserId].LastName;
+                jobDTO.UserProfileImage = userDetails[job.UserId].ProfileImageURL;
+                jobDTO.CareerDetail = userDetails[job.UserId].Designation + " " +
+                                      (string.IsNullOrEmpty(userDetails[job.UserId].EducationInfo)
+                                          ? string.Empty
+                                          : (string.IsNullOrEmpty(userDetails[job.UserId].Designation)
+                                              ? userDetails[job.UserId].EducationInfo
+                                              : "(" + userDetails[job.UserId].EducationInfo + ")")
+                                          );
+
+                result.Add(jobDTO);
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// API to get details about a specific jobId
+        /// </summary>
+        /// <param name="jobId">jobId to retrieve the details</param>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public async Task<IHttpActionResult> GetJob(string jobId)
+        {
+            try
+            {
+                var jobDetails = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.JobId == jobId);
+                if (jobDetails == null)
+                {
+                    return NotFound();
+                }
+
+                Helper.Helper helper = new Helper.Helper();
+                Task<CustomUserInfo> actionResult = helper.FindUserById(jobDetails.UserId, true);
+                var userDetails = await actionResult;
+
+                var jvm = new JobViewModel()
+                {
+                    UserId = jobDetails.UserId,
+                    Followers = jobDetails.Followers,
+                    JobId = jobDetails.JobId,
+                    JobDescription = jobDetails.JobDescription,
+                    JobTitle = jobDetails.JobTitle,
+                    SkillSets = jobDetails.SkillSets,
+                    ViewCount = jobDetails.ViewCount,
+                    LastEditedOnUtc = jobDetails.LastEditedOnUtc,
+                    HasClosed = jobDetails.HasClosed,
+                    PostedOnUtc = jobDetails.PostedOnUtc,
+                    SpamCount = jobDetails.SpamCount,
+                    DisplayName = userDetails.FirstName + " " + userDetails.LastName,
+                    UserProfileImage = userDetails.ProfileImageURL,
+                    CareerDetail = userDetails.Designation + " " +
+                       (string.IsNullOrEmpty(userDetails.EducationInfo) ? string.Empty :
+                       (string.IsNullOrEmpty(userDetails.Designation) ? userDetails.EducationInfo :
+                           "(" + userDetails.EducationInfo + ")")
+                       ),
+                };
+
+
+                return Ok(jvm);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -38,6 +146,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [Authorize]
         [ResponseType(typeof(Job))]
+        [InvalidateCacheOutput("GetJobs")]
         public async Task<IHttpActionResult> PostJob(JobDTO jobDto)
         {
             // validate title
@@ -117,11 +226,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             UpdateUserActivityLog(userActivityLog);
 
-            //// invalidate the cache for the action those will get impacted due to this new answer post
+            // invalidate the cache for the action those will get impacted due to this new answer post
             //var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 
-            //// invalidate the GetAnswersCount api for this question
-            //cache.RemoveStartsWith("questions-getquestionsbyuser-userId=" + userInfo.Id);
+            // invalidate the GetAnswersCount api for this question
+            //cache.RemoveStartsWith("career-getjobs-userId=" + userInfo.Id);
 
             ////Invalidate personalized feed cache
             //var userIdToInvalidate = userInfo.Followers == null ? new List<string>() : userInfo.Followers;
@@ -144,6 +253,37 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             //Call WebApi to log activity
             var userActivityController = new UserActivityController();
             userActivityController.PostAnActivity(log);
+        }
+
+        /// <summary>
+        /// Increment view count for a question
+        /// </summary>
+        /// <param name="question"></param>
+        /// <returns></returns>
+        [ResponseType(typeof(int))]
+        [ActionName("IncrementViewCount")]
+        [InvalidateCacheOutput("GetViewCount")]
+        public int IncrementViewCount(string jobId)
+        {
+            try
+            {
+                ObjectId.Parse(jobId);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+
+            var jobInDB = _mongoHelper.Collection.AsQueryable().Where(m => m.JobId == jobId).FirstOrDefault();
+            if (jobInDB != null)
+            {
+                var count = jobInDB.ViewCount + 1;
+                jobInDB.ViewCount = count;
+                _mongoHelper.Collection.Save(jobInDB);
+                return count;
+            }
+
+            return 0;
         }
     }
 }
