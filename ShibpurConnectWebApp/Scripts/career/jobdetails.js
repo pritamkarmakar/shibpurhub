@@ -88,6 +88,8 @@ function createJobDetails(question)
     
     $(htmlItem).find('h2.title a').text(question.jobTitle);
     
+    $(htmlItem).find('div.job-company p').html("Company: " + question.jobCompany);
+    $(htmlItem).find('div.job-location p').html("Location: " +question.jobCity+ ", " + question.jobCountry);
     $(htmlItem).find('div.post-description p').html(question.jobDescription);
     $(htmlItem).find('p.designation').text(question.careerDetail);
     $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");

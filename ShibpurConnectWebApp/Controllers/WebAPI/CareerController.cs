@@ -66,6 +66,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 jobDTO.JobDescription = job.JobDescription;
                 jobDTO.JobId = job.JobId;
                 jobDTO.JobTitle = job.JobTitle;
+                jobDTO.JobCompany = job.JobCompany;
+                jobDTO.JobCity = job.JobCity;
+                jobDTO.JobCountry = job.JobCountry;
                 jobDTO.LastEditedOnUtc = job.LastEditedOnUtc;
                 jobDTO.PostedOnUtc = job.PostedOnUtc;
                 jobDTO.SkillSets = job.SkillSets;
@@ -114,6 +117,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     JobId = jobDetails.JobId,
                     JobDescription = jobDetails.JobDescription,
                     JobTitle = jobDetails.JobTitle,
+                    JobCompany = jobDetails.JobCompany,
+                    JobCity = jobDetails.JobCity,
+                    JobCountry = jobDetails.JobCountry,
                     SkillSets = jobDetails.SkillSets,
                     ViewCount = jobDetails.ViewCount,
                     LastEditedOnUtc = jobDetails.LastEditedOnUtc,
@@ -187,6 +193,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             Job jobToPost = new Job()
             {
                 JobTitle = jobDto.JobTitle,
+                JobCompany = jobDto.JobCompany,
+                JobCity = jobDto.JobCity,
+                JobCountry = jobDto.JobCountry,
                 UserId = userInfo.Id,
                 JobDescription = jobDto.JobDescription,
                 SkillSets = jobDto.SkillSets.Select(c => c.Trim()).ToArray(),

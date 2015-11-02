@@ -84,6 +84,17 @@
     padding: 0;
 }
 
+.tagline-text-content {
+    font-size: 14px;
+    color: #78909C;
+    margin-bottom: -5px;
+    line-height: 1.4;
+    width: 85%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .submit-answer-container {
     display: none;
 }
@@ -108,6 +119,7 @@
     font-weight: 300;
     font-size: 1.3em;
     margin-bottom: 10px;
+    margin-top: 15px;
 }
 
 @media (min-width: 992px) {

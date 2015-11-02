@@ -26,6 +26,15 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string JobTitle { get; set; }
 
         [Required]
+        public string JobCompany { get; set; }
+
+        [Required]
+        public string JobCity { get; set; }
+
+        [Required]
+        public string JobCountry { get; set; }
+
+        [Required]
         public string JobDescription { get; set; }
 
         [Required]

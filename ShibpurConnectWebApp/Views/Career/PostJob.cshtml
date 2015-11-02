@@ -68,10 +68,10 @@
 
             e.preventDefault();
             if ($("#newquestionform")[0].checkValidity()) {
-                // validate question description rich text is not empty and has minimum no of characters
-                var questiondescription = advancedEditorForQuestion.getHTML();
+                // validate job description rich text is not empty and has minimum no of characters
+                var jobdescription = advancedEditorForQuestion.getHTML();
                 // verify if question description is empty
-                if (!questiondescription || $.trim(advancedEditorForQuestion.getText()) == "") {
+                if (!jobdescription || $.trim(advancedEditorForQuestion.getText()) == "") {
                     // enable the button
                     $('#btn_Save_Question').prop('disabled', false);
 
@@ -90,7 +90,10 @@
                 $('#btn_Save_Question > i').addClass('fa fa-circle-o-notch fa-spin');
                 $('#btn_Save_Question > span').text(' Saving...');
 
-                var question = $('#txt_question').val();
+                var jobTitle = $('#job_title').val();
+                var jobcompany = $('#job_companyname').val();
+                var jobcity = $('#job_city').val();
+                var jobcountry = $('#job_country').val();
                 var categories = $('#select_categories').select2('data');
                 // form the categories array
                 var categoryArr = [];
@@ -99,8 +102,11 @@
                 });
 
                 var data = {
-                    "jobtitle": question,
-                    "jobdescription": questiondescription,
+                    "jobtitle": jobTitle,
+                    "jobdescription": jobdescription,
+                    "jobcompany": jobcompany,
+                    "jobcity": jobcity,
+                    "jobcountry": jobcountry,
                     "skillsets": categoryArr
                 };
 
@@ -113,7 +119,7 @@
                             return;
                         }
 
-                        document.location.href = "/career/" + result.jobId;
+                        document.location.href = "/career/jobdetails?jobid=" + result.jobId;
                     },
                     "error": function (err) {
                         var errorMessage = "";
@@ -192,12 +198,42 @@
 
     <form action="#" class="form-horizontal" method="post" role="form" id="newquestionform">
         <div class="col-md-9 col-xs-12">
-            <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
+            <div class="form-group" style="margin-bottom: 0px; overflow: auto;">
                 <label class="control-label" for="Question">Job title</label>
                 <div class="col-md-12" id="questiontitlediv">
                     <div class="form-group">
                         <div class="col-md-12">
-                            <input class="form-control" id="txt_question" placeholder="Job title" type="text" required>
+                            <input class="form-control" id="job_title" placeholder="Job title" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px; overflow: auto;">
+                <label class="control-label" for="Question">Company Name</label>
+                <div class="col-md-12" id="companynamediv">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input class="form-control" id="job_companyname" placeholder="Company name" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px; overflow: auto;">
+                <label class="control-label" for="Question">City</label>
+                <div class="col-md-12" id="citynamediv">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input class="form-control" id="job_city" placeholder="City name" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px; overflow: auto;">
+                <label class="control-label" for="Question">Country</label>
+                <div class="col-md-12" id="countrynamediv">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input class="form-control" id="job_country" placeholder="Country name" type="text" required>
                         </div>
                     </div>
                 </div>

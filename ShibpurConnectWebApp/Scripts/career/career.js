@@ -89,6 +89,10 @@ function createAllJobs(allJobsData, page) {
             tempdescription = tempdescription.substring(0, 300) + " ...";
         }
         $(htmlItem).find('div.jobdescription p').html(tempdescription);
+
+        $(htmlItem).find('div.job-company p').html("Company: " + job.jobCompany);
+        $(htmlItem).find('div.job-location p').html("Location: " + job.jobCity + ", " + job.jobCountry);
+
         $(htmlItem).find('p.designation').text(job.careerDetail);
         $(htmlItem).find('span.post-pub-time').text("Posted on: " + getDateFormattedByMonthYear(job.postedOnUtc));
 
