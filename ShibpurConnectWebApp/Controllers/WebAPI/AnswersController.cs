@@ -248,7 +248,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 string pathQuery = myuri.PathAndQuery;
                 hostName = myuri.ToString().Replace(pathQuery, "");
 
-                // sent notification to the user who posted the question
+                // send notification to the user who posted the question
                 EmailsController emailsController = new EmailsController();
                 NotificationsController notificationsController = new NotificationsController();
                 if (question.UserId != userInfo.Id)

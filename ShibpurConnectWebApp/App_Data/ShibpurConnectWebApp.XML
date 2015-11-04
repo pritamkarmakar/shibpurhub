@@ -580,6 +580,8 @@
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CareerController.GetJob(System.String)">
             <summary>
             API to get details about a specific jobId
+            Note: we are not caching this API as we don't want to restrict the 'JobApplications' collection. 
+            This will be different for each user
             </summary>
             <param name="jobId">jobId to retrieve the details</param>
             <returns></returns>
@@ -589,6 +591,13 @@
             API to post a new job
             </summary>
             <param name="jobDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CareerController.ApplyForAJob(ShibpurConnectWebApp.Models.WebAPI.JobApplicationDTO)">
+            <summary>
+            API to post a job application
+            </summary>
+            <param name="jobApplicationDto">JobApplicationDTO object</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CareerController.UpdateUserActivityLog(ShibpurConnectWebApp.Models.WebAPI.UserActivityLog)">
@@ -1137,6 +1146,21 @@
             Model for user profile image
             </summary>
         </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobApplicationDTO">
+            <summary>
+            Model to use to apply a job
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobApplication">
+            <summary>
+            Model to use to save the record to database
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobApplicationViewModel">
+            <summary>
+            Model to use in the API as return object
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobDTO">
             <summary>
             Data model to post a new job opportunity
@@ -1150,6 +1174,11 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobViewModel">
             <summary>
             We will use this model to send from the API. It has the firstname and lastname of the user
+            </summary>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Models.WebAPI.JobViewModel.JobApplications">
+            <summary>
+            List of job applications associated with this job
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.Notifications">

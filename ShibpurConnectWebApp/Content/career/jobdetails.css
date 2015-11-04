@@ -85,6 +85,17 @@
 }
 
 .tagline-text-content {
+    font-size: 12px;
+    color: #78909C;
+    margin-bottom: -5px;
+    line-height: 1.4;
+    width: 85%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tagline-company-text {
     font-size: 14px;
     color: #78909C;
     margin-bottom: -5px;
@@ -168,4 +179,9 @@
     text-overflow: ellipsis;
     display: inline-block;
     width: 98%;
+}
+
+#careernotification {
+    padding-left: 10px;
+    padding-bottom: 10px;
 }

@@ -88,8 +88,8 @@ function createJobDetails(question)
     
     $(htmlItem).find('h2.title a').text(question.jobTitle);
     
-    $(htmlItem).find('div.job-company p').html("Company: " + question.jobCompany);
-    $(htmlItem).find('div.job-location p').html("Location: " +question.jobCity+ ", " + question.jobCountry);
+    $(htmlItem).find('div.job-company p').html(question.jobCompany);
+    $(htmlItem).find('div.job-location p').html(question.jobCity+ ", " + question.jobCountry);
     $(htmlItem).find('div.post-description p').html(question.jobDescription);
     $(htmlItem).find('p.designation').text(question.careerDetail);
     $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
@@ -145,21 +145,18 @@ function createJobDetails(question)
     });
     
     $('.btn-submit-answer').click(function () {
-        saveAnswer();
+        saveApplication();
     });
-
-    // show the 'ask to answer module'
-    $('#userToAnswer').show();
-        
-    var answers = question.answers;
-    if (!answers) {
+       
+    var jobapplications = question.jobApplications;
+    if (!jobapplications) {
         return;
     }
     
     var answerIds = [];
-    $(answers).each(function (index, answer) {
-        answerIds.push(answer.answerId);
-        createAnswer(answer);
+    $(jobapplications).each(function (index, jobapplication) {
+        answerIds.push(jobapplication.answerId);
+        createApplication(jobapplication);
     });
 
     updateQnAStatus(questionIds, answerIds);
@@ -169,34 +166,34 @@ function createJobDetails(question)
     }
 }
 
-function createAnswer(answer)
+function createApplication(jobapplication)
 {
-    var htmlItem = $('div.item.answer.hide').clone().removeClass('hide').attr('id', answer.answerId);
+    var htmlItem = $('div.item.answer.hide').clone().removeClass('hide').attr('id', jobapplication.jobId);
 
     var creatorImage = $(htmlItem).find('.post-creator-image');
-    $(creatorImage).attr("href", "/Account/Profile?userId" + answer.userId).css('background-image', "url(http://i.imgur.com/" + answer.userProfileImage + ")");
+    $(creatorImage).attr("href", "/Account/Profile?userId" + jobapplication.userId).css('background-image', "url(http://i.imgur.com/" + answer.userProfileImage + ")");
 
-    $(htmlItem).find('a.name-link').text(answer.displayName).attr("href", "/Account/Profile?userId=" + answer.userId);
+    $(htmlItem).find('a.name-link').text(jobapplication.displayName).attr("href", "/Account/Profile?userId=" + jobapplication.userId);
     
-    $(htmlItem).find('div.post-description p').html(answer.answerText);
-    $(htmlItem).find('p.designation').text(answer.careerDetail);
+    $(htmlItem).find('div.post-description p').html(jobapplication.coverLetter);
+    $(htmlItem).find('p.designation').text(jobapplication.careerDetail);
     $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
     
-    $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(answer.postedOnUtc));
+    $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(jobapplication.postedOnUtc));
     
     var upvoteButton = $(htmlItem).find('.upvote-ul a.thumbs');
-    $(upvoteButton).attr({ 'data-answerId': answer.answerId, 'id': answer.answerId });
+    $(upvoteButton).attr({ 'data-answerId': jobapplication.answerId, 'id': jobapplication.answerId });
     
     $("div.answer-container").append(htmlItem);
 
     $(upvoteButton).click(function (event) {
         event.preventDefault();
-        updateUpVote(answer.answerId);
+        updateUpVote(jobapplication.answerId);
     });
     
     $('.myimg').css('background-image',"url("+ myImageUrl +")");
     
-    var comments = answer.comments;
+    var comments = jobapplication.comments;
     if (!comments) {
         return;
     }
@@ -205,7 +202,7 @@ function createAnswer(answer)
         createComment(comment);
     });
     
-    $('#'+ answer.answerId).find('textarea.write-comment').bind('keyup',function (event){
+    $('#' + jobapplication.answerId).find('textarea.write-comment').bind('keyup', function (event) {
         if (event.keyCode === 13){
             var commentText = $(this).val();
             if(!commentText || commentText == "")
@@ -215,7 +212,7 @@ function createAnswer(answer)
             
             var postComment = {};
             postComment.commentText = commentText;
-            postComment.answerId = answer.answerId;
+            postComment.answerId = jobapplication.answerId;
             postComment.userId = userInfo.id;
             postComment.userProfileImage = userInfo.profileImageURL;
             postComment.displayName = userInfo.firstName + " " + userInfo.lastName;
@@ -311,7 +308,7 @@ function enableOrDisableSubmitAnswer(enable)
     }
 }
 
-function saveAnswer() {
+function saveApplication() {
     // hide the error div
     $('#errormessage').empty().hide();
     
@@ -338,12 +335,12 @@ function saveAnswer() {
     
     var userInfo = $.parseJSON(userDetails);
     
-    var answerObject = { "AnswerText": answer, "QuestionId": questionID };
+    var answerObject = { "CoverLetter": answer, "JobId": jobId };
 
     advancedEditor.setHTML("");
     
     scAjax({
-        "url": "Answers/PostAnswer",
+        "url": "career/applyforajob",
         "type": "POST",
         "data": JSON.stringify(answerObject),
         "success": function (result, data) {

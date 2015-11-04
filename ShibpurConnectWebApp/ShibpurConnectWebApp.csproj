@@ -360,6 +360,7 @@
     <Compile Include="Models\WebAPI\FeedContentDetail.cs" />
     <Compile Include="Models\WebAPI\FeedUserDetail.cs" />
     <Compile Include="Models\WebAPI\ImageInfo.cs" />
+    <Compile Include="Models\WebAPI\JobApplication.cs" />
     <Compile Include="Models\WebAPI\JobDTO.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
     <Compile Include="Models\WebAPI\PersonalizedFeedItem.cs" />

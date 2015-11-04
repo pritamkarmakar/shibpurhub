@@ -27,6 +27,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         private MongoHelper<Job> _mongoHelper;
         private string jobPageSize = ConfigurationManager.AppSettings["jobPageSize"];
         private int maxSkillSetLength = Convert.ToInt16(ConfigurationManager.AppSettings["maxskillsetlength"]);
+        private static string hostName = string.Empty;
 
         public CareerController()
         {
@@ -42,60 +43,75 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public async Task<IHttpActionResult> GetJobs(int page = 0)
         {
             int pageSize = Convert.ToInt16(jobPageSize);
-            var joblist = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.PostedOnUtc).Skip(page * pageSize).Take(pageSize).ToList();
 
-            // retrieve all the user information who posted these jobs
-            Helper.Helper helper = new Helper.Helper();
-            var userIds = joblist.Select(a => a.UserId).Distinct();
-            var userDetails = new Dictionary<string, CustomUserInfo>();
-
-            foreach (var userId in userIds)
+            try
             {
-                Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
-                var userDetail = await actionResult;
-                userDetails.Add(userId, userDetail);
+                var joblist =
+                    _mongoHelper.Collection.FindAll()
+                        .OrderByDescending(a => a.PostedOnUtc)
+                        .Skip(page * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                // retrieve all the user information who posted these jobs
+                Helper.Helper helper = new Helper.Helper();
+                var userIds = joblist.Select(a => a.UserId).Distinct();
+                var userDetails = new Dictionary<string, CustomUserInfo>();
+
+                foreach (var userId in userIds)
+                {
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
+                    var userDetail = await actionResult;
+                    userDetails.Add(userId, userDetail);
+                }
+
+                var result = new List<JobViewModel>();
+                foreach (var job in joblist)
+                {
+                    var jobDTO = new JobViewModel();
+                    jobDTO.Followers = job.Followers;
+                    jobDTO.UserId = job.UserId;
+                    jobDTO.HasClosed = job.HasClosed;
+                    jobDTO.JobDescription = job.JobDescription;
+                    jobDTO.JobId = job.JobId;
+                    jobDTO.JobTitle = job.JobTitle;
+                    jobDTO.JobCompany = job.JobCompany;
+                    jobDTO.JobCity = job.JobCity;
+                    jobDTO.JobCountry = job.JobCountry;
+                    jobDTO.LastEditedOnUtc = job.LastEditedOnUtc;
+                    jobDTO.PostedOnUtc = job.PostedOnUtc;
+                    jobDTO.SkillSets = job.SkillSets;
+                    jobDTO.SpamCount = job.SpamCount;
+                    jobDTO.ViewCount = job.ViewCount;
+                    jobDTO.DisplayName = userDetails[job.UserId].FirstName + " " + userDetails[job.UserId].LastName;
+                    jobDTO.UserProfileImage = userDetails[job.UserId].ProfileImageURL;
+                    jobDTO.CareerDetail = userDetails[job.UserId].Designation + " " +
+                                          (string.IsNullOrEmpty(userDetails[job.UserId].EducationInfo)
+                                              ? string.Empty
+                                              : (string.IsNullOrEmpty(userDetails[job.UserId].Designation)
+                                                  ? userDetails[job.UserId].EducationInfo
+                                                  : "(" + userDetails[job.UserId].EducationInfo + ")")
+                                              );
+
+                    result.Add(jobDTO);
+                }
+
+                return Ok(result);
             }
 
-            var result = new List<JobViewModel>();
-            foreach (var job in joblist)
+            catch (Exception ex)
             {
-                var jobDTO = new JobViewModel();
-                jobDTO.Followers = job.Followers;
-                jobDTO.UserId = job.UserId;
-                jobDTO.HasClosed = job.HasClosed;
-                jobDTO.JobDescription = job.JobDescription;
-                jobDTO.JobId = job.JobId;
-                jobDTO.JobTitle = job.JobTitle;
-                jobDTO.JobCompany = job.JobCompany;
-                jobDTO.JobCity = job.JobCity;
-                jobDTO.JobCountry = job.JobCountry;
-                jobDTO.LastEditedOnUtc = job.LastEditedOnUtc;
-                jobDTO.PostedOnUtc = job.PostedOnUtc;
-                jobDTO.SkillSets = job.SkillSets;
-                jobDTO.SpamCount = job.SpamCount;
-                jobDTO.ViewCount = job.ViewCount;
-                jobDTO.DisplayName = userDetails[job.UserId].FirstName + " " + userDetails[job.UserId].LastName;
-                jobDTO.UserProfileImage = userDetails[job.UserId].ProfileImageURL;
-                jobDTO.CareerDetail = userDetails[job.UserId].Designation + " " +
-                                      (string.IsNullOrEmpty(userDetails[job.UserId].EducationInfo)
-                                          ? string.Empty
-                                          : (string.IsNullOrEmpty(userDetails[job.UserId].Designation)
-                                              ? userDetails[job.UserId].EducationInfo
-                                              : "(" + userDetails[job.UserId].EducationInfo + ")")
-                                          );
-
-                result.Add(jobDTO);
+                return BadRequest(ex.Message);
             }
-
-            return Ok(result);
         }
 
         /// <summary>
         /// API to get details about a specific jobId
+        /// Note: we are not caching this API as we don't want to restrict the 'JobApplications' collection. 
+        /// This will be different for each user
         /// </summary>
         /// <param name="jobId">jobId to retrieve the details</param>
         /// <returns></returns>
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetJob(string jobId)
         {
             try
@@ -110,30 +126,83 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 Task<CustomUserInfo> actionResult = helper.FindUserById(jobDetails.UserId, true);
                 var userDetails = await actionResult;
 
-                var jvm = new JobViewModel()
+                // retrieve the job applications associated with this job, if current user is the job poster then retrieve all  
+                // otherwise send only the user application if there is any
+                List<JobApplication> applications = new List<JobApplication>();
+                List<JobApplicationViewModel> javm = new List<JobApplicationViewModel>();
+                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                if (principal != null)
                 {
-                    UserId = jobDetails.UserId,
-                    Followers = jobDetails.Followers,
-                    JobId = jobDetails.JobId,
-                    JobDescription = jobDetails.JobDescription,
-                    JobTitle = jobDetails.JobTitle,
-                    JobCompany = jobDetails.JobCompany,
-                    JobCity = jobDetails.JobCity,
-                    JobCountry = jobDetails.JobCountry,
-                    SkillSets = jobDetails.SkillSets,
-                    ViewCount = jobDetails.ViewCount,
-                    LastEditedOnUtc = jobDetails.LastEditedOnUtc,
-                    HasClosed = jobDetails.HasClosed,
-                    PostedOnUtc = jobDetails.PostedOnUtc,
-                    SpamCount = jobDetails.SpamCount,
-                    DisplayName = userDetails.FirstName + " " + userDetails.LastName,
-                    UserProfileImage = userDetails.ProfileImageURL,
-                    CareerDetail = userDetails.Designation + " " +
-                       (string.IsNullOrEmpty(userDetails.EducationInfo) ? string.Empty :
-                       (string.IsNullOrEmpty(userDetails.Designation) ? userDetails.EducationInfo :
-                           "(" + userDetails.EducationInfo + ")")
-                       ),
-                };
+                    var email = principal.Identity.Name;
+                    if (email != null)
+                    {
+                        var userResult = helper.FindUserByEmail(email);
+                        var userInfo = await userResult;
+
+                        var mongoHelper = new MongoHelper<JobApplication>();
+                        if (userInfo != null)
+                        {
+                            // retrieve all the applcations as this is the user who posted the job
+                            if (userInfo.Id == userDetails.Id)
+                            {
+                                applications =
+                                    mongoHelper.Collection.AsQueryable()
+                                        .Where(a => a.JobId == jobId)
+                                        .OrderBy(a => a.PostedOnUtc)
+                                        .ToList();
+                            }
+                            else
+                            {
+                                // retrieve applications that this user posted
+                                applications =
+                                    mongoHelper.Collection.AsQueryable()
+                                        .Where(a => a.JobId == jobId && a.UserId == userInfo.Id)
+                                        .OrderBy(a => a.PostedOnUtc)
+                                        .ToList();
+                            }
+
+                            // add displayName property to the job applications
+                            foreach (var application in applications)
+                            {
+                                javm.Add(new JobApplicationViewModel()
+                                {
+                                    JobId = application.JobId,
+                                    UserId = application.UserId,
+                                    PostedOnUtc = application.PostedOnUtc,
+                                    DisplayName = userInfo.FirstName + " " + userInfo.LastName,
+                                    CoverLetter = application.CoverLetter,
+                                    ApplicationId = application.ApplicationId
+                                });
+                            }
+                        }
+                    }
+                }
+
+                var jvm = new JobViewModel()
+                        {
+                            UserId = jobDetails.UserId,
+                            Followers = jobDetails.Followers,
+                            JobId = jobDetails.JobId,
+                            JobDescription = jobDetails.JobDescription,
+                            JobTitle = jobDetails.JobTitle,
+                            JobApplications = javm,
+                            JobCompany = jobDetails.JobCompany,
+                            JobCity = jobDetails.JobCity,
+                            JobCountry = jobDetails.JobCountry,
+                            SkillSets = jobDetails.SkillSets,
+                            ViewCount = jobDetails.ViewCount,
+                            LastEditedOnUtc = jobDetails.LastEditedOnUtc,
+                            HasClosed = jobDetails.HasClosed,
+                            PostedOnUtc = jobDetails.PostedOnUtc,
+                            SpamCount = jobDetails.SpamCount,
+                            DisplayName = userDetails.FirstName + " " + userDetails.LastName,
+                            UserProfileImage = userDetails.ProfileImageURL,
+                            CareerDetail = userDetails.Designation + " " +
+                               (string.IsNullOrEmpty(userDetails.EducationInfo) ? string.Empty :
+                               (string.IsNullOrEmpty(userDetails.Designation) ? userDetails.EducationInfo :
+                                   "(" + userDetails.EducationInfo + ")")
+                               ),
+                        };
 
 
                 return Ok(jvm);
@@ -235,22 +304,106 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             UpdateUserActivityLog(userActivityLog);
 
-            // invalidate the cache for the action those will get impacted due to this new answer post
-            //var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
-
-            // invalidate the GetAnswersCount api for this question
-            //cache.RemoveStartsWith("career-getjobs-userId=" + userInfo.Id);
-
-            ////Invalidate personalized feed cache
-            //var userIdToInvalidate = userInfo.Followers == null ? new List<string>() : userInfo.Followers;
-            //userIdToInvalidate.Add(userInfo.Id);
-            //BackgroundJob.Enqueue(() => WebApiCacheHelper.InvalidatePersonalizedFeedCache(userIdToInvalidate));
-
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
 
             return CreatedAtRoute("DefaultApi", new { id = jobToPost.JobId }, jobToPost);
+        }
+
+        /// <summary>
+        /// API to post a job application
+        /// </summary>
+        /// <param name="jobApplicationDto">JobApplicationDTO object</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IHttpActionResult> ApplyForAJob(JobApplicationDTO jobApplicationDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (jobApplicationDto == null)
+                return BadRequest("Request body is null. Please send a valid JobApplicationDTO object");
+
+            // retrieve the user information from the ClaimsPrincipal
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            try
+            {
+                // validate given jobId is valid
+                var jobMongoHelper = new MongoHelper<Job>();
+                var jobInfo = jobMongoHelper.Collection.AsQueryable().Where(m => m.JobId == jobApplicationDto.JobId).ToList().FirstOrDefault();
+                if (jobInfo == null)
+                    return BadRequest("Supplied jobId is invalid");
+
+                // create the JobApplication object to save to database
+                JobApplication jobApplication = new JobApplication()
+                {
+                    UserId = userInfo.Id,
+                    JobId = jobInfo.JobId,
+                    PostedOnUtc = DateTime.UtcNow,
+                    ApplicationId = ObjectId.GenerateNewId().ToString(),
+                    CoverLetter = jobApplicationDto.CoverLetter
+                };
+
+                MongoHelper mongoHelper = new MongoHelper("jobapplication");
+                // save the JobApplication to the database
+                var result = mongoHelper.Collection.Save(jobApplication);
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    return InternalServerError();
+
+                // get the hostname
+                Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+                string pathQuery = myuri.PathAndQuery;
+                hostName = myuri.ToString().Replace(pathQuery, "");
+
+                // send notification to the user who posted the question
+                EmailsController emailsController = new EmailsController();
+                NotificationsController notificationsController = new NotificationsController();
+                if (jobInfo.UserId != userInfo.Id)
+                {
+                    await emailsController.SendEmail(new Email()
+                    {
+                        UserId = jobInfo.UserId,
+                        Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " applied to your job <a href='" + hostName + "/career/jobdetails?jobid=" + jobInfo.JobId + "' style='text-decoration:none'>" + jobInfo.JobTitle + "</a><i>" + jobApplication.CoverLetter + "</i>",
+                        Subject = "ShibpurHub | New application to your job \"" + jobInfo.JobTitle + "\""
+                    });
+
+                    notificationsController.PostNotification(new Notifications()
+                    {
+                        UserId = jobInfo.UserId,
+                        PostedOnUtc = DateTime.UtcNow,
+                        NewNotification = true,
+                        NotificationType = NotificationTypes.ReceivedJobApplication,
+                        NotificationContent = "{\"appliedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"jobId\":\"" + jobInfo.JobId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"jobTitle\":\"" + jobInfo.JobTitle + "\"}"
+                    });
+                }
+
+                // invalidate the cache for the action those will get impacted due to this new application
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getjob api call for the job associated with this application
+                cache.RemoveStartsWith("career-getjob-jobId=" + jobApplication.JobId);
+
+                return CreatedAtRoute("DefaultApi", new { id = jobApplication.ApplicationId }, jobApplication);
+            }
+            catch (MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>

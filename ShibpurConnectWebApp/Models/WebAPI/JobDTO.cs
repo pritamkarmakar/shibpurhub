@@ -82,5 +82,11 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public string CareerDetail { get; set; }
+
+        /// <summary>
+        /// List of job applications associated with this job
+        /// </summary>
+        [DataMember]
+        public List<JobApplicationViewModel> JobApplications { get; set; }
     }
 }
