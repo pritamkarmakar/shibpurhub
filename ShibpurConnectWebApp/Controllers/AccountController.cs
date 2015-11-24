@@ -157,15 +157,7 @@ namespace ShibpurConnectWebApp.Controllers
                     //Update last logged in time
                     try
                     {
-                        user.LastSeenOn = DateTime.UtcNow;
-                        UpdateUserInfo(user);
-                        //BackgroundJob.Enqueue(() => UpdateUserInfo(user));
-
-                        var config = System.Web.Http.GlobalConfiguration.Configuration;
-                        var cache = (config.Properties[typeof(IApiOutputCache)] as Func<IApiOutputCache>)();
-
-                        var key = "profile-getprofilebyuserid-userId";
-                        cache.RemoveStartsWith(key);
+                        UpdateLastSeenTime(user);
                     }
                     catch(Exception e)
                     { }
@@ -203,13 +195,16 @@ namespace ShibpurConnectWebApp.Controllers
 
         }
 
-        private async void UpdateUserInfo(ApplicationUser user)
+        private async void UpdateLastSeenTime(ApplicationUser user)
         {
             try
             {
                 using (AuthRepository _repo = new AuthRepository())
                 {
+                    user.LastSeenOn = DateTime.UtcNow;
                     await _repo.UpdateUser(user);
+                    var chacheKey = "profile-getprofilebyuserid-userId=" + user.Id;
+                    BackgroundJob.Enqueue(() => WebApiCacheHelper.InvalidateCacheByKey(chacheKey));
                 }
             }
             catch(Exception e)
