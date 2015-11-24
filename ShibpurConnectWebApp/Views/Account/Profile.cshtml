@@ -26,9 +26,9 @@
         color: #66757f;
     }
 
-    ul.nav a:visited {
+    /*ul.nav a:visited {
         background-color: white;
-    }
+    }*/
 
     span#department {
         font-size: 15px;
@@ -36,6 +36,18 @@
 
     #companyname {
         font-size: 14px;
+        font-weight: bold;
+    }
+
+    .profile-tab {
+        border-bottom-style: none;
+        font-weight: normal;
+    }
+
+    .select-profile-tab {
+        border-bottom-width: 3px;
+        border-bottom-style: solid;
+        border-bottom-color: rgb(88, 200, 196);
         font-weight: bold;
     }
 
@@ -100,13 +112,12 @@
         -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
         background-image: url('/Content/images/profile-image.jpg');
     }
-    .userdisplayname
-    {
+
+    .userdisplayname {
         font-size: 32px;
         word-wrap: break-word;
     }
 </style>
-
 <script type="text/javascript">
     // userid of the user whose profile we are looking at
     var profileId;
@@ -115,8 +126,9 @@
         jQuery.support.cors = true;
 
         // select the first tab 'Profile'
-        $('.nav-tabs li:first').css("border-bottom", "3px solid #58C8C4");
-        $('.nav-tabs li:first').css("font-weight", "bold");
+        //$('.nav-tabs li:first').css("border-bottom", "3px solid #58C8C4");
+        //$('.nav-tabs li:first').css("font-weight", "bold");
+        $('.nav-tabs li').first().addClass('select-profile-tab');
 
         var SERVER = "/api/";
         profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
@@ -157,7 +169,7 @@
 
                 //Show tabbed data if we need to
                 ShowTabbedData();
-                
+
                 var userDetails = localStorage.getItem("SC_Session_UserDetails");
                 if (userDetails) {
                     var userInfo = $.parseJSON(userDetails);
@@ -168,7 +180,8 @@
                 document.title = result.userInfo.firstName + " " + result.userInfo.lastName + " - ShibpurHub";
 
                 $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
-                $(".registeredon").after( getDateFormattedByMonthYear(result.userInfo.registeredOn));
+                $(".registeredon").after(getDateFormattedByMonthYear(result.userInfo.registeredOn));
+                $(".lastseenon").after(getDateFormattedByMonthYear(result.userInfo.lastSeenOn));
                 $(".reputationcount").after(result.userInfo.reputationCount);
                 $(".userlocation").after(result.userInfo.location);
                 $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
@@ -244,8 +257,8 @@
                     if (!result) {
                         return;
                     }
-                        $("#userfollowbutton > i").addClass('fa fa-check-circle');
-                        $("#userfollowbutton > span").text(' Following');
+                    $("#userfollowbutton > i").addClass('fa fa-check-circle');
+                    $("#userfollowbutton > span").text(' Following');
 
                 }
             });
@@ -307,14 +320,21 @@
             var tab = tabParam.substring(tabParam.length - 1, tabParam.length);
             obj = $(".nav-tabs li:nth-child("+ tab +")" );
         }
-        
+
+        if(!obj)
+        {
+            return;
+        }
+
         // remove the styles from all 'li'
-        $('.nav-tabs li').css("border-bottom", "none");
-        $('.nav-tabs li').css("font-weight", "normal");
+        //$('.nav-tabs li').css("border-bottom", "none");
+        //$('.nav-tabs li').css("font-weight", "normal");
+        $('.nav-tabs li.select-profile-tab').removeClass('select-profile-tab');
 
         // add border-bottom to the selected one
-        $(obj).css("border-bottom", "3px solid #58C8C4");
-        $(obj).css("font-weight", "bold");
+        //$(obj).css("border-bottom", "3px solid #58C8C4");
+        //$(obj).css("font-weight", "bold");
+        $(obj).addClass('select-profile-tab');
 
         if($(obj).text().toLowerCase() == "followers")
         {
@@ -520,7 +540,6 @@
         $('.nav-tabs a[href="#' + tab + '"]').click();
     }
 </script>
-
 <div class="container target" style="display:none;">
     <!--<div class="row">
 
@@ -562,21 +581,19 @@
                 <div class="form-group">
                     <button type="button" class="btn btn-xs btn-success" id="userfollowbutton" onclick="followUnfollowUser(this);" onmouseout='changeuserfollowonmouseout(this);' onmouseover='changeuserfollowonmouseover(this);'><i class='fa fa-plus-circle'></i><span> Follow</span></button>
                 </div>
-                    @*<button type="button" class="btn btn-sm btn-info">Send a message</button>*@
-                </div>
+                @*<button type="button" class="btn btn-sm btn-info">Send a message</button>*@
+            </div>
             <ul class="list-group">
                 <li class="list-group-item text-muted" contenteditable="false">Profile</li>
                 <li class="list-group-item text-right"><span class="pull-left registeredon"><strong class="">Joined</strong></span> </li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Last seen</strong></span> ....</li>
+                <li class="list-group-item text-right"><span class="pull-left lastseenon"><strong class="">Last seen</strong></span> ....</li>
                 <li class="list-group-item text-right">
                     <span class="pull-left userlocation"><strong class="">Location </strong></span>
-
                 </li>
             </ul>
             <ul class="list-group">
                 <li class="list-group-item text-muted">
                     Activity <i class="fa fa-dashboard fa-1x"></i>
-
                 </li>
                 <li class="list-group-item text-right"><span class="pull-left userquestioncount"><strong class="">Questions</strong></span></li>
                 <li class="list-group-item text-right"><span class="pull-left useranswercount"><strong class="">Answers</strong></span></li>
@@ -587,7 +604,6 @@
                 <div class="panel-body">
                     <i class="fa fa-facebook fa-2x"></i>  <i class="fa fa-github fa-2x"></i>
                     <i class="fa fa-twitter fa-2x"></i> <i class="fa fa-pinterest fa-2x"></i>  <i class="fa fa-google-plus fa-2x"></i>
-
                 </div>
             </div>
         </div>
@@ -643,13 +659,10 @@
         <div id="loadingdiv2" style="display:none;">
             <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
         </div>
-
         <div id="push"></div>
     </div>
     <input type="hidden" id="hdnUserId" value="" />
 </div>
-
 <div id="loadingdiv">
     <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
 </div>
-

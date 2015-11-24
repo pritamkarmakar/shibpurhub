@@ -21,6 +21,9 @@ using System.Xml.Linq;
 using System.Net;
 using System.Collections.Specialized;
 using System.Security.Claims;
+using Hangfire;
+using ShibpurConnectWebApp.Providers;
+using WebApi.OutputCache.Core.Cache;
 
 namespace ShibpurConnectWebApp.Controllers
 {
@@ -151,6 +154,15 @@ namespace ShibpurConnectWebApp.Controllers
                     // save the user id, token as session variable
                     System.Web.HttpContext.Current.Session["userid"] = user.Id;
 
+                    //Update last logged in time
+                    try
+                    {
+                        user.LastSeenOn = DateTime.UtcNow;
+                        BackgroundJob.Enqueue(() => UpdateUserInfo(user));
+                    }
+                    catch(Exception e)
+                    { }
+
                     // check whether user has added educational history, if not then redirect to the profile page
                     EducationalHistoriesController controller = new EducationalHistoriesController();
                     IHttpActionResult actionResult = await controller.GetEducationalHistories(user.Email);
@@ -183,6 +195,20 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
         }
+
+        private async void UpdateUserInfo(ApplicationUser user)
+        {
+            try
+            {
+                using (AuthRepository _repo = new AuthRepository())
+                {
+                    await _repo.UpdateUser(user);
+                }
+            }
+            catch(Exception e)
+            {
+            }
+       }
 
         //
         // GET: /Account/VerifyCode
@@ -261,7 +287,14 @@ namespace ShibpurConnectWebApp.Controllers
                 var userInfo = await UserManager.FindByNameAsync(model.Email.ToLower());
 
                 // if we are here that means user hasn't been created before. So add a new account
-                var user = new ApplicationUser { UserName = model.Email.ToLower(), Email = model.Email.ToLower(), FirstName = model.FirstName, LastName = model.LastName, Location = model.Location, RegisteredOn = DateTime.UtcNow };
+                var user = new ApplicationUser
+                { UserName = model.Email.ToLower(),
+                    Email = model.Email.ToLower(),
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Location = model.Location,
+                    RegisteredOn = DateTime.UtcNow
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
