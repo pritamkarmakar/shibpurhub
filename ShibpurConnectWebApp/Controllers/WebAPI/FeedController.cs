@@ -332,7 +332,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     if (question != null)
                     {
                         feedContent.Header = question.Title;
-                        var questionUrl = "/discussion/" + question.UrlSlug;
+                        var questionUrl = "/discussion/" + question.UrlSlug ?? question.QuestionId;
                         feedContent.ActionUrl = isFeedAnAnswer ? "/discussion/" + question.QuestionId + "/" + feed.ActedOnObjectId : questionUrl;
 
                         feedContent.ViewCount = question.ViewCount;
