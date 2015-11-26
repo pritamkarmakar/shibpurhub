@@ -222,8 +222,10 @@ function getQueryStringParam(name) {
 // function to follow a new tag
 function followtag(event) {
     var tagname = event.id;
-
-    if ($("#" + event.id + " > span").text().trim().toLowerCase() == "follow" || $("#" + event.id + " > span").text().trim().toLowerCase() == "follow this tag") {
+    var shouldFollowTag = $("#" + event.id + " > span").text().trim().toLowerCase() == "follow" ||
+                           $("#" + event.id + " > span").text().trim().toLowerCase() == "follow this tag" ||
+                           !$("#" + event.id).hasClass('active');
+    if (shouldFollowTag) {
         scAjax({
             "url": "tags/FollowNewTag?tagName=" + tagname,
             "type": "POST",
@@ -232,8 +234,8 @@ function followtag(event) {
                     return;
                 }
 
-                $("#" + tagname + " > i").addClass('fa fa-check-circle');
-                $("#" + tagname + " > span").text(' Following');
+                //$("#" + tagname + " > i").addClass('fa fa-check-circle');
+                //$("#" + tagname + " > span").text(' Following');
 
                 Command: toastr["success"]("Successfully subscribed to " + tagname);
             },
@@ -245,7 +247,7 @@ function followtag(event) {
             }
         });
     }
-    else if ($("#" + event.id + " > span").text().trim().toLowerCase() == "unfollow") {
+    else if ($("#" + event.id + " > span").text().trim().toLowerCase() == "unfollow" || $("#" + event.id).hasClass('active')) {
         scAjax({
             "url": "tags/unfollowtag?tagName=" + tagname,
             "type": "POST",
@@ -254,9 +256,9 @@ function followtag(event) {
                     return;
                 }
 
-                $("#" + tagname + " > i").removeClass('fa fa-check-circle');
-                $("#" + tagname + " > i").addClass('fa fa-plus-circle');
-                $("#" + tagname + " > span").text(' Follow');
+                //$("#" + tagname + " > i").removeClass('fa fa-check-circle');
+                //$("#" + tagname + " > i").addClass('fa fa-plus-circle');
+                //$("#" + tagname + " > span").text(' Follow');
 
                 Command: toastr["success"]("Successfully unsubscribed " + tagname);
             },
@@ -404,6 +406,10 @@ function followuser(obj, profileId) {
             }
             else {
                 Command: toastr["success"](result);
+                if (!obj)
+                {
+                    return;
+                }
                 $("#" + obj.id + "> i").removeClass();
                 $("#" + obj.id + "> i").addClass('fa fa-check-circle');
                 $("#" + obj.id + "> span").text(' Following');
@@ -432,6 +438,9 @@ function unfollowuser(obj, profileId) {
             }
             else {
                 Command: toastr["success"](result);
+                if (!obj) {
+                    return;
+                }
                 $("#" + obj.id + "> i").removeClass();
                 $("#" + obj.id + "> i").addClass('fa fa-plus-circle');
                 $("#" + obj.id + "> span").text(' Follow');

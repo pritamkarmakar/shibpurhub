@@ -186,16 +186,45 @@ cursor:pointer;
     // variable to keep the all users data that we will receive from the api, and will use this when
     // user will clear the search text from the search box
     var allusers;
+    var userDetails = localStorage.getItem("SC_Session_UserDetails");
+    var userInfo = $.parseJSON(userDetails);
+    var loggedInUserid = userInfo.id;
     function handleFollowClick()
     {
         $('.follow-small').each(function (i, e) {
             $(e).unbind('click');
             $(e).click(function () {
                 var button = $(this);
+                var profileid = $(button).attr('id');
+                if ($(button).hasClass('active'))
+                {
+                    unfollowuser(null, profileid);
+                }
+                else
+                {
+                    followuser(null, profileid);
+                }
+
                 $(button).toggleClass('active');
                 $(button).find('i.fa').toggleClass('fa-plus fa-check');
             });
         });
+    }
+
+    function getProfileHtml(userinfo)
+    {
+        var profileImgUrl = userinfo.profileImageURL == null ? "/Content/images/profile-image.jpg" : IMGURPATH + userinfo.profileImageURL;
+        var followingClass = $.inArray(loggedInUserid, userinfo.followers) == -1 ? "" : "active";
+        var iconClass = followingClass == "active" ? "fa-check" : "fa-plus";
+        if (loggedInUserid == userinfo.id)
+        {
+            followingClass = "hide";
+        }
+        return "<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'> \
+                <a href='/Account/Profile?userId=" + userinfo.id + "'> \
+                    <div class='profileimage' style='background-image: url(" + profileImgUrl + ")'></div>" + userinfo.firstName + " " + userinfo.lastName + "</a> \
+                <div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i> " + userinfo.reputationCount + "</div> \
+                <div class='follow-small " + followingClass + "' id=" + userinfo.id + "><i class='fa " + iconClass + "'></i> </div> </div></div>";
     }
 
     $(document).ready(function () {
@@ -217,10 +246,7 @@ cursor:pointer;
                 $('#loadingusers').hide();
 
                 $(result).each(function (i, userinfo) {
-                    if (userinfo.profileImageURL == null)
-                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><a href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a><div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i> " + userinfo.reputationCount + "</div> <div class='follow-small'> <i class='fa fa-plus'></i> </div> </div></div>")
-                    else
-                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile' '><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><a href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a><div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i> " + userinfo.reputationCount + "</div><div class='follow-small'><i class='fa fa-plus'></i> </div></div></div>")
+                    $('#userlist').append(getProfileHtml(userinfo));
                 });
                 handleFollowClick();
             }
@@ -258,10 +284,7 @@ cursor:pointer;
                             else {
                                 // update the div with the user data received from the API
                                 $(result).each(function (i, userinfo) {
-                                    if (userinfo.profileImageURL == null)
-                                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><a href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a><div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i>" + userinfo.reputationCount + "</div><div></div></div></div>")
-                                    else
-                                        $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><a href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a><div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i>" + userinfo.reputationCount + "</div><div></div></div></div>")
+                                    $('#userlist').append(getProfileHtml(userinfo));
                                 });
                                 handleFollowClick();
                             }
@@ -282,10 +305,7 @@ cursor:pointer;
                     }
                     else {
                         $(allusers).each(function (i, userinfo) {
-                            if (userinfo.profileImageURL == null)
-                                $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'><div class='profileimage' style='background-image: url(/Content/images/profile-image.jpg)'></div><a href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a><div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i>" + userinfo.reputationCount + "</div></div></div>")
-                            else
-                                $('#userlist').append("<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'><div class='profileimage' style='background-image: url(" + IMGURPATH + userinfo.profileImageURL + ")'></div><a href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a><div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i>" + userinfo.reputationCount + "</div></div></div>")
+                            $('#userlist').append(getProfileHtml(userinfo));
                         });
                         handleFollowClick();
                     }

@@ -158,6 +158,11 @@ namespace ShibpurConnectWebApp.Controllers
                     try
                     {
                         UpdateLastSeenTime(user);
+                        var config = System.Web.Http.GlobalConfiguration.Configuration;
+                        var cache = (config.Properties[typeof(IApiOutputCache)] as Func<IApiOutputCache>)();
+
+                        var key = "profile-getprofilebyuserid-userId";
+                        cache.RemoveStartsWith(key);
                     }
                     catch(Exception e)
                     { }

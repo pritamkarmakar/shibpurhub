@@ -315,7 +315,8 @@ namespace ShibpurConnectWebApp.Helper
                 Following = user.Following,
                 RegisteredOn = user.RegisteredOn,
                 LastSeenOn = user.LastSeenOn,
-                FollowedQuestions = user.FollowedQuestions
+                FollowedQuestions = user.FollowedQuestions,
+                AboutMe = user.AboutMe
             };
         }
 
