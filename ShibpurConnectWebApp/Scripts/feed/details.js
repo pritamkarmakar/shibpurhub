@@ -909,7 +909,7 @@ function setUpEditQuestion()
         theme: 'snow'
     });
 
-    qustionRTBoxEditor.setHTML($('.description').html());
+    qustionRTBoxEditor.setHTML($('.post-description').html());
 
     $('#btn_Edit_Question').click(function(){
         var data = {

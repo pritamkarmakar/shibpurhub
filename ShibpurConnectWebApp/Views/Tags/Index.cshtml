@@ -45,33 +45,9 @@
     }
 
     /* NEW TAGS*/
-    /*#taglist .row {
-        border: solid 1px #ddd;
-        margin: 0;
+    #taglist {
+        margin-top: 20px;
     }
-
-    .tag {
-        border-bottom: solid 1px #ddd;
-        padding: 6px 0;
-    }
-
-        .tag.lastrow {
-            border-bottom: 0;
-        }
-
-        .tag.sideborder {
-            border-right: solid 1px #ddd;
-            border-left: solid 1px #ddd;
-        }
-
-    .tag-count {
-        display: inline-block;
-        font-size: 11px;
-    }
-
-    .tag-button {
-        padding-top: 8px;
-    }*/
 
     .list-inline {
         list-style: none;
@@ -87,52 +63,10 @@
         float: left;
     }
 
-    /*a.tagname {
-        width: 100%;
-    }
-
-    a.thumbs {
-        display: block;
-        height: 28px;
-        margin-top: 0;
-        overflow: hidden;
-        margin-right: 10px;
-        background: #ECEFF1;
-        font-weight: 400;
-        padding: 7.2px 8px;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        border-bottom: 2px solid #CFD8DC;
-        color: #455A64;
-        font-size: 12px;
-        text-decoration: none;
-        line-height: 1;
-        text-align: center;
-        -webkit-transition: all,.2s,ease-in-out,.2s;
-        -moz-transition: all,.2s,ease-in-out,.2s;
-        -ms-transition: all,.2s,ease-in-out,.2s;
-        -o-transition: all,.2s,ease-in-out,.2s;
-        transition: all,.2s,ease-in-out,.2s;
-    }
-
-        a.thumbs:hover {
-            background: #CFD8DC;
-            border: 0;
-        }
-
-        a.thumbs.active {
-            background: #4DB6AC;
-            border-bottom: 2px solid #009688;
-            color: #fff;
-        }
-
-    .follow-ul {
-        display: none;
-    }*/
-body {
+    body {
         background: #ECEFF1;
     }
+
     .tag-detail {
         display: block;
         background: #FFF;
@@ -196,10 +130,10 @@ body {
         cursor: pointer;
     }
 
-    div.follow-small:hover {
-        background: #CFD8DC;
-        border: 0;
-    }
+        div.follow-small:hover {
+            background: #CFD8DC;
+            border: 0;
+        }
 </style>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -222,7 +156,7 @@ body {
                 $.each(result, function (key, value) {
 
                     var tagItem = $('#taglist .row .tag.hide').clone().removeClass('hide');
-                    
+
                     $(tagItem).find('a.tagname').text(value.categoryName).attr({ 'href': '/Feed/FeedByCategory?category=' + value.categoryName });
                     $(tagItem).find('.question-count span').text(value.questionCount);
                     var followButton = $(tagItem).find('.follow-small');
@@ -232,7 +166,7 @@ body {
                     }
                     $('#taglist .row').append(tagItem);
 
-                    $(followButton).click(function (event) {                        
+                    $(followButton).click(function (event) {
                         event.preventDefault();
                         followtag(this);
 
@@ -268,17 +202,16 @@ body {
 <div class="taglistcontainer">
     <h4>All Tags</h4>
     <div id="taglist">
-        <div class="row">
-            <div class="col-md-2 col-xs-12 col-sm-6 tag hide">
-
-                <div class="tag-detail">
-                    <div>
-                        <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
+        <div class="row">           
+                <div class="col-md-2 col-xs-6 col-sm-6 tag hide">
+                    <div class="tag-detail">
+                        <div>
+                            <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
+                        </div>
+                        <div class="question-count" title="Number of questions"><i class="fa fa-question"></i><span></span></div>
+                        <div class="follow-small" id=""><i class="fa fa-plus"></i> </div>
                     </div>
-                    <div class="question-count" title="Number of questions"><i class="fa fa-question"></i><span></span></div>
-                    <div class="follow-small" id=""><i class="fa fa-plus"></i> </div>
-                </div>
-            </div>
+                </div>            
         </div>
     </div>
     <div id="loadingtags">

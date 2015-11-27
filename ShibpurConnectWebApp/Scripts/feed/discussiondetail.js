@@ -87,9 +87,13 @@ function createQuestion(question)
 
     $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId=" + question.userId);
     
-    $(htmlItem).find('h2.title a').text(question.title);
+    var titleEl = $(htmlItem).find('h2.title a').addClass('top');
+    $(titleEl).text(question.title);
     
-    $(htmlItem).find('div.post-description p').html(question.description);
+    var descriptionEl = $(htmlItem).find('div.post-description p').addClass('top');
+    $(descriptionEl).html(question.description);
+   
+
     $(htmlItem).find('p.designation').text(question.careerDetail);
     $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
 
@@ -111,11 +115,13 @@ function createQuestion(question)
         $(htmlItem).find('.follow-ul').show();
     }
     
+    var categoryArr = [];
     var tagListUL = $(htmlItem).find('.tagsList');
     $(question.categories).each(function(i,e){
         var anchor = $('<a>').attr('href', "/Feed/FeedByCategory?category=" + e).text(e);
         var li = $('<li>').append(anchor);
         $(tagListUL).append(li);
+        categoryArr.push(e);
     });
     
     $("div.question-container").append(htmlItem);
@@ -170,6 +176,22 @@ function createQuestion(question)
     if (answerId && answerId != "") {
         $('html,body').animate({ scrollTop: $('#' + answerId).offset().top - 70 }, 'fast');
     }
+
+    if (question.userId == userId) {
+        $('.spanEditQuestion').removeClass('hide');
+    }
+    $('.spanEditQuestion').magnificPopup({
+        delegate: 'a',
+        removalDelay: 500, //delay removal by X to allow out-animation
+        callbacks: {
+            beforeOpen: function () {
+                this.st.mainClass = this.st.el.attr('data-effect');
+                $('#btn_Edit_Question').attr('data-question-id', question.questionId);
+                setUpEditQuestion();
+            }
+        },
+        midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+    });
 }
 
 
@@ -513,6 +535,58 @@ function updateUpVote(answerId, success) {
             $(textSpan).text('Upvoted');
             $(icon).removeClass('fa-arrow-up fa-circle-o-notch fa-spin').addClass('fa-thumbs-up');
         }
+    });
+}
+
+function setUpEditQuestion() {
+    var rtContainer = $('.editQuesDiv .richtextbox-container');
+    $(rtContainer).find('.control-label').text('Question');
+    $('.editQuesDiv #txt_question_edit').val($('h2.title a.top').text());
+
+    qustionRTBoxEditor = new Quill('.editQuesDiv .richtextbox-container .text-wrapper .editor-container', {
+        modules: {
+            'authorship': {
+                authorId: 'advanced',
+                enabled: true
+            },
+            'toolbar': {
+                container: '.editQuesDiv .richtextbox-container .text-wrapper .toolbar-container'
+            },
+            'link-tooltip': true,
+            'image-tooltip': true,
+            'multi-cursor': true
+        },
+        styles: false,
+        theme: 'snow'
+    });
+
+    qustionRTBoxEditor.setHTML($('div.post-description p.top').html());
+
+    $('#btn_Edit_Question').click(function () {
+        $.magnificPopup.close();
+        var newTitle = $('#txt_question_edit').val();
+        var newDescription = qustionRTBoxEditor.getHTML();
+        var data = {
+            "questionId": $(this).attr('data-question-id'),
+            "title": newTitle,
+            "description": newDescription,
+            "categories": categoryArr
+        };
+
+        scAjax({
+            "url": "questions/EditQuestion",
+            "type": "POST",
+            "data": JSON.stringify(data, null, 2),
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+            }
+        });
+
+        $('h2.title a.top').text(newTitle);
+        $('div.post-description p.top').html(newDescription);
+        
     });
 }
 
