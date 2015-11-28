@@ -20,6 +20,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string Location { get; set; }
         public int ReputationCount { get; set; }
         public DateTime RegisteredOn { get; set; }
+        public DateTime LastSeenOn { get; set; }
         public string AboutMe { get; set; }
 
         public string ProfileImageURL { get; set; }

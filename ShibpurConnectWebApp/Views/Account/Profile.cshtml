@@ -26,9 +26,9 @@
         color: #66757f;
     }
 
-    ul.nav a:visited {
+    /*ul.nav a:visited {
         background-color: white;
-    }
+    }*/
 
     span#department {
         font-size: 15px;
@@ -37,6 +37,21 @@
     #companyname {
         font-size: 14px;
         font-weight: bold;
+    }
+
+    .profile-tab {
+        border-bottom-style: none;
+        font-weight: normal;
+    }
+
+    .select-profile-tab {
+        border-bottom-width: 3px;
+        border-bottom-style: solid;
+        border-bottom-color: rgb(88, 200, 196);
+        font-weight: bold;
+        background-color: #ecf0f1;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
     }
 
     hr#dotted {
@@ -64,21 +79,21 @@
         overflow: hidden;
     }
 
-        .btn-file input[type=file] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
-            outline: none;
-            background: white;
-            cursor: inherit;
-            display: block;
-        }
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
 
     .center-block {
         text-align: center;
@@ -100,13 +115,16 @@
         -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
         background-image: url('/Content/images/profile-image.jpg');
     }
-    .userdisplayname
-    {
+
+    .userdisplayname {
         font-size: 32px;
         word-wrap: break-word;
     }
-</style>
 
+    .nav > li > a:hover {
+        background-color:transparent;
+    }
+</style>
 <script type="text/javascript">
     // userid of the user whose profile we are looking at
     var profileId;
@@ -115,8 +133,9 @@
         jQuery.support.cors = true;
 
         // select the first tab 'Profile'
-        $('.nav-tabs li:first').css("border-bottom", "3px solid #58C8C4");
-        $('.nav-tabs li:first').css("font-weight", "bold");
+        //$('.nav-tabs li:first').css("border-bottom", "3px solid #58C8C4");
+        //$('.nav-tabs li:first').css("font-weight", "bold");
+        $('.nav-tabs li').first().addClass('select-profile-tab');
 
         var SERVER = "/api/";
         profileId = @Html.Raw(Json.Encode(ViewData["userId"]));
@@ -131,7 +150,10 @@
         // If profileId is null then consider loggedInUserId. This will happen when a logged in user will click on the 'Profile' link from the navbar.
         // That url will be '/account/profile' without any userid. But if both are null then redirect to feed/index page
         if (profileId == null & loggedInUserId != null)
+        {
+            $("#userfollowbutton").hide();
             profileId = loggedInUserId;
+        }            
 
         $.ajax({
             url: SERVER + "profile/GetProfileByUserId",
@@ -157,7 +179,7 @@
 
                 //Show tabbed data if we need to
                 ShowTabbedData();
-                
+
                 var userDetails = localStorage.getItem("SC_Session_UserDetails");
                 if (userDetails) {
                     var userInfo = $.parseJSON(userDetails);
@@ -168,7 +190,8 @@
                 document.title = result.userInfo.firstName + " " + result.userInfo.lastName + " - ShibpurHub";
 
                 $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
-                $(".registeredon").after( getDateFormattedByMonthYear(result.userInfo.registeredOn));
+                $(".registeredon").after(getDateFormattedByMonthYear(result.userInfo.registeredOn));
+                $(".lastseenon").after(getDateFormattedByMonthYear(result.userInfo.lastSeenOn));
                 $(".reputationcount").after(result.userInfo.reputationCount);
                 $(".userlocation").after(result.userInfo.location);
                 $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
@@ -244,8 +267,8 @@
                     if (!result) {
                         return;
                     }
-                        $("#userfollowbutton > i").addClass('fa fa-check-circle');
-                        $("#userfollowbutton > span").text(' Following');
+                    $("#userfollowbutton > i").addClass('fa fa-check-circle');
+                    $("#userfollowbutton > span").text(' Following');
 
                 }
             });
@@ -307,14 +330,21 @@
             var tab = tabParam.substring(tabParam.length - 1, tabParam.length);
             obj = $(".nav-tabs li:nth-child("+ tab +")" );
         }
-        
+
+        if(!obj)
+        {
+            return;
+        }
+
         // remove the styles from all 'li'
-        $('.nav-tabs li').css("border-bottom", "none");
-        $('.nav-tabs li').css("font-weight", "normal");
+        //$('.nav-tabs li').css("border-bottom", "none");
+        //$('.nav-tabs li').css("font-weight", "normal");
+        $('.nav-tabs li.select-profile-tab').removeClass('select-profile-tab');
 
         // add border-bottom to the selected one
-        $(obj).css("border-bottom", "3px solid #58C8C4");
-        $(obj).css("font-weight", "bold");
+        //$(obj).css("border-bottom", "3px solid #58C8C4");
+        //$(obj).css("font-weight", "bold");
+        $(obj).addClass('select-profile-tab');
 
         if($(obj).text().toLowerCase() == "followers")
         {
@@ -467,7 +497,7 @@
 
                 // iterate over all questions and add them in the div
                 $(result).each(function (i, question) {
-                    $('.userquestions').append("<div id='"+ question.questionId +"'><div class='title'><a class='question-hyperlink' href='/feed/" + question.questionId + "'>" + question.title + "</a></div><div class='categories'></div></div>");
+                    $('.userquestions').append("<div id='"+ question.questionId +"'><div class='title'><a class='question-hyperlink' href='/discussion/" + question.questionId + "'>" + question.title + "</a></div><div class='categories'></div></div>");
                     if (question.categories) {
                         $(question.categories).each(function (i, category) {
                             var tagAnchor = $('<a>').addClass('post-tag').text(category).attr('href', "/Feed/FeedByCategory?category=" + category);
@@ -507,7 +537,7 @@
 
                 // iterate over all questions and add them in the div
                 $(result).each(function (i, answer) {
-                    $('.useranswers').append("<div id='"+ answer.questionId +"'><div class='title'><a class='question-hyperlink' href='/feed/" + answer.questionId + "'>" + answer.questionTitle + "</a></div><p>"+ answer.answerText  +"</p></div>");
+                    $('.useranswers').append("<div id='"+ answer.questionId +"'><div class='title'><a class='question-hyperlink' href='/discussion/" + answer.questionId + "'>" + answer.questionTitle + "</a></div><p>"+ answer.answerText  +"</p></div>");
 
                     $('.useranswers').append("<hr>");
                 });
@@ -520,7 +550,6 @@
         $('.nav-tabs a[href="#' + tab + '"]').click();
     }
 </script>
-
 <div class="container target" style="display:none;">
     <!--<div class="row">
 
@@ -562,21 +591,19 @@
                 <div class="form-group">
                     <button type="button" class="btn btn-xs btn-success" id="userfollowbutton" onclick="followUnfollowUser(this);" onmouseout='changeuserfollowonmouseout(this);' onmouseover='changeuserfollowonmouseover(this);'><i class='fa fa-plus-circle'></i><span> Follow</span></button>
                 </div>
-                    @*<button type="button" class="btn btn-sm btn-info">Send a message</button>*@
-                </div>
+                @*<button type="button" class="btn btn-sm btn-info">Send a message</button>*@
+            </div>
             <ul class="list-group">
                 <li class="list-group-item text-muted" contenteditable="false">Profile</li>
                 <li class="list-group-item text-right"><span class="pull-left registeredon"><strong class="">Joined</strong></span> </li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Last seen</strong></span> ....</li>
+                <li class="list-group-item text-right"><span class="pull-left lastseenon"><strong class="">Last seen</strong></span></li>
                 <li class="list-group-item text-right">
                     <span class="pull-left userlocation"><strong class="">Location </strong></span>
-
                 </li>
             </ul>
             <ul class="list-group">
                 <li class="list-group-item text-muted">
                     Activity <i class="fa fa-dashboard fa-1x"></i>
-
                 </li>
                 <li class="list-group-item text-right"><span class="pull-left userquestioncount"><strong class="">Questions</strong></span></li>
                 <li class="list-group-item text-right"><span class="pull-left useranswercount"><strong class="">Answers</strong></span></li>
@@ -587,7 +614,6 @@
                 <div class="panel-body">
                     <i class="fa fa-facebook fa-2x"></i>  <i class="fa fa-github fa-2x"></i>
                     <i class="fa fa-twitter fa-2x"></i> <i class="fa fa-pinterest fa-2x"></i>  <i class="fa fa-google-plus fa-2x"></i>
-
                 </div>
             </div>
         </div>
@@ -643,13 +669,10 @@
         <div id="loadingdiv2" style="display:none;">
             <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
         </div>
-
         <div id="push"></div>
     </div>
     <input type="hidden" id="hdnUserId" value="" />
 </div>
-
 <div id="loadingdiv">
     <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
 </div>
-

@@ -198,24 +198,7 @@ namespace ShibpurConnectWebApp.Helper
                         }
                     }
 
-                    return new CustomUserInfo()
-                    {
-                        Email = user.Email,
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Location = user.Location,
-                        ReputationCount = user.ReputationCount,
-                        RegisteredOn = user.RegisteredOn,
-                        AboutMe = user.AboutMe,
-                        ProfileImageURL = user.ProfileImageURL,
-                        Tags = user.Tags,
-                        Followers = user.Followers,
-                        Following = user.Following,
-                        FollowedQuestions = user.FollowedQuestions,
-                        Designation = designation,
-                        EducationInfo = educationInfo
-                    };
+                    return GetCustomUserInfoFromAppicationUser(user);
 
                 }
             }
@@ -258,24 +241,7 @@ namespace ShibpurConnectWebApp.Helper
                         }
                     }
 
-                    return new CustomUserInfo()
-                    {
-                        Email = user.Email,
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Location = user.Location,
-                        ReputationCount = user.ReputationCount,
-                        AboutMe = user.AboutMe,
-                        ProfileImageURL = user.ProfileImageURL,
-                        Tags = user.Tags,
-                        Followers = user.Followers,
-                        Following = user.Following,
-                        FollowedQuestions = user.FollowedQuestions,
-                        Designation = designation,
-                        EducationInfo = educationInfo
-                    };
-
+                    return GetCustomUserInfoFromAppicationUser(user);
                 }
             }
         }
@@ -292,20 +258,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return new CustomUserInfo()
-                    {
-                        Email = user.Email,
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Location = user.Location,
-                        ReputationCount = user.ReputationCount,
-                        ProfileImageURL = user.ProfileImageURL,
-                        Tags = user.Tags,
-                        Followers = user.Followers,
-                        Following = user.Following,
-                        FollowedQuestions = user.FollowedQuestions
-                    };
+                    return GetCustomUserInfoFromAppicationUser(user);
 
                 }
             }
@@ -323,20 +276,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return new CustomUserInfo()
-                    {
-                        Email = user.Email,
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Location = user.Location,
-                        ReputationCount = user.ReputationCount,
-                        ProfileImageURL = user.ProfileImageURL,
-                        Tags = user.Tags,
-                        Followers = user.Followers,
-                        Following = user.Following,
-                        FollowedQuestions = user.FollowedQuestions
-                    };
+                    return GetCustomUserInfoFromAppicationUser(user);
 
                 }
             }
@@ -354,23 +294,30 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return new CustomUserInfo()
-                    {
-                        Email = user.Email,
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Location = user.Location,
-                        ReputationCount = user.ReputationCount,
-                        ProfileImageURL = user.ProfileImageURL,
-                        Tags = user.Tags,
-                        Followers = user.Followers,
-                        Following = user.Following,
-                        FollowedQuestions = user.FollowedQuestions
-                    };
-
+                   return GetCustomUserInfoFromAppicationUser(user);
                 }
             }
+        }
+
+        private CustomUserInfo GetCustomUserInfoFromAppicationUser(ApplicationUser user)
+        {
+            return new CustomUserInfo()
+            {
+                Email = user.Email,
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Location = user.Location,
+                ReputationCount = user.ReputationCount,
+                ProfileImageURL = user.ProfileImageURL,
+                Tags = user.Tags,
+                Followers = user.Followers,
+                Following = user.Following,
+                RegisteredOn = user.RegisteredOn,
+                LastSeenOn = user.LastSeenOn,
+                FollowedQuestions = user.FollowedQuestions,
+                AboutMe = user.AboutMe
+            };
         }
 
         /// <summary>

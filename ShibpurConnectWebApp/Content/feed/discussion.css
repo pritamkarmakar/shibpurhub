@@ -157,3 +157,30 @@
     display: inline-block;
     width: 98%;
 }
+
+.spanEditQuestion a
+{
+    /*display: none;*/
+    color: #BABABA;
+    margin-left: 8px;
+}
+.white-popup {
+  position: relative;
+  background: #FFF;
+  padding: 25px;
+  max-width: 700px;
+  margin: 0 auto; 
+  overflow: auto;
+}
+
+.mfp-zoom-in.mfp-ready .mfp-with-anim {
+    opacity: 1;
+    transform: scale(1);
+    -webkit-transform: scale(1);
+}
+
+.mfp-zoom-in .mfp-with-anim {
+    transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+}
+

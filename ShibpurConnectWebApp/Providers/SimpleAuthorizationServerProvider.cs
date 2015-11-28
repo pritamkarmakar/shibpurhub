@@ -156,7 +156,8 @@ namespace ShibpurConnectWebApp.Providers
                     FirstName = applicationUser.FirstName,
                     LastName = applicationUser.LastName,
                     AboutMe = applicationUser.AboutMe,
-                    Location = applicationUser.Location
+                    Location = applicationUser.Location,
+                    LastSeenOn = applicationUser.LastSeenOn
                 }));
 
             return result;

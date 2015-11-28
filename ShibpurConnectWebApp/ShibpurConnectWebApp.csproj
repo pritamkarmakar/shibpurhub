@@ -397,6 +397,7 @@
     <Content Include="Content\feed\feed.css" />
     <Content Include="Content\feed\feedlistV1.css" />
     <Content Include="Content\feed\feedmobile.css" />
+    <Content Include="Content\feed\magnific-popup.css" />
     <Content Include="Content\flatly.css" />
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
@@ -504,6 +505,7 @@
     <Content Include="Scripts\feed\details.js" />
     <Content Include="Scripts\feed\feed.js" />
     <Content Include="Scripts\feed\discussiondetail.js" />
+    <Content Include="Scripts\feed\jquery.magnific-popup.min.js" />
     <Content Include="Scripts\jquery-2.1.3.js" />
     <Content Include="Scripts\jquery-2.1.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.js" />
