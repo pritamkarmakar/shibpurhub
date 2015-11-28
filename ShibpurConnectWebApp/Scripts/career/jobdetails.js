@@ -10,7 +10,8 @@ var userDetails = localStorage.getItem("SC_Session_UserDetails");
 var userInfo = $.parseJSON(userDetails);
 if (userInfo != null) {
     userId = userInfo.id;
-    myImageUrl = "http://i.imgur.com/" + userInfo.profileImageURL;
+    if (userInfo.profileImageURL != null)
+        myImageUrl = "http://i.imgur.com/" + userInfo.profileImageURL;
 }
 
 //used to reference rich textbox editor for question edit
@@ -82,7 +83,10 @@ function createJobDetails(question)
     var htmlItem = $('div.item.question.hide').clone().removeClass('hide');
 
     var creatorImage = $(htmlItem).find('.post-creator-image');
-    $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+    if (question.userProfileImage != null)
+        $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+    else
+        $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(/Content/images/profile-image.jpg)");
 
     $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId=" + question.userId);
     
@@ -155,7 +159,7 @@ function createJobDetails(question)
     
     var answerIds = [];
     $(jobapplications).each(function (index, jobapplication) {
-        answerIds.push(jobapplication.answerId);
+        answerIds.push(jobapplication.applicationId);
         createApplication(jobapplication);
     });
 
@@ -168,10 +172,14 @@ function createJobDetails(question)
 
 function createApplication(jobapplication)
 {
-    var htmlItem = $('div.item.answer.hide').clone().removeClass('hide').attr('id', jobapplication.jobId);
+    var htmlItem = $('div.item.answer.hide').clone().removeClass('hide').attr('id', jobapplication.applicationId);
 
     var creatorImage = $(htmlItem).find('.post-creator-image');
-    $(creatorImage).attr("href", "/Account/Profile?userId" + jobapplication.userId).css('background-image', "url(http://i.imgur.com/" + answer.userProfileImage + ")");
+    if (jobapplication.userProfileImage != null)
+        $(creatorImage).attr("href", "/Account/Profile?userId" + jobapplication.userId).css('background-image', "url(http://i.imgur.com/" + jobapplication.userProfileImage + ")");
+    else {
+        $(creatorImage).attr("href", "/Account/Profile?userId" + jobapplication.userId).css('background-image', "url(/Content/images/profile-image.jpg)");
+    }
 
     $(htmlItem).find('a.name-link').text(jobapplication.displayName).attr("href", "/Account/Profile?userId=" + jobapplication.userId);
     
@@ -182,18 +190,18 @@ function createApplication(jobapplication)
     $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(jobapplication.postedOnUtc));
     
     var upvoteButton = $(htmlItem).find('.upvote-ul a.thumbs');
-    $(upvoteButton).attr({ 'data-answerId': jobapplication.answerId, 'id': jobapplication.answerId });
+    $(upvoteButton).attr({ 'data-answerId': jobapplication.applicationId, 'id': jobapplication.applicationId });
     
     $("div.answer-container").append(htmlItem);
 
     $(upvoteButton).click(function (event) {
         event.preventDefault();
-        updateUpVote(jobapplication.answerId);
+        updateUpVote(jobapplication.applicationId);
     });
     
     $('.myimg').css('background-image',"url("+ myImageUrl +")");
     
-    var comments = jobapplication.comments;
+    var comments = jobapplication.applicationComments;
     if (!comments) {
         return;
     }
@@ -202,7 +210,7 @@ function createApplication(jobapplication)
         createComment(comment);
     });
     
-    $('#' + jobapplication.answerId).find('textarea.write-comment').bind('keyup', function (event) {
+    $('#' + jobapplication.applicationId).find('textarea.write-comment').bind('keyup', function (event) {
         if (event.keyCode === 13){
             var commentText = $(this).val();
             if(!commentText || commentText == "")
@@ -212,7 +220,7 @@ function createApplication(jobapplication)
             
             var postComment = {};
             postComment.commentText = commentText;
-            postComment.answerId = jobapplication.answerId;
+            postComment.applicationId = jobapplication.applicationId;
             postComment.userId = userInfo.id;
             postComment.userProfileImage = userInfo.profileImageURL;
             postComment.displayName = userInfo.firstName + " " + userInfo.lastName;
@@ -229,7 +237,7 @@ function createApplication(jobapplication)
 
 function createComment(comment)
 {
-    var answerId = comment.answerId;
+    var applicationId = comment.applicationId;
     var htmlItem = $('#'+ answerId +" .comments .post-comment.hide").clone().removeClass('hide');
     
     $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
@@ -370,9 +378,9 @@ function saveComment(comment)
     }
     
     createComment(comment);
-    var data = { "CommentText": $.trim(comment.commentText), "AnswerId": comment.answerId };
+    var data = { "CommentText": $.trim(comment.commentText), "ApplicationId": comment.applicationId };
     scAjax({
-        "url": "comments/postcomment",
+        "url": "jobapplicationcomments/postcomment",
         "type": "POST",
         "data": JSON.stringify(data, null, 2),
         "success": function (result) {
@@ -439,125 +447,3 @@ function updateUpVote(answerId, success) {
         }
     });
 }
-
-// This method will execute when user will type user details in the 'Ask To Answer' serach box
-$(function () {
-    $('#usernametext').keyup(function (event) {
-        var searchValue = $(this).val();
-        setTimeout(function () {
-            if (searchValue == $('#usernametext').val() && searchValue != null && searchValue != "") {
-                //alert(searchValue);
-                scAjax({
-                    "url": "search/SearchUsersByNameEmail",
-                    "data": { "userDetails": searchValue },
-                    "success": function (result) {
-                        if (!result) {
-                            return;
-                        }
-
-                        // clear the previous users
-                        $('#userlistasktoanswer').empty();
-
-                        if (result.length == 0) {
-                            $('#userlistasktoanswer').append("<span>Sorry no matching profile available</span>");
-                            // hide the loading message
-                            $('#loadingasktoanswer').hide();
-                        }
-                        else {
-                            // update the div with the user data received from the API
-                            jQuery.each(result, function (i, val) {
-                                if (val.profileImageURL != null) {
-                                    // form the smaller imgur image by adding 's' before '.jpg'
-                                    if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
-                                        val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
-                                    }
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion col-xs-12' id='" + val.id + "'><div class='userContainer'><div class='profileimage col-md-3 col-xs-4'><img class='avatar avatarasktoanswer  center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "' /></div><div class='userinfo col-md-9 col-xs-8'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br /><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br /><span id='" + val.id + "' style='font-size:12px'></span></div></div> <div class='askbuton col-md-12 col-xs-12'> <button id='" + val.id + "' data-id='" + val.id + "' class='btn btn-primary btn-xs' onclick='SendNotification(this)'>Ask</button></div></div>");
-                                }
-                                else
-                                    $('#userlistasktoanswer').append("<div class='wantedanswersuggestion col-xs-12' id='" + val.id + "'><div class='userContainer'><div class='profileimage col-md-3 col-xs-4'><img class='avatar avatarasktoanswer  center-block' width='60' height='60' src='/Content/images/profile-image.jpg' /></div><div class='userinfo col-md-9 col-xs-8'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br /><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br /><span id='" + val.id + "' style='font-size:12px'></span></div></div> <div class='askbuton col-md-12 col-xs-12'> <button id='" + val.id + "' data-id='" + val.id + "' class='btn btn-primary btn-xs' onclick='SendNotification(this)'>Ask</button></div></div>");
-                                // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                                scAjax({
-                                    "url": "asktoanswer/GetAskToAnswer",
-                                    "data": { "questionId": questionID, "userId": val.id },
-                                    "success": function (result) {
-                                        if (result != null) {
-                                            $('button[id$="' + val.id + '"]:first').text("Already Asked");
-                                            $('button[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
-                                        }
-                                        //get the response rate for each user
-                                        var responseRate;
-                                        scAjax({
-                                            "url": "asktoanswer/GetResponseRate",
-                                            "data": { "userId": val.id },
-                                            "success": function (rRate) {
-                                                //wantedanswersuggestion
-                                                responseRate = rRate;
-                                                $('span[id$="' + val.id + '"]:first').text("Response rate: " + rRate);
-
-                                                // hide the loading message
-                                                $('#loadingasktoanswer').hide();
-                                            }
-                                        });
-                                    }
-                                });
-
-                            });
-                        }
-                    }
-                });
-            }
-            else if (searchValue == '') {
-                // user have cleared all text from the text field so load all previous users
-                // clear the existing users
-                $('#userlistasktoanswer').empty();
-
-                if (userListAskToAnswer.length == 0) {
-                    $('#userlistasktoanswer').append("<span>Sorry we haven't found anyone to answer this question. Use above search box to request someone to answer this question</span>");
-                    // hide the loading message
-                    $('#loadingasktoanswer').hide();
-                }
-                else {
-                    // update the div with the user data received from the API
-                    jQuery.each(userListAskToAnswer, function (i, val) {
-                        // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                        if (val.profileImageURL != null) {
-                            // form the smaller imgur image by adding 's' before '.jpg'
-                            if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
-                                val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
-                            }
-                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion  col-xs-12' id='" + val.id + "'><div class='userContainer'><div class='profileimage col-md-3 col-xs-4'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "' /></div><div class='userinfo col-md-9 col-xs-8'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br /><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br /><span id='" + val.id + "' style='font-size:12px'></span></div></div> <div class='askbuton col-md-12 col-xs-12'> <button id='" + val.id + "' data-id='" + val.id + "' class='btn btn-primary btn-xs' onclick='SendNotification(this)'>Ask</button></div></div>");
-                        }
-                        else
-                            $('#userlistasktoanswer').append("<div class='wantedanswersuggestion  col-xs-12' id='" + val.id + "'><div class='userContainer'><div class='profileimage col-md-3 col-xs-4'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg' /></div><div class='userinfo col-md-9 col-xs-8'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br /><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br /><span id='" + val.id + "' style='font-size:12px'></span></div></div> <div class='askbuton col-md-12 col-xs-12'> <button id='" + val.id + "' data-id='" + val.id + "' class='btn btn-primary btn-xs' onclick='SendNotification(this)'>Ask</button></div></div>");
-                        // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
-                        scAjax({
-                            "url": "asktoanswer/GetAskToAnswer",
-                            "data": { "questionId": questionID, "userId": val.id },
-                            "success": function (result) {
-                                if (result != null) {
-                                    $('button[id$="' + val.id + '"]:first').text("Already Asked");
-                                    $('button[id$="' + val.id + '"]:first').attr('disabled', 'disabled');
-                                }
-                                //get the response rate for each user
-                                var responseRate;
-                                scAjax({
-                                    "url": "asktoanswer/GetResponseRate",
-                                    "data": { "userId": val.id },
-                                    "success": function (rRate) {
-                                        //wantedanswersuggestion
-                                        responseRate = rRate;
-                                        $('span[id$="' + val.id + '"]:first').text("Response rate: " + rRate);
-
-                                        // hide the loading message
-                                        $('#loadingasktoanswer').hide();
-                                    }
-                                });
-                            }
-                        });
-
-                    });
-                }
-            }
-        }, 400);
-    });
-});

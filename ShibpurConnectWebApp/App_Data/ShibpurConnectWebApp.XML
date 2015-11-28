@@ -613,6 +613,27 @@
             <param name="question"></param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.JobApplicationCommentsController.GetCommentsForJobApplication(System.String)">
+            <summary>
+            Get list of comments available in a job application
+            </summary>
+            <param name="applicationId">applicationId to search</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.JobApplicationCommentsController.PostComment(ShibpurConnectWebApp.Models.WebAPI.JobApplicationCommentDTO)">
+            <summary>
+            Add a new comment for a job application
+            </summary>
+            <param name="comment">JobApplicationCommentDTO object</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.JobApplicationCommentsController.EditComment(ShibpurConnectWebApp.Models.WebAPI.JobApplicationComment)">
+            <summary>
+            Edit a new comment for a question
+            </summary>
+            <param name="comment">Comment object</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.FeedController.GetPersonalizedFeeds(System.String,System.Int32,System.Int32)">
             <summary>
             Gets my feeds.
@@ -1090,6 +1111,21 @@
             Will use this model in the tag cloud
             </summary>
         </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobApplicationCommentDTO">
+            <summary>
+            Model to use to post a comment for a job application
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobApplicationComment">
+            <summary>
+            Model to save comment data in database
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobApplicationCommentViewModel">
+            <summary>
+            Model with comment user name, to be used by API to send return object
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.CommentDTO">
             <summary>
             Model to use to post a comment
@@ -1159,6 +1195,11 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobApplicationViewModel">
             <summary>
             Model to use in the API as return object
+            </summary>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Models.WebAPI.JobApplicationViewModel.ApplicationComments">
+            <summary>
+            List of comment associated with this job
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.JobDTO">

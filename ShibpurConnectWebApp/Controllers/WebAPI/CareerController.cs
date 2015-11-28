@@ -116,6 +116,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             try
             {
+                // dictionary to keep a userinfo
+                Dictionary<string, CustomUserInfo> userInfoDictionary = new Dictionary<string, CustomUserInfo>();
+
                 var jobDetails = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.JobId == jobId);
                 if (jobDetails == null)
                 {
@@ -125,6 +128,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 Helper.Helper helper = new Helper.Helper();
                 Task<CustomUserInfo> actionResult = helper.FindUserById(jobDetails.UserId, true);
                 var userDetails = await actionResult;
+
+                // add this user in the dictionary
+                userInfoDictionary.Add(userDetails.Id, userDetails);
 
                 // retrieve the job applications associated with this job, if current user is the job poster then retrieve all  
                 // otherwise send only the user application if there is any
@@ -138,6 +144,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         var userResult = helper.FindUserByEmail(email);
                         var userInfo = await userResult;
+
+                        // add this user in the userinfo dictionary, if it is not present
+                        if (!userInfoDictionary.ContainsKey(userInfo.Id))
+                            userInfoDictionary.Add(userInfo.Id, userInfo);
 
                         var mongoHelper = new MongoHelper<JobApplication>();
                         if (userInfo != null)
@@ -164,14 +174,67 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             // add displayName property to the job applications
                             foreach (var application in applications)
                             {
+                                // retrieve the user info for this application, if that is not present in the dictionary
+                                CustomUserInfo userInfo2;
+                                if (!userInfoDictionary.ContainsKey(application.UserId))
+                                {
+                                    var userResult2 = helper.FindUserById(application.UserId);
+                                    userInfo2 = await userResult2;
+                                    
+                                    userInfoDictionary.Add(userInfo2.Id, userInfo2);
+                                }
+                                else
+                                {
+                                    userInfo2 = userInfoDictionary[application.UserId];
+                                }
+
+                                // retrieve the associated comments with this application
+                                var mongoHelper2 = new MongoHelper<JobApplicationComment>();
+                                var comments = mongoHelper2.Collection.AsQueryable()
+                                        .Where(a => a.ApplicationId == application.ApplicationId)
+                                        .OrderBy(a => a.PostedOnUtc)
+                                        .ToList();
+
+                                // create the JobApplicationCommentViewModel
+                                List<JobApplicationCommentViewModel> jacvm = new List<JobApplicationCommentViewModel>();
+                                foreach (var comment in comments)
+                                {
+                                    // retrieve the userinfo
+                                    CustomUserInfo userInfo3;
+                                    if (!userInfoDictionary.ContainsKey(comment.UserId))
+                                    {
+                                        var userResult3 = helper.FindUserById(comment.UserId);
+                                        userInfo3 = await userResult3;
+
+                                        userInfoDictionary.Add(userInfo3.Id, userInfo3);
+                                    }
+                                    else
+                                    {
+                                        userInfo3 = userInfoDictionary[comment.UserId];
+                                    }
+
+                                    jacvm.Add(new JobApplicationCommentViewModel()
+                                    {
+                                        UserId = userInfo3.Id,
+                                        PostedOnUtc = comment.PostedOnUtc,
+                                        ApplicationId = comment.ApplicationId,
+                                        DisplayName = userInfo3.FirstName + " " + userInfo3.LastName,
+                                        UserProfileImage = userInfo3.ProfileImageURL,
+                                        CommentId = comment.CommentId,
+                                        CommentText = comment.CommentText
+                                    });
+                                }
+
                                 javm.Add(new JobApplicationViewModel()
                                 {
                                     JobId = application.JobId,
                                     UserId = application.UserId,
                                     PostedOnUtc = application.PostedOnUtc,
-                                    DisplayName = userInfo.FirstName + " " + userInfo.LastName,
+                                    DisplayName = userInfo2.FirstName + " " + userInfo2.LastName,
+                                    UserProfileImage = userInfo2.ProfileImageURL,
                                     CoverLetter = application.CoverLetter,
-                                    ApplicationId = application.ApplicationId
+                                    ApplicationId = application.ApplicationId,
+                                    ApplicationComments = jacvm
                                 });
                             }
                         }
@@ -405,6 +468,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ex.Message);
             }
         }
+        
 
         /// <summary>
         /// Updates the user activity log.

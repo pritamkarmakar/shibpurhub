@@ -52,6 +52,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         ReceivedAnswer,
         ReceivedComment,
         ReceivedJobApplication,
+        ReceivedCommentInJobApplication,
         AskToAnswer,
         ReceivedCommentInQuestion
     }
