@@ -331,7 +331,7 @@ function scrollToADivOnPageLoad() {
     }
 }
 
-// function to enable disable submit application; 
+// function to enable disable submit application; false = "Savings.."
 function enableOrDisableSubmitApplication(enable) {
     if (enable) {
         // enable the button
@@ -351,7 +351,7 @@ function enableOrDisableSubmitApplication(enable) {
     }
 }
 
-// new job application
+// new job application, the api call
 function saveApplication() {
     // hide the error div
     $('#errormessage').empty().hide();
@@ -390,9 +390,8 @@ function saveApplication() {
             }
 
             var answer = result;
-            // we dont user to reapply for the same position. So disabling the apply editor.
-            enableOrDisableSubmitApplication(false);
-            //logActivity(2, answer.answerId);
+            // we don't want user to reapply for the same position. So if we are here that means this user already applied for this job so will remove the 'submit-answer-container'
+            $('.submit-answer-container').html("<div style='font-size:20px;margin-bottom:10px;'>Your application</div>");
 
             answer.userId = userInfo.id;
             answer.userProfileImage = userInfo.profileImageURL;
