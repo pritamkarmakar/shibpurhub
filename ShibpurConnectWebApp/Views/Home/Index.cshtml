@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet"/>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <title>ShibpurHub</title>
     <meta name="keywords" content="shibpurhub, shibpur, bec, be college, shibpoore, besu, iiest, bengal engineering college, bengal engineering and sciencce university, indian institute of engineering science and technology shibpur, academic networking" />
     <meta name="description" content="Homepage of ShibpurHub - online platform to connect BE College/BESU/IIEST students and alumnus. " />
@@ -53,7 +53,7 @@
 </head>
 <body>
 
-    
+
 
 
 
@@ -66,12 +66,23 @@
         </div>
     </nav>
 
+    @*Need this message to be displayed. For user who hasn't confirmed their account & for user who just registered in the website*@
+@if (TempData["ConfirmEmail"] != null && !string.IsNullOrEmpty(TempData["ConfirmEmail"].ToString()))
+    {
+        <div class="container">
+            <div class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @TempData["ConfirmEmail"]
+            </div>
+        </div>
+    }
+
     <div class="container">
         <label style="font-size: 80px; text-align: center; display: block;">ShibpurHub</label>
         <label style="font-size: 30px; text-align: center; display: block;">Platform to connect Bengal Engineering College(Presently IIEST) students and alumnus</label>
         @*<div style="width:200px; margin:auto;">
-            <a class="btn btn-primary" href="~/Home/LearnMore">Learn more &raquo;</a>
-        </div>*@
+                <a class="btn btn-primary" href="~/Home/LearnMore">Learn more &raquo;</a>
+            </div>*@
 
         <footer class="footer navbar-fixed-bottom">
             <div class="container">

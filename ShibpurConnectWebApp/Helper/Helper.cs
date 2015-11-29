@@ -198,7 +198,7 @@ namespace ShibpurConnectWebApp.Helper
                         }
                     }
 
-                    return GetCustomUserInfoFromAppicationUser(user);
+                    return GetCustomUserInfoFromAppicationUser(user, educationInfo, designation);
 
                 }
             }
@@ -241,7 +241,7 @@ namespace ShibpurConnectWebApp.Helper
                         }
                     }
 
-                    return GetCustomUserInfoFromAppicationUser(user);
+                    return GetCustomUserInfoFromAppicationUser(user, educationInfo,designation);
                 }
             }
         }
@@ -258,7 +258,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return GetCustomUserInfoFromAppicationUser(user);
+                    return GetCustomUserInfoFromAppicationUser(user, null, null);
 
                 }
             }
@@ -276,7 +276,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return GetCustomUserInfoFromAppicationUser(user);
+                    return GetCustomUserInfoFromAppicationUser(user, null, null);
 
                 }
             }
@@ -294,12 +294,12 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                   return GetCustomUserInfoFromAppicationUser(user);
+                   return GetCustomUserInfoFromAppicationUser(user, null, null);
                 }
             }
         }
 
-        private CustomUserInfo GetCustomUserInfoFromAppicationUser(ApplicationUser user)
+        private CustomUserInfo GetCustomUserInfoFromAppicationUser(ApplicationUser user, string edh, string emh)
         {
             return new CustomUserInfo()
             {
@@ -316,7 +316,9 @@ namespace ShibpurConnectWebApp.Helper
                 RegisteredOn = user.RegisteredOn,
                 LastSeenOn = user.LastSeenOn,
                 FollowedQuestions = user.FollowedQuestions,
-                AboutMe = user.AboutMe
+                AboutMe = user.AboutMe,
+                Designation = emh,
+                EducationInfo = edh
             };
         }
 
