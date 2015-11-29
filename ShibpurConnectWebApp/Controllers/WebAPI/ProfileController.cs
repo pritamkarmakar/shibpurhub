@@ -148,6 +148,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     ApplicationUser user = await _repo.FindUserByEmail(email);
                     user.LastSeenOn = DateTime.UtcNow;
                     await _repo.UpdateUser(user);
+                    
+                    var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
                     cache.Remove("profile-getprofilebyuserid-userId=" + user.Id);
                 }
             }
