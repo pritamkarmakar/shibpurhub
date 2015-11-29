@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
@@ -129,6 +131,30 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return Ok(userProfile);
         }
+        
+        public async void UpdateLastSeenTime()
+        {
+            try
+            {
+                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                var email = principal.Identity.Name;
+                if(string.IsNullOrEmpty(email))
+                {
+                    return;
+                }
+            
+                using (AuthRepository _repo = new AuthRepository())
+                {
+                    ApplicationUser user = await _repo.FindUserByEmail(email);
+                    user.LastSeenOn = DateTime.UtcNow;
+                    await _repo.UpdateUser(user);
+                    cache.Remove("profile-getprofilebyuserid-userId=" + user.Id);
+                }
+            }
+            catch(Exception e)
+            {
+            }
+       }
 
         /// <summary>
         /// Get details about an user from only users collection

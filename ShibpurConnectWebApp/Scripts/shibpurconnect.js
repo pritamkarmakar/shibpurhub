@@ -121,6 +121,10 @@ function getDateFormatted(date) {
 
 function getDateFormattedByMonthYear(date) {
     var utcDate = new Date(date);
+    if(utcDate == new Date("0001-01-01"))
+    {
+        return "";
+    }
     var hour = utcDate.getHours();
 
     var dateString = getMonth(utcDate.getMonth().toString()) + " " + utcDate.getDate() + ", " + utcDate.getFullYear();

@@ -92,6 +92,9 @@ namespace ShibpurConnectWebApp
             //Database.SetInitializer<ApplicationDbContext>(null);
 
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            
+            var profileController = new ProfileController();
+            profileController.UpdateLastSeenTime();
         }
 
         protected void Application_Error()
