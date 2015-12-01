@@ -80,7 +80,10 @@ function createAllJobs(allJobsData, page) {
         $(htmlItem).find('h2.jobtitle a').text(job.jobTitle).attr("href", "career/jobdetails?jobid=" + job.jobId);
 
         var creatorImage = $(htmlItem).find('.post-creator-image');
-        $(creatorImage).attr("href", "/Account/Profile?userId" + job.userId).css('background-image', "url(http://i.imgur.com/" + job.userProfileImage + ")");
+        if (job.userProfileImage != null)
+            $(creatorImage).attr("href", "/Account/Profile?userId" + job.userId).css('background-image', "url(http://i.imgur.com/" + job.userProfileImage + ")");
+        else
+            $(creatorImage).attr("href", "/Account/Profile?userId" + job.userId).css('background-image', "url(/Content/images/profile-image.jpg)");
 
         $(htmlItem).find('a.name-link').text(job.displayName).attr("href", "/Account/Profile?userId=" + job.userId);
 

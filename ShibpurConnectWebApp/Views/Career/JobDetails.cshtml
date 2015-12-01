@@ -18,7 +18,7 @@
         <div id="loadingdiv">
             <i class="fa fa-refresh fa-spin"></i><span> Loading...</span>
         </div>
-        <div class="feed-list">
+        <div class="job-list">
             <div class="row item question hide">
                 <div class="col-xs-12 thread">
                     <div class="row">
@@ -29,11 +29,11 @@
                                         <a href="#">Need help to create shibpurhub animated video</a>
                                     </h2>
                                     @*<div class="job-company">
-                                        <p class="tagline-text-content"></p>
-                                    </div>
-                                    <div class="job-location">
-                                        <p class="tagline-text-content"></p>
-                                    </div>*@
+                                            <p class="tagline-text-content"></p>
+                                        </div>
+                                        <div class="job-location">
+                                            <p class="tagline-text-content"></p>
+                                        </div>*@
                                 </div>
                                 <div class="col-sm-12 col-xs-12 col-md-4 headers-col">
                                     <div class="profile-img-col">
@@ -53,7 +53,7 @@
                                     <div class="job-location">
                                         <p class="tagline-text-content"></p>
                                     </div>
-                                    <br/>
+                                    <br />
                                     <div class="post-description">
                                         <p>
                                         </p>
@@ -64,19 +64,19 @@
                     </div>
                     <div class="row thread-details">
                         <div class="thread-details-container">
-                            <div class="col-xs-12 col-md-3">
+                            @*<div class="col-xs-12 col-md-3">
                                 <ul class="list-inline pull-left follow-ul">
                                     <li>
                                         <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-plus-circle"></i> <span>Follow</span></a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div>*@
                             <div class="col-md-5">
                                 <ul class="list-inline">
                                     <li class="jobskills"></li>
                                 </ul>
                             </div>
-                            <div class="col-xs-12 col-md-4 hidden-xs">
+                            <div class="col-xs-12 col-md-7 hidden-xs">
                                 <ul class="extra-details pull-right list-inline">
                                     <li>
                                         <span class="view-count"></span>
@@ -105,7 +105,7 @@
                                     </div>
                                     <p class="header-text-content ">
                                         <a href="#" class="name-link"></a>
-                                        <span class="action"> wrote an Answer</span>
+                                        @*<span class="action"> wrote an Answer</span>*@
                                     </p>
                                     <p class="tagline-text-content designation"></p>
                                 </div>
@@ -124,14 +124,14 @@
                     </div>
                     <div class="row thread-details">
                         <div class="thread-details-container">
-                            <div class="col-xs-12 col-md-2">
+                            @*<div class="col-xs-12 col-md-2">
                                 <ul class="list-inline pull-left upvote-ul">
                                     <li>
                                         <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
                                     </li>
                                 </ul>
-                            </div>
-                            <div class="col-xs-12 col-md-10 hidden-xs">
+                            </div>*@
+                            <div class="col-xs-12 col-md-12 hidden-xs">
                                 <ul class="extra-details pull-right list-inline">
                                     <li>
                                         <span class="view-count"></span>
@@ -202,146 +202,171 @@
             </div>
             @if (User.Identity.IsAuthenticated)
             {
-                <div class="submit-answer-container">
-                    <div class="col-xs-12">
-                        <h4 class="answer-header">Apply to this job</h4>
-                    </div>
-                    <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none; padding: 5px; margin-bottom: 15px;" id="errormessage">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong>Error!</strong>
-                    </div>
-                    <div class="row item">
-                        <div class="col-xs-12 thread">
-                            <div class="write-answer" style="margin:20px 0px; padding-left: 0;">
-                                @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
-                                <div class="text-wrapper col-md-12 col-xs-12">
-                                    <div class="toolbar-container">
-                                        <span class="ql-format-group">
-                                            <select title="Size" class="ql-size">
-                                                <option value="10px">Small</option>
-                                                <option value="13px" selected>Normal</option>
-                                                <option value="18px">Large</option>
-                                                <option value="32px">Huge</option>
-                                            </select>
-                                        </span>
-                                        <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
-                                            <select title="Text Color" class="ql-color">
-                                                <option value="rgb(0, 0, 0)" selected></option>
-                                                <option value="rgb(230, 0, 0)"></option>
-                                                <option value="rgb(255, 153, 0)"></option>
-                                                <option value="rgb(255, 255, 0)"></option>
-                                                <option value="rgb(0, 138, 0)"></option>
-                                                <option value="rgb(0, 102, 204)"></option>
-                                                <option value="rgb(153, 51, 255)"></option>
-                                                <option value="rgb(255, 255, 255)"></option>
-                                                <option value="rgb(250, 204, 204)"></option>
-                                                <option value="rgb(255, 235, 204)"></option>
-                                                <option value="rgb(255, 255, 204)"></option>
-                                                <option value="rgb(204, 232, 204)"></option>
-                                                <option value="rgb(204, 224, 245)"></option>
-                                                <option value="rgb(235, 214, 255)"></option>
-                                                <option value="rgb(187, 187, 187)"></option>
-                                                <option value="rgb(240, 102, 102)"></option>
-                                                <option value="rgb(255, 194, 102)"></option>
-                                                <option value="rgb(255, 255, 102)"></option>
-                                                <option value="rgb(102, 185, 102)"></option>
-                                                <option value="rgb(102, 163, 224)"></option>
-                                                <option value="rgb(194, 133, 255)"></option>
-                                                <option value="rgb(136, 136, 136)"></option>
-                                                <option value="rgb(161, 0, 0)"></option>
-                                                <option value="rgb(178, 107, 0)"></option>
-                                                <option value="rgb(178, 178, 0)"></option>
-                                                <option value="rgb(0, 97, 0)"></option>
-                                                <option value="rgb(0, 71, 178)"></option>
-                                                <option value="rgb(107, 36, 178)"></option>
-                                                <option value="rgb(68, 68, 68)"></option>
-                                                <option value="rgb(92, 0, 0)"></option>
-                                                <option value="rgb(102, 61, 0)"></option>
-                                                <option value="rgb(102, 102, 0)"></option>
-                                                <option value="rgb(0, 55, 0)"></option>
-                                                <option value="rgb(0, 41, 102)"></option>
-                                                <option value="rgb(61, 20, 102)"></option>
-                                            </select><span class="ql-format-separator"></span>
-                                            <select title="Background Color" class="ql-background">
-                                                <option value="rgb(0, 0, 0)"></option>
-                                                <option value="rgb(230, 0, 0)"></option>
-                                                <option value="rgb(255, 153, 0)"></option>
-                                                <option value="rgb(255, 255, 0)"></option>
-                                                <option value="rgb(0, 138, 0)"></option>
-                                                <option value="rgb(0, 102, 204)"></option>
-                                                <option value="rgb(153, 51, 255)"></option>
-                                                <option value="rgb(255, 255, 255)" selected></option>
-                                                <option value="rgb(250, 204, 204)"></option>
-                                                <option value="rgb(255, 235, 204)"></option>
-                                                <option value="rgb(255, 255, 204)"></option>
-                                                <option value="rgb(204, 232, 204)"></option>
-                                                <option value="rgb(204, 224, 245)"></option>
-                                                <option value="rgb(235, 214, 255)"></option>
-                                                <option value="rgb(187, 187, 187)"></option>
-                                                <option value="rgb(240, 102, 102)"></option>
-                                                <option value="rgb(255, 194, 102)"></option>
-                                                <option value="rgb(255, 255, 102)"></option>
-                                                <option value="rgb(102, 185, 102)"></option>
-                                                <option value="rgb(102, 163, 224)"></option>
-                                                <option value="rgb(194, 133, 255)"></option>
-                                                <option value="rgb(136, 136, 136)"></option>
-                                                <option value="rgb(161, 0, 0)"></option>
-                                                <option value="rgb(178, 107, 0)"></option>
-                                                <option value="rgb(178, 178, 0)"></option>
-                                                <option value="rgb(0, 97, 0)"></option>
-                                                <option value="rgb(0, 71, 178)"></option>
-                                                <option value="rgb(107, 36, 178)"></option>
-                                                <option value="rgb(68, 68, 68)"></option>
-                                                <option value="rgb(92, 0, 0)"></option>
-                                                <option value="rgb(102, 61, 0)"></option>
-                                                <option value="rgb(102, 102, 0)"></option>
-                                                <option value="rgb(0, 55, 0)"></option>
-                                                <option value="rgb(0, 41, 102)"></option>
-                                                <option value="rgb(61, 20, 102)"></option>
-                                            </select><span class="ql-format-separator"></span>
+            <div class="submit-answer-container">
+                <div class="col-xs-12">
+                    <h4 class="answer-header">Apply to this job</h4>
+                </div>
+                <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none; padding: 5px; margin-bottom: 15px;" id="errormessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Error!</strong>
+                </div>
+                <div class="row item">
+                    <div class="col-xs-12 thread">
+                        <div class="write-answer" style="margin:20px 0px; padding-left: 0;">
+                            @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
+                            <div class="text-wrapper col-md-12 col-xs-12">
+                                <div class="toolbar-container">
+                                    <span class="ql-format-group">
+                                        <select title="Size" class="ql-size">
+                                            <option value="10px">Small</option>
+                                            <option value="13px" selected>Normal</option>
+                                            <option value="18px">Large</option>
+                                            <option value="32px">Huge</option>
+                                        </select>
+                                    </span>
+                                    <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
+                                        <select title="Text Color" class="ql-color">
+                                            <option value="rgb(0, 0, 0)" selected></option>
+                                            <option value="rgb(230, 0, 0)"></option>
+                                            <option value="rgb(255, 153, 0)"></option>
+                                            <option value="rgb(255, 255, 0)"></option>
+                                            <option value="rgb(0, 138, 0)"></option>
+                                            <option value="rgb(0, 102, 204)"></option>
+                                            <option value="rgb(153, 51, 255)"></option>
+                                            <option value="rgb(255, 255, 255)"></option>
+                                            <option value="rgb(250, 204, 204)"></option>
+                                            <option value="rgb(255, 235, 204)"></option>
+                                            <option value="rgb(255, 255, 204)"></option>
+                                            <option value="rgb(204, 232, 204)"></option>
+                                            <option value="rgb(204, 224, 245)"></option>
+                                            <option value="rgb(235, 214, 255)"></option>
+                                            <option value="rgb(187, 187, 187)"></option>
+                                            <option value="rgb(240, 102, 102)"></option>
+                                            <option value="rgb(255, 194, 102)"></option>
+                                            <option value="rgb(255, 255, 102)"></option>
+                                            <option value="rgb(102, 185, 102)"></option>
+                                            <option value="rgb(102, 163, 224)"></option>
+                                            <option value="rgb(194, 133, 255)"></option>
+                                            <option value="rgb(136, 136, 136)"></option>
+                                            <option value="rgb(161, 0, 0)"></option>
+                                            <option value="rgb(178, 107, 0)"></option>
+                                            <option value="rgb(178, 178, 0)"></option>
+                                            <option value="rgb(0, 97, 0)"></option>
+                                            <option value="rgb(0, 71, 178)"></option>
+                                            <option value="rgb(107, 36, 178)"></option>
+                                            <option value="rgb(68, 68, 68)"></option>
+                                            <option value="rgb(92, 0, 0)"></option>
+                                            <option value="rgb(102, 61, 0)"></option>
+                                            <option value="rgb(102, 102, 0)"></option>
+                                            <option value="rgb(0, 55, 0)"></option>
+                                            <option value="rgb(0, 41, 102)"></option>
+                                            <option value="rgb(61, 20, 102)"></option>
+                                        </select><span class="ql-format-separator"></span>
+                                        <select title="Background Color" class="ql-background">
+                                            <option value="rgb(0, 0, 0)"></option>
+                                            <option value="rgb(230, 0, 0)"></option>
+                                            <option value="rgb(255, 153, 0)"></option>
+                                            <option value="rgb(255, 255, 0)"></option>
+                                            <option value="rgb(0, 138, 0)"></option>
+                                            <option value="rgb(0, 102, 204)"></option>
+                                            <option value="rgb(153, 51, 255)"></option>
+                                            <option value="rgb(255, 255, 255)" selected></option>
+                                            <option value="rgb(250, 204, 204)"></option>
+                                            <option value="rgb(255, 235, 204)"></option>
+                                            <option value="rgb(255, 255, 204)"></option>
+                                            <option value="rgb(204, 232, 204)"></option>
+                                            <option value="rgb(204, 224, 245)"></option>
+                                            <option value="rgb(235, 214, 255)"></option>
+                                            <option value="rgb(187, 187, 187)"></option>
+                                            <option value="rgb(240, 102, 102)"></option>
+                                            <option value="rgb(255, 194, 102)"></option>
+                                            <option value="rgb(255, 255, 102)"></option>
+                                            <option value="rgb(102, 185, 102)"></option>
+                                            <option value="rgb(102, 163, 224)"></option>
+                                            <option value="rgb(194, 133, 255)"></option>
+                                            <option value="rgb(136, 136, 136)"></option>
+                                            <option value="rgb(161, 0, 0)"></option>
+                                            <option value="rgb(178, 107, 0)"></option>
+                                            <option value="rgb(178, 178, 0)"></option>
+                                            <option value="rgb(0, 97, 0)"></option>
+                                            <option value="rgb(0, 71, 178)"></option>
+                                            <option value="rgb(107, 36, 178)"></option>
+                                            <option value="rgb(68, 68, 68)"></option>
+                                            <option value="rgb(92, 0, 0)"></option>
+                                            <option value="rgb(102, 61, 0)"></option>
+                                            <option value="rgb(102, 102, 0)"></option>
+                                            <option value="rgb(0, 55, 0)"></option>
+                                            <option value="rgb(0, 41, 102)"></option>
+                                            <option value="rgb(61, 20, 102)"></option>
+                                        </select><span class="ql-format-separator"></span>
 
-                                        </span><span class="ql-format-group">
-                                            <span title="List" class="ql-format-button ql-list"></span>
-                                            <span class="ql-format-separator"></span>
-                                            <span title="Bullet" class="ql-format-button ql-bullet"></span>
-                                            <span class="ql-format-separator"></span>
-                                            <select title="Text Alignment" class="ql-align">
-                                                <option value="left" selected></option>
-                                                <option value="center"></option>
-                                                <option value="right"></option>
-                                                <option value="justify"></option>
-                                            </select>
-                                        </span>
-                                        <span class="ql-format-group">
-                                            <span title="Link" class="ql-format-button ql-link"></span>
-                                            <span class="ql-format-separator"></span>
-                                            <span title="Image" class="ql-format-button ql-image"></span>
-                                        </span>
-                                    </div>
-                                    <div class="editor-container">Add a cover letter and upload your resume</div>
+                                    </span><span class="ql-format-group">
+                                        <span title="List" class="ql-format-button ql-list"></span>
+                                        <span class="ql-format-separator"></span>
+                                        <span title="Bullet" class="ql-format-button ql-bullet"></span>
+                                        <span class="ql-format-separator"></span>
+                                        <select title="Text Alignment" class="ql-align">
+                                            <option value="left" selected></option>
+                                            <option value="center"></option>
+                                            <option value="right"></option>
+                                            <option value="justify"></option>
+                                        </select>
+                                    </span>
+                                    <span class="ql-format-group">
+                                        <span title="Link" class="ql-format-button ql-link"></span>
+                                        <span class="ql-format-separator"></span>
+                                        <span title="Image" class="ql-format-button ql-image"></span>
+                                    </span>
                                 </div>
-                                @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
-                                <button type="submit" id="btn_Save" class="btn-primary btn-submit-answer btn-md" style=" margin-top: 15px;">
-                                    <i></i><span>Apply</span>
-                                </button>
+                                <div class="editor-container">Add a cover letter and upload your resume</div>
                             </div>
+                            @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
+                            <button type="submit" id="btn_Save" class="btn-primary btn-submit-answer btn-md" style=" margin-top: 15px;">
+                                <span>Apply Now</span>
+                            </button>
                         </div>
                     </div>
                 </div>
+            </div>
             }
             <div class="answer-container">
             </div>
         </div>
     </div>
     <div class="col-xs-12 col-md-3">
-        <a href="/career/postjob" class="btn btn-success" style="margin-bottom: 20px;"><b>Post A Job</b></a>
-
-        <div class="sidebar-container">
+        <a class="btn btn-success closejob" style="margin-bottom: 20px; display: none;" data-toggle="modal" data-target="#confirm-close" data-backdrop="false"><b>Close this job</b></a>
+        <div class="alert alert-danger jobclosedalert" style="display: none;" role="alert">This job has been closed</div>
+        <div class="alert alert-success jobapplicationprivate" style="display: none;" role="alert">Your job application can only be viewed by the job poster, no one else will come to know about this.</div>
+        @*<div class="sidebar-container jobapplicationprivate">
             <div class="sidebar-header">
-               Job application is private
+                Job application is private
             </div>
             <div id="careernotification" class="sidebar-content">
-                Job application is entirely private and except the job poster no one else will get to know about this
+                Your job application can only be viewed by the job poster, no one else will come to know about this.
+            </div>
+        </div>*@
+    </div>
+
+    <!--modal for the close job confirmation-->
+    <div class="modal fade" id="confirm-close" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Close</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>You are about to close this job. This can't be undone and applicants can't apply to this job anymore.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger btn-ok" onclick="closejob();">Close</a>
+                </div>
             </div>
         </div>
     </div>

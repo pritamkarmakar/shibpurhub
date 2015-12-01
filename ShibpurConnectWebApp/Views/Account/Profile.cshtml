@@ -120,6 +120,13 @@
         font-size: 32px;
         word-wrap: break-word;
     }
+    .nav > li:hover
+    {
+        border-bottom-width: 3px;
+        border-bottom-style: solid;
+        border-bottom-color: #66757f;
+        font-weight: bold;
+    }
 
     .nav > li > a:hover {
         background-color:transparent;
@@ -188,10 +195,11 @@
 
                 // set page title
                 document.title = result.userInfo.firstName + " " + result.userInfo.lastName + " - ShibpurHub";
-
+                var registeredOn = result.userInfo.registeredOn;
+                var lastSeenOn = result.userInfo.lastSeenOn;
                 $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
-                $(".registeredon").after(getDateFormattedByMonthYear(result.userInfo.registeredOn));
-                $(".lastseenon").after(getDateFormattedByMonthYear(result.userInfo.lastSeenOn));
+                $(".registeredon").after(registeredOn ? getDateFormattedByMonthYear(registeredOn) : "");
+                $(".lastseenon").after(lastSeenOn ? getDateFormattedByMonthYear(lastSeenOn) : "");
                 $(".reputationcount").after(result.userInfo.reputationCount);
                 $(".userlocation").after(result.userInfo.location);
                 $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");

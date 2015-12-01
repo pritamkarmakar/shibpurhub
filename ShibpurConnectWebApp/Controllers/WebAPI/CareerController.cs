@@ -85,14 +85,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     jobDTO.ViewCount = job.ViewCount;
                     jobDTO.DisplayName = userDetails[job.UserId].FirstName + " " + userDetails[job.UserId].LastName;
                     jobDTO.UserProfileImage = userDetails[job.UserId].ProfileImageURL;
-                    jobDTO.CareerDetail = userDetails[job.UserId].Designation + " " +
-                                          (string.IsNullOrEmpty(userDetails[job.UserId].EducationInfo)
-                                              ? string.Empty
-                                              : (string.IsNullOrEmpty(userDetails[job.UserId].Designation)
-                                                  ? userDetails[job.UserId].EducationInfo
-                                                  : "(" + userDetails[job.UserId].EducationInfo + ")")
-                                              );
-
+                    jobDTO.CareerDetail = userDetails[job.UserId].Designation;
                     result.Add(jobDTO);
                 }
 
@@ -116,6 +109,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             try
             {
+                // dictionary to keep a userinfo
+                Dictionary<string, CustomUserInfo> userInfoDictionary = new Dictionary<string, CustomUserInfo>();
+
                 var jobDetails = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.JobId == jobId);
                 if (jobDetails == null)
                 {
@@ -125,6 +121,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 Helper.Helper helper = new Helper.Helper();
                 Task<CustomUserInfo> actionResult = helper.FindUserById(jobDetails.UserId, true);
                 var userDetails = await actionResult;
+
+                // add this user in the dictionary
+                userInfoDictionary.Add(userDetails.Id, userDetails);
 
                 // retrieve the job applications associated with this job, if current user is the job poster then retrieve all  
                 // otherwise send only the user application if there is any
@@ -136,8 +135,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var email = principal.Identity.Name;
                     if (email != null)
                     {
-                        var userResult = helper.FindUserByEmail(email);
+                        var userResult = helper.FindUserByEmail(email, true);
                         var userInfo = await userResult;
+
+                        // add this user in the userinfo dictionary, if it is not present
+                        if (!userInfoDictionary.ContainsKey(userInfo.Id))
+                            userInfoDictionary.Add(userInfo.Id, userInfo);
 
                         var mongoHelper = new MongoHelper<JobApplication>();
                         if (userInfo != null)
@@ -164,14 +167,68 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             // add displayName property to the job applications
                             foreach (var application in applications)
                             {
+                                // retrieve the user info for this application, if that is not present in the dictionary
+                                CustomUserInfo userInfo2;
+                                if (!userInfoDictionary.ContainsKey(application.UserId))
+                                {
+                                    var userResult2 = helper.FindUserById(application.UserId, true);
+                                    userInfo2 = await userResult2;
+                                    
+                                    userInfoDictionary.Add(userInfo2.Id, userInfo2);
+                                }
+                                else
+                                {
+                                    userInfo2 = userInfoDictionary[application.UserId];
+                                }
+
+                                // retrieve the associated comments with this application
+                                var mongoHelper2 = new MongoHelper<JobApplicationComment>();
+                                var comments = mongoHelper2.Collection.AsQueryable()
+                                        .Where(a => a.ApplicationId == application.ApplicationId)
+                                        .OrderBy(a => a.PostedOnUtc)
+                                        .ToList();
+
+                                // create the JobApplicationCommentViewModel
+                                List<JobApplicationCommentViewModel> jacvm = new List<JobApplicationCommentViewModel>();
+                                foreach (var comment in comments)
+                                {
+                                    // retrieve the userinfo
+                                    CustomUserInfo userInfo3;
+                                    if (!userInfoDictionary.ContainsKey(comment.UserId))
+                                    {
+                                        var userResult3 = helper.FindUserById(comment.UserId);
+                                        userInfo3 = await userResult3;
+
+                                        userInfoDictionary.Add(userInfo3.Id, userInfo3);
+                                    }
+                                    else
+                                    {
+                                        userInfo3 = userInfoDictionary[comment.UserId];
+                                    }
+
+                                    jacvm.Add(new JobApplicationCommentViewModel()
+                                    {
+                                        UserId = userInfo3.Id,
+                                        PostedOnUtc = comment.PostedOnUtc,
+                                        ApplicationId = comment.ApplicationId,
+                                        DisplayName = userInfo3.FirstName + " " + userInfo3.LastName,
+                                        UserProfileImage = userInfo3.ProfileImageURL,
+                                        CommentId = comment.CommentId,
+                                        CommentText = comment.CommentText
+                                    });
+                                }
+
                                 javm.Add(new JobApplicationViewModel()
                                 {
                                     JobId = application.JobId,
                                     UserId = application.UserId,
+                                    CareerDetail = userInfo2.Designation,
                                     PostedOnUtc = application.PostedOnUtc,
-                                    DisplayName = userInfo.FirstName + " " + userInfo.LastName,
+                                    DisplayName = userInfo2.FirstName + " " + userInfo2.LastName,
+                                    UserProfileImage = userInfo2.ProfileImageURL,
                                     CoverLetter = application.CoverLetter,
-                                    ApplicationId = application.ApplicationId
+                                    ApplicationId = application.ApplicationId,
+                                    ApplicationComments = jacvm
                                 });
                             }
                         }
@@ -197,11 +254,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             SpamCount = jobDetails.SpamCount,
                             DisplayName = userDetails.FirstName + " " + userDetails.LastName,
                             UserProfileImage = userDetails.ProfileImageURL,
-                            CareerDetail = userDetails.Designation + " " +
-                               (string.IsNullOrEmpty(userDetails.EducationInfo) ? string.Empty :
-                               (string.IsNullOrEmpty(userDetails.Designation) ? userDetails.EducationInfo :
-                                   "(" + userDetails.EducationInfo + ")")
-                               ),
+                            CareerDetail = userDetails.Designation
                         };
 
 
@@ -312,6 +365,49 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
+        /// Close a job
+        /// </summary>
+        /// <param name="jobId">jobid to close</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        [InvalidateCacheOutput("GetJobs")]
+        public async Task<IHttpActionResult> CloseJob(string jobId)
+        {
+            // retrieve the job details
+            var jobDetails = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.JobId == jobId);
+            if (jobDetails == null)
+            {
+                return BadRequest("Invalid job id");
+            }
+
+            // check the user who posted the job is actually requested to close
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            if (userInfo.Id != jobDetails.UserId)
+                return BadRequest("You can't close this job as you are not the job poster");
+
+            // set job status to close
+            jobDetails.HasClosed = true;
+            var result = _mongoHelper.Collection.Save(jobDetails);
+
+            // if mongo failed to save the data then send error
+            if (!result.Ok)
+                return InternalServerError();
+
+            return CreatedAtRoute("DefaultApi", new { id = jobDetails.JobId }, jobDetails);
+        }
+
+        /// <summary>
         /// API to post a job application
         /// </summary>
         /// <param name="jobApplicationDto">JobApplicationDTO object</param>
@@ -346,6 +442,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var jobInfo = jobMongoHelper.Collection.AsQueryable().Where(m => m.JobId == jobApplicationDto.JobId).ToList().FirstOrDefault();
                 if (jobInfo == null)
                     return BadRequest("Supplied jobId is invalid");
+                // if the job is closed then we can't apply to this anymore
+                if (jobInfo.HasClosed)
+                    return BadRequest("This job has been closed, you can't apply anymore");
 
                 // create the JobApplication object to save to database
                 JobApplication jobApplication = new JobApplication()
@@ -357,7 +456,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     CoverLetter = jobApplicationDto.CoverLetter
                 };
 
-                MongoHelper mongoHelper = new MongoHelper("jobapplication");
+                var mongoHelper = new MongoHelper<JobApplication>();
+                // check if this user alraedy applied for this job
+                var jobApplications =
+                    mongoHelper.Collection.AsQueryable()
+                        .Where(m => m.JobId == jobApplicationDto.JobId && m.UserId == userInfo.Id);
+
+                if (jobApplications.ToList().Count > 0)
+                {
+                    return BadRequest("You already applied for this job");
+                }
+
                 // save the JobApplication to the database
                 var result = mongoHelper.Collection.Save(jobApplication);
 
@@ -370,7 +479,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 string pathQuery = myuri.PathAndQuery;
                 hostName = myuri.ToString().Replace(pathQuery, "");
 
-                // send notification to the user who posted the question
+                // send notification to the user who posted the job
                 EmailsController emailsController = new EmailsController();
                 NotificationsController notificationsController = new NotificationsController();
                 if (jobInfo.UserId != userInfo.Id)
@@ -405,6 +514,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ex.Message);
             }
         }
+        
 
         /// <summary>
         /// Updates the user activity log.

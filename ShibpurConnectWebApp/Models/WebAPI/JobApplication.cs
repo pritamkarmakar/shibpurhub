@@ -49,5 +49,16 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class JobApplicationViewModel : JobApplication
     {
         public string DisplayName { get; set; }
+
+        public string CareerDetail { get; set; }
+
+        [DataMember]
+        public string UserProfileImage { get; set; }
+
+        /// <summary>
+        /// List of comment associated with this job
+        /// </summary>
+        [DataMember]
+        public List<JobApplicationCommentViewModel> ApplicationComments { get; set; }
     }
 }

@@ -304,6 +304,7 @@
     <Compile Include="Controllers\WebAPI\AnswersController.cs" />
     <Compile Include="Controllers\WebAPI\AskToAnswerController.cs" />
     <Compile Include="Controllers\WebAPI\CareerController.cs" />
+    <Compile Include="Controllers\WebAPI\JobApplicationCommentsController.cs" />
     <Compile Include="Controllers\WebAPI\FeedController.cs" />
     <Compile Include="Controllers\WebAPI\SkillSetsController.cs" />
     <Compile Include="Controllers\WebAPI\TagsController.cs" />
@@ -344,6 +345,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\WebAPI\Answer.cs" />
     <Compile Include="Models\WebAPI\Categories.cs" />
+    <Compile Include="Models\WebAPI\JobApplicationComment.cs" />
     <Compile Include="Models\WebAPI\Comments.cs" />
     <Compile Include="Controllers\WebAPI\CommentsController.cs" />
     <Compile Include="Models\WebAPI\CustomModel.cs" />
