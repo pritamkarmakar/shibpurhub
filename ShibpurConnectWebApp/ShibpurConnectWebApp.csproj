@@ -289,6 +289,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AboutController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\CareerController.cs" />
     <Compile Include="Controllers\DiscussionController.cs" />
     <Compile Include="Controllers\LegalController.cs" />
@@ -489,6 +490,8 @@
     <None Include="Properties\PublishProfiles\shibpur %284%29.pubxml" />
     <None Include="Properties\PublishProfiles\shibpur.pubxml" />
     <None Include="Properties\PublishProfiles\ShibpurConnect.pubxml" />
+    <Content Include="Scripts\admin\admin.js" />
+    <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app\app.datamodel.js" />
     <Content Include="Scripts\app\app.viewmodel.js" />
     <Content Include="Scripts\app\common.js" />
@@ -626,6 +629,7 @@
     <Content Include="Views\Career\Index.cshtml" />
     <Content Include="Views\Career\PostJob.cshtml" />
     <Content Include="Views\Career\JobDetails.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

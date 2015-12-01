@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Admin - ShibpurHub";
+}
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css")" />
+<script src="@Url.Content("~/Scripts/angular.min.js")"></script>
+<script src="@Url.Content("~/Scripts/admin/admin.js")"></script>
+<style>
+    img {
+        float: left;
+        width: 40%;
+    }
+a[ng-click]{
+    cursor: pointer;
+}
+</style>
+
+
+<div ng-app="AdminApp">
+    <div ng-controller="MainController">
+        <div class="feed-list">
+            <div ng-repeat="question in questions" class="row">
+                <div class="thread">
+                    <div class="row post-header">{{question.displayName}}</div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                            <h2 class="title">
+                                <a ng-href="{{'/discussion/' + question.questionId}}">{{question.title}}</a>
+                            </h2>
+                            <div class="post-description">
+                                <p ng-bind-html="question.description">
+                                </p>
+                            </div>
+                            </div>
+                        </div>
+                    <div class="row thread-details">
+                        <div class="thread-details-container">
+                            <div class="col-xs-6 col-md-2">
+                                <ul class="list-inline pull-left">
+                                    <li>
+                                        <a ng-click="deleteQuestion(question.questionId)" class="thumbs" data-allowed="true">
+                                            <i class="fa fa-trash-o"></i> <span>Delete</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row load">
+            <div class="col-xs-12 thread text-center loadMoreContainer">
+                <a ng-click="laodMore()" class="loadMore" id="loadMoreBtn">
+                    <span class="toggleThis loadlabel" style="display: inline;">Load more</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

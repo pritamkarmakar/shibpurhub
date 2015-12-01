@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Microsoft.AspNet.Identity;
+using System.Configuration;
 using System.Web.Mvc;
 
 namespace ShibpurConnectWebApp.Controllers
@@ -18,6 +16,12 @@ namespace ShibpurConnectWebApp.Controllers
         [ActionName("DiscussionDetail")]
         public ActionResult DiscussionDetail(string id)
         {
+            var name = User.Identity.GetUserName();
+            var admins = ConfigurationManager.AppSettings["adminsEmail"];
+            if (!string.IsNullOrEmpty(name))
+            {
+                ViewBag.IsAdmin = admins.Contains(name);
+            }
             TempData["SelectedPage"] = "Threads";
 
             ViewData["questionId"] = id;
@@ -26,7 +30,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         [ActionName("DiscussionDetailWithAnswerID")]
         public ActionResult DiscussionDetail(string id, string answerId)
-        {
+        {            
             TempData["SelectedPage"] = "Threads";
 
             ViewData["questionId"] = id;

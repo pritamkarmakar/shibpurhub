@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Hangfire;
 using WebApi.OutputCache.V2;
+using MongoDB.Driver.Builders;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -508,7 +509,27 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
             }
         }
-        
+
+        [Authorize]
+        [HttpPost]
+        public bool DeleteAnswer(Answer answer)
+        {
+            try
+            {
+                var query = Query.EQ("Id", answer.AnswerId);
+                _mongoHelper.Collection.Remove(query);
+
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+                cache.RemoveStartsWith("answers-getanswers-answerId=" + answer.AnswerId);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         private void UpdateUserActivityLog(UserActivityLog log)
         {
             //Call WebApi to log activity

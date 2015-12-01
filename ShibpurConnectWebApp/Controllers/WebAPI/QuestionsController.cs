@@ -22,6 +22,7 @@ using WebApi.OutputCache.V2;
 using System.Text.RegularExpressions;
 using System.Configuration;
 using Hangfire;
+using MongoDB.Driver.Builders;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -929,6 +930,25 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             return CreatedAtRoute("DefaultApi", new { id = questionFromDB.QuestionId }, questionFromDB);
         }
+
+        [Authorize]
+        [HttpDelete]
+        [InvalidateCacheOutput("GetQuestions")]
+        public bool DeleteQuestion(Question question)
+        {
+            try
+            {
+                var query = Query.EQ("Id", question.QuestionId);
+                _mongoHelper.Collection.Remove(query);
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+        
 
         private QuestionViewModel GetQuestionViewModel(Question question, CustomUserInfo userData)
         {

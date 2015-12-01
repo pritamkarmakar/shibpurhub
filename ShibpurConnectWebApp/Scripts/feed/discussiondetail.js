@@ -220,6 +220,16 @@ function createAnswer(answer)
         event.preventDefault();
         updateUpVote(answer.answerId);
     });
+
+    var deleteButton = $(htmlItem).find('.delete-ul a.thumbs');
+    if (deleteButton.length > 0)
+    {
+        $(deleteButton).attr({ 'data-answerId': answer.answerId });
+        $(deleteButton).click(function (event) {
+            event.preventDefault();
+            deleteAnswer(answer.answerId);
+        });
+    }
     
     $('.myimg').css('background-image',"url("+ myImageUrl +")");
     
@@ -587,6 +597,21 @@ function setUpEditQuestion() {
         $('h2.title a.top').text(newTitle);
         $('div.post-description p.top').html(newDescription);
         
+    });
+}
+
+function deleteAnswer(id)
+{
+    var answerObject = { "AnswerId": id };
+    scAjax({
+        "url": "answers/DeleteAnswer",
+        "type": "POST",
+        "data": JSON.stringify(answerObject),
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+        }
     });
 }
 
