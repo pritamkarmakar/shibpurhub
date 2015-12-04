@@ -188,7 +188,7 @@ cursor:pointer;
     var allusers;
     var userDetails = localStorage.getItem("SC_Session_UserDetails");
     var userInfo = $.parseJSON(userDetails);
-    var loggedInUserid = userInfo.id;
+    var loggedInUserid = userInfo == null ? "" : userInfo.id;
     function handleFollowClick()
     {
         $('.follow-small').each(function (i, e) {
@@ -216,7 +216,7 @@ cursor:pointer;
         var profileImgUrl = userinfo.profileImageURL == null ? "/Content/images/profile-image.jpg" : IMGURPATH + userinfo.profileImageURL;
         var followingClass = $.inArray(loggedInUserid, userinfo.followers) == -1 ? "" : "active";
         var iconClass = followingClass == "active" ? "fa-check" : "fa-plus";
-        if (loggedInUserid == userinfo.id)
+        if (loggedInUserid == "" || loggedInUserid == userinfo.id)
         {
             followingClass = "hide";
         }

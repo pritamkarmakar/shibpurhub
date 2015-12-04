@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using WebApi.OutputCache.V2;
 using MongoDB.Driver.Builders;
+using MongoDB.Driver;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -510,14 +511,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public bool DeleteAnswer(Answer answer)
         {
             try
-            {
-                var query = Query.EQ("Id", answer.AnswerId);
-                _mongoHelper.Collection.Remove(query);
+            {                
+                //var query = Query.EQ("answerId", answer.AnswerId);
+                var result = _mongoHelper.Collection.Remove(Query.EQ("answerId", answer.AnswerId), RemoveFlags.Single);
 
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
                 cache.RemoveStartsWith("answers-getanswers-answerId=" + answer.AnswerId);

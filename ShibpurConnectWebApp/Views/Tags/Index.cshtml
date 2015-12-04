@@ -202,16 +202,19 @@
 <div class="taglistcontainer">
     <h4>All Tags</h4>
     <div id="taglist">
-        <div class="row">           
-                <div class="col-md-2 col-xs-6 col-sm-6 tag hide">
-                    <div class="tag-detail">
-                        <div>
-                            <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
-                        </div>
-                        <div class="question-count" title="Number of questions"><i class="fa fa-question"></i><span></span></div>
-                        <div class="follow-small" id=""><i class="fa fa-plus"></i> </div>
+        <div class="row">
+            <div class="col-md-2 col-xs-6 col-sm-6 tag hide">
+                <div class="tag-detail">
+                    <div>
+                        <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
                     </div>
-                </div>            
+                    <div class="question-count" title="Number of questions"><i class="fa fa-question"></i><span></span></div>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                    <div class="follow-small" id=""><i class="fa fa-plus"></i> </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
     <div id="loadingtags">

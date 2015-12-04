@@ -632,6 +632,7 @@
     <Content Include="Views\Career\PostJob.cshtml" />
     <Content Include="Views\Career\JobDetails.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\PartialViews\_TopNavBar.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

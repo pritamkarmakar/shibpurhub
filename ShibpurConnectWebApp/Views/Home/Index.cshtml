@@ -53,18 +53,7 @@
 </head>
 <body>
 
-
-
-
-
-    <nav class="navbar navbar-default navbar-fixed-top" style="background-color: transparent; border-color: transparent;">
-        <div class="container">
-            <ul class="nav navbar-nav navbar-right">
-                <a href="/Account/Login" class="btn btn-primary btn-md"><b>Login</b></a>
-                <a href="/Account/Register" class="btn btn-primary btn-md"><b>Signup</b></a>
-            </ul>
-        </div>
-    </nav>
+    @Html.Partial("~/Views/PartialViews/_TopNavBar.cshtml")
 
     @*Need this message to be displayed. For user who hasn't confirmed their account & for user who just registered in the website*@
 @if (TempData["ConfirmEmail"] != null && !string.IsNullOrEmpty(TempData["ConfirmEmail"].ToString()))

@@ -163,13 +163,14 @@ namespace ShibpurConnectWebApp.Controllers
                     { }
 
                     // check whether user has added educational history, if not then redirect to the profile page
-                    EducationalHistoriesController controller = new EducationalHistoriesController();
-                    IHttpActionResult actionResult = await controller.GetEducationalHistories(user.Email);
-                    var education = actionResult as OkNegotiatedContentResult<List<EducationalHistories>>;
-                    if (education == null)
-                    {
-                        return RedirectToAction("Profile", "Account");
-                    }
+
+                    //EducationalHistoriesController controller = new EducationalHistoriesController();
+                    //IHttpActionResult actionResult = await controller.GetEducationalHistories(user.Email);
+                    //var education = actionResult as OkNegotiatedContentResult<List<EducationalHistories>>;
+                    //if (education == null)
+                    //{
+                    //    return RedirectToAction("Profile", "Account");
+                    //}
                     
                     if(TempData["IsEmailConfirmed"] != null)
                     {
