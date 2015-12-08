@@ -146,12 +146,15 @@ function createQuestion(question)
 
     // show the submit answer rich text control
     $('.submit-answer-container').show();
-    advancedEditor.on('text-change', function(delta, source) {
-        if(!$('.toolbar-container').is(":visible"))
-        {
-            $('.toolbar-container').show("slide", {"direction": "down"});
-        }
-    });
+    if (advancedEditor)
+    {
+        advancedEditor.on('text-change', function(delta, source) {
+            if(!$('.toolbar-container').is(":visible"))
+            {
+                $('.toolbar-container').show("slide", {"direction": "down"});
+            }
+        });
+    }    
     
     $('.btn-submit-answer').click(function () {
         saveAnswer();
@@ -309,6 +312,11 @@ function SendNotification(elm) {
 
 function showAskToAnswer(question)
 {
+    if ($('#userToAnswer').length == 0)
+    {
+        return;
+    }
+
     // show the suggested user who can answer this question using elastic search
     scAjax({
         "url": "search/SearchUsers",

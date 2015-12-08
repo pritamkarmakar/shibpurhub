@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
 using System.Collections.Generic;
+using ShibpurConnectWebApp.Controllers.WebAPI;
+using System.Web.Http.Results;
 
 namespace ShibpurConnectWebApp.Helper
 {
@@ -320,7 +322,7 @@ namespace ShibpurConnectWebApp.Helper
                 Designation = emh,
                 EducationInfo = edh
             };
-        }
+        }        
 
         /// <summary>
         /// Method to post a new tag, this is not in api as we don't want end user to create tag using api

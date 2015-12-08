@@ -70,6 +70,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string UserProfileImage { get; set; }
 
         [DataMember]
+        public string CareerDetail { get; set; }
+
+        [DataMember]
         public List<CommentViewModel> Comments { get; set; }        
 
         [DataMember]

@@ -284,7 +284,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // check if claim is null (this can happen if user don't have any valid token)
                 if (email != null)
                 {
-                    var userResult = helper.FindUserByEmail(email);
+                    var userResult = helper.FindUserByEmail(email, true);
                     userInfo = await userResult;
                 }
 
@@ -305,6 +305,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 questionVM.UserEmail = questionUserDetail.Email;
                 questionVM.DisplayName = questionUserDetail.FirstName + " " + questionUserDetail.LastName;
                 questionVM.UserProfileImage = questionUserDetail.ProfileImageURL;
+                questionVM.CareerDetail = userInfo.Designation + " " +
+                        (string.IsNullOrEmpty(userInfo.EducationInfo) ? string.Empty : (
+                        string.IsNullOrEmpty(userInfo.Designation) ? userInfo.EducationInfo :
+                            "(" + userInfo.EducationInfo + ")")
+                        );
 
                 if (answers.Count() == 0)
                 {
@@ -349,7 +354,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var uniqueUserIds = new List<string>(allUserIds.Distinct());
                 foreach (var userId in uniqueUserIds)
                 {
-                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                    Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
                     var userDetail = await actionResult;
                     if (!userDetails.ContainsKey(userId) && userDetail != null)
                     {
@@ -365,6 +370,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         answerVM.UserEmail = userData.Email;
                         answerVM.DisplayName = userData.FirstName + " " + userData.LastName;
                         answerVM.UserProfileImage = userData.ProfileImageURL;
+
+                        answerVM.CareerDetail = userData.Designation + " " +
+                        (string.IsNullOrEmpty(userData.EducationInfo) ? string.Empty : (
+                        string.IsNullOrEmpty(userData.Designation) ? userData.EducationInfo :
+                            "(" + userData.EducationInfo + ")")
+                        );
                     }
                     // update userinfo for all comments in a answer
                     foreach (var comment in answerVM.Comments)

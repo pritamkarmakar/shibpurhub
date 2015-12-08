@@ -12,7 +12,7 @@
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
 <script src="@Url.Content("~/Scripts/feed/jquery.magnific-popup.min.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=4.1")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=4.2")" type="text/javascript"></script>
 
 <div class="detail-container">
 
@@ -181,22 +181,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 post-comment hidden-xs hidden-sm">
-                    <div class="row">
-                        <div class="col-md-1 col-xs-2 comment-photo-container">
-                            <a href="#" class="img-container myimg" style="background-image: url('/Content/images/profile-image.jpg');"></a>
-                        </div>
-                        <div class="col-md-11 col-xs-10 comment-photo-container">
-                            <div class="comment-text">
-                                <div class="form-group">
-                                    <textarea placeholder="Comment on this answer" rows="1"
-                                              class="form-control write-comment" data-reply-to="56163190ad669c4758e3a30e"
-                                              style="overflow: hidden; word-wrap: break-word; height: 54px;"></textarea>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="col-xs-12 post-comment hidden-xs hidden-sm">
+                        <div class="row">
+                            <div class="col-md-1 col-xs-2 comment-photo-container">
+                                <a href="#" class="img-container myimg" style="background-image: url('/Content/images/profile-image.jpg');"></a>
+                            </div>
+                            <div class="col-md-11 col-xs-10 comment-photo-container">
+                                <div class="comment-text">
+                                    <div class="form-group">
+                                        <textarea placeholder="Comment on this answer" rows="1"
+                                                  class="form-control write-comment" data-reply-to="56163190ad669c4758e3a30e"
+                                                  style="overflow: hidden; word-wrap: break-word; height: 54px;"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
             <div class="question-container">
             </div>
@@ -334,6 +337,8 @@
         </div>
 
         <!--div to show Ask to Answer module-->
+        @if (User.Identity.IsAuthenticated)
+        {
         <div class="" id="userToAnswer" style="margin-top:30px;display:none">
             <h4 class="section-header">Ask to answer</h4>
             <div class="col-md-12 col-xs-12">
@@ -351,6 +356,7 @@
                 <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
             </div>
         </div>
+        }
 
         <!-- EDIT QUESTION START-->
         <div id="editquestion" class="editQuesDiv white-popup mfp-with-anim mfp-hide">

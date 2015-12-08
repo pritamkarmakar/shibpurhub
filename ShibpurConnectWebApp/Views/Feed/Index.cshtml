@@ -3,11 +3,13 @@
     ViewBag.Title = "All Questions - ShibpurHub";
 }
 
-@section Scripts{
-    @Scripts.Render("~/bundles/knockout")
-    @Scripts.Render("~/bundles/app")
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
 }
-
 <style type="text/css">   
     .moduleheader {
         font-size: 18px;
