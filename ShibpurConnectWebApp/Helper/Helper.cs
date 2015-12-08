@@ -163,6 +163,20 @@ namespace ShibpurConnectWebApp.Helper
             return "Succeed";
         }
 
+        public string GetUserCareerDetail(CustomUserInfo userInfo)
+        {
+            if(userInfo == null)
+            {
+                return string.Empty;
+            }
+
+            return userInfo.Designation + " " +
+                        (string.IsNullOrEmpty(userInfo.EducationInfo) ? string.Empty : (
+                        string.IsNullOrEmpty(userInfo.Designation) ? userInfo.EducationInfo :
+                            "(" + userInfo.EducationInfo + ")")
+                        );
+        }
+
         public async Task<CustomUserInfo> FindUserByEmail(string userEmail, bool needEmploymentAndEducationDetails = false)
         {
             using (AuthRepository _repo = new AuthRepository())
