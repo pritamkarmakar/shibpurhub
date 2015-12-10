@@ -34,6 +34,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         private MongoHelper<Question> _mongoQustionHelper;
         private QuestionsController _questionController;
+        private MongoHelper<Job> _mongoJobHelper;
 
         private MongoHelper<Answer> _mongoAnswerHelper;
         private AnswersController _answerController;
@@ -52,6 +53,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoAnswerHelper = new MongoHelper<Answer>();
             _answerController = new AnswersController();
 
+            _mongoJobHelper = new MongoHelper<Job>();
 
             _employmentHistoriesController = new EmploymentHistoriesController();
             _educationalHistoriesController = new EducationalHistoriesController();
@@ -110,6 +112,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var allFeedsFollowedByMe = from x in allFeeds
                                            where followedUsers.Contains(x.UserId) ||
                                                  (followedQuestions.Contains(x.ActedOnObjectId) && x.UserId != userId)
+                                                 || x.Activity == 10
                                            select x;
 
                 var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
@@ -294,6 +297,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                 where questionIds.Contains(b.QuestionId)
                                 select b;
 
+                var jobIds = logs.Where(a => a.Activity == 10).Select(a => a.ActedOnObjectId).ToList();
+                var jobs = from c in _mongoJobHelper.Collection.AsQueryable()
+                           where jobIds.Contains(c.JobId)
+                           select c;
+
                 var feedContents = new List<FeedContentDetail>();
                 foreach (var feed in logs)
                 {
@@ -303,6 +311,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     Answer answer = null;
                     Question question = null;
+                    Job job = null;
                     var isFeedAnAnswer = (feed.Activity == 2 || feed.Activity == 4 || feed.Activity == 5); // Else its a Question
 
                     if (isFeedAnAnswer)
@@ -327,6 +336,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     if (feed.Activity == 1 || feed.Activity == 8)
                     {
                         question = questions.FirstOrDefault(b => b.QuestionId == feed.ActedOnObjectId);
+                    }
+
+                    if (feed.Activity == 10)
+                    {
+                        job = jobs.FirstOrDefault(b => b.JobId == feed.ActedOnObjectId);
+
+                        feedContent.Header = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " requires ") 
+                                             + "<span class='job-title'>" + job.JobTitle + "</span>" +
+                                             (string.IsNullOrEmpty(job.JobCity) ? "" : " in " + job.JobCity) +
+                                             (string.IsNullOrEmpty(job.JobCountry) ? "" : ", " + job.JobCountry);
+                        feedContent.SimpleDetail = job.JobDescription;
+                        feedContent.PostedDateInUTC = job.PostedOnUtc;
+                        feedContent.ActionUrl = "/career/jobdetails?jobid=" + job.JobId;
                     }
 
                     if (question != null)
@@ -449,6 +471,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return " updated profile image ";
             }
 
+            if (type == 10)
+            {
+                return " posted a new ";
+            }
+
             return string.Empty;
         }
 
@@ -462,6 +489,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (type == 3 || type == 4)
             {
                 return "Answer";
+            }
+
+            if (type == 10)
+            {
+                return "Job";
             }
 
             return string.Empty;

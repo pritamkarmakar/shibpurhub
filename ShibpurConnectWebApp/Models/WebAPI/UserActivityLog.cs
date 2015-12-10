@@ -61,5 +61,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public Answer Answer { get; set; }
 
         public Question Question { get; set; }
+
+        public Job Job { get; set; }
     }
 }

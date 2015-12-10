@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Followed feed - ShibpurHub";
 }
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.1")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.4")" />
 <script type="text/javascript">
     $(document).ready(function () {
         loadFeeds(0);
@@ -12,6 +12,7 @@ function getThreadClass(feedType)
 {
     if(feedType == 1) return "question";
     if(feedType == 2) return "answer";
+    if (feedType == 10) return "job";
 }
     function loadFeeds(page) {
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -47,7 +48,8 @@ function getThreadClass(feedType)
 
                         $(htmlItem).find('p.designation').text(feed.userDesignation);
 
-                        $(htmlItem).find('h2.title a').text(feed.itemHeader).attr("href", feed.targetActionUrl);
+                        $(htmlItem).find('h2.title a').html(feed.itemHeader).attr("href", feed.targetActionUrl);
+                        $(htmlItem).find('a.topic-icon-placeholder').attr("href", feed.targetActionUrl);
 
                         $(htmlItem).find('div.post-description p').html(getEmojiedString(feed.itemDetail));
 

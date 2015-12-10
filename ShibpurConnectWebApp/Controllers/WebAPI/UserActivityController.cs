@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Description;
-using System.Web.Http.Results;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
-using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
