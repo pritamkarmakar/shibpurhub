@@ -8,6 +8,11 @@
         loadFeeds(0);
     });
 
+function getThreadClass(feedType)
+{
+    if(feedType == 1) return "qustion";
+    if(feedType == 2) return "answer";
+}
     function loadFeeds(page) {
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         var userInfo = $.parseJSON(userDetails);
@@ -47,6 +52,8 @@
                         $(htmlItem).find('div.post-description p').html(getEmojiedString(feed.itemDetail));
 
                         $(htmlItem).find('div.post-description img').addClass("col-md-12");
+                        
+                        $(htmlItem).find('div.thread').addClass(getThreadClass(feed.activityType));
 
                         // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer,
                         // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
@@ -154,7 +161,7 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="row post-header">
-                            <div class="col-sm-12 col-xs-12 headers-col">
+                            <div class="col-sm-10 col-xs-8 headers-col">
                                 <div class="profile-img-col">
                                     <a href="#" class="post-creator-image"></a>
                                 </div>
@@ -165,6 +172,11 @@
                                 </p>
                                 <p class="tagline-text-content designation"></p>
                             </div>
+                            <div class="col-sm-2  col-xs-4 headers-col text-right">
+                                                <a class="topic-icon-placeholder repo" href="/post/2185/slim-300-released">
+                                                    <i class=""></i>
+                                                </a>
+                                            </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-12 ">

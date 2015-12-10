@@ -119,6 +119,12 @@ a.post-creator-image {
     border-radius: 50%;
     padding: 6px 0 3px 0;
     text-decoration: none;
+    display: none;
+}
+
+.text-right
+{
+    text-align: right;
 }
 
 .thread .topic-icon-placeholder.follow {
@@ -369,3 +375,18 @@ div.post-description img {
     .tags-area:hover a:hover {
         background: #555;
     }
+
+.thread.question
+{
+    border: solid 1px #03a9f4;
+}
+
+.thread.answer
+{
+    border: solid 1px #00897B;
+}
+
+.thread.answer .topic-icon-placeholder, .thread.question .topic-icon-placeholder
+{
+    display: inline-block;
+}

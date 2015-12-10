@@ -137,10 +137,10 @@ function createAllQuestions(questions, page)
 
         $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId=" + question.userId);
 
-        $(htmlItem).find('span.action').text(" asked a ");
+        //$(htmlItem).find('span.action').text(" asked a ");
 
         var questionUrl = '/discussion/' + (question.urlSlug == null ? question.questionId : question.urlSlug);
-        $(htmlItem).find('a.target').text("Question").attr("href", questionUrl);
+        //$(htmlItem).find('a.target').text("Question").attr("href", questionUrl);
 
         //$(htmlItem).find('p.designation').text(feed.userDesignation);
 
