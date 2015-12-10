@@ -1,27 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using System.Web.Http.Description;
 using System.Web.Http.Results;
-using MongoDB.Bson;
 using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
-using System.Text;
-using System.Collections;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
-using System.Net.Http;
-using System.Security.Claims;
-using ShibpurConnectWebApp.Providers;
 using WebApi.OutputCache.V2;
-using System.Text.RegularExpressions;
-using System.Configuration;
-using WebApi.OutputCache.Core.Cache;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -66,8 +53,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="page">The page.</param>
         /// <param name="alreadyShown">The alrady shown.</param>
         /// <returns></returns>
-        [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        //[CacheControl()]
+        //[CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetPersonalizedFeeds(string loggedInUserId, int page = 0, int alreadyShown = 0)
         {
             try
@@ -112,7 +99,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var allFeedsFollowedByMe = from x in allFeeds
                                            where followedUsers.Contains(x.UserId) ||
                                                  (followedQuestions.Contains(x.ActedOnObjectId) && x.UserId != userId)
-                                                 || x.Activity == 10
+                                                 || (x.Activity == 10 && x.UserId != userId)
                                            select x;
 
                 var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
@@ -128,7 +115,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
 
                 var feedResults = new List<PersonalizedFeedItem>();
-                string previousObjectId = string.Empty;
+                //string previousObjectId = string.Empty;
                 var distinctUserId = new List<string>();
 
                 var lstLogsWithContent = new List<UserActivityLogWithContent>();
@@ -206,21 +193,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     feedItem.UpvoteCount = feedContent == null ? 0 : feedContent.UpvoteCount;
                     feedItem.IsUpvotedByme = feedContent == null ? false : feedContent.IsUpvotedByme;
 
-                    if (!string.IsNullOrEmpty(previousObjectId) && previousObjectId == feed.ActedOnObjectId)
-                    {
-                        if (feedItem.ChildItems == null)
-                        {
-                            feedItem.ChildItems = new List<PersonalizedFeedItem>();
-                        }
+                    //if (!string.IsNullOrEmpty(previousObjectId) && previousObjectId == feed.ActedOnObjectId)
+                    //{
+                    //    if (feedItem.ChildItems == null)
+                    //    {
+                    //        feedItem.ChildItems = new List<PersonalizedFeedItem>();
+                    //    }
 
-                        feedItem.ChildItems.Add(feedItem);
-                    }
-                    else
-                    {
+                    //    feedItem.ChildItems.Add(feedItem);
+                    //}
+                    //else
+                    //{
                         feedResults.Add(feedItem);
-                    }
+                    //}
 
-                    previousObjectId = feed.ActedOnObjectId;
+                    //previousObjectId = feed.ActedOnObjectId;
                     //}
                 }
 
@@ -291,7 +278,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var questionIds = logs.Where(a => a.Activity == 1 || a.Activity == 8).Select(a => a.ActedOnObjectId).ToList();
                 var questionIdsFromAnswers = from o in answers.ToList()
                                              select o.QuestionId;
-                questionIds.AddRange(questionIdsFromAnswers.ToList());
+
+                var uniqueQuestionIdsFromAnswers = questionIdsFromAnswers.Distinct();
+                questionIds.AddRange(uniqueQuestionIdsFromAnswers.ToList());
 
                 var questions = from b in _mongoQustionHelper.Collection.AsQueryable()
                                 where questionIds.Contains(b.QuestionId)
@@ -303,6 +292,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                            select c;
 
                 var feedContents = new List<FeedContentDetail>();
+                var questionIdsForAnswerFeeds = new List<string>();
                 foreach (var feed in logs)
                 {
                     var feedContent = new FeedContentDetail();
@@ -315,10 +305,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var isFeedAnAnswer = (feed.Activity == 2 || feed.Activity == 4 || feed.Activity == 5); // Else its a Question
 
                     if (isFeedAnAnswer)
-                    {
-                        answer = answers.FirstOrDefault(a => a.AnswerId == feed.ActedOnObjectId);
+                    {                        
+                        answer = answers.FirstOrDefault(a => a.AnswerId == feed.ActedOnObjectId);                        
+
                         if (answer != null)
                         {
+                            if (questionIdsForAnswerFeeds.Contains(answer.QuestionId))
+                            {
+                                continue;
+                            }
+
+                            questionIdsForAnswerFeeds.Add(answer.QuestionId);
                             question = questions.FirstOrDefault(b => b.QuestionId == answer.QuestionId);
                             if (answer.UpvotedByUserIds == null)
                             {
