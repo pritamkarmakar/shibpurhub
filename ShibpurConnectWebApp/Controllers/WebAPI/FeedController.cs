@@ -53,8 +53,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="page">The page.</param>
         /// <param name="alreadyShown">The alrady shown.</param>
         /// <returns></returns>
-        //[CacheControl()]
-        //[CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheControl()]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetPersonalizedFeeds(string loggedInUserId, int page = 0, int alreadyShown = 0)
         {
             try
