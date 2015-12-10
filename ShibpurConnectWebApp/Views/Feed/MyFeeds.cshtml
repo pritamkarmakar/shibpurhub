@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Followed feed - ShibpurHub";
 }
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.0")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.1")" />
 <script type="text/javascript">
     $(document).ready(function () {
         loadFeeds(0);
@@ -10,7 +10,7 @@
 
 function getThreadClass(feedType)
 {
-    if(feedType == 1) return "qustion";
+    if(feedType == 1) return "question";
     if(feedType == 2) return "answer";
 }
     function loadFeeds(page) {
@@ -173,8 +173,8 @@ function getThreadClass(feedType)
                                 <p class="tagline-text-content designation"></p>
                             </div>
                             <div class="col-sm-2  col-xs-4 headers-col text-right">
-                                                <a class="topic-icon-placeholder repo" href="/post/2185/slim-300-released">
-                                                    <i class=""></i>
+                                                <a class="topic-icon-placeholder" href="">
+                                                    <i class="fa fa-briefcase"></i>
                                                 </a>
                                             </div>
                         </div>

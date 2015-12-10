@@ -381,9 +381,19 @@ div.post-description img {
     border: solid 1px #03a9f4;
 }
 
+.thread.question .topic-icon-placeholder
+{
+    background: #03a9f4;
+}
+
 .thread.answer
 {
-    border: solid 1px #00897B;
+    border: solid 1px #8bc34a;
+}
+
+.thread.answer .topic-icon-placeholder
+{
+    background: #8bc34a;
 }
 
 .thread.answer .topic-icon-placeholder, .thread.question .topic-icon-placeholder
