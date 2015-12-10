@@ -106,6 +106,18 @@ function createAllJobs(allJobsData, page) {
             $(htmlItem).find('span.jobstatus').html("<span style='color:red;font-weight:bold;'>Status: Closed</span>");
         }
 
+        // add the total applicant count
+        scAjax({
+            "url": "career/getjobapplicationcount?jobId=" + job.jobId,
+            "type": "GET",
+            "success": function (result) {
+                if (result == 1)
+                    $(htmlItem).find('span.applicant-count').text("Applicant: 1");
+                if (result > 1)
+                    $(htmlItem).find('span.applicant-count').text("Applicants: " + result);
+            }
+        });
+
         var skillset = $(htmlItem).find('li.jobskills');
         // add the job skillset tags
         $(job.skillSets).each(function(index) {

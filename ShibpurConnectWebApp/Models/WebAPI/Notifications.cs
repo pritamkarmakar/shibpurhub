@@ -44,6 +44,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
     /// <summary>
     /// Notification types that we support
+    /// ***Don't add a new notification type in between this list as it will break the UI (because each enum correspond to an integer).
+    /// If we need to add a new type then add it at the end ***
     /// </summary>
     public enum NotificationTypes
     {

@@ -408,6 +408,29 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
+        /// Get the total application count for a specific job
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public async Task<IHttpActionResult> GetJobApplicationCount(string jobId)
+        {
+            var mongoHelper = new MongoHelper<JobApplication>();
+            try
+            {
+                var jobApplicationCount = mongoHelper.Collection.AsQueryable()
+                              .Where(a => a.JobId == jobId).ToList().Count;
+
+                return CreatedAtRoute("DefaultApi", new { id = jobId }, jobApplicationCount);
+            }
+            catch (MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+            /// <summary>
         /// API to post a job application
         /// </summary>
         /// <param name="jobApplicationDto">JobApplicationDTO object</param>
@@ -506,6 +529,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 // invalidate the getjob api call for the job associated with this application
                 cache.RemoveStartsWith("career-getjob-jobId=" + jobApplication.JobId);
+                // invalidate the getjobapplicationcount api call for the job associated with this application
+                cache.RemoveStartsWith("career-getjobapplicationcount-jobId=" + jobApplication.JobId);
+
+                // invalidate the getnotification cache for the user
+                cache.RemoveStartsWith("notifications-getnotifications-userId=" + jobInfo.UserId);
+                cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + jobInfo.UserId);
 
                 return CreatedAtRoute("DefaultApi", new { id = jobApplication.ApplicationId }, jobApplication);
             }

@@ -99,58 +99,63 @@ $(document).ready(function () {
 });
 
 // create the entire job details, including job applications, comments
-function createJobDetails(question) {
-    document.title = question.jobTitle + " - ShibpurHub";
+function createJobDetails(jobDetails) {
+    document.title = jobDetails.jobTitle + " - ShibpurHub";
 
     var htmlItem = $('div.item.question.hide').clone().removeClass('hide');
 
     var creatorImage = $(htmlItem).find('.post-creator-image');
-    if (question.userProfileImage != null)
-        $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+    if (jobDetails.userProfileImage != null)
+        $(creatorImage).attr("href", "/Account/Profile?userId" + jobDetails.userId).css('background-image', "url(http://i.imgur.com/" + jobDetails.userProfileImage + ")");
     else
-        $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(/Content/images/profile-image.jpg)");
+        $(creatorImage).attr("href", "/Account/Profile?userId" + jobDetails.userId).css('background-image', "url(/Content/images/profile-image.jpg)");
 
-    $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId=" + question.userId);
+    $(htmlItem).find('a.name-link').text(jobDetails.displayName).attr("href", "/Account/Profile?userId=" + jobDetails.userId);
 
-    $(htmlItem).find('h2.title a').text(question.jobTitle);
+    $(htmlItem).find('h2.title a').text(jobDetails.jobTitle);
 
-    $(htmlItem).find('div.job-company p').html(question.jobCompany);
-    $(htmlItem).find('div.job-location p').html(question.jobCity + ", " + question.jobCountry);
-    $(htmlItem).find('div.post-description p').html(question.jobDescription);
-    $(htmlItem).find('p.designation').text(question.careerDetail);
+    $(htmlItem).find('div.job-company p').html(jobDetails.jobCompany);
+    $(htmlItem).find('div.job-location p').html(jobDetails.jobCity + ", " + jobDetails.jobCountry);
+    $(htmlItem).find('div.post-description p').html(jobDetails.jobDescription);
+    $(htmlItem).find('p.designation').text(jobDetails.careerDetail);
     $(htmlItem).find('div.post-description img').addClass("col-md-12 col-md-12 col-xs-12");
 
-    if (question.viewCount && question.viewCount > 1) {
-        $(htmlItem).find('span.view-count').text(question.viewCount + " views");
+    if (jobDetails.viewCount && jobDetails.viewCount > 1) {
+        $(htmlItem).find('span.view-count').text(jobDetails.viewCount + " views");
     }
-    $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
+    $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(jobDetails.postedOnUtc));
+
+    // add the total applicant count
+    scAjax({
+        "url": "career/getjobapplicationcount?jobId=" + jobDetails.jobId,
+        "type": "GET",
+        "success": function (result) {
+            if (result == 1)
+                $(htmlItem).find('span.applicant-count').text("Applicant: 1");
+            if (result > 1)
+                $(htmlItem).find('span.applicant-count').text("Applicants: " + result);
+        }
+    });
+    
 
     var followButton = $(htmlItem).find('.follow-ul a.thumbs');
-    $(followButton).attr({ 'data-questionId': question.questionId, 'id': question.questionId });
-
-    var questionIds = [];
-    questionIds.push(question.questionId);
+    $(followButton).attr({ 'data-questionId': jobDetails.questionId, 'id': jobDetails.questionId });
 
     // add the job skillset tags
     var skillset = $(htmlItem).find('li.jobskills');
-    $(question.skillSets).each(function (index) {
-        $(skillset).append("<i class='fa fa-tags'>" + question.skillSets[index] + "</i>&nbsp;&nbsp;");
+    $(jobDetails.skillSets).each(function (index) {
+        $(skillset).append("<i class='fa fa-tags'>" + jobDetails.skillSets[index] + "</i>&nbsp;&nbsp;");
     });
 
 
-    if (!question.isAskedByMe) {
+    if (!jobDetails.isAskedByMe) {
         $(htmlItem).find('.follow-ul').show();
     }
 
     $("div.question-container").append(htmlItem);
 
-    $(followButton).click(function (event) {
-        event.preventDefault();
-        followQuestion(question.questionId);
-    });
-
-    scAjax({
-        "url": "career/incrementviewcount?jobId=" + jobId,
+       scAjax({
+           "url": "career/incrementviewcount?jobId=" + jobDetails.jobId,
         "type": "POST",
         "success": function (result) {
         }
@@ -176,13 +181,13 @@ function createJobDetails(question) {
         saveApplication();
     });
 
-    var jobapplications = question.jobApplications;
+    var jobapplications = jobDetails.jobApplications;
     if (!jobapplications) {
         return;
     }
 
     if (jobapplications.length > 0) {
-        if (question.userId == userInfo.id) {
+        if (jobDetails.userId == userInfo.id) {
             // if this user is the job poster then he/she can post additional update
             $('.submit-answer-container').html("<div style='font-size:20px;margin-bottom:10px;'>Applications</div>");
             $('.closejob').show();

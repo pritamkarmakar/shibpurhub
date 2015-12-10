@@ -69,7 +69,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     }
 
     /// <summary>
-    /// We will use this model to send from the API. It has the firstname and lastname of the user
+    /// We will use this model to send from the API. It has the user display name alongwith Job object parameters
     /// </summary>
     [Serializable]
     public class JobViewModel : Job

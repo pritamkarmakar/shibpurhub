@@ -149,7 +149,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 // save this new request in the notification collection, so that user will get that bubble notification in the header
                 NotificationsController notificationsController = new NotificationsController();
-                string notificationContent = "{\"askedBy\":\"" + askToAnswerDto.AskedBy + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionId\":\"" + askToAnswerDto.QuestionId + "\",\"questionTitle\":\"" + question.Content.Title + "\"}";
+                string notificationContent = "{\"askedBy\":\"" + askToAnswerDto.AskedBy + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionId\":\"" + askToAnswerDto.QuestionId + "\",\"questionTitle\":\"" + question.Content.UrlSlug + "\"}";
                 notificationsController.PostNotification(new Notifications()
                 {
                     UserId = askToAnswerDto.AskedTo,
