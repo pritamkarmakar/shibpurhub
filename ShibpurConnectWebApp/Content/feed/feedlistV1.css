@@ -184,6 +184,15 @@ a.post-creator-image {
 .thread .post-link-image-container {
     padding-right: 0;
 }
+.post-description.profile ul
+{
+    padding: 0;
+}
+
+.post-description.profile ul li{
+    list-style-type: none;
+    padding: 2px 0;
+}
 
 .thread .post-link-image-small {
     position: relative;

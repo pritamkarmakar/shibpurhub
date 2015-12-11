@@ -62,16 +62,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="userId">userid for whom we want to do the searh</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IHttpActionResult> GetUserQuestionCount(string userId)
+        public int GetUserQuestionCount(string userId)
         {
             try
             {
                 var questionCount = _mongoHelper.Collection.AsQueryable().Count(m => m.UserId == userId);
-                return Ok(questionCount);
+                return questionCount;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return 0;
             }
         }
 

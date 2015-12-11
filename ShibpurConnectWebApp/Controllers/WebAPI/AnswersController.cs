@@ -104,16 +104,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <returns></returns>
         [HttpGet]
         [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
-        public async Task<IHttpActionResult> GetUserAnswerCount(string userId)
+        public int GetUserAnswerCount(string userId)
         {
             try
             {
                 var answerCount = _mongoHelper.Collection.AsQueryable().Count(m => m.UserId == userId);
-                return Ok(answerCount);
+                return answerCount;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return 0;
             }
         }
 
