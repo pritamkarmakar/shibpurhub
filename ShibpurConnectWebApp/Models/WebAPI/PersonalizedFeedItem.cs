@@ -38,6 +38,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         public string ItemHeader { get; set; }
+        
+        [DataMember]
+        public string ItemSubHeader { get; set; }
 
         [DataMember]
         public string ItemDetail { get; set; }

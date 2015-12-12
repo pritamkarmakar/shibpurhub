@@ -33,18 +33,23 @@ function loadFeeds(page) {
 					var htmlItem = $('div.item.hide').clone().removeClass('hide');
 
 					var creatorImage = $(htmlItem).find('.post-creator-image');
-					$(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url(http://i.imgur.com/" + feed.userProfileImageUrl + ")");
-
-					$(htmlItem).find('a.name-link').text(feed.userName).attr("href", feed.userProfileUrl);
-
-					$(htmlItem).find('span.action').text(feed.actionText);
-
-					$(htmlItem).find('a.target').text(feed.targetAction).attr("href", feed.targetActionUrl);
-
-					$(htmlItem).find('p.designation').text(feed.userDesignation);
-
-					$(htmlItem).find('h2.title a').html(feed.itemHeader).attr("href", feed.targetActionUrl);
-					$(htmlItem).find('a.topic-icon-placeholder').attr("href", feed.targetActionUrl);
+					if(feed.activityType == 10)
+					{
+						$(creatorImage).removeClass('post-creator-image').addClass('topic-icon-placeholder').html('<i class="fa fa-briefcase"></i>');
+						$(creatorImage).attr("href", feed.targetActionUrl);
+						$(htmlItem).find('a.name-link').text(feed.itemHeader).attr("href", feed.targetActionUrl).css('font-size', '20px');
+						$(htmlItem).find('h2.title').hide();
+					}
+					else
+					{
+						$(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url(http://i.imgur.com/" + feed.userProfileImageUrl + ")");
+						$(htmlItem).find('a.name-link').text(feed.userName).attr("href", feed.userProfileUrl);
+						$(htmlItem).find('h2.title a').html(feed.itemHeader).attr("href", feed.targetActionUrl);
+						$(htmlItem).find('span.action').text(feed.actionText);
+						$(htmlItem).find('a.target').text(feed.targetAction).attr("href", feed.targetActionUrl);
+					}
+					
+					$(htmlItem).find('p.designation').text(feed.itemSubHeader);
 
 					$(htmlItem).find('div.post-description p').html(getEmojiedString(feed.itemDetail));
 

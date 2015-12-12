@@ -300,6 +300,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + question.UserId);
                 cache.RemoveStartsWith("notifications-getnotifications-userId=" + question.UserId);
 
+                cache.RemoveStartsWith("feed-getpersonalizedfeeds");     
+                   
                 //Invalidate personalized feed cache
                 var userIdToInvalidate = question.Followers == null ? new List<string>() : question.Followers;
                 userIdToInvalidate.Add(userInfo.Id);

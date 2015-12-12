@@ -177,6 +177,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
 
                     feedItem.ItemHeader = feedContent == null ? string.Empty : feedContent.Header;
+                    feedItem.ItemSubHeader = feedContent == null ? string.Empty : feedContent.SubHeader;
                     feedItem.ItemDetail = feedContent == null ? string.Empty : feedContent.SimpleDetail;
                     feedItem.TargetAction = feedContent == null ? string.Empty : feedContent.ActionName;
                     feedItem.TargetActionUrl = feedContent == null ? string.Empty : feedContent.ActionUrl;
@@ -242,7 +243,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     if (matchedUser != null)
                     {
                         feedResult.UserName = matchedUser.FullName;
-                        feedResult.UserDesignation = matchedUser.CareerDetail;
+                        if(feedResult.ActivityType != 10)
+                        {
+                            feedResult.ItemSubHeader =  matchedUser.CareerDetail;
+                        }
+                        
                         feedResult.UserProfileUrl = "/Account/Profile?userId=" + feedResult.UserId;
                         feedResult.UserProfileImageUrl = matchedUser.ImageUrl;
                     }
@@ -339,9 +344,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         job = jobs.FirstOrDefault(b => b.JobId == feed.ActedOnObjectId);
 
-                        feedContent.Header = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " requires ") 
-                                             + "<span class='job-title'>" + job.JobTitle + "</span>" +
-                                             (string.IsNullOrEmpty(job.JobCity) ? "" : " in " + job.JobCity) +
+                        feedContent.Header = job.JobTitle;
+                        feedContent.SubHeader = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " | ") 
+                                                + (string.IsNullOrEmpty(job.JobCity) ? "" :  job.JobCity) +
                                              (string.IsNullOrEmpty(job.JobCountry) ? "" : ", " + job.JobCountry);
                         feedContent.SimpleDetail = job.JobDescription;
                         feedContent.PostedDateInUTC = job.PostedOnUtc;
