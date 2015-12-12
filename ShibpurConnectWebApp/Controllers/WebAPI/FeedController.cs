@@ -161,14 +161,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     if (feed.Activity == 6 || feed.Activity == 7)
                     {
-                        var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
-                        var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
-                        if (y == null)
-                        {
-                            continue;
-                        }
+                        //var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
+                        //var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
+                        //if (y == null)
+                        //{
+                        //    continue;
+                        //}
 
-                        feedContent = y.Content;
+                        //feedContent = y.Content;
                     }
                     else
                     {
@@ -594,6 +594,42 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return NotFound();
             }
+        }
+
+        public async Task<IHttpActionResult> GetFollowedUserDetails([FromUri] IList<string> userIds)
+        {
+            if(userIds == null || userIds.Count == 0)
+            {
+                return Ok();
+            }
+
+            var helper = new Helper.Helper();
+            var feedUserDetails = new List<FeedUserDetail>();
+            foreach (var userid in userIds)
+            {
+                Task<CustomUserInfo> result = helper.FindUserById(userid, true);
+                var userDetailInList = await result;
+                var user = new FeedUserDetail
+                {
+                    UserId = userid,
+                    FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,
+                    ImageUrl = userDetailInList.ProfileImageURL,
+                    Reputation = userDetailInList.ReputationCount
+                };
+
+                user.CareerDetail = userDetailInList.Designation + " " +
+                    (string.IsNullOrEmpty(userDetailInList.EducationInfo) ? string.Empty : (
+                    string.IsNullOrEmpty(userDetailInList.Designation) ? userDetailInList.EducationInfo :
+                        "(" + userDetailInList.EducationInfo + ")")
+                    );
+
+                user.QuestionCount = _questionController.GetUserQuestionCount(userid);
+                user.AnswerCount = _answerController.GetUserAnswerCount(userid);
+
+                feedUserDetails.Add(user);
+            }
+
+            return Ok(feedUserDetails);
         }
     }
 

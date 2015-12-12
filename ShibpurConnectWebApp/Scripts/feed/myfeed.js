@@ -28,6 +28,7 @@ function loadFeeds(page) {
 			var feeds = result.feedItems;
 			$('#alreadyShown').val(result.alreadyProcessedItemCount);
 
+			var userIds = [];
 			$(feeds).each(function (index, feed) {
 				if (feed.itemHeader) {
 					var htmlItem = $('div.item.hide').clone().removeClass('hide');
@@ -60,7 +61,11 @@ function loadFeeds(page) {
 					// 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer,
 					// 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
 					if (feed.activityType == 6 || feed.activityType == 7) {
-						$(htmlItem).find('div.thread-details').hide();
+					    $(htmlItem).find('div.thread-details').hide();					    
+
+					    var userId = feed.targetActionUrl.split("=")[1];
+					    userIds.push(userId);
+					    $(htmlItem).find('div.content').hide().attr("id", "user-" + userId);
 					}
 
 					if (feed.activityType == 1 || feed.activityType == 8) {
@@ -127,6 +132,7 @@ function loadFeeds(page) {
 				}
 			});
 
+			createUserFeeds(userIds);
 			if (!page) {
 				var loadMoreDiv = $("div.feed-list .load").clone().removeClass('hide');
 				$("div.feed-list").append(loadMoreDiv);
@@ -149,4 +155,42 @@ function loadFeeds(page) {
 			}
 		}
 	});
+}
+
+function createUserFeeds(userIds)
+{
+    if(!userIds || userIds.length == 0)
+    {
+        return;
+    }
+
+    scAjax({
+        "url": "feed/GetFollowedUserDetails",
+        "data": { "userIds": userIds },
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+
+            $(result).each(function (index, user) {
+                var userId = user.userId;
+                var userDiv = $("#user-" + userId);
+
+                $(userDiv).show();
+                var htmlItem = $('div.user-feed.hide').clone().removeClass('hide');
+                $(htmlItem).find('h2 a').text(user.fullName);
+                $(htmlItem).find('p.tagline-text-content').text(user.careerDetail);
+
+                var userImage = $(htmlItem).find('.user-feed-img');
+                $(userImage).css('background-image', "url(http://i.imgur.com/" + user.imageUrl + ")");
+
+                var profileUrl = "/Account/Profile?userId=";
+                $(htmlItem).find('.useranswercount a').text(user.answerCount).attr("href", profileUrl + userId + "#tab5");
+                $(htmlItem).find('.userquestioncount a').text(user.questionCount).attr("href", profileUrl + userId + "#tab4");
+                $(htmlItem).find('.reputationcount span.count').text(user.reputation);
+
+                $(userDiv).html(htmlItem);
+            });
+        }
+    });
 }
