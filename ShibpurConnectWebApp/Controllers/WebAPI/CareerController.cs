@@ -356,6 +356,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             };
 
             UpdateUserActivityLog(userActivityLog);
+            
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+            cache.RemoveStartsWith("feed-getpersonalizedfeeds");
 
             // if mongo failed to save the data then send error
             if (!result.Ok)

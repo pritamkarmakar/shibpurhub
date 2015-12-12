@@ -161,14 +161,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     if (feed.Activity == 6 || feed.Activity == 7)
                     {
-                        //var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
-                        //var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
-                        //if (y == null)
-                        //{
-                        //    continue;
-                        //}
+                        var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
+                        var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
+                        if (y == null)
+                        {
+                            continue;
+                        }
 
-                        //feedContent = y.Content;
+                        feedContent = y.Content;
                     }
                     else
                     {
