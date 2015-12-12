@@ -41,7 +41,7 @@ function loadFeeds(page) {
 						$(htmlItem).find('a.name-link').text(feed.itemHeader).attr("href", feed.targetActionUrl).css('font-size', '20px');
 						$(htmlItem).find('h2.title').hide();
 						
-						var userDetailP = $('<p>Posted by</p>').append($('<a>').text(feed.userName).attr("href", feed.userProfileUrl));
+						var userDetailP = $('<p>Posted by </p>').append($('<a>').text(feed.userName).attr("href", feed.userProfileUrl));
 						$(htmlItem).find('.thread-details-container div:first').append(userDetailP);
 					}
 					else
