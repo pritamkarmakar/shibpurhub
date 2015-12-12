@@ -110,11 +110,10 @@ a.post-creator-image {
 }
 
 .thread .post-header .topic-icon-placeholder {
-    font-size: 12px;
     display: block;
     background: #f2f2f2;
     width: 30px;
-    float: right;
+    height: 30px;
     text-align: center;
     color: #FFF;
     -webkit-border-radius: 50%;
@@ -155,6 +154,10 @@ a.post-creator-image {
     margin-top: 10px;
     margin-bottom: 15px;
     font-weight: 300;
+}
+
+.thread.job .post-description {
+    margin: 0;
 }
 
 .post-description p {
