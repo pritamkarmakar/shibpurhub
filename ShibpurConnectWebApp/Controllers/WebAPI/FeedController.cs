@@ -283,9 +283,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var questionIds = logs.Where(a => a.Activity == 1 || a.Activity == 8).Select(a => a.ActedOnObjectId).ToList();
                 var questionIdsFromAnswers = from o in answers.ToList()
                                              select o.QuestionId;
+                questionIds.AddRange(questionIdsFromAnswers.ToList());
 
-                var uniqueQuestionIdsFromAnswers = questionIdsFromAnswers.Distinct();
-                questionIds.AddRange(uniqueQuestionIdsFromAnswers.ToList());
+                //var uniqueQuestionIdsFromAnswers = questionIdsFromAnswers.Distinct();
+                //questionIds.AddRange(uniqueQuestionIdsFromAnswers.ToList());
 
                 var questions = from b in _mongoQustionHelper.Collection.AsQueryable()
                                 where questionIds.Contains(b.QuestionId)
