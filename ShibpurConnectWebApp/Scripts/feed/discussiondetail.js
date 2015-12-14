@@ -227,7 +227,7 @@ function createAnswer(answer)
     var deleteButton = $(htmlItem).find('.delete-ul a.thumbs');
     if (deleteButton.length > 0)
     {
-        $(deleteButton).attr({ 'data-answerId': answer.answerId });
+        $(deleteButton).attr({ 'data-delete-answerId': answer.answerId });
         $(deleteButton).click(function (event) {
             event.preventDefault();
             deleteAnswer(answer.answerId);
@@ -551,7 +551,7 @@ function setUpEditQuestion() {
 
 function deleteAnswer(id)
 {
-    var answerObject = { "AnswerId": id };
+    var answerObject = { "AnswerId": id, "QuestionId": questionID };
     scAjax({
         "url": "answers/DeleteAnswer",
         "type": "POST",
@@ -560,6 +560,8 @@ function deleteAnswer(id)
             if (!result) {
                 return;
             }
+
+            $('.answer-container #'+id).remove();
         }
     });
 }

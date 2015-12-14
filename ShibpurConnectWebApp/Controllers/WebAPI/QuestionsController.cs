@@ -23,6 +23,7 @@ using System.Text.RegularExpressions;
 using System.Configuration;
 using Hangfire;
 using MongoDB.Driver.Builders;
+using MongoDB.Driver;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -939,15 +940,31 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = questionFromDB.QuestionId }, questionFromDB);
         }
 
-        [Authorize]
-        [HttpDelete]
+        [HttpPost]
         [InvalidateCacheOutput("GetQuestions")]
         public bool DeleteQuestion(Question question)
         {
             try
             {
-                var query = Query.EQ("Id", question.QuestionId);
-                _mongoHelper.Collection.Remove(query);
+                var query = Query.EQ("_id", new BsonObjectId(new ObjectId(question.QuestionId)));
+                _mongoHelper.Collection.Remove(query, RemoveFlags.Single);
+
+                var _mongoAnswerHelper = new MongoHelper<Answer>();
+                var answers = _mongoAnswerHelper.Collection.AsQueryable().Where(a => a.QuestionId == question.QuestionId).ToList();
+                List<ObjectId> objectIds = new List<ObjectId>();
+                foreach (var a in answers)
+                {
+                    objectIds.Add(new ObjectId(a.AnswerId));
+                }
+
+                if (objectIds.Count > 0)
+                {
+                    _mongoAnswerHelper.Collection.Remove(Query.In("_id", new BsonArray(objectIds)));
+                }
+
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+                cache.RemoveStartsWith("feed-getpersonalizedfeeds");
+
                 return true;
             }
             catch(Exception e)

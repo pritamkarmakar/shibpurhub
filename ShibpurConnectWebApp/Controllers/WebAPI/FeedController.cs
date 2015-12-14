@@ -224,10 +224,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var questionIds = logs.Where(a => a.Activity == 1 || a.Activity == 8).Select(a => a.ActedOnObjectId).ToList();
                 var questionIdsFromAnswers = from o in answers.ToList()
                                              select o.QuestionId;
-                //questionIds.AddRange(questionIdsFromAnswers.ToList());
+                questionIds.AddRange(questionIdsFromAnswers.ToList());
 
-                var uniqueQuestionIdsFromAnswers = questionIdsFromAnswers.Distinct();
-                questionIds.AddRange(uniqueQuestionIdsFromAnswers.ToList());
+                //var uniqueQuestionIdsFromAnswers = questionIdsFromAnswers.Distinct();
+                //questionIds.AddRange(uniqueQuestionIdsFromAnswers.ToList());
 
                 var questions = from b in _mongoQustionHelper.Collection.AsQueryable()
                                 where questionIds.Contains(b.QuestionId)
@@ -282,8 +282,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     if (feed.Activity == 1 || feed.Activity == 8)
                     {
-                        question = questions.FirstOrDefault(b => b.QuestionId == feed.ActedOnObjectId);
-                        feedContent.QuestionId = question.QuestionId;
+                        question = questions.FirstOrDefault(b => b.QuestionId == feed.ActedOnObjectId);                        
                     }
 
                     if (feed.Activity == 10)
@@ -313,6 +312,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                         feedContent.ItemDetail = question.Description;
                         feedContent.PostedDateInUTC = question.PostedOnUtc;
+                        feedContent.QuestionId = question.QuestionId;
 
                         if (question.Followers == null)
                         {

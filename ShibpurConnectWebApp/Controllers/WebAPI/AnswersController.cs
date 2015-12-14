@@ -520,10 +520,26 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             try
             {                
                 //var query = Query.EQ("answerId", answer.AnswerId);
-                var result = _mongoHelper.Collection.Remove(Query.EQ("answerId", answer.AnswerId), RemoveFlags.Single);
+                var result = _mongoHelper.Collection.Remove(Query.EQ("_id", new BsonObjectId(new ObjectId(answer.AnswerId))), RemoveFlags.Single);
+                var _mongoCommentHelper = new MongoHelper<Comment>();
+                var comments = _mongoCommentHelper.Collection.AsQueryable().Where(a => a.AnswerId == answer.AnswerId).ToList();
+                List<ObjectId> objectIds = new List<ObjectId>();
+                foreach (var comment in comments)
+                {
+                    objectIds.Add(new ObjectId(comment.CommentId));
+                }
+
+                if(objectIds.Count > 0)
+                {
+                    _mongoCommentHelper.Collection.Remove(Query.In("_id", new BsonArray(objectIds)));
+                }
 
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
                 cache.RemoveStartsWith("answers-getanswers-answerId=" + answer.AnswerId);
+                cache.RemoveStartsWith("questions-getquestion-questionId=" + answer.QuestionId);
+                cache.RemoveStartsWith("questions-getquestions");
+
+                //var ans = _mongoHelper.Collection.AsQueryable<Answer>().Where(a => a.AnswerId == answer.AnswerId).FirstOrDefault();
 
                 return true;
             }

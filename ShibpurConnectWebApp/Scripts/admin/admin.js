@@ -27,21 +27,8 @@ angular.module("AdminApp", [])
     };
 
     $scope.deleteQuestion = function (questionId) {
-        var question = $.param({ 'questionId': questionId });
 
-        $http({
-            url: "api/questions/DeleteQuestion",
-            method: "DELETE",
-            data: question
-        });
-
-        //var config = {
-        //    headers: {
-        //        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-        //    }
-        //};
-
-        //$http.post('api/questions/DeleteQuestion', question);
+        $http.post('api/questions/DeleteQuestion', { 'QuestionId': questionId });
     };
 
     loadQuestions(0);

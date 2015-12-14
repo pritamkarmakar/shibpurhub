@@ -54,7 +54,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     }
                 }
 
-                return Ok(result.OrderByDescending(m => m.ReputationCount).ToList());
+                return Ok(result.OrderByDescending(m => m.ReputationCount).ThenByDescending(n => n.RegisteredOn).ToList());
             }
             catch(Exception ex)
             {
