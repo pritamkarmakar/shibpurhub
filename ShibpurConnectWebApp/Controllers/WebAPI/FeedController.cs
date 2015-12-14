@@ -59,14 +59,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             try
             {
-                //ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-                //if (principal == null || principal.Identity == null || string.IsNullOrEmpty(principal.Identity.Name))
-                //{
-                //    return BadRequest("No UserId is found");
-                //}
-
-                //var email = principal.Identity.Name;
-
                 if (string.IsNullOrEmpty(loggedInUserId))
                 {
                     return BadRequest("No UserId is found");
@@ -85,14 +77,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(alreadyShown).Take(100).ToList();
 
 
-                //Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
-                //var userDetail = await actionResult;
-
-                //if(userDetail == null)
-                //{
-                //return NotFound();
-                //}
-
                 var followedUsers = userDetail.Following ?? new List<string>();
                 var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
 
@@ -103,15 +87,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                            select x;
 
                 var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
-
-                //foreach(var feed in feedsFollowedByMe)
-                //{
-                //    allFeeds.Remove(feed);
-                //}
-                //allFeeds.AddRange(feedsFollowedByMe);
-
-                //var feeds = feedsFollowedByMe.Skip(page * PAGESIZE).Take(PAGESIZE).ToList();
-
 
 
                 var feedResults = new List<PersonalizedFeedItem>();
@@ -126,8 +101,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 var allfeedsWithContentResult = await GetAllFeedContents(lstLogsWithContent, userId);
-                var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<FeedContentDetail>>;
-                var allfeedsWithContent = z.Content ?? new List<FeedContentDetail>();
+                var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<PersonalizedFeedItem>>;
+                var allfeedsWithContent = z.Content ?? new List<PersonalizedFeedItem>();
 
                 var processedItemCount = page == 0 ? 0 : alreadyShown;
                 for (var i = 0; feedResults.Count < PAGESIZE && i < feedsFollowedByMe.ToList().Count; i++)
@@ -146,11 +121,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         continue;
                     }
                     
-                    FeedContentDetail feedContent = null;
+                    PersonalizedFeedItem feedContent = null;
                     if (feed.Activity == 6 || feed.Activity == 7)
                     {
                         var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
-                        var y = feedContentResult as OkNegotiatedContentResult<FeedContentDetail>;
+                        var y = feedContentResult as OkNegotiatedContentResult<PersonalizedFeedItem>;
                         if (y == null)
                         {
                             continue;
@@ -170,32 +145,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     
                     processedItemCount += 1;
 
-                    var feedItem = new PersonalizedFeedItem();
-                    feedItem.UserId = feed.UserId;
+                    feedContent.ActivityType = feed.Activity;
+                    feedContent.ActionText = GetActionText(feed.Activity);
+                    feedContent.UserId = feed.UserId;
                     if (!distinctUserId.Contains(feed.UserId))
                     {
                         distinctUserId.Add(feed.UserId);
                     }
-
-                    feedItem.ItemHeader = feedContent.Header;
-                    feedItem.ItemSubHeader = feedContent.SubHeader;
-                    feedItem.ItemDetail = feedContent.SimpleDetail;
-                    feedItem.TargetAction = feedContent.ActionName;
-                    feedItem.TargetActionUrl = feedContent.ActionUrl;
-
-                    feedItem.ActionText = GetActionText(feed.Activity);
-                    feedItem.ActivityType = feed.Activity;
-
-                    feedItem.ViewCount = feedContent.ViewCount;
-                    feedItem.AnswersCount = feedContent.AnswersCount;
-                    feedItem.PostedDateInUTC = feedContent.PostedDateInUTC;
-
-                    feedItem.FollowedByCount = feedContent.FollowedByCount;
-                    feedItem.IsFollowedByme = feedContent.IsFollowedByme;
-                    feedItem.UpvoteCount = feedContent.UpvoteCount;
-                    feedItem.IsUpvotedByme = feedContent.IsUpvotedByme;
                     
-                    feedResults.Add(feedItem);
+                    feedResults.Add(feedContent);
                 }
 
                 //var userIds = feeds.Select(a => a.UserId).Distinct();
@@ -210,9 +168,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,
                         ImageUrl = userDetailInList.ProfileImageURL
                     };
-                    //var careerTextResult = await GetDesignationText(userDetailInList.Email);
-                    //var careerText = careerTextResult as OkNegotiatedContentResult<string>;
-                    //user.CareerDetail = careerText == null ? string.Empty : careerText.Content;
 
                     user.CareerDetail = userDetailInList.Designation + " " +
                         (string.IsNullOrEmpty(userDetailInList.EducationInfo) ? string.Empty : (
@@ -283,12 +238,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                            where jobIds.Contains(c.JobId)
                            select c;
 
-                var feedContents = new List<FeedContentDetail>();
+                var feedContents = new List<PersonalizedFeedItem>();
                 var questionIdsForAnswerFeeds = new List<string>();
                 foreach (var feed in logs)
                 {
-                    var feedContent = new FeedContentDetail();
-                    feedContent.ActionName = GetActionName(feed.Activity);
+                    var feedContent = new PersonalizedFeedItem();
+                    feedContent.TargetAction = GetActionName(feed.Activity);
                     feedContent.LogId = feed.ActivityLogId;
 
                     Answer answer = null;
@@ -309,6 +264,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                             questionIdsForAnswerFeeds.Add(answer.QuestionId);
                             question = questions.FirstOrDefault(b => b.QuestionId == answer.QuestionId);
+                            feedContent.QuestionId = question.QuestionId;
+                            feedContent.AnswerId = answer.AnswerId;
+
                             if (answer.UpvotedByUserIds == null)
                             {
                                 feedContent.UpvoteCount = 0;
@@ -325,26 +283,27 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     if (feed.Activity == 1 || feed.Activity == 8)
                     {
                         question = questions.FirstOrDefault(b => b.QuestionId == feed.ActedOnObjectId);
+                        feedContent.QuestionId = question.QuestionId;
                     }
 
                     if (feed.Activity == 10)
                     {
                         job = jobs.FirstOrDefault(b => b.JobId == feed.ActedOnObjectId);
 
-                        feedContent.Header = job.JobTitle;
-                        feedContent.SubHeader = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " | ") 
+                        feedContent.ItemHeader = job.JobTitle;
+                        feedContent.ItemSubHeader = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " | ") 
                                                 + (string.IsNullOrEmpty(job.JobCity) ? "" :  job.JobCity) +
                                              (string.IsNullOrEmpty(job.JobCountry) ? "" : ", " + job.JobCountry);
-                        feedContent.SimpleDetail = job.JobDescription;
+                        feedContent.ItemDetail = job.JobDescription;
                         feedContent.PostedDateInUTC = job.PostedOnUtc;
-                        feedContent.ActionUrl = "/career/jobdetails?jobid=" + job.JobId;
+                        feedContent.TargetActionUrl = "/career/jobdetails?jobid=" + job.JobId;
                     }
 
                     if (question != null)
                     {
-                        feedContent.Header = question.Title;
+                        feedContent.ItemHeader = question.Title;
                         var questionUrl = "/discussion/" + question.UrlSlug ?? question.QuestionId;
-                        feedContent.ActionUrl = isFeedAnAnswer ? "/discussion/" + question.QuestionId + "/" + feed.ActedOnObjectId : questionUrl;
+                        feedContent.TargetActionUrl = isFeedAnAnswer ? "/discussion/" + question.QuestionId + "/" + feed.ActedOnObjectId : questionUrl;
 
                         feedContent.ViewCount = question.ViewCount;
 
@@ -352,7 +311,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         var answersCount = answersCountResult as OkNegotiatedContentResult<int>;
                         feedContent.AnswersCount = answersCount.Content;
 
-                        feedContent.SimpleDetail = question.Description;
+                        feedContent.ItemDetail = question.Description;
                         feedContent.PostedDateInUTC = question.PostedOnUtc;
 
                         if (question.Followers == null)
@@ -369,14 +328,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     if (isFeedAnAnswer && answer != null)
                     {
-                        feedContent.SimpleDetail = answer.AnswerText;
+                        feedContent.ItemDetail = answer.AnswerText;
                         feedContent.PostedDateInUTC = answer.PostedOnUtc;
                     }
 
                     feedContents.Add(feedContent);
                 }
 
-                return Ok<IList<FeedContentDetail>>(feedContents);
+                return Ok<IList<PersonalizedFeedItem>>(feedContents);
             }
             catch (Exception e)
             {
@@ -388,7 +347,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
         private async Task<IHttpActionResult> GetFeedContent(int type, string userId, string objectId = "", string objectUserId = "")
         {
-            var feedContent = new FeedContentDetail();
+            var feedContent = new PersonalizedFeedItem();
 
             try
             {
@@ -403,11 +362,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     Task<CustomUserInfo> actionResult = helper.FindUserById(objectUserId);
                     var userDetail = await actionResult;
 
-                    feedContent.Header = userDetail.FirstName + " " + userDetail.LastName;
-                    feedContent.ActionName = userDetail.FirstName + " " + userDetail.LastName;
-                    feedContent.ActionUrl = "/Account/Profile?userId=" + userDetail.Id;
+                    feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
+                    feedContent.TargetAction = userDetail.FirstName + " " + userDetail.LastName;
+                    feedContent.TargetActionUrl = "/Account/Profile?userId=" + userDetail.Id;
 
-                    return Ok<FeedContentDetail>(feedContent);
+                    return Ok(feedContent);
                 }
 
                 return NotFound();

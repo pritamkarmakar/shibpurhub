@@ -677,3 +677,59 @@ function getEmojiedString(original) {
 
     return transformed;
 }
+
+function updateUpVote(answerId, success) {
+    var upvoteButton = $(".upvote-ul a[data-answerId='" + answerId + "']");
+
+    if ($(upvoteButton).hasClass('active')) {
+        $(upvoteButton).attr('title', 'You have already upvoted this answer.');
+        return;
+    }
+
+    var textSpan = $(upvoteButton).find('span');
+    var icon = $(upvoteButton).find('i.fa');
+    $(icon).addClass('fa-circle-o-notch fa-spin');
+
+    scAjax({
+        "url": "answers/UpdateUpVoteCount",
+        "type": "POST",
+        "data": JSON.stringify({
+            "AnswerID": answerId
+        }),
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+            if (success && typeof success === 'function') {
+                success();
+            }
+
+            $(upvoteButton).addClass('active');
+            $(textSpan).text('Upvoted');
+            $(icon).removeClass('fa-arrow-up fa-circle-o-notch fa-spin').addClass('fa-thumbs-up');
+        }
+    });
+}
+
+function followQuestion(questionId) {
+    var button = $("#" + questionId);
+    //var questionId = $(button).attr('data-questionId');
+    var textSpan = $(button).find('span');
+    var icon = $(button).find('i.fa');
+    $(icon).addClass('fa-circle-o-notch fa-spin');
+
+    if ($(button).hasClass('active')) {
+        updateFollowQuestion(false, questionId, function () {
+            $(button).removeClass('active');
+            $(textSpan).text('Follow');
+            $(icon).removeClass('fa-check fa-circle-o-notch fa-spin').addClass('fa-plus-circle');
+        });
+    }
+    else {
+        updateFollowQuestion(true, questionId, function () {
+            $(button).addClass('active');
+            $(textSpan).text('Following');
+            $(icon).removeClass('fa-plus-circle fa-circle-o-notch fa-spin').addClass('fa-check');
+        });
+    }
+}

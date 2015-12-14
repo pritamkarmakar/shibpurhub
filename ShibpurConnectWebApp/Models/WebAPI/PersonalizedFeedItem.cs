@@ -10,10 +10,19 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class PersonalizedFeedItem
     {
         [DataMember]
+        public string LogId { get; set; }
+
+        [DataMember]
         public int ActivityType { get; set; }
         
         [DataMember]
         public string UserId { get; set; }
+
+        [DataMember]
+        public string QuestionId { get; set; }
+
+        [DataMember]
+        public string AnswerId { get; set; }
 
         [DataMember]
         public string UserName { get; set; }

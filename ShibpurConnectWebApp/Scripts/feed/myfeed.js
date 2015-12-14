@@ -29,6 +29,8 @@ function loadFeeds(page) {
 			$('#alreadyShown').val(result.alreadyProcessedItemCount);
 
 			var userIds = [];
+			var questionIds = [];
+			var answerIds = [];
 			$(feeds).each(function (index, feed) {
 				if (feed.itemHeader) {
 					var htmlItem = $('div.item.hide').clone().removeClass('hide');
@@ -74,6 +76,9 @@ function loadFeeds(page) {
 					if (feed.activityType == 1 || feed.activityType == 8) {
 						$(htmlItem).find('.follow-ul').show();
 						var followButton = $(htmlItem).find('.follow-ul a.thumbs');
+						questionIds.push(feed.questionId);
+						$(followButton).attr({ 'data-questionId': feed.questionId, 'id': feed.questionId });
+
 						if (feed.isFollowedByme) {
 							$(followButton).addClass('active');
 							$(followButton).find('span').text('Following');
@@ -81,44 +86,25 @@ function loadFeeds(page) {
 						}
 						$(followButton).click(function (event) {
 							event.preventDefault();
-
-							var button = $(this);
-							var textSpan = $(button).find('span');
-							var icon = $(button).find('i.fa');
-							if ($(button).hasClass('active')) {
-								$(button).removeClass('active');
-								$(textSpan).text('Follow');
-								$(icon).removeClass('fa-check').addClass('fa-plus-circle');
-							}
-							else {
-								$(button).addClass('active');
-								$(textSpan).text('Following');
-								$(icon).removeClass('fa-plus-circle').addClass('fa-check');
-							}
+							followQuestion(feed.questionId);
 						});
 					}
 
 					if (feed.activityType == 2 || feed.activityType == 5) {
 						$(htmlItem).find('.upvote-ul').show();
 						var upvoteButton = $(htmlItem).find('.upvote-ul a.thumbs');
+						var answerId = feed.answerId;
+						answerIds.push(answerId);
+						$(upvoteButton).attr({ 'data-answerId': answerId, 'id': answerId });
+
 						if (feed.isUpvotedByme) {
 							$(upvoteButton).addClass('active');
 							$(upvoteButton).find('span').text('Upvoted');
+							$(upvoteButton).find('i.fa').removeClass('fa-arrow-up fa-circle-o-notch fa-spin').addClass('fa-thumbs-up');
 						}
 						$(upvoteButton).click(function (event) {
 							event.preventDefault();
-
-							var button = $(this);
-							var textSpan = $(button).find('span');
-
-							if ($(button).hasClass('active')) {
-								$(button).removeClass('active');
-								$(textSpan).text('Upvote');
-							}
-							else {
-								$(button).addClass('active');
-								$(textSpan).text('Upvoted');
-							}
+							updateUpVote(answerId);
 						});
 					}
 
@@ -136,6 +122,7 @@ function loadFeeds(page) {
 			});
 
 			createUserFeeds(userIds);
+			updateQnAStatus(questionIds, answerIds);
 			if (!page) {
 				var loadMoreDiv = $("div.feed-list .load").clone().removeClass('hide');
 				$("div.feed-list").append(loadMoreDiv);

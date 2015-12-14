@@ -1,16 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Http;
-using System.Web.Http.Results;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using MongoDB.Bson;
 using ShibpurConnectWebApp.Controllers.WebAPI;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
@@ -23,7 +17,6 @@ using System.Collections.Specialized;
 using System.Security.Claims;
 using Hangfire;
 using ShibpurConnectWebApp.Providers;
-using WebApi.OutputCache.Core.Cache;
 
 namespace ShibpurConnectWebApp.Controllers
 {
@@ -175,7 +168,7 @@ namespace ShibpurConnectWebApp.Controllers
                     if(TempData["IsEmailConfirmed"] != null)
                     {
                         TempData["IsEmailConfirmed"] = null;
-                        return RedirectToAction("Index", "Feed");
+                        return RedirectToAction("MyFeeds", "Feed");
                     }
 
                     if (Url.IsLocalUrl(returnUrl))
@@ -183,7 +176,7 @@ namespace ShibpurConnectWebApp.Controllers
                         return Redirect(returnUrl);
                     }
 
-                    return RedirectToAction("Index", "Feed");
+                    return RedirectToAction("MyFeeds", "Feed");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
