@@ -20,7 +20,7 @@ angular.module("AdminApp", [])
         var len = $scope.questions.length;
         var index = -1;
         for (var i = 0; i < len; i += 1) {
-            if ($scope.questions[i].questionId === this.deletedQuestionId) {
+            if ($scope.questions[i].questionId === deletedQuestionId) {
                 index = i;
                 break;
             }
