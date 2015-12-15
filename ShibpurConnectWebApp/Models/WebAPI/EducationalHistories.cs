@@ -13,7 +13,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     public class EducationalHistories
     {
         [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [DataMember]

@@ -634,6 +634,7 @@
     <Content Include="Views\Career\JobDetails.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\PartialViews\_TopNavBar.cshtml" />
+    <Content Include="Views\PartialViews\_EditedDepartmentDropdown.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

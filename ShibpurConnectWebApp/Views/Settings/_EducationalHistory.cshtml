@@ -45,7 +45,7 @@
             e.preventDefault();
             if ($(".educationform")[0].checkValidity()) {
                 saveEducationalHistory();
-            } else Command: toastr["error"]("All form fields are mandatory")
+            } else Command: toastr["error"]("All form fields are mandatory");
 
         });
 
@@ -86,7 +86,10 @@
             success: function (data, result) {
                 if (result) {
                     // display success message
-                    Command: toastr["success"]("Saved educational data")
+                    Command: toastr["success"]("Saved educational data",{
+                    timeOut: 0,
+                    extendedTimeOut: 0
+                });
                     // disply loading spinner
                     $('#loadingeducations').show();
                     // clear form values
@@ -98,7 +101,7 @@
                         url: SERVER + "educationalhistories/geteducationalhistories",
                         type: "GET",
                         dataType: "json",
-                        data: { "userEmail": userInfo.email },
+                        data: { "userId": userInfo.id },
                         contentType: "application/json",
                         headers: {
                             Accept: "application/json",
@@ -158,8 +161,7 @@
     }    
 
     // get the existing education details, when user load this partial view
-    function loadEducations() {     
-
+    function loadEducations() {
         // disply loading spinner
         $('#loadingeducations').show();
         var SERVER = "/api/";
@@ -167,7 +169,7 @@
             url: SERVER + "educationalhistories/GetEducationalHistories",
             type: "GET",
             dataType: "json",
-            data: { "userEmail": profileEmail },
+            data: { "userId": userInfo.id },
             contentType: "application/json",
             headers: {
                 Accept: "application/json",
@@ -187,10 +189,9 @@
                 // iterate over all the educational histories
                 if (result != null) {
                     jQuery.each(result, function (i, val) {
-                        $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
-                        if (i != result.length - 1) {
-                            $('.educationbody').append("<hr id='dotted'/>");
-                        }
+                        $('.educationbody').append("<div id='" + val.id + "'class=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><br><span id=\"year\">" + val.graduateYear + "</span></div>");
+                        $('.educationbody').append("<button class='btn btn-primary btn-xs' id='editeducationinfobutton' onclick='loadEditEducationForm($(this).prev()); return false;' style='float:right;'>Edit</button><br />");
+                        $('.educationbody').append("<hr id='dotted'/>");
                     });
                 }
 
@@ -207,9 +208,85 @@
         });
     }
 
+    // this will trigger when user will click on the 'Edit' button of the individual education history.
+    // this method will populate the values in the form field
+    function loadEditEducationForm(req) {
+        $("#editeducationdiv").slideToggle();
+        var universityname = req.find('span#collegeName').text();
+        var graduateyear = req.find('span#year').text();
+
+        // set the form field values
+        $("#editEducationButton").attr("onclick", "saveEditEducation('" + req[0].id + "'); return false;");
+        $(".editeduniversityname").val(universityname);
+        $(".editedgraduateyear").val(graduateyear);
+    }
+
     // if user click on the Cancel button in the newEducation div then collapse that div
     function cancelSaveEducationalHistory() {
         $("#neweducationdiv").slideToggle();
+    }
+
+    // method to save the employment details to database after changes done by user
+    function saveEditEducation(educationId) {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            // show the error dialog
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+        var token = sessionStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        var educationalHistory = '{"Id":' + '"' + educationId + '"' + ',"Department":' + '"' + $('#EditedDepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('.editeduniversityname').val() + '"' + ',"GraduateYear":' + '"' + $('.editedgraduateyear').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + '}';
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('#editEducationButton > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#editEducationButton > span').text(' Saving...');
+
+        $.ajax({
+            url: SERVER + "educationalhistories/editeducationalhistory",
+            type: "POST",
+            data: educationalHistory,
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {
+                    // close the new edit employment form
+                    $("#editeducationdiv").slideToggle();
+                    // clear the previous values
+                    $('#CompanyName').val("");
+                    $('input#employmentfromdate').val("");
+                    $('#employmenttodate').val("");
+                    $('#Title').val("");
+                    $('#Location').val("");
+
+                    // remove the loading class from save button
+                    $('#editEducationButton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#editEducationButton > span').text('Update');
+
+                    // get the latest data from server and update the profile page
+                    loadEducations();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorMessage = "";
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+
+                Command: toastr["error"](errorresponse.message);
+                // remove the loading class from save button
+                $('#editEducationButton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#editEducationButton > span').text('Save');
+            }
+        });
+    }
+
+    function cancelEditEducationHistory() {
+        $("#editeducationdiv").slideToggle();
+        $('html, body').animate({ scrollTop: $("#newemploymentdiv").offset().top - 50 }, 'slow');
     }
 </script>
 
@@ -259,3 +336,35 @@
     </div>
 </div>
 
+ <!--Add new edit education div -->
+<div id="editeducationdiv" style="display:none">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form class="educationform top-buffer2 form-horizontal" method="post">
+                <div class="form-group">
+                    <label for="universityname" class="col-md-3 control-label">University name</label>
+                    <div class="col-md-9">
+                        <input class="form-control editeduniversityname" data-val="true" data-val-required="The Password field is required." id="universityname" name="UniversityName" placeholder="University name" type="text" aria-required="true" required>
+                    </div>
+                </div>
+
+                @Html.Partial("../PartialViews/_EditedDepartmentDropdown")
+
+                <div class="form-group">
+                    <label for="GraduateYear" class="col-md-3 control-label">Graduation year</label>
+                    <div class="col-md-9">
+                        <input class="form-control editedgraduateyear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout year/expected passout year" type="text" aria-required="true" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-3 col-md-10">
+                        <button type="submit" id="editEducationButton" class="btn btn-primary btn-sm">
+                            <i></i><span>Update</span>
+                        </button>
+                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEducationHistory(); return false;" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

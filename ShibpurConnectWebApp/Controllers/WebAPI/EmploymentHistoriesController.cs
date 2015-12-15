@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -35,11 +37,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // GET: api/Employment/getemploymenthistory?useremail=
         // this api will return all employment histories of a user
         [ResponseType(typeof(EmploymentHistories))]
-        public async Task<IHttpActionResult> GetEmploymentHistories(string userEmail)
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public async Task<IHttpActionResult> GetEmploymentHistories(string userId)
         {
             // get the userID and verify userEmail is valid or not
             Helper.Helper helper = new Helper.Helper();
-            var actionResult = helper.FindUserByEmail(userEmail);
+            var actionResult = helper.FindUserById(userId);
             var userInfo = await actionResult;
 
             if (userInfo == null)
@@ -50,9 +53,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return Ok(employmentHistory);
         }
 
+        [Authorize]
         [ResponseType(typeof(EmploymentHistories))]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
-        public IHttpActionResult PostEmploymentHistory(EmploymentHistories employmentHistory)
+        public async Task<IHttpActionResult> PostEmploymentHistory(EmploymentHistories employmentHistory)
         {
             if (!ModelState.IsValid)
             {
@@ -63,8 +67,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("Request body is null. Please send a valid EmploymentHistory object");
             }
 
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
             // add the guid id for this record
-            employmentHistory.Id = ObjectId.GenerateNewId();
+            employmentHistory.Id = ObjectId.GenerateNewId().ToString();
 
             // save the entry in database
             var result = _mongoHelper.Collection.Save(employmentHistory);
@@ -72,6 +87,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
+
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+            // invalidate the getemploymenthistories api call for this user
+            cache.RemoveStartsWith("employmenthistories-getemploymenthistories-userId=" + userInfo.Id);
+            cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
             
             // add the new entry in elastic search
             var client = _elasticSearchHelper.ElasticClient();
@@ -88,8 +110,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // DELETE: api/EmploymentHistories/5
+        [Authorize]
         [ResponseType(typeof(EmploymentHistories))]
-        public IHttpActionResult DeleteEmploymentHistory(string id)
+        public async Task<IHttpActionResult> DeleteEmploymentHistory(string id)
         {
             EmploymentHistories employmentHistory = _mongoHelper.Collection.FindOneById(id);
             if (employmentHistory == null)
@@ -97,23 +120,94 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return NotFound();
             }
 
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            // make sure the user requesting this is the owner of the database record. We will not allow one user to update record for any other user
+            if (employmentHistory.UserId != userInfo.Id)
+            {
+                return BadRequest("You are not allowed to edit this record");
+            }
+
             _mongoHelper.Collection.Remove(Query.EQ("Id", id));
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+
+            // invalidate the getemploymenthistories api call for this user
+            cache.RemoveStartsWith("employmenthistories-getemploymenthistories-userId=" + userInfo.Id);
 
             return Ok(employmentHistory);
         }
 
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        db.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
+        /// <summary>
+        /// API to update employment history record of an user
+        /// </summary>
+        /// <param name="employmentHistories">EmploymentHistories object</param>
+        /// <returns></returns>
+        [Authorize]
+        public async Task<IHttpActionResult> EditEmploymentHistory(EmploymentHistories employmentHistories)
+        {
+            EmploymentHistories employmentHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.Id == employmentHistories.Id).ToList()[0];
+            if (employmentHistory == null)
+            {
+                return BadRequest("Invalid employment history id");
+            }
 
-        //private bool EmploymentHistoryExists(string id)
-        //{
-        //    return db.EmploymentHistories.Count(e => e.Id == id) > 0;
-        //}
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            // make sure the user requesting this is the owner of the database record. We will not allow one user to update record for any other user
+            if (employmentHistory.UserId != userInfo.Id)
+            {
+                return BadRequest("You are not allowed to edit this record");
+            }
+
+            // update the employment history record with whatever user send
+            employmentHistory.CompanyName = employmentHistories.CompanyName;
+            employmentHistory.Location = employmentHistories.Location;
+            employmentHistory.Title = employmentHistories.Title;
+            employmentHistory.From = employmentHistories.From;
+            employmentHistory.To = employmentHistories.To;
+
+            // save the record in database
+            try
+            {
+                var result= _mongoHelper.Collection.Save(employmentHistory);
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    return InternalServerError();
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getemploymenthistories api call for this user
+                cache.RemoveStartsWith("employmenthistories-getemploymenthistories-userId=" + userInfo.Id);
+                cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+
+                return CreatedAtRoute("DefaultApi", new { id = employmentHistories.Id }, employmentHistory);
+            }
+            catch (MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

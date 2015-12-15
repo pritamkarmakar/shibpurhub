@@ -37,6 +37,7 @@
         });
     });
 
+
     // function to load all existing employment histories
     function loadEmployments() {
         // disply loading spinner
@@ -49,7 +50,7 @@
             url: SERVER + "employmenthistories/getemploymenthistories",
             type: "GET",
             dataType: "json",
-            data: { "userEmail": userInfo.email },
+            data: { "userId": userInfo.id },
             contentType: "application/json",
             headers: {
                 Accept: "application/json",
@@ -85,11 +86,9 @@
                     else {
                         toDate = "Present";
                     }
-                    $('.experiencebody').append("<div id=\"employmentDetails\"><span id=\"experience\">" + val.title + ", " + "<span id=\"companyname\">" + val.companyName + "</span></span><br><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
-                    if (i != result.length - 1) {
-                        $('.experiencebody').append("<hr id='dotted'/>");
-                    }
-
+                    $('.experiencebody').append("<div id='"+ val.id +"' class=\"employmentDetails\"><span id=\"companyname\">" + val.companyName + "</span><br><span id=\"designation\">" + val.title + "</span><br><span id=\"joblocation\">" + val.location + "</span><br><span id=\"jobstartdate\" style='display:none;'>" + val.from + "</span><span id=\"jobenddate\" style='display:none;'>" + val.to + "</span><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
+                    $('.experiencebody').append("<button class='btn btn-primary btn-xs' id='editexperienceinfobutton' onclick='loadEditEmploymentForm($(this).prev()); return false;' style='float:right;'>Edit</button><br />");
+                    $('.experiencebody').append("<hr id='dotted'/>");
                 });
 
                 // hide the loading spinner
@@ -103,6 +102,32 @@
                 $('#loadingexperience').hide();
             }
         });
+    }
+
+    // this will trigger when user will click on the 'Edit' button of the individual emaployment history.
+    // this method will populate the values in the form field
+    function loadEditEmploymentForm(req) {
+        $("#editemploymentdiv").slideToggle();
+        var companyName = req.find('span#companyname').text();
+        var designartion = req.find('span#designation').text();
+        var location = req.find('span#joblocation').text();
+        var jobstartdate = req.find('span#jobstartdate').text();
+        var jobenddate = req.find('span#jobenddate').text();
+
+        // extract the start, end time
+        var startdate = new Date(jobstartdate);
+        var enddate = new Date(jobenddate);
+        var startdateformatted = startdate.getMonth() + 1 + "/" + startdate.getDate() + "/" + startdate.getFullYear();
+        var enddateformatted = enddate.getMonth() + 1 + "/" + enddate.getDate() + "/" + enddate.getFullYear();
+
+        // set the form field values
+        $("#editEmploymentDetails").attr("onclick", "saveEditEmployment('" + req[0].id + "'); return false;");
+        $(".editedCompanyName").val(companyName);
+        $(".editedDesignation").val(designartion);
+        $(".editedJobLocation").val(location);
+        $('input#editedemploymentfromdate').val(startdateformatted);
+        if (jobenddate != "null")
+            $('input#editedemploymenttodate').val(enddateformatted);
     }
 
     // method to save new employment history
@@ -134,6 +159,11 @@
             },
             success: function (data, result) {
                 if (result) {
+                    // display toast notification
+                    Command: toastr["success"]("Saved employment data", {
+                        timeOut: 0,
+                        extendedTimeOut: 0
+                    });
                     // close the new employment form
                     $("#newemploymentdiv").slideToggle();
                     // clear the previous values
@@ -162,10 +192,73 @@
         });
     }
 
+    // method to save the employment details to database after changes done by user
+    function saveEditEmployment(employmentId) {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            // show the error dialog
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+        var token = sessionStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+        var employmentHistory = '{"Id":'+'"'+ employmentId +'"'+',"CompanyName":' + '"' + $('.editedCompanyName').val() + '"' + ',"From":' + '"' + $('input#editedemploymentfromdate').val() + '"' + ',"To":' + '"' + $('input#editedemploymenttodate').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + ',"Title":' + '"' + $('.editedDesignation').val() + '"' +
+            ',"Location":' + '"' + $('.editedJobLocation').val() + '"' + '}';
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('#editEmploymentDetails > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#editEmploymentDetails > span').text(' Saving...');
+
+        $.ajax({
+            url: SERVER + "employmenthistories/editemploymenthistory",
+            type: "POST",
+            data: employmentHistory,
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {
+                    // close the new edit employment form
+                    $("#editemploymentdiv").slideToggle();
+                    // clear the previous values
+                    $('#CompanyName').val("");
+                    $('input#employmentfromdate').val("");
+                    $('#employmenttodate').val("");
+                    $('#Title').val("");
+                    $('#Location').val("");
+
+                    // remove the loading class from save button
+                    $('#editEmploymentDetails > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#editEmploymentDetails > span').text('Update');
+
+                    // get the latest data from server and update the profile page
+                    loadEmployments();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorMessage = "";
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+
+                Command: toastr["error"](errorresponse.message);
+                // remove the loading class from save button
+                $('#editEmploymentDetails > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#editEmploymentDetails > span').text('Save');
+            }
+        });
+    }
 
     // if user click on the Cancel button in the newEmployment div then collapse that div
     function cancelSaveEmploymentHistory() {
         $("#newemploymentdiv").slideToggle();
+        $('html, body').animate({ scrollTop: $("#newemploymentdiv").offset().top - 50 }, 'slow');
+    }
+
+    function cancelEditEmploymentHistory() {
+        $("#editemploymentdiv").slideToggle();
         $('html, body').animate({ scrollTop: $("#newemploymentdiv").offset().top - 50 }, 'slow');
     }
 </script>
@@ -183,28 +276,28 @@
     </div>
 </div>
 
-<div id="newemploymentdiv" style="display:none">
+<div id="newemploymentdiv" style="display: none">
     <div class="panel panel-default">
         <div class="panel-body">
             <form class="newemploymentform form-horizontal" method="post">
                 <div class="form-group">
-                    @Html.LabelFor(m => m.CompanyName, "Company Name", new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.CompanyName, "Company Name", new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control", @placeholder = "Company Name" })
+                        @Html.TextBoxFor(m => m.CompanyName, new {@class = "form-control", @placeholder = "Company Name"})
                     </div>
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Title, "Job Title", new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.Title, "Job Title", new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", @placeholder = "Your job title/designation" })
+                        @Html.TextBoxFor(m => m.Title, new {@class = "form-control", @placeholder = "Your job title/designation"})
                     </div>
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Location, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.Location, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Location, new { @class = "form-control", @placeholder = "Location of this employment" })
+                        @Html.TextBoxFor(m => m.Location, new {@class = "form-control", @placeholder = "Location of this employment"})
                     </div>
                 </div>
 
@@ -212,7 +305,7 @@
                     <label for="date-picker" class="col-md-2 control-label">Employment start date</label>
                     <div class="controls col-md-10">
                         <div class="input-group">
-                            <input id="employmentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)" />
+                            <input id="employmentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)"/>
                             <label for="employmentfromdate" class="input-group-addon btn">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </label>
@@ -223,7 +316,7 @@
                     <label for="date-picker" class="col-md-2 control-label">Employment end date</label>
                     <div class="controls col-md-10">
                         <div class="input-group">
-                            <input id="employmenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)" />
+                            <input id="employmenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)"/>
                             <label for="employmenttodate" class="input-group-addon btn">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </label>
@@ -232,11 +325,73 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">                     
+                    <div class="col-md-offset-2 col-md-10">
                         <button type="submit" id="addNewEmployment" class="btn btn-primary btn-sm">
                             <i></i><span>Save</span>
-                        </button>                   
-                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEmploymentHistory(); return false;" />
+                        </button>
+                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEmploymentHistory(); return false;"/>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="editemploymentdiv" style="display:none">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form class="newemploymentform form-horizontal" method="post">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyName, "Company Name", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control editedCompanyName", @placeholder = "Company Name" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Title, "Job Title", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control editedDesignation", @placeholder = "Your job title/designation" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Location, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Location, new { @class = "form-control editedJobLocation", @placeholder = "Location of this employment" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="date-picker" class="col-md-2 control-label">Employment start date</label>
+                    <div class="controls col-md-10">
+                        <div class="input-group">
+                            <input id="editedemploymentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)" />
+                            <label for="editedemploymentfromdate" class="input-group-addon btn">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="date-picker" class="col-md-2 control-label">Employment end date</label>
+                    <div class="controls col-md-10">
+                        <div class="input-group">
+                            <input id="editedemploymenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)" />
+                            <label for="editedemploymenttodate" class="input-group-addon btn">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" id="editEmploymentDetails" class="btn btn-primary btn-sm">
+                            <i></i><span>Update</span>
+                        </button>
+                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEmploymentHistory(); return false;" />
                     </div>
 
                 </div>

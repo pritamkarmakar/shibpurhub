@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace ShibpurConnectWebApp.Models.WebAPI
 {
+
     [Serializable]
     [DataContract(IsReference = true)]
     [JsonObject(IsReference = false)]
@@ -17,7 +18,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     {
         // Primary key
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
         [Required (ErrorMessage = "Company Name field is mandatory")]
         [DataMember]        

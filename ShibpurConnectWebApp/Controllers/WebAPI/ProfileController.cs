@@ -74,12 +74,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // get the user education details
             EducationalHistoriesController educationalHistoriesController = new EducationalHistoriesController();
-            IHttpActionResult actionResult2 = await educationalHistoriesController.GetEducationalHistories(userInfo.Email);
+            IHttpActionResult actionResult2 = await educationalHistoriesController.GetEducationalHistories(userInfo.Id);
             var education = actionResult2 as OkNegotiatedContentResult<List<EducationalHistories>>;
 
             // get the user employment details
             EmploymentHistoriesController employmentHistoriesController = new EmploymentHistoriesController();
-            IHttpActionResult actionResult3 = await employmentHistoriesController.GetEmploymentHistories(userInfo.Email);
+            IHttpActionResult actionResult3 = await employmentHistoriesController.GetEmploymentHistories(userInfo.Id);
             var employment = actionResult3 as OkNegotiatedContentResult<List<EmploymentHistories>>;
 
             // now form the UserProfile object
@@ -115,12 +115,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // get the user education details
             EducationalHistoriesController educationalHistoriesController = new EducationalHistoriesController();
-            IHttpActionResult actionResult2 = await educationalHistoriesController.GetEducationalHistories(userInfo.Email);
+            IHttpActionResult actionResult2 = await educationalHistoriesController.GetEducationalHistories(userInfo.Id);
             var education = actionResult2 as OkNegotiatedContentResult<List<EducationalHistories>>;
 
             // get the user employment details
             EmploymentHistoriesController employmentHistoriesController = new EmploymentHistoriesController();
-            IHttpActionResult actionResult3 = await employmentHistoriesController.GetEmploymentHistories(userInfo.Email);
+            IHttpActionResult actionResult3 = await employmentHistoriesController.GetEmploymentHistories(userInfo.Id);
             var employment = actionResult3 as OkNegotiatedContentResult<List<EmploymentHistories>>;
 
             // now form the UserProfile object

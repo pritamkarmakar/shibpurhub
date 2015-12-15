@@ -2,12 +2,15 @@
 using System.Collections;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
 using System.Web.Http.Results;
 using MongoDB.Bson;
+using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
@@ -39,18 +42,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return _mongoHelper.Collection.FindAll().ToList();
         }
 
-        // GET: api/Educational/GetEducationalHistories?useremail=
+        // GET: api/Educational/GetEducationalHistories?userId=
         /// <summary>
         /// Api to get all educational histories of a user
         /// </summary>
-        /// <param name="userEmail">user email</param>
+        /// <param name="userId">userId</param>
         /// <returns></returns>
         [ResponseType(typeof(EducationalHistories))]
-        public async Task<IHttpActionResult> GetEducationalHistories(string userEmail)
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public async Task<IHttpActionResult> GetEducationalHistories(string userId)
         {
             // get the userID and verify userEmail is valid or not
             Helper.Helper helper = new Helper.Helper();
-            var actionResult = helper.FindUserByEmail(userEmail);
+            var actionResult = helper.FindUserById(userId);
             var userInfo = await actionResult;
 
             if (userInfo == null)
@@ -66,9 +70,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="educationalHistory"></param>
         /// <returns></returns>
+        [Authorize]
         [ResponseType(typeof(EducationalHistories))]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
-        public IHttpActionResult PostEducationalHistory(EducationalHistories educationalHistory)
+        public async Task<IHttpActionResult> PostEducationalHistory(EducationalHistories educationalHistory)
         {
             if (!ModelState.IsValid)
             {
@@ -77,6 +82,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             if (educationalHistory == null)
                 return BadRequest("Request body is null. Please send a valid EducationalHistory object");
+
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
 
             // read the corresponding department id
             DepartmentsController DC = new DepartmentsController();
@@ -91,7 +107,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             //educationalHistory.Department = contentResult.Content.Id;
             
             // generate the unique id for this new record
-            educationalHistory.Id = ObjectId.GenerateNewId();
+            educationalHistory.Id = ObjectId.GenerateNewId().ToString();
 
             // save the entry in the database
             var result = _mongoHelper.Collection.Save(educationalHistory);
@@ -99,6 +115,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if mongo failed to save the data then send error
             if (!result.Ok)
                 return InternalServerError();
+
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+            // invalidate the getemploymenthistories api call for this user
+            cache.RemoveStartsWith("educationalhistories-geteducationalhistories-userId=" + userInfo.Id);
+            cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
 
             // add the new entry in elastic search
             var client = _elasticSearchHelper.ElasticClient();
@@ -114,24 +137,90 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = educationalHistory.Id }, educationalHistory);
         }
 
-        // DELETE: api/EducationalHistories/5
         /// <summary>
-        /// Delete a education history record by its id
+        /// API to update an educational history record of an user
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="educationalHistories">EducationalHistories object</param>
         /// <returns></returns>
-        [ResponseType(typeof(EducationalHistories))]
-        public IHttpActionResult DeleteEducationalHistory(string id)
+        [Authorize]
+        public async Task<IHttpActionResult> EditEducationalHistory(EducationalHistories educationalHistories)
         {
-            EducationalHistories educationalHistory = _mongoHelper.Collection.FindOneById(id);
-            if (educationalHistory == null)
+            if(educationalHistories == null)
+                return BadRequest("null educationalHistories supplied");
+            if(educationalHistories.Id == null)
+                return BadRequest("educationalHistories id can't be null");
+
+            EducationalHistories educationHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.Id == educationalHistories.Id).ToList()[0];
+            if (educationHistory == null)
             {
-                return NotFound();
+                return BadRequest("Invalid educational history id");
             }
 
-            _mongoHelper.Collection.Remove(Query.EQ("Id", id));
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
 
-            return Ok(educationalHistory);
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            // make sure the user requesting this is the owner of the database record. We will not allow one user to update record for any other user
+            if (educationHistory.UserId != userInfo.Id)
+            {
+                return BadRequest("You are not allowed to edit this record");
+            }
+
+            // update the employment history record with whatever user send
+            educationHistory.Department = educationalHistories.Department;
+            educationHistory.GraduateYear = educationalHistories.GraduateYear;
+            educationHistory.UniversityName = educationalHistories.UniversityName;
+            educationalHistories.UserId = userInfo.Id;
+
+            // save the record in database
+            try
+            {
+                var result = _mongoHelper.Collection.Save(educationHistory);
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    return InternalServerError();
+
+                // invalidate the cache for the action those will get impacted due to this new answer post
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                // invalidate the getemploymenthistories api call for this user
+                cache.RemoveStartsWith("educationalhistories-geteducationalhistories-userId=" + userInfo.Id);
+                cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+
+                return CreatedAtRoute("DefaultApi", new { id = educationHistory.Id }, educationHistory);
+            }
+            catch (MongoConnectionException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
+        //// DELETE: api/EducationalHistories/5
+        ///// <summary>
+        ///// Delete a education history record by its id
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns></returns>
+        //[ResponseType(typeof(EducationalHistories))]
+        //public IHttpActionResult DeleteEducationalHistory(string id)
+        //{
+        //    EducationalHistories educationalHistory = _mongoHelper.Collection.FindOneById(id);
+        //    if (educationalHistory == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _mongoHelper.Collection.Remove(Query.EQ("Id", id));
+
+        //    return Ok(educationalHistory);
+        //}
     }
 }
