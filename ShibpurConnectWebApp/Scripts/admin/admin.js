@@ -4,16 +4,36 @@ angular.module("AdminApp", [])
 
     var page = 0;
     $scope.questions = [];
+    var deletedQuestionId;
     var onReceiveRespone = function(response){
         
         angular.forEach(response.data, function (key, value) {            
             key.description = $sce.trustAsHtml(key.description);
             $scope.questions.push(key);
         });
+        
+        $scope.isLoading = false;
     };
+    
+    var onDelete = function()
+    {
+        var len = $scope.questions.length;
+        var index = -1;
+        for (var i = 0; i < len; i += 1) {
+            if ($scope.questions[i].questionId === this.deletedQuestionId) {
+                index = i;
+                break;
+            }
+        }
 
+        if (index !== -1) {
+            $scope.questions.splice(index,1);
+        }
+    }
+ 
     function loadQuestions(page)
     {
+        $scope.isLoading = true;
         var questions = $http({
             url: "api/questions/GetQuestions",
             method: "GET",
@@ -27,8 +47,8 @@ angular.module("AdminApp", [])
     };
 
     $scope.deleteQuestion = function (questionId) {
-
-        $http.post('api/questions/DeleteQuestion', { 'QuestionId': questionId });
+        deletedQuestionId = questionId;
+        $http.post('api/questions/DeleteQuestion', { 'QuestionId': questionId }).then(onDelete);
     };
 
     loadQuestions(0);

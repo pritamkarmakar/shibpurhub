@@ -3,7 +3,7 @@
 }
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css")" />
 <script src="@Url.Content("~/Scripts/angular.min.js")"></script>
-<script src="@Url.Content("~/Scripts/admin/admin.js")"></script>
+<script src="@Url.Content("~/Scripts/admin/admin.js?v=1.0")"></script>
 <style>
     img {
         float: left;
@@ -52,7 +52,8 @@ a[ng-click]{
         <div class="row load">
             <div class="col-xs-12 thread text-center loadMoreContainer">
                 <a ng-click="laodMore()" class="loadMore" id="loadMoreBtn">
-                    <span class="toggleThis loadlabel" style="display: inline;">Load more</span>
+                    <span ng-show="!isLoading">Load more</span>
+                    <span ng-show="isLoading"><i class="fa fa-spinner fa-spin fa-fw"></i> Loading more..</span>
                 </a>
             </div>
         </div>
