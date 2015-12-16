@@ -315,6 +315,23 @@ namespace ShibpurConnectWebApp.Helper
             }
         }
 
+        public CustomUserInfo UpdateCareerInfo(string userId, string designation, string education)
+        {
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                ApplicationUser user = _repo.UpdateCareerInfo(userId, designation, education);
+
+                if (user == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return GetCustomUserInfoFromAppicationUser(user, null, null);
+                }
+            }
+        }
+
         private CustomUserInfo GetCustomUserInfoFromAppicationUser(ApplicationUser user, string edh, string emh)
         {
             return new CustomUserInfo()

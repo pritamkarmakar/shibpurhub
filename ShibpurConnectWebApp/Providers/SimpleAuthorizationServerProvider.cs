@@ -263,6 +263,29 @@ namespace ShibpurConnectWebApp.Providers
             return user;
         }
 
+        internal ApplicationUser UpdateCareerInfo(string userId, string designation, string education)
+        {
+            ApplicationUser user = _userManager.FindById(userId);
+            if (user != null)
+            {
+                user.Designation = designation;
+                user.EducationInfo = education;
+                var updatedUser = _userManager.Update(user);
+
+                // update same profile image in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+                client.Update<CustomUserInfo, object>(u => u
+                            .Index("my_index")
+                            .Id(userId)
+                            .Type("customuserinfo")
+                            .Doc(new { Designation = designation, EducationInfo = education }));
+            }
+
+            return user;
+        }
+
         /// <summary>
         /// Method to add a new tag in users collection for a particular user
         /// </summary>
