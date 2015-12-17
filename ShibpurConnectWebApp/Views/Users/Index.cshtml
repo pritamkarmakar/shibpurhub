@@ -167,7 +167,7 @@
     div.follow-small:hover {
         background: #CFD8DC;
     }
-
+    
     /*div.user a.profile:hover
     {
         color: #fff;
@@ -207,6 +207,27 @@
             });
         });
     }
+    
+    function handleToggleViewClick()
+    {
+        $('.toggle-view').click(function(){
+            var button = $(this);
+            var icon = $(button).find('i.fa');
+            if($(button).hasClass('grid-view'))
+            {
+                $(button).removeClass('grid-view');
+                $(icon).removeClass('fa-list').addClass('fa-grid-large');
+            }
+            else
+            {
+                $(button).addClass('grid-view');
+                $(icon).removeClass('fa-grid-large').addClass('fa-list');
+            }
+            
+            $('#userlist').toggle();
+            $('.table-responsive').toggle();
+        });
+    }
 
     function getProfileHtml(userinfo)
     {
@@ -217,6 +238,16 @@
         {
             followingClass = "hide";
         }
+        
+        var row = $("<tr>");
+        $(row).append($('<td>').text(userinfo.firstName + " " + userinfo.lastName));
+        $(row).append($('<td>').text(userinfo.educationInfo));
+        $(row).append($('<td>').text(userinfo.designation));
+        $(row).append($('<td>').text(userinfo.location));
+        $(row).append($('<td>').html("<div class='follow-small " + followingClass + "' id=" + userinfo.id + "><i class='fa " + iconClass + "'></i> </div>"));
+        
+        $('.table tbody').append(row);
+        
         return "<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'> \
                 <a href='/Account/Profile?userId=" + userinfo.id + "'> \
                     <div class='profileimage' style='background-image: url(" + profileImgUrl + ")'></div>" + userinfo.firstName + " " + userinfo.lastName + "</a> \
@@ -246,6 +277,7 @@
                     $('#userlist').append(getProfileHtml(userinfo));
                 });
                 handleFollowClick();
+                handleToggleViewClick();
             }
         });
     });
@@ -326,12 +358,15 @@
         <div class="row">
             <div class="row">
                 <form role="search">
-                    <div class="input-group input-group-sm" id="the-basics">
-                        <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">
-                        @*<div class="input-group-btn">
-                            <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
-                        </div>*@
+                    <div class="col-md-11">
+                        <div class="input-group input-group-sm" id="the-basics">
+                            <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">
+                            @*<div class="input-group-btn">
+                                <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+                            </div>*@
+                        </div>
                     </div>
+                    <button class="btn-default toggle-view grid-view" <i class="fa fa-list"></i> </button>
                 </form>
                 @*<div id="the-basics">
                     <input class="typeahead" type="text" placeholder="States of USA">
@@ -343,6 +378,12 @@
         </div>
         <div id="loadingusers">
             <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+        </div>
+        <div class="table-responsive hide">
+            <table class="table table-condensed table-striped">
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
