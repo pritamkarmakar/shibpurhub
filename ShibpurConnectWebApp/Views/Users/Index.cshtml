@@ -245,11 +245,13 @@
             followingClass = "hide";
         }
         
+        
         var row = $("<tr>");
         $(row).append($('<td>').text(userinfo.firstName + " " + userinfo.lastName));
         $(row).append($('<td>').text(userinfo.educationInfo));
         $(row).append($('<td>').text(userinfo.designation));
         $(row).append($('<td>').text(userinfo.location));
+        $(row).append($('<td>').html("<a href=mailto:" + userinfo.email + "><i class='fa fa-envelope-o'></i></a>"));
         $(row).append($('<td>').html("<div class='follow-small " + followingClass + "' id=" + userinfo.id + "><i class='fa " + iconClass + "'></i> </div>"));
         
         $('.table tbody').append(row);
@@ -318,6 +320,7 @@
                                 return;
                             }
                             else {
+                                $('.table tbody tr').remove();
                                 // update the div with the user data received from the API
                                 $(result).each(function (i, userinfo) {
                                     $('#userlist').append(getProfileHtml(userinfo));
