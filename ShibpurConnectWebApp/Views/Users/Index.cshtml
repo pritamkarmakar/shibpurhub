@@ -168,6 +168,11 @@
         background: #CFD8DC;
     }
     
+    .table
+    {
+        background: white;
+    }
+    
     /*div.user a.profile:hover
     {
         color: #fff;
@@ -215,17 +220,16 @@
             var icon = $(button).find('i.fa');
             if($(button).hasClass('grid-view'))
             {
-                $(button).removeClass('grid-view');
                 $(icon).removeClass('fa-list').addClass('fa-grid-large');
             }
             else
             {
-                $(button).addClass('grid-view');
                 $(icon).removeClass('fa-grid-large').addClass('fa-list');
             }
             
+            $(button).toggleClass('grid-view');
             $('#userlist').toggle();
-            $('.table-responsive').toggle();
+            $('.table').toggle();
         });
     }
 
@@ -366,7 +370,7 @@
                             </div>*@
                         </div>
                     </div>
-                    <button class="btn-default toggle-view grid-view" <i class="fa fa-list"></i> </button>
+                    <button class="btn-default toggle-view grid-view"> <i class="fa fa-list"></i> </button>
                 </form>
                 @*<div id="the-basics">
                     <input class="typeahead" type="text" placeholder="States of USA">
@@ -379,11 +383,11 @@
         <div id="loadingusers">
             <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
         </div>
-        <div class="table-responsive hide">
-            <table class="table table-condensed table-striped">
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+        
+        <table class="table table-condensed table-striped">
+            <tbody>
+            </tbody>
+        </table>
+        
     </div>
 </div>
