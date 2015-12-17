@@ -171,6 +171,7 @@
     .table
     {
         background: white;
+        margin-top: 25px;
     }
     
     /*div.user a.profile:hover
@@ -221,11 +222,11 @@
             var icon = $(button).find('i.fa');
             if($(button).hasClass('grid-view'))
             {
-                $(icon).removeClass('fa-list').addClass('fa-grid-large');
+                $(icon).removeClass('fa-list').addClass('fa-th');
             }
             else
             {
-                $(icon).removeClass('fa-grid-large').addClass('fa-list');
+                $(icon).removeClass('fa-th').addClass('fa-list');
             }
             
             $(button).toggleClass('grid-view');
@@ -265,6 +266,7 @@
         var SERVER = "/api/";
         //$('#select_categories').tokenInput("/api/categories/GetCategories");
 
+        $('.table').hide();
         scAjax({
             "url": "users/GetAllUsers",
             "success": function (result) {
@@ -385,7 +387,7 @@
             <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
         </div>
         
-        <table class="table table-condensed table-striped hide">
+        <table class="table table-condensed table-striped">
             <tbody>
             </tbody>
         </table>
