@@ -114,6 +114,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + answer.Content.UserId);
             cache.RemoveStartsWith("notifications-getnotifications-userId=" + answer.Content.UserId);
 
+             // post user activity for this new answer
+            var userActivityLog = new UserActivityLog
+            {
+                Activity = 4,
+                UserId = userInfo.Id,
+                ActedOnObjectId = commentToPost.CommentId,
+                PatentObjectId = question.Content.QuestionId
+            };
+
+            UpdateUserActivityLog(userActivityLog);
+
             EmailsController emailsController = new EmailsController();
             // send notification for this new comment, bubble comment in the nav bar
             NotificationsController notificationsController = new NotificationsController();
@@ -226,6 +237,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        // method to update the useractivitylog collection
+        private void UpdateUserActivityLog(UserActivityLog log)
+        {
+            //Call WebApi to log activity
+            var userActivityController = new UserActivityController();
+            userActivityController.PostAnActivity(log);
         }
     }
 }

@@ -127,7 +127,7 @@
                             jQuery.each(result, function (i, val) {
                                 ////$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + "</h4>, " + "<span id=\"department\">" + val.department + "</span><span id=\"year\">" + val.graduateYear + "</span></div><hr id='dotted'/>");
                                 //$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
-                                $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
+                                $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + "</span>,<span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
                                 if (i != result.length - 1) {
                                     $('.educationbody').append("<hr id='dotted'/>");
                                 }
@@ -189,8 +189,9 @@
                 // iterate over all the educational histories
                 if (result != null) {
                     jQuery.each(result, function (i, val) {
-                        $('.educationbody').append("<div id='" + val.id + "'class=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + ", " + "</span><span id=\"department\">" + val.department + "</span><br><span id=\"year\">" + val.graduateYear + "</span></div>");
-                        $('.educationbody').append("<button class='btn btn-primary btn-xs' id='editeducationinfobutton' onclick='loadEditEducationForm($(this).prev()); return false;' style='float:right;'>Edit</button><br />");
+                        $('.educationbody').append("<div id='" + val.id + "'class=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName +"</span>,<span id=\"department\">" + val.department + "</span><br><span id=\"year\">" + val.graduateYear + "</span></div>");
+                        $('.educationbody').append("<div style='float:right;'> <button class='btn btn-primary btn-xs' id='editeducationinfobutton' onclick='loadEditEducationForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteeducationinfobutton' onclick='loadDeleteModal($(this).parent().prev());'>Delete</button></div><br />");
+                        $('.educationbody').append("<a class='btn btn-success closejob' style='margin-bottom: 20px;' data-toggle='modal' data-target='#deleteducationemodal' data-backdrop='false'><b>Close this job</b></a><br>");
                         $('.educationbody').append("<hr id='dotted'/>");
                     });
                 }
@@ -207,6 +208,21 @@
             }
         });
     }
+
+    // this will get trigger when user will click on the Delete button
+    function loadDeleteModal(req) {
+        $('#deleteducationemodal').modal('show');
+    }
+
+    function deleteEducation() {
+        alert("hola");
+    }
+
+    //$('#deleteconfirm').on('click', function (e) {
+
+    //    alert("hola");
+
+    //});
 
     // this will trigger when user will click on the 'Edit' button of the individual education history.
     // this method will populate the values in the form field
@@ -298,7 +314,8 @@
 <div class="panel panel-default">
     <div class="panel-heading educationheading">Manage Education</div>
     <div class="panel-body">
-        <div class="educationbody"></div>
+        <div class="educationbody">
+        </div>
         <button class="btn btn-primary btn-xs" id="newEducation">Add Education</button><br />      
     </div>
 </div>
@@ -337,7 +354,7 @@
 </div>
 
  <!--Add new edit education div -->
-<div id="editeducationdiv" style="display:none">
+<div id="editeducationdiv" style="display: none">
     <div class="panel panel-default">
         <div class="panel-body">
             <form class="educationform top-buffer2 form-horizontal" method="post">
@@ -361,10 +378,34 @@
                         <button type="submit" id="editEducationButton" class="btn btn-primary btn-sm">
                             <i></i><span>Update</span>
                         </button>
-                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEducationHistory(); return false;" />
+                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEducationHistory(); return false;"/>
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal to delete an educational details-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="deleteducationemodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Delete Education History</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>You are about to delete your education history.</p>
+                <p>Do you want to proceed?</p>
+                <p class="debug-url"></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger btn-ok" id="deleteconfirm" onclick="deleteEducation();">Delete</a>
+            </div>
         </div>
     </div>
 </div>

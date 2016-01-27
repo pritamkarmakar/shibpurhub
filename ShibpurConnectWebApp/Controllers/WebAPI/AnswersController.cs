@@ -222,6 +222,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     Activity = 2,
                     UserId = userInfo.Id,
                     ActedOnObjectId = answer.AnswerId,
+                    PatentObjectId = answer.QuestionId,
                     ActedOnUserId = string.Empty
                 };
 
@@ -434,7 +435,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     Activity = 5,
                     UserId = userInfo.Id,
                     ActedOnObjectId = answer.AnswerId,
-                    ActedOnUserId = answer.UserId
+                    ActedOnUserId = answer.UserId,
+                    PatentObjectId = answer.QuestionId
                 };
 
                 UpdateUserActivityLog(userActivityLog);

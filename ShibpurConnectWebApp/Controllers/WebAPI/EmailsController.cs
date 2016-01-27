@@ -40,8 +40,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 // find the email address of the user from the userid
                 var userInfo = await helper.FindUserById(userId);
-                //var userInfo = actionResult.;
-                myMessage.AddTo(userInfo.Email);
+                if (userInfo != null)
+                    myMessage.AddTo(userInfo.Email);
+                else
+                {
+                    return;
+                }
             }           
            
             myMessage.From = new System.Net.Mail.MailAddress(
