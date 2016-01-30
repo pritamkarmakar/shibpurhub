@@ -186,15 +186,18 @@ function createJobDetails(jobDetails) {
         return;
     }
 
+    if (jobDetails.userId == userInfo.id) {
+        // if this user is the job poster then he/she can post additional update
+        $('.submit-answer-container').html("<div style='font-size:20px;margin-bottom:10px;'>Applications</div>");
+        $('.closejob').show();
+        $('.jobapplicationprivate').hide();
+        $('.jobclosedalert').hide();
+    }
+
     if (jobapplications.length > 0) {
-        if (jobDetails.userId == userInfo.id) {
-            // if this user is the job poster then he/she can post additional update
-            $('.submit-answer-container').html("<div style='font-size:20px;margin-bottom:10px;'>Applications</div>");
-            $('.closejob').show();
-            $('.jobapplicationprivate').hide();
-            $('.jobclosedalert').hide();
-        } else {
+        if (jobDetails.userId != userInfo.id) {
             // we don't want user to reapply for the same position. So if we are here that means this user already applied for this job so will remove the 'submit-answer-container'
+            // but 
             $('.submit-answer-container').html("<div style='font-size:20px;margin-bottom:10px;'>Your application</div>");
         }
     }

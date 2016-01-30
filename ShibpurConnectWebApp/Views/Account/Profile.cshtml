@@ -263,6 +263,11 @@
                         $('.followtagsbody').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value + "'> " + value + "</a></div></div>");
                     });
                 }
+            },
+            error:function (xhr, ajaxOptions, thrownError){
+                if(xhr.status==404) {
+                    window.location.href = "/errors/Http404";                    
+                }
             }
         });
 
@@ -683,4 +688,8 @@
 </div>
 <div id="loadingdiv">
     <i class="fa fa-refresh fa-spin"></i><span> Loading....</span>
+</div>
+
+<div id="notfound">
+
 </div>

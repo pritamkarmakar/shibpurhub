@@ -62,31 +62,36 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
                     var userDetail = await actionResult;
-                    userDetails.Add(userId, userDetail);
+                    if (userDetail != null)
+                        userDetails.Add(userId, userDetail);
                 }
 
                 var result = new List<JobViewModel>();
                 foreach (var job in joblist)
                 {
-                    var jobDTO = new JobViewModel();
-                    jobDTO.Followers = job.Followers;
-                    jobDTO.UserId = job.UserId;
-                    jobDTO.HasClosed = job.HasClosed;
-                    jobDTO.JobDescription = job.JobDescription;
-                    jobDTO.JobId = job.JobId;
-                    jobDTO.JobTitle = job.JobTitle;
-                    jobDTO.JobCompany = job.JobCompany;
-                    jobDTO.JobCity = job.JobCity;
-                    jobDTO.JobCountry = job.JobCountry;
-                    jobDTO.LastEditedOnUtc = job.LastEditedOnUtc;
-                    jobDTO.PostedOnUtc = job.PostedOnUtc;
-                    jobDTO.SkillSets = job.SkillSets;
-                    jobDTO.SpamCount = job.SpamCount;
-                    jobDTO.ViewCount = job.ViewCount;
-                    jobDTO.DisplayName = userDetails[job.UserId].FirstName + " " + userDetails[job.UserId].LastName;
-                    jobDTO.UserProfileImage = userDetails[job.UserId].ProfileImageURL;
-                    jobDTO.CareerDetail = userDetails[job.UserId].Designation;
-                    result.Add(jobDTO);
+                    // make sure we have the user details who posted the job
+                    if (userDetails.ContainsKey(job.UserId))
+                    {
+                        var jobDTO = new JobViewModel();
+                        jobDTO.Followers = job.Followers;
+                        jobDTO.UserId = job.UserId;
+                        jobDTO.HasClosed = job.HasClosed;
+                        jobDTO.JobDescription = job.JobDescription;
+                        jobDTO.JobId = job.JobId;
+                        jobDTO.JobTitle = job.JobTitle;
+                        jobDTO.JobCompany = job.JobCompany;
+                        jobDTO.JobCity = job.JobCity;
+                        jobDTO.JobCountry = job.JobCountry;
+                        jobDTO.LastEditedOnUtc = job.LastEditedOnUtc;
+                        jobDTO.PostedOnUtc = job.PostedOnUtc;
+                        jobDTO.SkillSets = job.SkillSets;
+                        jobDTO.SpamCount = job.SpamCount;
+                        jobDTO.ViewCount = job.ViewCount;
+                        jobDTO.DisplayName = userDetails[job.UserId].FirstName + " " + userDetails[job.UserId].LastName;
+                        jobDTO.UserProfileImage = userDetails[job.UserId].ProfileImageURL;
+                        jobDTO.CareerDetail = userDetails[job.UserId].Designation;
+                        result.Add(jobDTO);
+                    }
                 }
 
                 return Ok(result);
