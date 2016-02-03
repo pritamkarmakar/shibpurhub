@@ -148,7 +148,7 @@
                 if (result != null) {
                     jQuery.each(result, function (i, val) {
                         $('.educationbody').append("<div id='" + val.id + "'class=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName +"</span>,<span id=\"department\">" + val.department + "</span><br><span id=\"year\">" + val.graduateYear + "</span></div>");
-                        $('.educationbody').append("<div style='float:right;'><button class='btn btn-primary btn-xs' id='editeducationinfobutton' onclick='loadEditEducationForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteeducationinfobutton' onclick='deleteEducation($(this).parent().prev());'>Delete</button></div><br />");
+                        $('.educationbody').append("<div style='float:right;'><button class='btn btn-primary btn-xs' id='editeducationinfobutton' onclick='loadEditEducationForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteeducationinfobutton' onclick='deleteEducation($(this).parent().prev());'><i></i><span>Delete</span></button></div><br />");
                         //$('.educationbody').append("<a class='btn btn-success closejob' style='margin-bottom: 20px;' data-toggle='modal' data-target='#deleteducationemodal'><b>Close this job</b></a><br>");
                         $('.educationbody').append("<hr id='dotted'/>");
                     });
