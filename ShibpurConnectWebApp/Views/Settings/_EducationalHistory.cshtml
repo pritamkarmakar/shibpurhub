@@ -167,11 +167,6 @@
         });
     }
 
-    // this will get trigger when user will click on the Delete button
-    function deleteEducation(req) {     
-       deleteEducation(req[0].id);
-    }   
-    
 
     // this will trigger when user will click on the 'Edit' button of the individual education history.
     // this method will populate the values in the form field
@@ -256,7 +251,8 @@
     }
 
     // method to delete a educational record
-    function deleteEducation(educationId) {
+    function deleteEducation(req) {
+        educationId = req[0].id;
         jQuery.support.cors = true;
         var SERVER = "/api/";
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -281,7 +277,11 @@
             },
             success: function (data, result) {
                 if (result) {                  
-                   
+                    // display toast notification
+                    Command: toastr["success"]("Deleted eucational record", {
+                        timeOut: 0,
+                        extendedTimeOut: 0
+                    });
 
                     // remove the loading class from save button
                     $('#deleteeducationinfobutton > i').removeClass('fa fa-circle-o-notch fa-spin');

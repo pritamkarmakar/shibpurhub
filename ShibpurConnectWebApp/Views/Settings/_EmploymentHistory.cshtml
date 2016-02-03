@@ -37,11 +37,6 @@
         });
     });
 
-    // this will get trigger when user will click on the Delete button
-    function deleteEmployment(req) {
-        deleteEmployment(req[0].id);
-    }
-
     // function to load all existing employment histories
     function loadEmployments() {
         // disply loading spinner
@@ -264,7 +259,8 @@
     }
 
     // method to delete a educational record
-    function deleteEmployment(employmentId) {
+    function deleteEmployment(req) {
+        employmentId = req[0].id;
         jQuery.support.cors = true;
         var SERVER = "/api/";
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -289,8 +285,11 @@
             },
             success: function (data, result) {
                 if (result) {
-
-
+                    // display toast notification
+                    Command: toastr["success"]("Deleted employment record", {
+                        timeOut: 0,
+                        extendedTimeOut: 0
+                    });
                     // remove the loading class from save button
                     $('#deleteemploymentinfobutton > i').removeClass('fa fa-circle-o-notch fa-spin');
                     $('#deleteemploymentinfobutton > span').text('Delete');
