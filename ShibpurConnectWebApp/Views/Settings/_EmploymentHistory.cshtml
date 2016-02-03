@@ -37,6 +37,10 @@
         });
     });
 
+    // this will get trigger when user will click on the Delete button
+    function loadDeleteModal(req) {
+        deleteEmployment(req[0].id);
+    }
 
     // function to load all existing employment histories
     function loadEmployments() {
@@ -87,7 +91,7 @@
                         toDate = "Present";
                     }
                     $('.experiencebody').append("<div id='"+ val.id +"' class=\"employmentDetails\"><span id=\"companyname\">" + val.companyName + "</span><br><span id=\"designation\">" + val.title + "</span><br><span id=\"joblocation\">" + val.location + "</span><br><span id=\"jobstartdate\" style='display:none;'>" + val.from + "</span><span id=\"jobenddate\" style='display:none;'>" + val.to + "</span><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
-                    $('.experiencebody').append("<button class='btn btn-primary btn-xs' id='editexperienceinfobutton' onclick='loadEditEmploymentForm($(this).prev()); return false;' style='float:right;'>Edit</button><br />");
+                    $('.experiencebody').append("<div style='float:right;'><button class='btn btn-primary btn-xs' id='editexperienceinfobutton' onclick='loadEditEmploymentForm($(this).prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteemploymentinfobutton' onclick='loadDeleteModal($(this).parent().prev());'>Delete</button></div><br />");
                     $('.experiencebody').append("<hr id='dotted'/>");
                 });
 
@@ -179,12 +183,9 @@
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 var errorMessage = "";
                 // parse the error json
-                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);                
-                jQuery.each(errorresponse.modelState, function (i, val) {                    
-                    errorMessage += "<li>" + val + "</li>";
-                });
-              
-                Command: toastr["error"]("<ul>" + errorMessage + "</ul>")               
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);             
+                
+                Command: toastr["error"](errorresponse.message)
                 // remove the loading class from save button
                 $('#addNewEmployment > i').removeClass('fa fa-circle-o-notch fa-spin');
                 $('#addNewEmployment > span').text('Save');
@@ -260,6 +261,55 @@
     function cancelEditEmploymentHistory() {
         $("#editemploymentdiv").slideToggle();
         $('html, body').animate({ scrollTop: $("#newemploymentdiv").offset().top - 50 }, 'slow');
+    }
+
+    // method to delete a educational record
+    function deleteEmployment(employmentId) {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            // show the error dialog
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+        var token = sessionStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('#deleteemploymentinfobutton > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#deleteemploymentinfobutton > span').text(' Deleting...');
+
+        $.ajax({
+            url: SERVER + "employmenthistories/deleteemploymenthistory?id=" + employmentId,
+            type: "DELETE",
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {
+
+
+                    // remove the loading class from save button
+                    $('#deleteemploymentinfobutton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#deleteemploymentinfobutton > span').text('Delete');
+
+                    // get the latest data from server and update the profile page
+                    loadEmployments();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorMessage = "";
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+
+                Command: toastr["error"](errorresponse.message);
+                // remove the loading class from save button
+                $('#editEducationButton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#editEducationButton > span').text('Save');
+            }
+        });
     }
 </script>
 

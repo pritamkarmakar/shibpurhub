@@ -28,12 +28,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _elasticSearchHelper = new ElasticSearchHelper();
         }
 
-        // GET: api/EmploymentHistories
-        public IList<EmploymentHistories> GetEmploymentHistories()
-        {
-            return _mongoHelper.Collection.FindAll().ToList();
-        }
-
         // GET: api/Employment/getemploymenthistory?useremail=
         // this api will return all employment histories of a user
         [ResponseType(typeof(EmploymentHistories))]
@@ -66,6 +60,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest("Request body is null. Please send a valid EmploymentHistory object");
             }
+
+            // validate employment from date is older than to date
+            if(employmentHistory.From > employmentHistory.To)
+                return BadRequest("'Employment start date' can't be older than 'Employment end date'");
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var email = principal.Identity.Name;
@@ -114,7 +112,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [ResponseType(typeof(EmploymentHistories))]
         public async Task<IHttpActionResult> DeleteEmploymentHistory(string id)
         {
-            EmploymentHistories employmentHistory = _mongoHelper.Collection.FindOneById(id);
+            EmploymentHistories employmentHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.Id == id).ToList()[0];
             if (employmentHistory == null)
             {
                 return NotFound();
@@ -137,13 +135,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("You are not allowed to edit this record");
             }
 
-            _mongoHelper.Collection.Remove(Query.EQ("Id", id));
+            var result = _mongoHelper.Collection.Remove(Query.EQ("_id", new BsonObjectId(new ObjectId(id))), RemoveFlags.Single);
             // invalidate the cache for the action those will get impacted due to this new answer post
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 
 
             // invalidate the getemploymenthistories api call for this user
             cache.RemoveStartsWith("employmenthistories-getemploymenthistories-userId=" + userInfo.Id);
+            cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
 
             return Ok(employmentHistory);
         }
@@ -161,6 +160,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest("Invalid employment history id");
             }
+
+            // validate employment from date is older than to date
+            if (employmentHistory.From > employmentHistory.To)
+                return BadRequest("'Employment start date' can't be older than 'Employment end date'");
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var email = principal.Identity.Name;

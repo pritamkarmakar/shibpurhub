@@ -26,6 +26,7 @@
 </style>
 
 <script type="text/javascript">
+    var documentToDelete;
     $(document).ready(function () {
         
         jQuery.support.cors = true;
@@ -58,7 +59,6 @@
 
     // method to save new educational history
     function saveEducationalHistory() {
-
         jQuery.support.cors = true;
         var SERVER = "/api/";
 
@@ -92,55 +92,13 @@
                 });
                     // disply loading spinner
                     $('#loadingeducations').show();
-                    // clear form values
-                    $('#universityname').val("");
-                    $('#GraduateYear').val("");
-                    $('#DepartmentDropdown').val($('#DepartmentDropdown').find('option').first().val());
-                    // get the educational history from the server and update the div
-                    $.ajax({
-                        url: SERVER + "educationalhistories/geteducationalhistories",
-                        type: "GET",
-                        dataType: "json",
-                        data: { "userId": userInfo.id },
-                        contentType: "application/json",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                            //"Access-Control-Allow-Origin": "*"
-                        },
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("Authorization", "Bearer UEkvwQmR0EOsdGd-9y_bqizgm7F6_qvHSy4tyeKGY9Kb93h2ASjLyvW4BdcuB9cGgt-PcACQAy7WBycNbplGPXtHI4_r4YOLjDeXcK6S4Cswk2SQ5R_51zV1cmytfczRkGM6RnRWKmH_yiIz-LPO6tByk28wkLDeeaLDnoiy6Zg6S5zk9uZZtrreZHRx3nl4SiCD3QKLtXqn7bGYGFF71D745YBAeAjNityNKpyum7pBnQSYpL5qYZHCjI3-94bT");
-                        },
-                        success: function (result) {
-                            if (!result) {
-                                return;
-                            }
-                            // toggle the 'Add education' button, so that the form will get close
-                            $("#neweducationdiv").slideToggle();
-                            // clear div content
-                            $('.educationbody').empty();
-                            // remove the loading class from save button
-                            $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
-                            $('#addNewEducation > span').text('Save');                          
-
-                            // iterate over all the educational histories
-                            jQuery.each(result, function (i, val) {
-                                ////$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + "</h4>, " + "<span id=\"department\">" + val.department + "</span><span id=\"year\">" + val.graduateYear + "</span></div><hr id='dotted'/>");
-                                //$('#educationdiv').append("<div id=\"educationalDetails\"><h4 id=\"collegeName\">" + val.universityName + ", " + "<span id=\"department\">" + val.department + "</span></h4><P id=\"year\">" + val.graduateYear + "</P></div><hr id='dotted'/>");
-                                $('.educationbody').append("<div id=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName + "</span>,<span id=\"department\">" + val.department + "</span><P id=\"year\">" + val.graduateYear + "</P></div>");
-                                if (i != result.length - 1) {
-                                    $('.educationbody').append("<hr id='dotted'/>");
-                                }
-                            });
-
-                            // stop the spinner
-                            $('#loadingeducations').hide();
-                        },
-                        error: function()
-                        {
-                            $('#loadingeducations').hide();
-                        }
-                    });
+                    // remove the loading class from save button
+                    $('#addNewEducation > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#addNewEducation > span').text('Save');          
+                    // toggle the 'Add education' button, so that the form will get close
+                    $("#neweducationdiv").slideToggle();
+                    // get the latest data from server and update the profile page
+                    loadEducations();                    
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -190,8 +148,8 @@
                 if (result != null) {
                     jQuery.each(result, function (i, val) {
                         $('.educationbody').append("<div id='" + val.id + "'class=\"educationalDetails\"><span id=\"collegeName\">" + val.universityName +"</span>,<span id=\"department\">" + val.department + "</span><br><span id=\"year\">" + val.graduateYear + "</span></div>");
-                        $('.educationbody').append("<div style='float:right;'> <button class='btn btn-primary btn-xs' id='editeducationinfobutton' onclick='loadEditEducationForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteeducationinfobutton' onclick='loadDeleteModal($(this).parent().prev());'>Delete</button></div><br />");
-                        $('.educationbody').append("<a class='btn btn-success closejob' style='margin-bottom: 20px;' data-toggle='modal' data-target='#deleteducationemodal' data-backdrop='false'><b>Close this job</b></a><br>");
+                        $('.educationbody').append("<div style='float:right;'><button class='btn btn-primary btn-xs' id='editeducationinfobutton' onclick='loadEditEducationForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteeducationinfobutton' onclick='loadDeleteModal($(this).parent().prev());'>Delete</button></div><br />");
+                        //$('.educationbody').append("<a class='btn btn-success closejob' style='margin-bottom: 20px;' data-toggle='modal' data-target='#deleteducationemodal'><b>Close this job</b></a><br>");
                         $('.educationbody').append("<hr id='dotted'/>");
                     });
                 }
@@ -210,19 +168,10 @@
     }
 
     // this will get trigger when user will click on the Delete button
-    function loadDeleteModal(req) {
-        $('#deleteducationemodal').modal('show');
-    }
-
-    function deleteEducation() {
-        alert("hola");
-    }
-
-    //$('#deleteconfirm').on('click', function (e) {
-
-    //    alert("hola");
-
-    //});
+    function loadDeleteModal(req) {     
+       deleteEducation(req[0].id);
+    }   
+    
 
     // this will trigger when user will click on the 'Edit' button of the individual education history.
     // this method will populate the values in the form field
@@ -252,6 +201,7 @@
             // show the error dialog
             return;
         }
+
         var userInfo = $.parseJSON(userDetails);
         var token = sessionStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
         var educationalHistory = '{"Id":' + '"' + educationId + '"' + ',"Department":' + '"' + $('#EditedDepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('.editeduniversityname').val() + '"' + ',"GraduateYear":' + '"' + $('.editedgraduateyear').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + '}';
@@ -304,6 +254,56 @@
         $("#editeducationdiv").slideToggle();
         $('html, body').animate({ scrollTop: $("#newemploymentdiv").offset().top - 50 }, 'slow');
     }
+
+    // method to delete a educational record
+    function deleteEducation(educationId) {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            // show the error dialog
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+        var token = sessionStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+       
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('#deleteeducationinfobutton > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#deleteeducationinfobutton > span').text(' Deleting...');
+
+        $.ajax({
+            url: SERVER + "educationalhistories/deleteeducationalhistory?id=" + educationId,
+            type: "DELETE",
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {                  
+                   
+
+                    // remove the loading class from save button
+                    $('#deleteeducationinfobutton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#deleteeducationinfobutton > span').text('Delete');
+
+                    // get the latest data from server and update the profile page
+                    loadEducations();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorMessage = "";
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+
+                Command: toastr["error"](errorresponse.message);
+                // remove the loading class from save button
+                $('#editEducationButton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#editEducationButton > span').text('Save');
+            }
+        });
+    }
+
 </script>
 
 <!--div for loading spinner-->
@@ -387,7 +387,7 @@
 </div>
 
 <!--Modal to delete an educational details-->
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="deleteducationemodal">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="deleteducationemodal">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -404,8 +404,9 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger btn-ok" id="deleteconfirm" onclick="deleteEducation();">Delete</a>
+                <a class="btn btn-danger btn-ok" id="deleteconfirm">Delete</a>
             </div>
         </div>
     </div>
 </div>
+

@@ -743,12 +743,6 @@
             </summary>
             <param name="categoryTagging"></param>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.GetEducationalHistory">
-            <summary>
-            Get education histories for all users
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.GetEducationalHistories(System.String)">
             <summary>
             Api to get all educational histories of a user
@@ -764,6 +758,13 @@
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.EditEducationalHistory(ShibpurConnectWebApp.Models.WebAPI.EducationalHistories)">
+            <summary>
+            API to update an educational history record of an user
+            </summary>
+            <param name="educationalHistories">EducationalHistories object</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.DeleteEducationalHistory(System.String)">
             <summary>
             API to update an educational history record of an user
             </summary>
