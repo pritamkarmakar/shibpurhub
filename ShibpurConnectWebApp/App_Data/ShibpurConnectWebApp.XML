@@ -771,6 +771,14 @@
             <param name="educationalHistories">EducationalHistories object</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.DeleteAllEducationalHistories(System.String)">
+            <summary>
+            This is not a public API. We will use it do background operation with Hangfire. 
+            This will delete all the educatioanl histories for a particular user
+            </summary>
+            <param name="userId">userId for whom we want to delete all records</param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EmailsController.SendEmail(ShibpurConnectWebApp.Models.WebAPI.Email)">
             <summary>
             API to send email to end user
@@ -846,6 +854,12 @@
             <param name="category">category/tag name</param>
             <param name="page">page index</param>
             <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.DeleteAllQuestionsPostedByAUser(System.String)">
+            <summary>
+            Not a Public API, will be used by Hangfire to delete all question posted by a user, if the user delete his/her account
+            </summary>
+            <param name="userId"></param>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetQuestionsByUser(System.String,System.Int32)">
             <summary>
@@ -966,6 +980,19 @@
             API to find the current logged-in user
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AccountController.DeleteAccount">
+            <summary>
+            Delete the user account
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AccountController.DeleteAllRecords(System.String)">
+            <summary>
+            This is where Hangfire will do the background task
+            We will remove all the educational, employment, answer, comments details associated with this user, when user will delete his/her account
+            </summary>
+            <param name="id"></param>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersWithCompleteProfile(System.String)">
             <summary>
@@ -1391,6 +1418,13 @@
             </summary>
             <param name="userId">user userid</param>
             <param name="url">profile image url</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.DeleteUserAccount(System.String)">
+            <summary>
+            Delete the user account
+            </summary>
+            <param name="userId"></param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Providers.AuthRepository.FollowNewTag(System.String,System.String)">

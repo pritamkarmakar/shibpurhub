@@ -11,6 +11,8 @@ using ShibpurConnectWebApp.Helper;
 using System.Security.Claims;
 using System.Net.Http;
 using ShibpurConnectWebApp.Helper;
+using WebApi.OutputCache.V2;
+using Hangfire;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -166,6 +168,76 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         
 
             return Ok("{'status': 'successfullychangedpassword'}");
+        }
+
+        /// <summary>
+        /// Delete the user account
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        public async Task<IHttpActionResult> DeleteAccount()
+        {
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            Helper.Helper helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email);
+            var userInfo = await userResult;
+            if (userInfo == null)
+            {
+                return BadRequest("No UserId is found");
+            }           
+
+            // Delete all records associated with this user
+            BackgroundJob.Enqueue(() => DeleteAllRecords(userInfo.Id));
+
+            // invalidate the cache for the action those will get impacted due to this new answer post
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+            // invalidate the getemploymenthistories api call for this user       
+            cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+            cache.RemoveStartsWith("users-getleaderboard");
+
+            return CreatedAtRoute("DefaultApi", new { id = userInfo.Id }, "User account deleted");
+        }
+
+        /// <summary>
+        /// This is where Hangfire will do the background task
+        /// We will remove all the educational, employment, answer, comments details associated with this user, when user will delete his/her account
+        /// </summary>
+        /// <param name="id"></param>
+        [DisableConcurrentExecution(3600)]
+        public async void DeleteAllRecords(string userId)
+        {
+            // delete all educational histories from database
+            EducationalHistoriesController educationalHistoryController = new EducationalHistoriesController();
+            educationalHistoryController.DeleteAllEducationalHistories(userId);
+
+            // delete all employment histories from database
+            EmploymentHistoriesController employmentHistoriesController = new EmploymentHistoriesController();
+            employmentHistoriesController.DeleteAllEmploymentHistories(userId);
+
+            // delete all questions posted by this user
+            QuestionsController questionController = new QuestionsController();
+            questionController.DeleteAllQuestionsPostedByAUser(userId);
+
+            // delete all answers posted by this user
+            AnswersController answerController = new AnswersController();
+            answerController.DeleteAllAnswerPostedByAUser(userId);
+
+            // delete all comments posted by this user
+            CommentsController commentController = new CommentsController();
+            commentController.DeleteAllCommentPostedByAUser(userId);
+
+            // delete all jobs posted by this user
+            CareerController careerController = new CareerController();
+            careerController.DeleteAllJobsAndApplicationaPostedByAUser(userId);
+
+            // delete all job applications by this user
+
+
+            // delete the user from the database, keeping it at the end to make sure previous methods get execute successfully
+            ApplicationUser result = await _repo.DeleteUserAccount(userId);           
         }
 
         protected override void Dispose(bool disposing)

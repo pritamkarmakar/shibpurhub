@@ -18,6 +18,7 @@ using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using WebApi.OutputCache.V2;
+using MongoDB.Driver.Builders;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -143,13 +144,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         var userResult = helper.FindUserByEmail(email, true);
                         var userInfo = await userResult;
 
-                        // add this user in the userinfo dictionary, if it is not present
-                        if (!userInfoDictionary.ContainsKey(userInfo.Id))
-                            userInfoDictionary.Add(userInfo.Id, userInfo);
-
-                        var mongoHelper = new MongoHelper<JobApplication>();
                         if (userInfo != null)
                         {
+                            // add this user in the userinfo dictionary, if it is not present
+                            if (!userInfoDictionary.ContainsKey(userInfo.Id))
+                            userInfoDictionary.Add(userInfo.Id, userInfo);
+
+                            var mongoHelper = new MongoHelper<JobApplication>();                        
                             // retrieve all the applcations as this is the user who posted the job
                             if (userInfo.Id == userDetails.Id)
                             {
@@ -178,7 +179,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                 {
                                     var userResult2 = helper.FindUserById(application.UserId, true);
                                     userInfo2 = await userResult2;
-                                    
+
+                                    // if user record not present may be due to account deletion then no need to proceed further
+                                    if (userInfo2 == null)
+                                        continue;
+
                                     userInfoDictionary.Add(userInfo2.Id, userInfo2);
                                 }
                                 else
@@ -269,6 +274,42 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        internal async void DeleteAllJobsAndApplicationaPostedByAUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");           
+
+            // delete all the records in database
+            try
+            {
+                var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
+
+                // invalidate cache if we are deleting any job
+                if (result.DocumentsAffected > 0)
+                {
+                    var chacheKey = "career-getjobs";
+                    BackgroundJob.Enqueue(() => WebApiCacheHelper.InvalidateCacheByKey(chacheKey));
+                }
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    throw new MongoException("failed to delete the job histories");
+
+                // delete all job applications by this user
+                var mongoHelper = new MongoHelper<JobApplication>();
+                var result2 = mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
+
+                // if mongo failed to save the data then send error
+                if (!result2.Ok)
+                    throw new MongoException("failed to delete the job application histories");
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to delete the job posted by the user");
             }
         }
 

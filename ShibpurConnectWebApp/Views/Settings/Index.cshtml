@@ -84,7 +84,7 @@
                             <table class="table">
                                 <tr>
                                     <td>
-                                        <span class="glyphicon glyphicon-trash text-danger"></span><a href="#" class="text-danger">
+                                        <span class="glyphicon glyphicon-trash text-danger"></span><a href="#" onclick="DisplayDiv('deleteaccount');" class="text-danger">
                                             Delete Account
                                         </a>
                                     </td>
@@ -108,6 +108,9 @@
                 </div>
                 <div class="experiencebackground" style="display: none;">
                     @{ Html.RenderPartial("_EmploymentHistory"); }
+                </div>
+                <div class="deleteaccount" style="display: none;">
+                    @{ Html.RenderPartial("_DeleteAccount"); }
                 </div>
             </div>
         </div>

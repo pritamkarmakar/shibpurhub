@@ -316,6 +316,37 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        [Authorize]
+        internal async void DeleteAllAnswerPostedByAUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");
+
+            // find list of questions those will be affected due to this deletion, we will then remove the cache
+            var questionList = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).Select(x => x.QuestionId).Distinct().ToList();
+            var keys = new List<string>();
+            foreach (string questionid in questionList)
+            {
+                var key = "questions-getquestion-questionId=" + questionid;
+                keys.Add(key);
+            }
+            WebApiCacheHelper.InvalidateCacheByKeys(keys);
+
+            // delete all the records in database
+            try
+            {
+                var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    throw new MongoException("failed to delete the answers");
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to delete the answers");
+            }
+        }
+
         public async Task<int> UpdateUpVoteCount(Answer answer)
         {
             try

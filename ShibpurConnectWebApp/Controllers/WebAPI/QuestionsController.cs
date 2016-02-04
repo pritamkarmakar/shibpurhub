@@ -210,6 +210,37 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
+        /// Not a Public API, will be used by Hangfire to delete all question posted by a user, if the user delete his/her account
+        /// </summary>
+        /// <param name="userId"></param>
+        [Authorize]
+        internal async void DeleteAllQuestionsPostedByAUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");            
+
+            // delete all the records in database
+            try
+            {
+                var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
+                // invalidate cache if we are deleting any question
+                if (result.DocumentsAffected > 0)
+                {
+                    var chacheKey = "questions-getquestions";
+                    BackgroundJob.Enqueue(() => WebApiCacheHelper.InvalidateCacheByKey(chacheKey));
+                }
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    throw new MongoException("failed to delete the educational histories");
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to delete the educational histories");
+            }
+        }
+
+        /// <summary>
         /// Get the questions posted by a specific user
         /// </summary>
         /// <param name="userId">userid for which we are searching</param>

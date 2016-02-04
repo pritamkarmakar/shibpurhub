@@ -13,6 +13,7 @@ using ShibpurConnectWebApp.Models.WebAPI;
 using System.Web;
 using System.Net.Http;
 using System.Collections.Generic;
+using Nest;
 
 namespace ShibpurConnectWebApp.Providers
 {
@@ -258,6 +259,30 @@ namespace ShibpurConnectWebApp.Providers
                     .Id(userId)
                     .Type("customuserinfo")
                     .Doc(new { ProfileImageURL = url }));
+            }
+
+            return user;
+        }
+    
+        /// <summary>
+        /// Delete the user account
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        internal async Task<ApplicationUser> DeleteUserAccount(string userId)
+        {
+            ApplicationUser user = _userManager.FindById(userId);
+            if (user != null)
+            {
+                // delete from the local database
+                var updatedUser = _userManager.Delete(user);
+
+                // update same profile image in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+                // Be explicit with type and index
+                var response = client.Delete("my_index", "customuserinfo", user.Id);
             }
 
             return user;

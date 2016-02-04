@@ -15,6 +15,8 @@ using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
 using WebApi.OutputCache.V2;
+using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -185,6 +187,43 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
 
             return CreatedAtRoute("DefaultApi", new { id = commentToPost.CommentId }, commentToPost);
+        }
+
+        [Authorize]
+        internal async void DeleteAllCommentPostedByAUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");
+
+            // find list of answers those will be affected due to this deletion, we will then remove the cache with associted questions
+            var answerIds = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).Select(x => x.AnswerId).Distinct().ToList();
+
+            var keys = new List<string>();
+            foreach (string answer in answerIds)
+            {
+                // get details about the associated answer and retrieve the questionId
+                AnswersController answersController = new AnswersController();
+                var actionresult = await answersController.GetAnswer(answer);
+                var answerObj = actionresult as OkNegotiatedContentResult<Answer>;
+
+                var key = "questions-getquestion-questionId=" + answerObj.Content.QuestionId;
+                keys.Add(key);
+            }
+            WebApiCacheHelper.InvalidateCacheByKeys(keys);
+
+            // delete all the records in database
+            try
+            {
+                var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    throw new MongoException("failed to delete the comments");
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to delete the comments");
+            }
         }
 
         /// <summary>

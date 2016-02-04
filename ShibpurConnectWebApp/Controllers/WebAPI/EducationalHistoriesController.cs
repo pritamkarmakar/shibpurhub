@@ -16,6 +16,7 @@ using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using WebApi.OutputCache.V2;
+using System.Collections.Generic;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -251,6 +252,34 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest(ex.Message);
             }
-        }       
+        }
+
+        /// <summary>
+        /// This is not a public API. We will use it do background operation with Hangfire. 
+        /// This will delete all the educatioanl histories for a particular user
+        /// </summary>
+        /// <param name="userId">userId for whom we want to delete all records</param>
+        /// <returns></returns>
+        [Authorize]
+        internal async void DeleteAllEducationalHistories(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");
+            
+            
+            // delete all the records in database
+            try
+            {
+                var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    throw new MongoException("failed to delete the educational histories");                
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to delete the educational histories");
+            }
+        }
     }
 }

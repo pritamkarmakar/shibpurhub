@@ -635,6 +635,7 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\PartialViews\_TopNavBar.cshtml" />
     <Content Include="Views\PartialViews\_EditedDepartmentDropdown.cshtml" />
+    <Content Include="Views\Settings\_DeleteAccount.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -212,5 +212,26 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        internal async void DeleteAllEmploymentHistories(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");            
+
+            // delete all the records in database
+            try
+            {
+                var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    throw new MongoException("failed to delete the educational histories");
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to delete the educational histories");
+            }
+        }
     }
 }
