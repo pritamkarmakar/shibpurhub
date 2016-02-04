@@ -1,0 +1,67 @@
+﻿<script type="text/javascript">
+    // method to delete the user account
+    function deleteaccount() {
+        jQuery.support.cors = true;
+        var SERVER = "/api/";
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            // show the error dialog
+            return;
+        }
+        var userInfo = $.parseJSON(userDetails);
+        var token = sessionStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
+
+        // add spinner animation in the save button and change the text to 'Saving..'
+        $('#deleteaccountbutton > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#deleteaccountbutton > span').text(' Deleting...');
+
+        $.ajax({
+            url: SERVER + "account/deleteaccount",
+            type: "DELETE",
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            },
+            success: function (data, result) {
+                if (result) {
+                    // display toast notification
+                    Command: toastr["success"]("Deleted your account", {
+                        timeOut: 0,
+                        extendedTimeOut: 0
+                    });
+
+                    // remove the loading class from save button
+                    $('#deleteaccountbutton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                    $('#deleteaccountbutton > span').text('Account Deleted');
+                    $('#deleteaccountbutto').class('disabled', 'true');
+
+                    // redirect to home page
+                    window.location.href = "/";
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errorMessage = "";
+                // parse the error json
+                var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+
+                Command: toastr["error"](errorresponse.message);
+                // remove the loading class from save button
+                $('#deleteaccountbutton > i').removeClass('fa fa-circle-o-notch fa-spin');
+                $('#deleteaccountbutton > span').text('Try again');
+            }
+        });
+    }
+</script>
+
+<div class="panel panel-danger">
+    <div class="panel-heading deleteaccountheading">Delete Account</div>
+    <div class="panel-body">
+        <div class="deleteaccountbody">
+            <span>Are you sure you want to delete your account? This can't be undone and your record will be deleted completely.</span>
+        </div>
+        <br/>
+        <button class="btn btn-danger btn-xs" id="deleteaccountbutton" onclick="deleteaccount(); return false;"><i></i><span>Yes Delete My Account</span></button>
+        <a class="btn btn-primary btn-xs" id="canceldeleteaccount" href="/">Cancel</a><br />
+    </div>
+</div>
