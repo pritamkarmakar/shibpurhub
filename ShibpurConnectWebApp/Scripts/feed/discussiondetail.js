@@ -10,7 +10,7 @@ var userDetails = localStorage.getItem("SC_Session_UserDetails");
 var userInfo = $.parseJSON(userDetails);
 if (userInfo != null) {
     userId = userInfo.id;
-    myImageUrl = "http://i.imgur.com/" + userInfo.profileImageURL;
+    myImageUrl = userInfo.profileImageURL;
 }
 
 //used to reference rich textbox editor for question edit
@@ -203,7 +203,11 @@ function createAnswer(answer)
     var htmlItem = $('div.item.answer.hide').clone().removeClass('hide').attr('id', answer.answerId);
 
     var creatorImage = $(htmlItem).find('.post-creator-image');
-    $(creatorImage).attr("href", "/Account/Profile?userId" + answer.userId).css('background-image', "url(http://i.imgur.com/" + answer.userProfileImage + ")");
+    if (answer.userProfileImage != "/Content/images/profile-image.jpg")
+        $(creatorImage).attr("href", "/Account/Profile?userId" + answer.userId).css('background-image', "url(http://i.imgur.com/" + answer.userProfileImage + ")");
+    else
+        $(creatorImage).attr("href", "/Account/Profile?userId" + answer.userId).css('background-image', "url(" + answer.userProfileImage + ")");
+
 
     $(htmlItem).find('a.name-link').text(answer.displayName).attr("href", "/Account/Profile?userId=" + answer.userId);
     
@@ -275,7 +279,10 @@ function createComment(comment)
     var answerId = comment.answerId;
     var htmlItem = $('#'+ answerId +" .comments .post-comment.hide").clone().removeClass('hide');
     
-    $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
+    if (comment.userProfileImage != "/Content/images/profile-image.jpg")
+        $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
+    else
+        $(htmlItem).find('.img-container').css('background-image', "url(" + comment.userProfileImage + ")");
     
     var commentText = getEmojiedString(comment.commentText);
     $(htmlItem).find('.commentContent p').html(commentText);

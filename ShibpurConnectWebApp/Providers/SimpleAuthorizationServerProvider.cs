@@ -75,7 +75,9 @@ namespace ShibpurConnectWebApp.Providers
                 FirstName = userModel.FirstName,
                 LastName = userModel.LastName,
                 Location = userModel.Location,
-                RegisteredOn = DateTime.UtcNow
+                RegisteredOn = DateTime.UtcNow,
+                // set default profile image
+                ProfileImageURL = "/Content/images/profile-image.jpg"
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);
@@ -277,7 +279,7 @@ namespace ShibpurConnectWebApp.Providers
                 // delete from the local database
                 var updatedUser = _userManager.Delete(user);
 
-                // update same profile image in elastic search
+                // delete from elastic search database as well
                 var client = _elasticSearchHelper.ElasticClient();
                 dynamic updateUser = new System.Dynamic.ExpandoObject();
 

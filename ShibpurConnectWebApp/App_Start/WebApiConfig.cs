@@ -1,6 +1,8 @@
-﻿using MongoDB.Driver;
+﻿using Elmah.Contrib.WebApi;
+using MongoDB.Driver;
 using System.Configuration;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 using WebApi.OutputCache.V2;
 using WebAPI.OutputCache.MongoDb;
 
@@ -10,6 +12,9 @@ namespace ShibpurConnectWebApp.App_Start
     {
         public static void Register(HttpConfiguration config)
         {
+            // enable elmah
+            config.Services.Add(typeof(IExceptionLogger), new ElmahExceptionLogger());
+
             // Enable Cors
             config.EnableCors();
 
@@ -21,6 +26,14 @@ namespace ShibpurConnectWebApp.App_Start
                 routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new {id = RouteParameter.Optional}
                 );
+
+            // catch all route mapped to ErrorController so 404 errors
+            // can be logged in elmah
+            //config.Routes.MapHttpRoute(
+            //    name: "NotFound",
+            //    routeTemplate: "{*path}",
+            //    defaults: new { controller = "Error", action = "NotFound" }
+            //);
 
             // To enable bearer token authentication for the web api
             config.SuppressDefaultHostAuthentication();
@@ -36,7 +49,7 @@ namespace ShibpurConnectWebApp.App_Start
             var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
             var db = client.GetServer().GetDatabase("shibpurconnect");
             MongoCollection mongocollection = db.GetCollection("cache");
-            GlobalConfiguration.Configuration.CacheOutputConfiguration().RegisterCacheOutputProvider(() => new MongoDbApiOutputCache(db));
+            GlobalConfiguration.Configuration.CacheOutputConfiguration().RegisterCacheOutputProvider(() => new MongoDbApiOutputCache(db));          
         }
     }
 }

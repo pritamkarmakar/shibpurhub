@@ -56,6 +56,10 @@
       <HintPath>packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Elmah.Contrib.WebApi, Version=1.0.10.25, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Elmah.Contrib.WebApi.1.0.10.25\lib\net45\Elmah.Contrib.WebApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Elmah.Mvc, Version=2.0.0.29988, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Elmah.MVC.2.1.1\lib\net40\Elmah.Mvc.dll</HintPath>
       <Private>True</Private>
@@ -304,6 +308,7 @@
     <Compile Include="Controllers\WebAPI\AnswersController.cs" />
     <Compile Include="Controllers\WebAPI\AskToAnswerController.cs" />
     <Compile Include="Controllers\WebAPI\CareerController.cs" />
+    <Compile Include="Controllers\WebAPI\ErrorController.cs" />
     <Compile Include="Controllers\WebAPI\JobApplicationCommentsController.cs" />
     <Compile Include="Controllers\WebAPI\FeedController.cs" />
     <Compile Include="Controllers\WebAPI\SkillSetsController.cs" />
@@ -637,7 +642,9 @@
     <Content Include="Views\PartialViews\_EditedDepartmentDropdown.cshtml" />
     <Content Include="Views\Settings\_DeleteAccount.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Error\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Project_Readme.html" />
   </ItemGroup>

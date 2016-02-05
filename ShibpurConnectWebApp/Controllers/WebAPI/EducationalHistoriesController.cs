@@ -17,6 +17,8 @@ using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using WebApi.OutputCache.V2;
 using System.Collections.Generic;
+using Nest;
+
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -233,6 +235,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // delete the record in database
             try
             {
+                // delete from elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                var response = client.Delete("my_index", "educationalhistories", id);
+
+                // delete from mongodb
                 var result = _mongoHelper.Collection.Remove(Query.EQ("_id", new BsonObjectId(new ObjectId(id))), RemoveFlags.Single);
 
                 // if mongo failed to save the data then send error
@@ -264,17 +271,29 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         internal async void DeleteAllEducationalHistories(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-                throw new ArgumentException("null userId supplied");
+                throw new ArgumentException("null userId supplied");      
             
-            
-            // delete all the records in database
             try
             {
+                // get the list of documents that will be deleted, we need the ids for doing the clean work in elastic search
+                var documents = _mongoHelper.Collection.Find(Query.EQ("UserId", userId));
+
+                // delete corresponding records from elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+                foreach (var document in documents)
+                {
+                    var response = client.Delete("my_index", "educationalhistories", document.Id);
+                }
+
+                // delete all the records from the database
                 var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
 
                 // if mongo failed to save the data then send error
                 if (!result.Ok)
-                    throw new MongoException("failed to delete the educational histories");                
+                    throw new MongoException("failed to delete the educational histories");                              
+               
             }
             catch (MongoConnectionException ex)
             {

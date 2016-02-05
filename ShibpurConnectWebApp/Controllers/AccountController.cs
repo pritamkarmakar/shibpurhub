@@ -289,7 +289,8 @@ namespace ShibpurConnectWebApp.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Location = model.Location,
-                    RegisteredOn = DateTime.UtcNow
+                    RegisteredOn = DateTime.UtcNow,
+                    ProfileImageURL = "/Content/images/profile-image.jpg"
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

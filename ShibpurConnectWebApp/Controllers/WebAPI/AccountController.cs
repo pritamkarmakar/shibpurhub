@@ -233,8 +233,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             CareerController careerController = new CareerController();
             careerController.DeleteAllJobsAndApplicationaPostedByAUser(userId);
 
-            // delete all job applications by this user
-
+            // delete all job applications by this user (not required at this time, as the API which retrieve the job applications validate whether user exist or not)
 
             // delete the user from the database, keeping it at the end to make sure previous methods get execute successfully
             ApplicationUser result = await _repo.DeleteUserAccount(userId);           

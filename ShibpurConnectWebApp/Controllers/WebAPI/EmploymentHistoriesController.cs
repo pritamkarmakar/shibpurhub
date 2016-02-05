@@ -14,6 +14,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using WebApi.OutputCache.V2;
+using Nest;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -135,6 +136,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("You are not allowed to edit this record");
             }
 
+            // delete from elastic search
+            var client = _elasticSearchHelper.ElasticClient();
+            var response = client.Delete("my_index", "employmenthistories", id);
+
             var result = _mongoHelper.Collection.Remove(Query.EQ("_id", new BsonObjectId(new ObjectId(id))), RemoveFlags.Single);
             // invalidate the cache for the action those will get impacted due to this new answer post
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
@@ -222,6 +227,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // delete all the records in database
             try
             {
+                // get the list of documents that will be deleted, we need the ids for doing the clean work in elastic search
+                var documents = _mongoHelper.Collection.Find(Query.EQ("UserId", userId));
+
+                // delete corresponding records from elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+                foreach (var document in documents)
+                {
+                    var response = client.Delete("my_index", "employmenthistories", document.Id);
+                }
+
+                // delete from mongodb
                 var result = _mongoHelper.Collection.Remove(Query.EQ("UserId", userId));
 
                 // if mongo failed to save the data then send error
