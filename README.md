@@ -73,5 +73,5 @@ var userES = client.Search<CustomUserInfo>(v => v
 
 ```
 
-### See all error logs using Elmah ###
+## See all error logs using Elmah ##
 www.shibpurhub.com/elmah.axd
