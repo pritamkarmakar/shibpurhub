@@ -72,3 +72,6 @@ var userES = client.Search<CustomUserInfo>(v => v
                     .Query(l => l.Term("userId", user.Id)));
 
 ```
+
+### See all error logs using Elmah ###
+www.shibpurhub.com/elmah.axd
