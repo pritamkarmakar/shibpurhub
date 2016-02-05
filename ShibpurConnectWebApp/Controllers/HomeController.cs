@@ -8,7 +8,7 @@ namespace ShibpurConnectWebApp.Controllers
         {
             if(User.Identity.IsAuthenticated)
             {
-               return RedirectToAction("Index", "Feed");
+               return RedirectToAction("myfeeds", "feed");
             }
 
             return View();

@@ -211,10 +211,15 @@
                 {
                     $("#imagePreview").siblings('.imageDiv').show();
                 }
-                if(result.userInfo.profileImageURL)
+
+                // we set the default image when user sign-up, if it is still that one then don't add imgur domain
+                if(result.userInfo.profileImageURL == "/Content/images/profile-image.jpg")
                 {
                     $("#imagePreview").show().css("background-image", "url("+ result.userInfo.profileImageURL+")");
                 }
+                else
+                    $("#imagePreview").show().css("background-image", "url("+ IMGURPATH + result.userInfo.profileImageURL+")");
+
                 // iterate over all the educational histories
                 if(result.educationalHistories != null)
                 {

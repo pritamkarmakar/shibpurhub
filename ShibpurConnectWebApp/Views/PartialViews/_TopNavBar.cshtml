@@ -30,19 +30,19 @@
                 <li>@Html.ActionLink("Questions", "Index", "feed")</li>*@
                 @if (User.Identity.IsAuthenticated)
                 {
-                <li class="dropdown">
+                @*<li class="dropdown">
 
                     <a href="/feed" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Feed<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/feed/myfeeds">Following</a></li>
                         <li><a href="/feed">All</a></li>
                     </ul>
-                </li>
+                </li>*@
+                @*<li>@Html.ActionLink("Activity", "myfeeds", "feed")</li>*@
+                <li><a href="/feed/myfeeds">Activity</a></li>
                 }
-                else
-                {
-                <li>@Html.ActionLink("Feed", "Index", "feed")</li>
-                }
+
+                <li>@Html.ActionLink("Discussions", "Index", "feed")</li>
                 <li>@Html.ActionLink("Tags", "Index", "tags")</li>
                 <li>@Html.ActionLink("Career", "Index", "career")</li>
                 <li>@Html.ActionLink("Users", "Index", "users")</li>

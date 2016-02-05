@@ -3,6 +3,14 @@
     ViewBag.Title = "Followed feed - ShibpurHub";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
+}
+
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.7")" />
 <script src="@Url.Content("~/Scripts/feed/myfeed.js?v=1.6")" type="text/javascript"></script>
 
