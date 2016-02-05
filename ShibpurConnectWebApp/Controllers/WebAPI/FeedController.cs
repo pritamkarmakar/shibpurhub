@@ -163,6 +163,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     Task<CustomUserInfo> result = helper.FindUserById(id, true);
                     var userDetailInList = await result;
+
+                    if (userDetailInList == null)
+                        continue;
+
                     var user = new FeedUserDetail
                     {
                         FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,
@@ -180,17 +184,20 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 foreach (var feedResult in feedResults)
                 {
-                    var matchedUser = userDetails[feedResult.UserId];
-                    if (matchedUser != null)
+                    if (userDetails.ContainsKey(feedResult.UserId))
                     {
-                        feedResult.UserName = matchedUser.FullName;
-                        if(feedResult.ActivityType != 10)
+                        var matchedUser = userDetails[feedResult.UserId];
+                        if (matchedUser != null)
                         {
-                            feedResult.ItemSubHeader =  matchedUser.CareerDetail;
+                            feedResult.UserName = matchedUser.FullName;
+                            if (feedResult.ActivityType != 10)
+                            {
+                                feedResult.ItemSubHeader = matchedUser.CareerDetail;
+                            }
+
+                            feedResult.UserProfileUrl = "/Account/Profile?userId=" + feedResult.UserId;
+                            feedResult.UserProfileImageUrl = matchedUser.ImageUrl;
                         }
-                        
-                        feedResult.UserProfileUrl = "/Account/Profile?userId=" + feedResult.UserId;
-                        feedResult.UserProfileImageUrl = matchedUser.ImageUrl;
                     }
 
                     // TO-DO: Do the same for child items
@@ -288,6 +295,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     if (feed.Activity == 10)
                     {
                         job = jobs.FirstOrDefault(b => b.JobId == feed.ActedOnObjectId);
+
+                        if (job == null)
+                            continue;
 
                         feedContent.ItemHeader = job.JobTitle;
                         feedContent.ItemSubHeader = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " | ") 
