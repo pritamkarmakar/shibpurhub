@@ -9,6 +9,8 @@ using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models.WebAPI;
 using System.Threading.Tasks;
 using WebApi.OutputCache.V2;
+using System.Security.Claims;
+using System.Net.Http;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -52,23 +54,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="loggedInUserId">The logged in user identifier.</param>
         /// <param name="page">The page.</param>
         /// <param name="alreadyShown">The alrady shown.</param>
-        /// <returns></returns>       
-        public async Task<IHttpActionResult> GetPersonalizedFeeds(string loggedInUserId, int page = 0, int alreadyShown = 0)
+        /// <returns></returns>   
+        [Authorize]
+        public async Task<IHttpActionResult> GetPersonalizedFeeds(int page = 0, int alreadyShown = 0)
         {
             try
             {
-                if (string.IsNullOrEmpty(loggedInUserId))
-                {
-                    return BadRequest("No UserId is found");
-                }
+                ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+                var email = principal.Identity.Name;
 
-                var helper = new Helper.Helper();
-                var userResult = helper.FindUserById(loggedInUserId);
+                Helper.Helper helper = new Helper.Helper();
+                var userResult = helper.FindUserByEmail(email);
                 var userDetail = await userResult;
                 if (userDetail == null)
                 {
-                    return BadRequest("No User is found");
-                }
+                    return BadRequest("No UserId is found");
+                }                
 
                 var userId = userDetail.Id;
                 // taking activities that hasn't been processed, but all these activities are not applicable to this user
@@ -89,17 +90,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                            (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
-                                           (m.Activity == 10 && m.UserId != loggedInUserId)
+                                           (m.Activity == 10 && m.UserId != userDetail.Id)
                                           orderby m.HappenedAtUTC descending
                                           select m).ToList();
 
                     // save the activity log for this user in in-memory cache
-                    CacheManager.SetCacheData("feed-" + loggedInUserId, allapplicablefeeds);
+                    CacheManager.SetCacheData("feed-" + userDetail.Id, allapplicablefeeds);
                 }
                 else
                 {
                     // get the list of activities from in-memory
-                    allapplicablefeeds = (List<UserActivityLog>)CacheManager.GetCachedData("feed-" + loggedInUserId);
+                    allapplicablefeeds = (List<UserActivityLog>)CacheManager.GetCachedData("feed-" + userDetail.Id);
 
                     // if for some reason in-memory cache is missing then get the list from database
                     if(allapplicablefeeds == null)
@@ -110,7 +111,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                                (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
-                                               (m.Activity == 10 && m.UserId != loggedInUserId)
+                                               (m.Activity == 10 && m.UserId != userDetail.Id)
                                               orderby m.HappenedAtUTC descending
                                               select m).ToList();
                     }
