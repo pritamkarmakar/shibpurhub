@@ -169,7 +169,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        // POST: api/Questions
+        /// <summary>
+        /// Post a new answer
+        /// </summary>
+        /// <param name="answerdto"></param>
+        /// <returns></returns>
         [Authorize]
         [ResponseType(typeof(Answer))]
         [InvalidateCacheOutput("GetQuestions", typeof(QuestionsController))]

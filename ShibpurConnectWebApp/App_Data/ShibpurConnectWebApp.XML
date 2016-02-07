@@ -535,6 +535,13 @@
             <param name="page">page index</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.PostAnswer(ShibpurConnectWebApp.Models.WebAPI.AnswerDTO)">
+            <summary>
+            Post a new answer
+            </summary>
+            <param name="answerdto"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AnswersController.NotificationToAllFollowers(ShibpurConnectWebApp.Models.WebAPI.Question,ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo,System.String)">
             <summary>
             Method to send email notification to all the followers of the question
@@ -655,7 +662,7 @@
             <param name="loggedInUserId">The logged in user identifier.</param>
             <param name="page">The page.</param>
             <param name="alreadyShown">The alrady shown.</param>
-            <returns></returns>
+            <returns></returns>       
         </member>
         <member name="T:ShibpurConnectWebApp.Controllers.WebAPI.PersonalizedQAStatus">
             <summary>
@@ -1150,6 +1157,16 @@
             </summary>
             <param name="userId">userid to check if current user is following this user to or</param>
             <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Helper.CacheManager.SetCacheData(System.String,System.Object)">
+            <summary>
+            Method to save cache data, if it is not present
+            </summary>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Helper.CacheManager.OverwriteCacheData(System.String,System.String)">
+            <summary>
+            Method to overwrite cache data even it is already exist
+            </summary>
         </member>
         <member name="M:ShibpurConnectWebApp.Helper.ElasticSearchHelper.ElasticClient">
             <summary>

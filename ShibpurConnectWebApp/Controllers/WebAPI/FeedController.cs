@@ -52,9 +52,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="loggedInUserId">The logged in user identifier.</param>
         /// <param name="page">The page.</param>
         /// <param name="alreadyShown">The alrady shown.</param>
-        /// <returns></returns>
-        [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        /// <returns></returns>       
         public async Task<IHttpActionResult> GetPersonalizedFeeds(string loggedInUserId, int page = 0, int alreadyShown = 0)
         {
             try
@@ -73,20 +71,54 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
 
                 var userId = userDetail.Id;
-
+                // taking activities that hasn't been processed, but all these activities are not applicable to this user
                 var allFeeds = _mongoHelper.Collection.FindAll().OrderByDescending(a => a.HappenedAtUTC).Skip(alreadyShown).Take(100).ToList();
 
-
+                // users that current user following
                 var followedUsers = userDetail.Following ?? new List<string>();
+                // questions that current user following
                 var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
+                List<UserActivityLog> allapplicablefeeds;
 
-                var allFeedsFollowedByMe = from x in allFeeds
-                                           where followedUsers.Contains(x.UserId) ||
-                                                 (followedQuestions.Contains(x.ActedOnObjectId) && x.UserId != userId)
-                                                 || (x.Activity == 10 && x.UserId != userId)
-                                           select x;
+                // also if user if doing a page refresh or making first time call to the feed api then make db query to get new content if there are any
+                if (alreadyShown == 0)
+                {
+                    allapplicablefeeds = (from m in _mongoHelper.Collection.FindAll()
+                                          where (m.Activity == 1 && followedUsers.Contains(m.UserId)) ||
+                                           (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
+                                           (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
+                                           (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
+                                           (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
+                                           (m.Activity == 10 && m.UserId != loggedInUserId)
+                                          orderby m.HappenedAtUTC descending
+                                          select m).ToList();
 
-                var feedsFollowedByMe = allFeedsFollowedByMe.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
+                    // save the activity log for this user in in-memory cache
+                    CacheManager.SetCacheData("feed-" + loggedInUserId, allapplicablefeeds);
+                }
+                else
+                {
+                    // get the list of activities from in-memory
+                    allapplicablefeeds = (List<UserActivityLog>)CacheManager.GetCachedData("feed-" + loggedInUserId);
+
+                    // if for some reason in-memory cache is missing then get the list from database
+                    if(allapplicablefeeds == null)
+                    {
+                        allapplicablefeeds = (from m in _mongoHelper.Collection.FindAll()
+                                              where (m.Activity == 1 && followedUsers.Contains(m.UserId)) ||
+                                               (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
+                                               (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
+                                               (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
+                                               (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
+                                               (m.Activity == 10 && m.UserId != loggedInUserId)
+                                              orderby m.HappenedAtUTC descending
+                                              select m).ToList();
+                    }
+                    
+                }                               
+
+
+                var feedsFollowedByMe = allapplicablefeeds.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
 
 
                 var feedResults = new List<PersonalizedFeedItem>();
@@ -224,26 +256,72 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             try
             {
                 var answerIds = logs.Where(a => a.Activity == 2 || a.Activity == 4 || a.Activity == 5).Select(a => a.ActedOnObjectId).ToList();
-                var answers = from a in _mongoAnswerHelper.Collection.AsQueryable()
-                              where answerIds.Contains(a.AnswerId)
-                              select a;
+                // create the answer list which are in the user activity log for this user
+                List<Answer> _answers = new List<Answer>();
 
+                foreach (string answerid in answerIds)
+                {
+                    // check if in-memory cache has this answer or retrive from db and save it
+                    Answer answerobj = (Answer)CacheManager.GetCachedData(answerid);
+                    if (answerobj == null)
+                    {
+                        answerobj = _mongoAnswerHelper.Collection.AsQueryable().Where(m => m.AnswerId == answerid).FirstOrDefault();
+                        if (answerobj != null)
+                        {
+                            CacheManager.SetCacheData(answerid, answerobj);
+                        }
+                    }
+                    // save the obj in the list if it not null
+                    if (answerobj != null)
+                        _answers.Add(answerobj);
+                }
+
+                // create the question list which are in the user activity log for this user
                 var questionIds = logs.Where(a => a.Activity == 1 || a.Activity == 8).Select(a => a.ActedOnObjectId).ToList();
-                var questionIdsFromAnswers = from o in answers.ToList()
+                var questionIdsFromAnswers = from o in _answers.ToList()
                                              select o.QuestionId;
                 questionIds.AddRange(questionIdsFromAnswers.ToList());
 
-                //var uniqueQuestionIdsFromAnswers = questionIdsFromAnswers.Distinct();
-                //questionIds.AddRange(uniqueQuestionIdsFromAnswers.ToList());
+                List<Question> questions = new List<Question>();
 
-                var questions = from b in _mongoQustionHelper.Collection.AsQueryable()
-                                where questionIds.Contains(b.QuestionId)
-                                select b;
+                foreach (string questionid in questionIds)
+                {
+                    // check if in-memory cache has this question or retrive from db and save it
+                    Question questionobj = (Question)CacheManager.GetCachedData(questionid);
+                    if (questionobj == null)
+                    {
+                        questionobj = _mongoQustionHelper.Collection.AsQueryable().Where(m => m.QuestionId == questionid).FirstOrDefault();
+                        if (questionobj != null)
+                        {
+                            CacheManager.SetCacheData(questionid, questionobj);
+                           
+                        }
+                    }
+                    // save the obj in the list if it not null
+                    if (questionobj != null)
+                        questions.Add(questionobj);
+                }
 
+                // create the job list which are in the user activity log for this user
                 var jobIds = logs.Where(a => a.Activity == 10).Select(a => a.ActedOnObjectId).ToList();
-                var jobs = from c in _mongoJobHelper.Collection.AsQueryable()
-                           where jobIds.Contains(c.JobId)
-                           select c;
+                List<Job> jobs = new List<Job>();
+
+                foreach (string jobid in jobIds)
+                {
+                    // check if in-memory cache has this job or retrive from db and save it
+                    Job jobobj = (Job)CacheManager.GetCachedData(jobid);
+                    if (jobobj == null)
+                    {
+                        jobobj = _mongoJobHelper.Collection.AsQueryable().Where(m => m.JobId == jobid).FirstOrDefault();
+                        if (jobobj != null)
+                            CacheManager.SetCacheData(jobid, jobobj);
+                    }
+
+                    // save the obj in the list if it is not null
+                    if (jobobj != null)
+                        jobs.Add(jobobj);
+
+                }
 
                 var feedContents = new List<PersonalizedFeedItem>();
                 var questionIdsForAnswerFeeds = new List<string>();
@@ -260,7 +338,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     if (isFeedAnAnswer)
                     {                        
-                        answer = answers.FirstOrDefault(a => a.AnswerId == feed.ActedOnObjectId);                        
+                        answer = _answers.FirstOrDefault(a => a.AnswerId == feed.ActedOnObjectId);                        
 
                         if (answer != null)
                         {
@@ -271,6 +349,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                             questionIdsForAnswerFeeds.Add(answer.QuestionId);
                             question = questions.FirstOrDefault(b => b.QuestionId == answer.QuestionId);
+                            // if the question has been deleted then no need process this
+                            if (question == null)
+                                continue;
+
                             feedContent.QuestionId = question.QuestionId;
                             feedContent.AnswerId = answer.AnswerId;
 
