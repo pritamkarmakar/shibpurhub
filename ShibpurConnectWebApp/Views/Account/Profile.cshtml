@@ -154,6 +154,9 @@
         if (userInfo != null)
             loggedInUserId = userInfo.id;
 
+        // get the token from the session storage
+        var token = sessionStorage.getItem("accessToken");
+
         // If profileId is null then consider loggedInUserId. This will happen when a logged in user will click on the 'Profile' link from the navbar.
         // That url will be '/account/profile' without any userid. But if both are null then redirect to feed/index page
         if (profileId == null & loggedInUserId != null)
@@ -276,11 +279,11 @@
             }
         });
 
-        if(userInfo != null)
+        if(token != null)
         {
             // find out if current user is following this user or not. Then change the button text accordingly from 'follow' -> 'following
             scAjax({
-                "url": "profile/checkuserfollow?userId="+profileId,
+                "url": "profile/checkuserfollow",
                 "success": function (result) {
                     if (!result) {
                         return;

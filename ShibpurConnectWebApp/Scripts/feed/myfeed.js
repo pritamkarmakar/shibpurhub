@@ -1,6 +1,10 @@
 $(document).ready(function () {
+    // after login we get the token from web api that stored in the session storage, if token not present 
+    // that means user is not yet logged-in
+    var token = sessionStorage.getItem("accessToken");
+    if (token != null)
         loadFeeds(0);
-    });
+});
 
 function getThreadClass(feedType)
 {
@@ -10,16 +14,12 @@ function getThreadClass(feedType)
 }
 
 function loadFeeds(page) {
-	var userDetails = localStorage.getItem("SC_Session_UserDetails");
-	var userInfo = $.parseJSON(userDetails);
-	var loggedInUserId = userInfo == null ? "" : userInfo.id;
-
 	$('#currentPage').val(page);
 	var alreadyShown = parseInt($('#alreadyShown').val()) || 0;
 
 	scAjax({
 		"url": "feed/GetPersonalizedFeeds",
-		"data": { "loggedInUserId": loggedInUserId, "page": page || 0, "alreadyShown": alreadyShown },
+		"data": {"page": page || 0, "alreadyShown": alreadyShown },
 		"success": function (result) {
 			if (!result) {
 				return;

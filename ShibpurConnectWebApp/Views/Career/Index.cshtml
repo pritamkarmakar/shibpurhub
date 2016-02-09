@@ -2,6 +2,15 @@
     ViewBag.Title = "Career - ShibpurHub";
 }
 
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
+}
+
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/career/career.css")" />
 <script src="@Url.Content("~/Scripts/career/career.js?v=2.2")" type="text/javascript"></script>
 
