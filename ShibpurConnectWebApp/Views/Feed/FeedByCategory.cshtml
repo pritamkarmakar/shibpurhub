@@ -3,6 +3,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
+}
+
 <script type="text/javascript">
     $(document).ready(function () {
         // hide the right column modules, we will enable inside respective the partial view once receive the server response

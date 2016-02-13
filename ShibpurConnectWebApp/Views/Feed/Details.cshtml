@@ -5,6 +5,15 @@
 @{
     //ViewBag.Title = "Feed Details";
 }
+
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
+}
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/details.css")" />
 <script type="text/javascript">
     var questionID = @Html.Raw(Json.Encode(ViewData["questionId"]));

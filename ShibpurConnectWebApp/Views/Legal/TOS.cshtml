@@ -2,6 +2,15 @@
     ViewBag.Title = "Terms of Service - ShibpurHub";
 }
 
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
+}
+
 <div class="col-md-12 col-xs-12">
     <h2>Terms of Service</h2>
     <p style="font-size: 20px; font-weight: bold">Agreement</p>

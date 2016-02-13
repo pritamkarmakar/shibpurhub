@@ -4,6 +4,15 @@
 <h2>Contact Us</h2>
 <h3>@ViewBag.Message</h3>
 
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
+}
+
 <address>
     ShibpurHub<br />
     Redmond, WA 98052-6399<br />
@@ -12,5 +21,6 @@
 </address>
 
 <address>
-    <strong>Admin:</strong>   <a href="mailto:admin@shibpurhub.com">admin@shibpurhub.com</a><br />
+    <strong>Admin:</strong> <a href="mailto:admin@shibpurhub.com">admin@shibpurhub.com</a><br/>
 </address>
+

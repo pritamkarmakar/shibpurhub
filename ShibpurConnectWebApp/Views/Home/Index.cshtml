@@ -3,6 +3,13 @@
     Layout = "";
 }
 
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @Scripts.Render("~/bundles/knockout")
+    @Scripts.Render("~/bundles/app")
+}
+
 <html>
 <head>
     <meta charset="utf-8" />
@@ -50,6 +57,7 @@
             background-color: transparent;
         }
     </style>
+
 </head>
 <body>
 

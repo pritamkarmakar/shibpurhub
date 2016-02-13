@@ -4,7 +4,16 @@
 }
 
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/career/career.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/career/jobdetails.css")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/career/jobdetails.css")"/>
+
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts{
+        @Scripts.Render("~/bundles/knockout")
+        @Scripts.Render("~/bundles/app")
+    }
+}
 
 <script type="text/javascript">
     var jobId = @Html.Raw(Json.Encode(ViewData["jobId"]));
