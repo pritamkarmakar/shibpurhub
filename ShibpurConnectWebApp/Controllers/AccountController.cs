@@ -542,6 +542,17 @@ namespace ShibpurConnectWebApp.Controllers
                         var result3 = await UserManager.CreateAsync(user);
                         if (result3.Succeeded)
                         {
+                            //Call WebApi to log activity
+                            var userActivityController = new UserActivityController();
+                            var userActivityLog = new UserActivityLog
+                            {
+                                Activity = 6,
+                                UserId = user.Id,
+                                ActedOnObjectId = string.Empty,
+                                ActedOnUserId = string.Empty
+                            };
+                            userActivityController.PostAnActivity(userActivityLog);
+
                             result3 = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                             if (result3.Succeeded)
                             {

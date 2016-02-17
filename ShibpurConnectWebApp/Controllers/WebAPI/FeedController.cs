@@ -88,6 +88,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                           where (m.Activity == 1 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
+                                           (m.Activity == 6) ||
                                            (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 10 && m.UserId != userDetail.Id)
@@ -109,6 +110,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                               where (m.Activity == 1 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
+                                               (m.Activity == 6) ||
                                                (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 10 && m.UserId != userDetail.Id)
@@ -252,6 +254,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        // Method to retrieve feed content for following activity types
+        // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer, 
+        // 8: Follow a question
         private async Task<IHttpActionResult> GetAllFeedContents(IList<UserActivityLogWithContent> logs, string loggedInUserId)
         {
             try
@@ -436,8 +441,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
-        // 1: Ask question, 2: Answer, 3: Upvote, 4: Comment, 5: Mark as Answer, 
-        // 6: Register as new user, 7: Follow an user, 8: Follow a question, 9: Update profile image
+        // Method to retrieve feed content for following activity types
+        // 6: Register as new user, 7: Follow an user
         private async Task<IHttpActionResult> GetFeedContent(int type, string userId, string objectId = "", string objectUserId = "")
         {
             var feedContent = new PersonalizedFeedItem();
@@ -446,13 +451,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 if (type == 6 || type == 7)
                 {
-                    if (string.IsNullOrEmpty(objectUserId))
+                    if (string.IsNullOrEmpty(userId))
                     {
                         return NotFound();
                     }
 
                     var helper = new Helper.Helper();
-                    Task<CustomUserInfo> actionResult = helper.FindUserById(objectUserId);
+                    Task<CustomUserInfo> actionResult = null;
+                    if (type == 7)
+                         actionResult = helper.FindUserById(objectUserId);
+                    if(type == 6)
+                        actionResult = helper.FindUserById(userId);
                     var userDetail = await actionResult;
 
                     feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
@@ -499,7 +508,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             if (type == 6)
             {
-                return " joined ";
+                return " joined ShibpurHub";
             }
 
             if (type == 7 || type == 8)
