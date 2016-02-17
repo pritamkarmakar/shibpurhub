@@ -144,6 +144,8 @@
 <script type="text/javascript">
     // userid of the user whose profile we are looking at
     var profileId;
+    // default user profile image path
+    var profiledefaultimage = '/Content/images/profile-image.jpg';
     // get the user profile for this user
     $(document).ready(function() {
         jQuery.support.cors = true;
@@ -225,7 +227,7 @@
                 }
 
                 // we set the default image when user sign-up, if it is still that one then don't add imgur domain
-                if(result.userInfo.profileImageURL == "/Content/images/profile-image.jpg")
+                if(result.userInfo.profileImageURL == profiledefaultimage)
                 {
                     $("#imagePreview").show().css("background-image", "url("+ result.userInfo.profileImageURL+")");
                 }
@@ -292,7 +294,7 @@
         {
             // find out if current user is following this user or not. Then change the button text accordingly from 'follow' -> 'following
             scAjax({
-                "url": "profile/checkuserfollow",
+                "url": "profile/checkuserfollow?userId="+profileId,
                 "success": function (result) {
                     if (!result) {
                         return;
@@ -405,7 +407,7 @@
 
                     // iterate over all followers and add them in the div
                     $(result).each(function (i, userinfo) {
-                        if (userinfo.profileImageURL == null)
+                        if (userinfo.profileImageURL == profiledefaultimage)
                             $('.userfollowers').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")
                         else
                             $('.userfollowers').append("<div class='user col-md-4'><div class='profileimage' style='float:left;'><img class='avatar' width='60' height='60' src='" + IMGURPATH + userinfo.profileImageURL + "'></img></div><div class='userinfo' style='float:left;'><span class='name'><a class='userName' style='margin-left:15px;' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><br/><span style='margin-left:15px;font-size:12px'>Reputation: " + userinfo.reputationCount + "</span></div></div>")

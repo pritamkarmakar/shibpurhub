@@ -1,7 +1,7 @@
 ﻿function AppDataModel() {
     var self = this;
     // Routes
-    self.userInfoUrl = "/api/Me";
+    self.userInfoUrl = "/api/account/me";
     self.siteUrl = "/";
 
     // Route operations

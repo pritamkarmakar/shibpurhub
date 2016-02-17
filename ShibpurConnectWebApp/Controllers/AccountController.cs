@@ -284,7 +284,8 @@ namespace ShibpurConnectWebApp.Controllers
 
                 // if we are here that means user hasn't been created before. So add a new account
                 var user = new ApplicationUser
-                { UserName = model.Email.ToLower(),
+                {
+                    UserName = model.Email.ToLower(),
                     Email = model.Email.ToLower(),
                     FirstName = model.FirstName,
                     LastName = model.LastName,
@@ -537,11 +538,34 @@ namespace ShibpurConnectWebApp.Controllers
                         string lastName =
                             loginInfo.ExternalIdentity.Name.Split(' ')[
                                 loginInfo.ExternalIdentity.Name.Split(' ').Length - 1];
-                        var user = new ApplicationUser { UserName = loginInfo.Email, Email = loginInfo.Email, FirstName = firstName, LastName = lastName, RegisteredOn = DateTime.UtcNow };
+                        var user = new ApplicationUser
+                        {
+                            UserName = loginInfo.Email,
+                            Email = loginInfo.Email,
+                            FirstName = firstName,
+                            LastName = lastName,
+                            RegisteredOn = DateTime.UtcNow,
+                            ProfileImageURL = "/Content/images/profile-image.jpg"
+                        };
                         //await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                         var result3 = await UserManager.CreateAsync(user);
                         if (result3.Succeeded)
                         {
+                            // add the new user in the elastic search index
+                            var client = _elasticSearchHelper.ElasticClient();
+                            var index = client.Index(new CustomUserInfo
+                            {
+                                Email = user.Email,
+                                Id = user.Id,
+                                FirstName = user.FirstName,
+                                LastName = user.LastName,
+                                Location = user.Location,
+                                RegisteredOn = user.RegisteredOn,
+                                ReputationCount = user.ReputationCount,
+                                ProfileImageURL = user.ProfileImageURL,
+                                AboutMe = user.AboutMe
+                            });
+
                             //Call WebApi to log activity
                             var userActivityController = new UserActivityController();
                             var userActivityLog = new UserActivityLog
