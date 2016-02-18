@@ -226,9 +226,8 @@ function getQueryStringParam(name) {
 // function to follow a new tag
 function followtag(event) {
     var tagname = event.id;
-    var shouldFollowTag = $("#" + event.id + " > span").text().trim().toLowerCase() == "follow" ||
-                           $("#" + event.id + " > span").text().trim().toLowerCase() == "follow this tag" ||
-                           !$("#" + event.id).hasClass('active');
+    var shouldFollowTag = $("#" + event.id + " > span").text().trim().toLowerCase() == "follow topic";
+
     if (shouldFollowTag) {
         scAjax({
             "url": "tags/FollowNewTag?tagName=" + tagname,
@@ -238,8 +237,8 @@ function followtag(event) {
                     return;
                 }
 
-                //$("#" + tagname + " > i").addClass('fa fa-check-circle');
-                //$("#" + tagname + " > span").text(' Following');
+                $("#" + tagname + " > i").addClass('fa fa-check-circle');
+                $("#" + tagname + " > span").text(' Following');
 
                 Command: toastr["success"]("Successfully subscribed to " + tagname);
             },
@@ -260,9 +259,9 @@ function followtag(event) {
                     return;
                 }
 
-                //$("#" + tagname + " > i").removeClass('fa fa-check-circle');
-                //$("#" + tagname + " > i").addClass('fa fa-plus-circle');
-                //$("#" + tagname + " > span").text(' Follow');
+                $("#" + tagname + " > i").removeClass('fa fa-check-circle');
+                $("#" + tagname + " > i").addClass('fa fa-plus-circle');
+                $("#" + tagname + " > span").text(' Follow Topic');
 
                 Command: toastr["success"]("Successfully unsubscribed " + tagname);
             },
@@ -319,7 +318,7 @@ function changetextonmouseout(event) {
     if ($("#" + event.id + " > span").text().trim().toLowerCase().search("unfollow") == 0) {
         $("#" + event.id + " > i").removeClass('fa fa-minus-circle');
         $("#" + event.id + " > i").addClass('fa fa-check-circle');
-        $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
+        $("#" + event.id).attr('style', 'background-color:#bed4e4;');
         $("#" + event.id + " > span").attr('style', 'color:black;');
         //$("#" + event.id + " > span").text(" Following");
         $("#" + event.id + " > i").attr('style', 'color:green;');
@@ -331,7 +330,7 @@ function changetextonmouseout(event) {
         }
     }
     else {
-        $("#" + event.id).attr('style', 'background-color:#E4EDF4;');
+        $("#" + event.id).attr('style', 'background-color:#bed4e4;');
         $("#" + event.id + " > span").attr('style', 'color:black;');
         $("#" + event.id + " > i").attr('style', 'color:green;');
     }

@@ -12,6 +12,13 @@
     }
 }
 
+<style type="text/css">
+    .topicheading
+    {
+        margin-bottom: 10px;
+    }
+</style>
+
 <script type="text/javascript">
     $(document).ready(function () {
         // hide the right column modules, we will enable inside respective the partial view once receive the server response
@@ -19,9 +26,9 @@
         $('.popularquestioncontainerdiv').hide();
 
         var selectedtag = @Html.Raw(Json.Encode(ViewData["selectedtag"]));
-        $('#tagheading').text("Questions about " + '"' +selectedtag + '"');
+        $('#tagheading').text(selectedtag);
         $('.followbutton').attr('id', selectedtag);
-        $(".followbutton").attr('style', 'background-color:#E4EDF4;');
+        $(".followbutton").attr('style', 'background-color:#bed4e4;');
 
         // get current user id from local storage
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
@@ -48,15 +55,10 @@
 
 <div>
     <div class="col-md-9 col-xs-12">
-        <div class="col-md-12">
-            <h4 id="tagheading"></h4>
-        </div>
-        <div class="col-md-12">
-            <button type='submit' class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followtag(this);'><i class='fa fa-plus-circle' style='color:green;'></i><span> Follow this tag</span></button>
-        </div>
-        <div class="col-md-12">
-            <hr id="solidseparator" />
-        </div>
+        <div class="topicheading">
+            <h4 id="tagheading" style="float:left"></h4>&nbsp;&nbsp;
+            <button type='submit' class='btn btn-xs followbutton' onmouseout='changetextonmouseout(this);' onmouseover='changetextonmouseover(this);' onclick='followtag(this);'><i class='fa fa-plus-circle' style='color:green;'></i><span> Follow Topic</span></button>
+        </div>      
         @Html.Partial("~/Views/PartialViews/_FeedList.cshtml")
     </div>
     <div class="col-md-3 col-xs-12">

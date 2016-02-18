@@ -86,7 +86,7 @@
             margin: 0;
         }
 
-    .profileimage {
+    .profileimage-user-index {
         width: 90px;
         height: 90px;
         margin: auto;
@@ -201,6 +201,10 @@
     var userDetails = localStorage.getItem("SC_Session_UserDetails");
     var userInfo = $.parseJSON(userDetails);
     var loggedInUserid = userInfo == null ? "" : userInfo.id;
+
+    // default user profile image path, when user signup in our site we assign this image as profile image by default
+    var profiledefaultimage = '/Content/images/profile-image.jpg';
+
     function handleFollowClick()
     {
         $('.follow-small').each(function (i, e) {
@@ -246,7 +250,7 @@
 
     function getProfileHtml(userinfo)
     {
-        var profileImgUrl = userinfo.profileImageURL == null ? "/Content/images/profile-image.jpg" : IMGURPATH + userinfo.profileImageURL;
+        var profileImgUrl = userinfo.profileImageURL == profiledefaultimage ? "/Content/images/profile-image.jpg" : IMGURPATH + userinfo.profileImageURL;
         var followingClass = $.inArray(loggedInUserid, userinfo.followers) == -1 ? "" : "active";
         var iconClass = followingClass == "active" ? "fa-check" : "fa-plus";
         if (loggedInUserid == "" || loggedInUserid == userinfo.id)
@@ -267,7 +271,7 @@
         
         return "<div class='user col-md-3 col-xs-12 col-sm-6'><div class='profile'> \
                 <a href='/Account/Profile?userId=" + userinfo.id + "'> \
-                    <div class='profileimage' style='background-image: url(" + profileImgUrl + ")'></div>" + userinfo.firstName + " " + userinfo.lastName + "</a> \
+                    <div class='profileimage-user-index' style='background-image: url(" + profileImgUrl + ")'></div>" + userinfo.firstName + " " + userinfo.lastName + "</a> \
                 <div class='rep-count' title='Reputation'><i class='fa fa-star-o'></i> " + userinfo.reputationCount + "</div> \
                 <div class='follow-small " + followingClass + "' id=" + userinfo.id + "><i class='fa " + iconClass + "'></i> </div> </div></div>";
     }

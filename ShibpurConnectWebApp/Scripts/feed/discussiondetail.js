@@ -3,14 +3,16 @@ var advancedEditor;
 var userId = null;
 // we will keep the default users that can answer this question and we will retrieve it during page load
 var userListAskToAnswer;
-var myImageUrl = "/Content/images/profile-image.jpg";
+
+// default user profile image path, when user signup in our site we assign this image as profile image by default
+var profiledefaultimage = '/Content/images/profile-image.jpg';
 
 // get the current logged-in user details
 var userDetails = localStorage.getItem("SC_Session_UserDetails");
 var userInfo = $.parseJSON(userDetails);
 if (userInfo != null) {
     userId = userInfo.id;
-    myImageUrl = userInfo.profileImageURL;
+    profiledefaultimage = userInfo.profileImageURL;
 }
 
 //used to reference rich textbox editor for question edit
@@ -83,7 +85,10 @@ function createQuestion(question)
     var htmlItem = $('div.item.question.hide').clone().removeClass('hide');
 
     var creatorImage = $(htmlItem).find('.post-creator-image');
-    $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+    if (question.userProfileImage != profiledefaultimage)
+        $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+    else
+        $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(" + question.userProfileImage + ")");
 
     $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId=" + question.userId);
     
@@ -203,7 +208,7 @@ function createAnswer(answer)
     var htmlItem = $('div.item.answer.hide').clone().removeClass('hide').attr('id', answer.answerId);
 
     var creatorImage = $(htmlItem).find('.post-creator-image');
-    if (answer.userProfileImage != "/Content/images/profile-image.jpg")
+    if (answer.userProfileImage != profiledefaultimage)
         $(creatorImage).attr("href", "/Account/Profile?userId" + answer.userId).css('background-image', "url(http://i.imgur.com/" + answer.userProfileImage + ")");
     else
         $(creatorImage).attr("href", "/Account/Profile?userId" + answer.userId).css('background-image', "url(" + answer.userProfileImage + ")");
@@ -238,7 +243,7 @@ function createAnswer(answer)
         });
     }
     
-    $('.myimg').css('background-image',"url("+ myImageUrl +")");
+    $('.myimg').css('background-image', "url(" + profiledefaultimage + ")");
     
     var comments = answer.comments;
     if (!comments) {
@@ -279,7 +284,7 @@ function createComment(comment)
     var answerId = comment.answerId;
     var htmlItem = $('#'+ answerId +" .comments .post-comment.hide").clone().removeClass('hide');
     
-    if (comment.userProfileImage != "/Content/images/profile-image.jpg")
+    if (comment.userProfileImage != profiledefaultimage)
         $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
     else
         $(htmlItem).find('.img-container').css('background-image', "url(" + comment.userProfileImage + ")");
@@ -343,7 +348,7 @@ function showAskToAnswer(question)
             else {
                 // update the div with the user data received from the API
                 $.each(result, function (i, val) {
-                    if (val.profileImageURL != null) {
+                    if (val.profileImageURL != profiledefaultimage) {
                         // form the smaller imgur image by adding 's' before '.jpg'
                         if (val.profileImageURL.charAt(val.profileImageURL.indexOf('.jpg') - 1) != 's') {
                             val.profileImageURL = val.profileImageURL.replace('.jpg', 's.jpg');
@@ -351,7 +356,7 @@ function showAskToAnswer(question)
                         $('#userlistasktoanswer').append("<div class='wantedanswersuggestion col-xs-12' id='" + val.id + "'><div class='userContainer'><div class='profileimage col-md-3 col-xs-4'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='" + IMGURPATH + val.profileImageURL + "' /></div><div class='userinfo col-md-9 col-xs-8'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br /><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br /><span id='" + val.id + "' style='font-size:12px'></span></div></div> <div class='askbuton col-md-12 col-xs-12'> <button id='" + val.id + "' data-id='" + val.id + "' class='btn btn-primary btn-xs' onclick='SendNotification(this)'>Ask</button></div></div>");
                     }
                     else
-                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion col-xs-12' id='" + val.id + "'><div class='userContainer'><div class='profileimage col-md-3 col-xs-4'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='/Content/images/profile-image.jpg' /></div><div class='userinfo col-md-9 col-xs-8'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br /><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br /><span id='" + val.id + "' style='font-size:12px'></span></div></div> <div class='askbuton col-md-12 col-xs-12'> <button id='" + val.id + "' data-id='" + val.id + "' class='btn btn-primary btn-xs' onclick='SendNotification(this)'>Ask</button></div></div>");
+                        $('#userlistasktoanswer').append("<div class='wantedanswersuggestion col-xs-12' id='" + val.id + "'><div class='userContainer'><div class='profileimage col-md-3 col-xs-4'><img class='avatar avatarasktoanswer center-block' width='60' height='60' src='"+ profiledefaultimage +"' /></div><div class='userinfo col-md-9 col-xs-8'><span class='name'><a class='userName' href='/Account/Profile?userId=" + val.id + "'>" + val.firstName + " " + val.lastName + "</a></span><br /><span id='reputationcount' style='font-size:12px'>Reputation: " + val.reputationCount + "</span><br /><span id='" + val.id + "' style='font-size:12px'></span></div></div> <div class='askbuton col-md-12 col-xs-12'> <button id='" + val.id + "' data-id='" + val.id + "' class='btn btn-primary btn-xs' onclick='SendNotification(this)'>Ask</button></div></div>");
                     // check if this user already requested to answer this question, if that true then keep the 'Ask' button disabled
                     scAjax({
                         "url": "asktoanswer/GetAskToAnswer",
