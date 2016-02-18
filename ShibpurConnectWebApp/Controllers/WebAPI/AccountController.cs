@@ -236,7 +236,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // delete all job applications by this user (not required at this time, as the API which retrieve the job applications validate whether user exist or not)
 
             // delete the user from the database, keeping it at the end to make sure previous methods get execute successfully
-            ApplicationUser result = await _repo.DeleteUserAccount(userId);           
+            ApplicationUser result = await _repo.DeleteUserAccount(userId);
+
+            // delete all notifications caused by this user
+            NotificationsController notificationController = new NotificationsController();
+            notificationController.DeleteAllNotificationsPostedByAUser(userId);              
         }
 
         protected override void Dispose(bool disposing)

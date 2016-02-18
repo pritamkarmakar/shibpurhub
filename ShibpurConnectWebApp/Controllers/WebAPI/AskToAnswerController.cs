@@ -154,6 +154,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     UserId = askToAnswerDto.AskedTo,
                     NotificationContent = notificationContent,
+                    NotificationByUser = userInfo.Id,
                     NotificationType = NotificationTypes.AskToAnswer
                 });
 

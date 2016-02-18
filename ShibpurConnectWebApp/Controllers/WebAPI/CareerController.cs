@@ -568,6 +568,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         UserId = jobInfo.UserId,
                         PostedOnUtc = DateTime.UtcNow,
                         NewNotification = true,
+                        NotificationByUser = userInfo.Id,
                         NotificationType = NotificationTypes.ReceivedJobApplication,
                         NotificationContent = "{\"appliedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"jobId\":\"" + jobInfo.JobId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"jobTitle\":\"" + jobInfo.JobTitle + "\"}"
                     });

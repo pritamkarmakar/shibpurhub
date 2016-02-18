@@ -273,6 +273,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         PostedOnUtc = DateTime.UtcNow,
                         NewNotification = true,
                         NotificationType = NotificationTypes.ReceivedAnswer,
+                        NotificationByUser = userInfo.Id,
                         NotificationContent = "{\"answeredBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " + userInfo.LastName + "\",\"questionId\":\"" + answerdto.QuestionId + "\",\"profileImage\":\"" + userInfo.ProfileImageURL + "\",\"questionTitle\":\"" + question.UrlSlug + "\"}"
                     });
                 }

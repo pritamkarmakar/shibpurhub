@@ -150,6 +150,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     PostedOnUtc = DateTime.UtcNow,
                     NewNotification = true,
                     NotificationType = NotificationTypes.ReceivedComment,
+                    NotificationByUser = userInfo.Id,
                     NotificationContent =
                         "{\"commentedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +
                         userInfo.LastName + "\",\"questionId\":\"" + question.Content.QuestionId +
@@ -174,6 +175,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     UserId = question.Content.UserId,
                     PostedOnUtc = DateTime.UtcNow,
                     NewNotification = true,
+                    NotificationByUser = userInfo.Id,
                     NotificationType = NotificationTypes.ReceivedCommentInQuestion,
                     NotificationContent =
                         "{\"commentedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +

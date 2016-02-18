@@ -390,6 +390,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 UserId = userIdToFollow,
                 PostedOnUtc = DateTime.UtcNow,
                 NewNotification = true,
+                NotificationByUser = userInfo.Id,
                 NotificationType = NotificationTypes.Following,
                 NotificationContent =
                     "{\"followedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +

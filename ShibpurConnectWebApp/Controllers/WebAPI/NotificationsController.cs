@@ -12,6 +12,8 @@ using MongoDB.Bson;
 using WebApi.OutputCache.V2;
 using System.Threading.Tasks;
 using System.Web.Http.Results;
+using MongoDB.Driver.Builders;
+using MongoDB.Driver;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
 {
@@ -183,6 +185,41 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             cache.RemoveStartsWith("notifications-getnotifications-userId=" + result[0].UserId);
 
             return Ok();
+        }
+
+        /// <summary>
+        /// method to do cleanup in the notification collection if user delete his/her account
+        /// </summary>
+        /// <param name="userId"></param>
+        [Authorize]
+        internal async void DeleteAllNotificationsPostedByAUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");
+
+            // find list of notifications those will be affected due to this deletion, we will then remove the cache
+            var userList = _mongoHelper.Collection.AsQueryable().Where(m => m.NotificationByUser == userId).Select(x => x.UserId).Distinct().ToList();
+            var keys = new List<string>();
+            foreach (string userid in userList)
+            {
+                var key = "notifications-getnotifications-userId=" + userid;
+                keys.Add(key);
+            }
+            WebApiCacheHelper.InvalidateCacheByKeys(keys);
+
+            // delete all the records in database
+            try
+            {
+                var result = _mongoHelper.Collection.Remove(Query.EQ("NotificationByUser", userId));
+
+                // if mongo failed to save the data then send error
+                if (!result.Ok)
+                    throw new MongoException("failed to delete the answers");
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to delete the answers");
+            }
         }
 
     }

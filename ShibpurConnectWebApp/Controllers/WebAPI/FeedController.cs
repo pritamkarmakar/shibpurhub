@@ -88,8 +88,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                           where (m.Activity == 1 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
-                                           (m.Activity == 6) ||
-                                           (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
+                                           (m.Activity == 6 && m.UserId != userDetail.Id) ||
+                                           // when one user will follow another user, we have to make sure the user who is getting followed is not receiving this notification in his feed
+                                           (m.Activity == 7 && followedUsers.Contains(m.UserId) && m.ActedOnUserId != userDetail.Id) ||
                                            (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 10 && m.UserId != userDetail.Id)
                                           orderby m.HappenedAtUTC descending
@@ -110,8 +111,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                               where (m.Activity == 1 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
-                                               (m.Activity == 6) ||
-                                               (m.Activity == 7 && followedUsers.Contains(m.UserId)) ||
+                                               (m.Activity == 6 && m.UserId != userDetail.Id) ||
+                                               // when one user will follow another user, we have to make sure the user who is getting followed is not receiving this notification in his feed
+                                               (m.Activity == 7 && followedUsers.Contains(m.UserId) && m.ActedOnUserId != userDetail.Id) ||
                                                (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 10 && m.UserId != userDetail.Id)
                                               orderby m.HappenedAtUTC descending

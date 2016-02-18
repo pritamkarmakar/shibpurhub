@@ -1,3 +1,5 @@
+var profiledefaultimage = '/Content/images/profile-image.jpg';
+
 $(document).ready(function () {
     // after login we get the token from web api that stored in the session storage, if token not present 
     // that means user is not yet logged-in
@@ -51,8 +53,13 @@ function loadFeeds(page) {
 					}
 					else
 					{
-						$(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url(http://i.imgur.com/" + feed.userProfileImageUrl + ")");
-						$(htmlItem).find('a.name-link').text(feed.userName).attr("href", feed.userProfileUrl);
+                        // set the profile image
+					    if (feed.userProfileImageUrl == profiledefaultimage)
+					        $(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url("+ feed.userProfileImageUrl + ")");
+					    else
+					        $(creatorImage).attr("href", feed.userProfileUrl).css('background-image', "url(http://i.imgur.com/" + feed.userProfileImageUrl + ")");
+
+					    $(htmlItem).find('a.name-link').text(feed.userName).attr("href", feed.userProfileUrl);
 						$(htmlItem).find('h2.title a').html(feed.itemHeader).attr("href", feed.targetActionUrl);
 						$(htmlItem).find('span.action').text(feed.actionText);
 						$(htmlItem).find('a.target').text(feed.targetAction).attr("href", feed.targetActionUrl);

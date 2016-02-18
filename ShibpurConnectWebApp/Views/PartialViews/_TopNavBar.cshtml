@@ -18,7 +18,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 @if (User.Identity.IsAuthenticated)
-                {                  
+                {
                 <!-- Notification center-->
                     <li id="notification_li">
                         <span id="notification_count" style="display:none;"></span>
@@ -29,24 +29,24 @@
                             <div id="notificationFooter"><a href="/notifications">See All</a></div>
                         </div>
                     </li>
-                }                
-                @*@if (User.Identity.IsAuthenticated)
-                    {                     
-                       <li><a href="/feed/myfeeds">Activity</a></li>
-                    }*@
+                }
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a href="/feed/myfeeds">Activity</a></li>
+                }
 
-                    <li>@Html.ActionLink("Discussions", "Index", "feed")</li>
-                    <li>@Html.ActionLink("Tags", "Index", "tags")</li>
-                    <li>@Html.ActionLink("Career", "Index", "career")</li>
-                    <li>@Html.ActionLink("Users", "Index", "users")</li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li>
-                            <a href="/feed/startdiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
-                        </li>
-                    }
-                </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
+                <li>@Html.ActionLink("Discussions", "Index", "feed")</li>
+                <li>@Html.ActionLink("Tags", "Index", "tags")</li>
+                <li>@Html.ActionLink("Career", "Index", "career")</li>
+                <li>@Html.ActionLink("Users", "Index", "users")</li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li>
+                        <a href="/feed/startdiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
+                    </li>
+                }
+            </ul>
+            @Html.Partial("_LoginPartial")
         </div>
     </div>
+</div>

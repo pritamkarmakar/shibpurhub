@@ -834,6 +834,12 @@
             <param name="notificationId">Notification Id</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.NotificationsController.DeleteAllNotificationsPostedByAUser(System.String)">
+            <summary>
+            method to do cleanup in the notification collection if user delete his/her account
+            </summary>
+            <param name="userId"></param>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.QuestionsController.GetTotalQuestionCount">
             <summary>
             Get total question count
@@ -1354,6 +1360,16 @@
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.Notifications">
             <summary>
             Notification model
+            </summary>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Models.WebAPI.Notifications.UserId">
+            <summary>
+            userid for which this notification is
+            </summary>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Models.WebAPI.Notifications.NotificationByUser">
+            <summary>
+            userid of the user who caused this notification
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.NotificationTypes">

@@ -13,6 +13,8 @@
 <script type="text/javascript">
     // get all the notifications
     var IMGURPATH = "http://i.imgur.com/";
+    // default user profile image path, when user signup in our site we assign this image as profile image by default
+    var profiledefaultimage = '/Content/images/profile-image.jpg';
     $(document).ready(function () {
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
         if (userDetails) {
@@ -47,7 +49,7 @@
                     var notificationContent = $.parseJSON(val.notificationContent);
 
                     // add 's' in the imgur profile image url so that we don't download the full size image
-                    if (notificationContent.profileImage != null && notificationContent.profileImage != "") {
+                    if (notificationContent.profileImage != profiledefaultimage) {
                         if (notificationContent.profileImage.charAt(notificationContent.profileImage.indexOf('.jpg') - 1) != 's') {
                             notificationContent.profileImage = IMGURPATH + notificationContent.profileImage.replace('.jpg', 's.jpg');
                         } else {
@@ -55,7 +57,7 @@
                         }
                     } else {
                         // if profile image is empty then set the default profile image
-                        notificationContent.profileImage = "/Content/images/profile-image.jpg";
+                        notificationContent.profileImage = profiledefaultimage;
                     }
                     // if user hasn't visited this notification then add a different color
                     if (val.hasVisited == false) {

@@ -119,6 +119,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     UserId = applicationDetails.UserId,
                     PostedOnUtc = DateTime.UtcNow,
                     NewNotification = true,
+                    NotificationByUser = userInfo.Id,
                     NotificationType = NotificationTypes.ReceivedCommentInJobApplication,
                     NotificationContent =
                         "{\"commentedBy\":\"" + userInfo.Id + "\",\"displayName\":\"" + userInfo.FirstName + " " +

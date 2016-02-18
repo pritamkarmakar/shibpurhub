@@ -1,4 +1,6 @@
 <script type="text/javascript">
+    // default user profile image path, when user signup in our site we assign this image as profile image by default
+    var profiledefaultimage = '/Content/images/profile-image.jpg';
     $(document).ready(function () {
         scAjax({
             "url": "users/GetLeaderBoard?count=10",
@@ -13,7 +15,7 @@
                 $('#loadingusers').hide();
 
                 $(result).each(function (i, userinfo) {
-                    if (userinfo.profileImageURL == null)
+                    if (userinfo.profileImageURL == profiledefaultimage)
                         //$('#popularusers').append("<div class='media'><div class='media-left'><a href='#'><img class='media-object' src='http://i.imgur.com/WHFstjs.jpg'></a></div><div class='media-body'><h4 class='media-heading'>Media heading</h4></div></div>");
                         $('#popularusers').append("<div id='popularusersdiv'><div class='profileimage col-md-3 col-xs-3'><img class='avatar' src='/Content/images/profile-image.jpg'></img></div><div class='userinfo col-md-9 col-xs-9'><span class='name twelvepxfont'><a class='userName' href='/Account/Profile?userId=" + userinfo.id + "'>" + userinfo.firstName + " " + userinfo.lastName + "</a></span><p style='font-size:12px'>Reputation: " + userinfo.reputationCount + "</p></div></div>")
                     else

@@ -1,4 +1,7 @@
-﻿function getMonth(month) {
+﻿// default user profile image path, when user signup in our site we assign this image as profile image by default
+var profiledefaultimage = '/Content/images/profile-image.jpg';
+
+function getMonth(month) {
     var monthArray = {
         "0": "Jan",
         "1": "Feb",
@@ -133,7 +136,12 @@ function createAllQuestions(questions, page)
         var htmlItem = $('div.item.hide').clone().removeClass('hide');
 
         var creatorImage = $(htmlItem).find('.post-creator-image');
-        $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
+
+        // set the user profile image
+        if (question.userProfileImage == profiledefaultimage)
+            $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(" + question.userProfileImage + ")");
+        else
+            $(creatorImage).attr("href", "/Account/Profile?userId" + question.userId).css('background-image', "url(http://i.imgur.com/" + question.userProfileImage + ")");
 
         $(htmlItem).find('a.name-link').text(question.displayName).attr("href", "/Account/Profile?userId=" + question.userId);
 

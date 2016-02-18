@@ -21,6 +21,9 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [BsonRepresentation(BsonType.ObjectId)]
         public string NotificationId { get; set; }
 
+        /// <summary>
+        /// userid for which this notification is
+        /// </summary>
         [DataMember]
         public string UserId { get; set; }
 
@@ -39,7 +42,14 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
         [DataMember]
         [Required]
-        public NotificationTypes NotificationType { get; set; }       
+        public NotificationTypes NotificationType { get; set; }
+
+        /// <summary>
+        /// userid of the user who caused this notification
+        /// </summary>
+        [DataMember]
+        [Required]
+        public string NotificationByUser { get; set; }
     }
 
     /// <summary>
