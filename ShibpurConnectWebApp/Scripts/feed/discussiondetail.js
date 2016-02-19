@@ -72,7 +72,12 @@ $(document).ready(function () {
             $('#details').show();
             
             createQuestion(question);
+        },
+        error:function (xhr, ajaxOptions, thrownError){
+        if(xhr.status==404) {
+            window.location.href = "/errors/Http404";                    
         }
+    }
         
     });
 	

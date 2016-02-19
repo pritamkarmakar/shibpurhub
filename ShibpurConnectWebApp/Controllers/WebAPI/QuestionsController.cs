@@ -484,7 +484,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         {
                             AnswerCount = contentResult.Content,
                             QuestionId = question.QuestionId,
-                            Title = question.Title
+                            Title = question.Title,
+                            UrlSlug = question.UrlSlug
                         });
                     }
                 }

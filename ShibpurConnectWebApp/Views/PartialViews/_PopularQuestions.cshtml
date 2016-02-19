@@ -10,9 +10,9 @@
 
                 $.each(result, function (key, value) {
                     if (value.answerCount > 0)
-                        $('#popularquestioncloud').append("<div class='popularquestiondiv'><a class='popularquestiontitle' href='/feed/" + value.questionId + "'> " + value.title + "..</a></div>");
+                        $('#popularquestioncloud').append("<div class='popularquestiondiv'><a class='popularquestiontitle' href='/discussion/" + value.urlSlug + "'> " + value.title.substring(0, 28) + "..</a><span class='tagquestioncount'>&nbsp;&nbsp;" + value.answerCount + " answers</span></div>");
                     else
-                        $('#popularquestioncloud').append("<div class='popularquestiondiv'><a class='popularquestiontitle' href='/feed/" + value.questionId + "'> " + value.title + "..</a></div>");
+                        $('#popularquestioncloud').append("<div class='popularquestiondiv'><a class='popularquestiontitle' href='/discussion/" + value.urlSlug + "'> " + value.title.substring(0, 30) + "..</a></div>");
                 });
             }
         });
@@ -46,7 +46,7 @@
     #popularquestioncloud
     {
         background: #fff;
-        padding: 10px 0px 10px 10px;
+        padding: 10px 10px 10px 10px;
     }
 
     /*question count font size in each tag*/
