@@ -322,11 +322,6 @@ div.post-description img {
     padding: 0;
 }
 
-.list-unstyled, .list-unstyled li {
-    margin: 0;
-    padding: 0;
-}
-
 .tags-area li:nth-child(1) {
     border-right: 6px solid #009688;
 }
