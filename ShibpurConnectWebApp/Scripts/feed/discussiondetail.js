@@ -1,3 +1,4 @@
+// javascript being used in the question details page
 var advancedEditor;
 // current logged-in user
 var userId = null;
@@ -290,9 +291,9 @@ function createComment(comment)
     var htmlItem = $('#'+ answerId +" .comments .post-comment.hide").clone().removeClass('hide');
     
     if (comment.userProfileImage != profiledefaultimage)
-        $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")");
+        $(htmlItem).find('.img-container').css('background-image', "url(http://i.imgur.com/" + comment.userProfileImage + ")").attr("href", "/Account/Profile?userId=" + comment.userId);
     else
-        $(htmlItem).find('.img-container').css('background-image', "url(" + comment.userProfileImage + ")");
+        $(htmlItem).find('.img-container').css('background-image', "url(" + comment.userProfileImage + ")").attr("href", "/Account/Profile?userId=" + comment.userId);
     
     var commentText = getEmojiedString(comment.commentText);
     $(htmlItem).find('.commentContent p').html(commentText);

@@ -182,7 +182,10 @@ function createUserFeeds(userIds)
                 $(htmlItem).find('p.tagline-text-content').text(user.careerDetail);
 
                 var userImage = $(htmlItem).find('.user-feed-img');
-                $(userImage).css('background-image', "url(http://i.imgur.com/" + user.imageUrl + ")");
+                if (user.imageUrl == profiledefaultimage)
+                    $(userImage).css('background-image', "url(" + profiledefaultimage + ")");
+                else
+                    $(userImage).css('background-image', "url(http://i.imgur.com/" + user.imageUrl + ")");
 
                 var profileUrl = "/Account/Profile?userId=";
                 $(htmlItem).find('.useranswercount a').text(user.answerCount).attr("href", profileUrl + userId + "#tab5");
