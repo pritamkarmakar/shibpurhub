@@ -174,11 +174,20 @@
         $("#editeducationdiv").slideToggle();
         var universityname = req.find('span#collegeName').text();
         var graduateyear = req.find('span#year').text();
+        var departmentName = req.find('span#department').text();
 
         // set the form field values
         $("#editEducationButton").attr("onclick", "saveEditEducation('" + req[0].id + "'); return false;");
         $(".editeduniversityname").val(universityname);
         $(".editedgraduateyear").val(graduateyear);
+
+        // read the corresponding option value and set it in the dropdown
+        $('select#EditedDepartmentDropdown').find('option').each(function () {
+            if ($(this).text() == departmentName) {
+                $("#EditedDepartmentDropdown").val($(this).val()).change();
+                return false;
+            }
+        });
     }
 
     // if user click on the Cancel button in the newEducation div then collapse that div

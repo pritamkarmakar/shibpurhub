@@ -4,6 +4,13 @@
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 
+<!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
+@if (User.Identity.IsAuthenticated)
+{
+    @Scripts.Render("~/bundles/knockout")
+    @Scripts.Render("~/bundles/app")
+}
+
 <style type="text/css">
     #error-container {
         margin-top: 10px;

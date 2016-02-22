@@ -86,7 +86,7 @@
                         toDate = "Present";
                     }
                     $('.experiencebody').append("<div id='"+ val.id +"' class=\"employmentDetails\"><span id=\"companyname\">" + val.companyName + "</span><br><span id=\"designation\">" + val.title + "</span><br><span id=\"joblocation\">" + val.location + "</span><br><span id=\"jobstartdate\" style='display:none;'>" + val.from + "</span><span id=\"jobenddate\" style='display:none;'>" + val.to + "</span><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
-                    $('.experiencebody').append("<div style='float:right;'><button class='btn btn-primary btn-xs' id='editexperienceinfobutton' onclick='loadEditEmploymentForm($(this).prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteemploymentinfobutton' onclick='deleteEmployment($(this).parent().prev());'><i></i><span>Delete</span></button></div><br />");
+                    $('.experiencebody').append("<div style='float:right;'><button class='btn btn-primary btn-xs' id='editexperienceinfobutton' onclick='loadEditEmploymentForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteemploymentinfobutton' onclick='deleteEmployment($(this).parent().prev());'><i></i><span>Delete</span></button></div><br />");
                     $('.experiencebody').append("<hr id='dotted'/>");
                 });
 
