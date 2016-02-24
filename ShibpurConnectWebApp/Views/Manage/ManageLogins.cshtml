@@ -32,6 +32,10 @@
                             {
                                 <button type="submit" style="width: 205px" class="btn btn-google-plus btn-sm"><i class="fa fa-google-plus"></i> | Remove Google login</button>
                             }
+                            else if (account.LoginProvider.ToLower() == "linkedin")
+                            {
+                                <button type="submit" style="width: 205px" class="btn btn-linkedin btn-sm"><i class="fa fa-linkedin"></i> | Remove LinkedIn login</button>
+                            }
                         </div>
                         }
                     </td>
@@ -60,7 +64,11 @@
                     }
                     else if (p.AuthenticationType == "Twitter")
                     {
-                        <button type="submit" style="width: 205px" class="btn btn-large btn-twitter" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-twitter"></i> | Add Twitter login</button>
+                        <button type="submit" style="width: 205px" class="btn btn-sm btn-twitter" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-twitter"></i> | Add Twitter login</button>
+                    }
+                    else if (p.AuthenticationType == "LinkedIn")
+                    {
+                        <button type="submit" style="width: 205px" class="btn btn-sm btn-linkedin" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-linkedin"></i> | Add LinkedIn login</button>
                     }
                 }
             </p>

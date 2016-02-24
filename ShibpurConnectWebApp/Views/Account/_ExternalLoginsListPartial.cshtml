@@ -5,6 +5,11 @@
     .btn-facebook {
         margin-top: 10px;
     }
+
+    .btn-google-plus
+    {
+        margin-top: 10px;
+    }
 </style>
 
 
@@ -28,7 +33,11 @@
                 <p>
                     @foreach (AuthenticationDescription p in loginProviders)
                     {
-                        if (p.AuthenticationType == "Google")
+                        if (p.AuthenticationType == "LinkedIn")
+                        {
+                            <button type="submit" class="btn btn-linkedin btn-sm col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-linkedin"></i> | Sign in with Linkedin</button>
+                        }
+                        else if (p.AuthenticationType == "Google")
                         {
                             <button type="submit" class="btn btn-google-plus btn-sm col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-google-plus"></i> | Sign in with Google</button>
                         }

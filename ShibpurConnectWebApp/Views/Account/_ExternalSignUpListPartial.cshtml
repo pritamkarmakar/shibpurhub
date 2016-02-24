@@ -5,6 +5,11 @@
     .btn-facebook {
         margin-top: 10px;
     }
+
+    .btn-google-plus
+    {
+        margin-top: 10px;
+    }
 </style>
 
 @{
@@ -27,17 +32,21 @@
                 <p>
                     @foreach (AuthenticationDescription p in loginProviders)
                     {
-                        if (p.AuthenticationType == "Google")
+                        if (p.AuthenticationType == "LinkedIn")
                         {
-                            <button type="submit" class="btn btn-sm btn-google-plus col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-google-plus"></i> | Sign up with Google</button>
+                            <button type="submit" class="btn btn-linkedin btn-sm col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Sign up using your @p.Caption account"><i class="fa fa-linkedin"></i> | Sign up with Linkedin</button>
+                        }
+                        else if (p.AuthenticationType == "Google")
+                        {
+                            <button type="submit" class="btn btn-sm btn-google-plus col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Sign up using your @p.Caption account"><i class="fa fa-google-plus"></i> | Sign up with Google</button>
                         }
                         else if (p.AuthenticationType == "Facebook")
                         {
-                            <button type="submit" class="btn btn-sm btn-facebook col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-facebook"></i> | Sign up with Facebook</button>
+                            <button type="submit" class="btn btn-sm btn-facebook col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Sign up using your @p.Caption account"><i class="fa fa-facebook"></i> | Sign up with Facebook</button>
                         }
                         else if (p.AuthenticationType == "Twitter")
                         {
-                            <button type="submit" class="btn btn-sm btn-twitter col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><i class="fa fa-twitter"></i> | Sign up with Twitter</button>
+                            <button type="submit" class="btn btn-sm btn-twitter col-md-12 col-xs-12" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Sign up using your @p.Caption account"><i class="fa fa-twitter"></i> | Sign up with Twitter</button>
                         }
                     }
                 </p>

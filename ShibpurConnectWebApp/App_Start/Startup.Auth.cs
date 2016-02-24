@@ -1,5 +1,4 @@
-﻿using System;
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -8,9 +7,11 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OAuth;
+using Owin.Security.Providers.LinkedIn;
 using Owin;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Providers;
+using System;
 
 namespace ShibpurConnectWebApp
 {
@@ -86,6 +87,9 @@ namespace ShibpurConnectWebApp
                 ClientId = "108349931194-2h3peq298hndtckune1h1tqi96dbh8bg.apps.googleusercontent.com",
                 ClientSecret = "xKb09OnMBqPZMVnHKCOTPfcJ"
             });
+
+            // LinkedIn login
+            app.UseLinkedInAuthentication("75quv1nghp28f9", "8MObI4ue573QE3wy");
 
             // hangfire configuration
             GlobalConfiguration.Configuration.UseMemoryStorage();
