@@ -116,6 +116,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             cache.RemoveStartsWith("educationalhistories-geteducationalhistories-userId=" + userInfo.Id);
             cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
 
+            // remove in-memory cache
+            CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
+
             // add the new entry in elastic search
             var client = _elasticSearchHelper.ElasticClient();
             client.Index(new EducationalHistories()

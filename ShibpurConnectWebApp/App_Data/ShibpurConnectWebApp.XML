@@ -1174,6 +1174,13 @@
             Method to overwrite cache data even it is already exist
             </summary>
         </member>
+        <member name="M:ShibpurConnectWebApp.Helper.CacheManager.RemoveCacheData(System.String)">
+            <summary>
+            Method to delete existing key from in-memory cache
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
         <member name="M:ShibpurConnectWebApp.Helper.ElasticSearchHelper.ElasticClient">
             <summary>
             Method to create the Elastic Search client instance

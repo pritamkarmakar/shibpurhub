@@ -93,7 +93,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // invalidate the getemploymenthistories api call for this user
             cache.RemoveStartsWith("employmenthistories-getemploymenthistories-userId=" + userInfo.Id);
             cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
-            
+
+            // remove in-memory cache
+            CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
+
             // add the new entry in elastic search
             var client = _elasticSearchHelper.ElasticClient();
             client.Index(new EmploymentHistories()

@@ -61,7 +61,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="userEmail">user email</param>
         /// <returns></returns>
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetProfile(string userEmail)
         {
             // validate userEmail is valid and get the userid
@@ -97,82 +97,98 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetProfileByUserId(string userId)
         {
-            if(string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(userId))
             {
-                ModelState.AddModelError("","userId can't be null or empty string");
+                ModelState.AddModelError("", "userId can't be null or empty string");
                 return BadRequest(ModelState);
             }
 
-            // validate userEmail is valid and get the userid
+            // validate userId is valid and get the userid
             Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
             var userInfo = await actionResult;
 
             if (userInfo == null)
                 return NotFound();
 
-            // get the user education details
-            EducationalHistoriesController educationalHistoriesController = new EducationalHistoriesController();
-            IHttpActionResult actionResult2 = await educationalHistoriesController.GetEducationalHistories(userInfo.Id);
-            var education = actionResult2 as OkNegotiatedContentResult<List<EducationalHistories>>;
+            // see if we have the user information in-memory
+            UserProfile userProfile = (UserProfile)CacheManager.GetCachedData("completeuserprofile-" + userId);
+            if (userProfile == null)
+            {
+                userProfile = new UserProfile();
 
-            // get the user employment details
-            EmploymentHistoriesController employmentHistoriesController = new EmploymentHistoriesController();
-            IHttpActionResult actionResult3 = await employmentHistoriesController.GetEmploymentHistories(userInfo.Id);
-            var employment = actionResult3 as OkNegotiatedContentResult<List<EmploymentHistories>>;
+                // get the user education details
+                EducationalHistoriesController educationalHistoriesController = new EducationalHistoriesController();
+                IHttpActionResult actionResult2 = await educationalHistoriesController.GetEducationalHistories(userInfo.Id);
+                var education = actionResult2 as OkNegotiatedContentResult<List<EducationalHistories>>;
 
-            // now form the UserProfile object
-            UserProfile userProfile = new UserProfile();
-            if (education != null) userProfile.EducationalHistories = education.Content;
-            if (employment != null) userProfile.EmploymentHistories = employment.Content;
-            userProfile.UserInfo = userInfo;
+                // get the user employment details
+                EmploymentHistoriesController employmentHistoriesController = new EmploymentHistoriesController();
+                IHttpActionResult actionResult3 = await employmentHistoriesController.GetEmploymentHistories(userInfo.Id);
+                var employment = actionResult3 as OkNegotiatedContentResult<List<EmploymentHistories>>;
 
-            return Ok(userProfile);
+                // now form the UserProfile object            
+                if (education != null) userProfile.EducationalHistories = education.Content;
+                if (employment != null) userProfile.EmploymentHistories = employment.Content;
+                userProfile.UserInfo = userInfo;
+
+                // save this userprofile in-memory
+                CacheManager.SetCacheData("completeuserprofile-" + userId, userProfile);
+            }
+            return Ok(userProfile);            
         }
-        
+
         public async void UpdateLastSeenTime()
         {
             try
             {
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
                 var email = principal.Identity.Name;
-                if(string.IsNullOrEmpty(email))
+                if (string.IsNullOrEmpty(email))
                 {
                     return;
                 }
-            
+
                 using (AuthRepository _repo = new AuthRepository())
                 {
                     ApplicationUser user = await _repo.FindUserByEmail(email);
                     user.LastSeenOn = DateTime.UtcNow;
                     await _repo.UpdateUser(user);
-                    
+
                     var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
                     cache.Remove("profile-getprofilebyuserid-userId=" + user.Id);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
             }
-       }
+        }
 
         /// <summary>
         /// Get details about an user from only users collection
         /// </summary>
         /// <param name="userEmail">user email</param>
         /// <returns></returns>
-       [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetUserInfo(string userId)
         {
-            // validate userEmail is valid and get the userid
-            Helper.Helper helper = new Helper.Helper();
-            Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
-            var userInfo = await actionResult;
+            // check if we have the userinfo in in-memory cache
+            var userInfo = CacheManager.GetCachedData(userId);
 
             if (userInfo == null)
-                return NotFound();
+            {
+                Helper.Helper helper = new Helper.Helper();
+                Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
+                userInfo = await actionResult;
+
+                if (userInfo == null)
+                    return NotFound();
+                // save the userInfo in in-memory cache
+                else
+                    CacheManager.SetCacheData(userId, userInfo);
+            }
 
             return Ok(userInfo);
         }
@@ -188,7 +204,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             if (string.IsNullOrEmpty(imageInfo.ImageBase64))
             {
-                ModelState.AddModelError("","image can't be null or empty string");
+                ModelState.AddModelError("", "image can't be null or empty string");
                 return BadRequest(ModelState);
             }
 
@@ -267,8 +283,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
         public async Task<IHttpActionResult> UpdateProfile(string firstName, string lastName, string location, string aboutMe)
-        {       
-           using (AuthRepository _repo = new AuthRepository())
+        {
+            using (AuthRepository _repo = new AuthRepository())
             {
                 // get user identity
                 ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
@@ -302,18 +318,18 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
 
                 return Ok(new CustomUserInfo
-                    {
-                        Email = user.Email,
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Location = user.Location,
-                        ReputationCount = user.ReputationCount,
-                        AboutMe = user.AboutMe,
-                        ProfileImageURL = user.ProfileImageURL
-                    });
-            }           
-        }        
+                {
+                    Email = user.Email,
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Location = user.Location,
+                    ReputationCount = user.ReputationCount,
+                    AboutMe = user.AboutMe,
+                    ProfileImageURL = user.ProfileImageURL
+                });
+            }
+        }
 
         /// <summary>
         /// API to follow a user
@@ -333,7 +349,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             // check if userIdToFollow is a valid userid or not
             Helper.Helper helper = new Helper.Helper();
-            if(helper.FindUserById(userIdToFollow) == null)
+            if (helper.FindUserById(userIdToFollow) == null)
                 return BadRequest("supplied userIdToFollow is not valid userid");
 
             var userResult = helper.FindUserByEmail(email);
@@ -373,7 +389,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // send notification to the user who is getting followed
             Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
             string pathQuery = myuri.PathAndQuery;
-            string hostName = myuri.ToString().Replace(pathQuery , "");
+            string hostName = myuri.ToString().Replace(pathQuery, "");
             EmailsController emailController = new EmailsController();
             await emailController.SendEmail(new Email()
             {
@@ -409,7 +425,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             userActivityController.PostAnActivity(userActivityLog);
 
             return Ok("now you are following this user");
-            
+
         }
 
         /// <summary>
@@ -475,13 +491,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             if (string.IsNullOrEmpty(userId))
                 return BadRequest("userId can't be null or empty");
-            
+
             // validate given userId is valid
-            Helper.Helper helper = new Helper.Helper();          
+            Helper.Helper helper = new Helper.Helper();
             Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
             var userInfo = await actionResult;
-            
-            if(userInfo == null)
+
+            if (userInfo == null)
                 return BadRequest("supplied userId is not valid userid");
 
             // list to keep the final follower list
@@ -490,13 +506,23 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if user don't have any follower list then return null
             if (userInfo.Followers == null)
                 return Ok(followerList);
-            
-            foreach(string followerUserId in userInfo.Followers)
+
+            foreach (string followerUserId in userInfo.Followers)
             {
-                Task<CustomUserInfo> actionResult2 = helper.FindUserById(followerUserId);
-                var userInfo2 = await actionResult2;
-                if (userInfo2 != null)
-                    followerList.Add(userInfo2);
+                // see if we have the user information in-memory
+                CustomUserInfo customUserInfo = (CustomUserInfo)CacheManager.GetCachedData(followerUserId);
+
+                if (customUserInfo == null)
+                {
+                    Task<CustomUserInfo> actionResult2 = helper.FindUserById(followerUserId);
+                    customUserInfo = await actionResult2;
+                }
+                if (customUserInfo != null)
+                {
+                    // add the user info in-memory
+                    CacheManager.SetCacheData(followerUserId, customUserInfo);
+                    followerList.Add(customUserInfo);
+                }
             }
 
             return Ok(followerList);
@@ -528,13 +554,25 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // if user following list is null then return null
             if (userInfo.Following == null)
                 return Ok(followingList);
-            
+
             foreach (string followerUserId in userInfo.Following)
             {
-                Task<CustomUserInfo> actionResult2 = helper.FindUserById(followerUserId);
-                var userInfo2 = await actionResult2;
-                if (userInfo2 != null)
-                    followingList.Add(userInfo2);
+                // see if we have the user information in-memory
+                CustomUserInfo customUserInfo = (CustomUserInfo)CacheManager.GetCachedData(followerUserId);
+
+                if (customUserInfo == null)
+                {
+                    Task<CustomUserInfo> actionResult2 = helper.FindUserById(followerUserId);
+                    customUserInfo = await actionResult2;
+
+                }
+
+                if (customUserInfo != null)
+                {
+                    // add this user info in-memory
+                    CacheManager.SetCacheData(followerUserId, customUserInfo);
+                    followingList.Add(customUserInfo);
+                }
             }
 
             return Ok(followingList);

@@ -142,16 +142,23 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     if (!hash.Contains(answer.QuestionId))
                     {
-                        QuestionsController questionsController = new QuestionsController();
-                        IHttpActionResult actionresult = await questionsController.GetQuestionInfo(answer.QuestionId);
-                        var questionObj = actionresult as OkNegotiatedContentResult<Question>;
+                        // check if in-memory cache has this question or retrive from db and save it
+                        Question questionObj = (Question)CacheManager.GetCachedData(answer.QuestionId);
+                        if (questionObj == null)
+                        {
+                            MongoHelper<Question> _mongoQuestionHelper = new MongoHelper<Question>();
+                            questionObj = _mongoQuestionHelper.Collection.AsQueryable().FirstOrDefault(m => m.QuestionId == answer.QuestionId);
+                        }
 
                         if (questionObj != null)
                         {
+                            // add it into in-memory cache
+                            CacheManager.SetCacheData(answer.QuestionId, questionObj);
+                            // add into our final list that we will send as return object
                             finalList.Add(new AnswerWithQuestionTitle()
                             {
-                                QuestionId = questionObj.Content.QuestionId,
-                                QuestionTitle = questionObj.Content.Title,
+                                QuestionId = questionObj.QuestionId,
+                                QuestionTitle = questionObj.Title,
                                 AnswerText = answer.AnswerText,
                                 PostedOnUtc = answer.PostedOnUtc
 

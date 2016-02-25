@@ -13,6 +13,7 @@ namespace ShibpurConnectWebApp.Helper
         static readonly object cacheLock = new object();
         static readonly object cacheLock2 = new object();
         static readonly object cacheLock3 = new object();
+        static readonly object cacheLock4 = new object();
 
         // read the cache expiry time
         static int cacheExpiry = Convert.ToInt16(ConfigurationManager.AppSettings["MemoryCacheExpiry"]);
@@ -71,12 +72,29 @@ namespace ShibpurConnectWebApp.Helper
         {
             lock (cacheLock3)
             {
+                // remove the existing key
+                var cachedString = MemoryCache.Default.Remove(key, null);
+
                 //The value still did not exist so we now write it in to the cache.
                 CacheItemPolicy cip = new CacheItemPolicy()
                 {
                     AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddMinutes(cacheExpiry))
                 };
                 MemoryCache.Default.Set(key, value, cip);
+            }
+        }
+
+        /// <summary>
+        /// Method to delete existing key from in-memory cache
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void RemoveCacheData(string key)
+        {
+            lock (cacheLock4)
+            {
+                // remove the existing key
+                var cachedString = MemoryCache.Default.Remove(key, null);               
             }
         }
     }
