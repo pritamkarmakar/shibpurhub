@@ -218,7 +218,7 @@ namespace ShibpurConnectWebApp.Helper
                         }
                     }
 
-                    return GetCustomUserInfoFromAppicationUser(user, educationInfo, designation);
+                    return GetCustomUserInfoFromAppicationUser(user, educationInfo, designation, null, null);
 
                 }
             }
@@ -238,6 +238,8 @@ namespace ShibpurConnectWebApp.Helper
                 {
                     var educationInfo = string.Empty;
                     var designation = string.Empty;
+                    List<EducationalHistories> EducationalHistories = null;
+                    List<EmploymentHistories> EmploymentHistories = null;
                     if (needEmploymentAndEducationDetails)
                     {
                         var _mongoEducationalHistoriesHelper = new MongoHelper<EducationalHistories>();
@@ -250,6 +252,9 @@ namespace ShibpurConnectWebApp.Helper
                                 educationInfo = becEducation.GraduateYear.ToString() + " " + becEducation.Department;
                             else
                                 educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
+
+                            // set the EducationalHistories properties that will have all the education details, required for ProfileController and activity feed to create user card (new user sign-up, follow user)
+                            EducationalHistories = educationalHistories;
                         }
 
                         var _mongEmploymentHistoriesHelper = new MongoHelper<EmploymentHistories>();
@@ -263,10 +268,13 @@ namespace ShibpurConnectWebApp.Helper
                             }
                             designation = currentJob == null ? string.Empty :
                                 currentJob.Title + ", " + currentJob.CompanyName;
+
+                            // set the EmploymentHistories properties that will have all the education details, required for ProfileController and activity feed to create user card (new user sign-up, follow user)
+                            EmploymentHistories = employmentHistories;
                         }
                     }
 
-                    return GetCustomUserInfoFromAppicationUser(user, educationInfo,designation);
+                    return GetCustomUserInfoFromAppicationUser(user, educationInfo,designation, EducationalHistories, EmploymentHistories);
                 }
             }
         }
@@ -283,7 +291,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return GetCustomUserInfoFromAppicationUser(user, null, null);
+                    return GetCustomUserInfoFromAppicationUser(user, null, null, null, null);
 
                 }
             }
@@ -301,7 +309,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return GetCustomUserInfoFromAppicationUser(user, null, null);
+                    return GetCustomUserInfoFromAppicationUser(user, null, null, null, null);
 
                 }
             }
@@ -319,7 +327,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                   return GetCustomUserInfoFromAppicationUser(user, null, null);
+                   return GetCustomUserInfoFromAppicationUser(user, null, null, null, null);
                 }
             }
         }
@@ -336,12 +344,12 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    return GetCustomUserInfoFromAppicationUser(user, null, null);
+                    return GetCustomUserInfoFromAppicationUser(user, null, null, null, null);
                 }
             }
         }
 
-        private CustomUserInfo GetCustomUserInfoFromAppicationUser(ApplicationUser user, string edh, string emh)
+        private CustomUserInfo GetCustomUserInfoFromAppicationUser(ApplicationUser user, string edh, string emh, List<EducationalHistories> educationalHistories, List<EmploymentHistories> employmentHistories)
         {
             return new CustomUserInfo()
             {
@@ -360,7 +368,9 @@ namespace ShibpurConnectWebApp.Helper
                 FollowedQuestions = user.FollowedQuestions,
                 AboutMe = user.AboutMe,
                 Designation = emh,
-                EducationInfo = edh
+                EducationInfo = edh,
+                EducationalHistories = educationalHistories,
+                EmploymentHistories = employmentHistories
             };
         }        
 

@@ -106,38 +106,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest(ModelState);
             }
 
-            // validate userId is valid and get the userid
-            Task<CustomUserInfo> actionResult = helper.FindUserById(userId);
-            var userInfo = await actionResult;
-
-            if (userInfo == null)
-                return NotFound();
-
             // see if we have the user information in-memory
-            UserProfile userProfile = (UserProfile)CacheManager.GetCachedData("completeuserprofile-" + userId);
+            CustomUserInfo userProfile = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + userId);
             if (userProfile == null)
             {
-                userProfile = new UserProfile();
+                // validate userId is valid and get the userid
+                Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
+                userProfile = await actionResult;
 
-                // get the user education details
-                EducationalHistoriesController educationalHistoriesController = new EducationalHistoriesController();
-                IHttpActionResult actionResult2 = await educationalHistoriesController.GetEducationalHistories(userInfo.Id);
-                var education = actionResult2 as OkNegotiatedContentResult<List<EducationalHistories>>;
-
-                // get the user employment details
-                EmploymentHistoriesController employmentHistoriesController = new EmploymentHistoriesController();
-                IHttpActionResult actionResult3 = await employmentHistoriesController.GetEmploymentHistories(userInfo.Id);
-                var employment = actionResult3 as OkNegotiatedContentResult<List<EmploymentHistories>>;
-
-                // now form the UserProfile object            
-                if (education != null) userProfile.EducationalHistories = education.Content;
-                if (employment != null) userProfile.EmploymentHistories = employment.Content;
-                userProfile.UserInfo = userInfo;
+                if (userProfile == null)
+                    return NotFound();
 
                 // save this userprofile in-memory
                 CacheManager.SetCacheData("completeuserprofile-" + userId, userProfile);
             }
-            return Ok(userProfile);            
+
+            return Ok(userProfile);
         }
 
         public async void UpdateLastSeenTime()

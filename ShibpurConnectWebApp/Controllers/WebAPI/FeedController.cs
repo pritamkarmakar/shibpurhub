@@ -658,8 +658,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var feedUserDetails = new List<FeedUserDetail>();
             foreach (var userid in userIds)
             {
-                Task<CustomUserInfo> result = helper.FindUserById(userid, true);
-                var userDetailInList = await result;
+                CustomUserInfo userDetailInList = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + userid);
+                if (userDetailInList == null)
+                {
+                    Task<CustomUserInfo> result = helper.FindUserById(userid, true);
+                    userDetailInList = await result;
+
+                    // set the profile in in-memory
+                    CacheManager.SetCacheData("completeuserprofile-" + userid, userDetailInList);
+                }
+
                 var user = new FeedUserDetail
                 {
                     UserId = userid,

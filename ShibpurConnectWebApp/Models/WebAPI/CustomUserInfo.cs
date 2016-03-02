@@ -22,16 +22,18 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public DateTime RegisteredOn { get; set; }
         public DateTime LastSeenOn { get; set; }
         public string AboutMe { get; set; }
-
         public string ProfileImageURL { get; set; }
         public List<string> Tags { get; set; }
         public List<string> Followers { get; set; }
         public List<string> Following { get; set; }
-
         public List<string> FollowedQuestions { get; set; }
-
+        // below two will have latest employment (we have to replace it later with EmploymentHistories
         public string Designation { get; set; }
-
+        // only BEC education
         public string EducationInfo { get; set; }
+
+        // below two properties will have all the educational and employment histories
+        public List<EducationalHistories> EducationalHistories { get; set; }
+        public List<EmploymentHistories> EmploymentHistories { get; set; } 
     }
 }

@@ -208,31 +208,31 @@
                 }
 
                 // set page title
-                document.title = result.userInfo.firstName + " " + result.userInfo.lastName + " - ShibpurHub";
-                var registeredOn = result.userInfo.registeredOn;
-                var lastSeenOn = result.userInfo.lastSeenOn;
-                $(".userdisplayname").text(result.userInfo.firstName + " " + result.userInfo.lastName);
+                document.title = result.firstName + " " + result.lastName + " - ShibpurHub";
+                var registeredOn = result.registeredOn;
+                var lastSeenOn = result.lastSeenOn;
+                $(".userdisplayname").text(result.firstName + " " + result.lastName);
                 $(".registeredon").after(registeredOn ? getDateFormattedByMonthYear(registeredOn) : "");
                 $(".lastseenon").after(lastSeenOn ? getDateFormattedByMonthYear(lastSeenOn) : "");
-                $(".reputationcount").after(result.userInfo.reputationCount);
-                $(".userlocation").after(result.userInfo.location);
-                $(".aboutmeheading").text(result.userInfo.firstName + "'s Bio");
-                $(".aboutmebody").text(result.userInfo.aboutMe);
-                $("#hdnUserId").val(result.userInfo.id);
+                $(".reputationcount").after(result.reputationCount);
+                $(".userlocation").after(result.location);
+                $(".aboutmeheading").text(result.firstName + "'s Bio");
+                $(".aboutmebody").text(result.aboutMe);
+                $("#hdnUserId").val(result.id);
                 //$(".registeredon").insertAfter.append("<strong class='registrationdatespan'>Joined</strong>" + getDateFormattedByMonthYear(result.userInfo.registeredOn));
 
-                if(result.userInfo.id == loggedInUserId)
+                if(result.id == loggedInUserId)
                 {
                     $("#imagePreview").siblings('.imageDiv').show();
                 }
 
                 // we set the default image when user sign-up, if it is still that one then don't add imgur domain
-                if(result.userInfo.profileImageURL == profiledefaultimage)
+                if(result.profileImageURL == profiledefaultimage)
                 {
                     $("#imagePreview").show().css("background-image", "url("+ result.userInfo.profileImageURL+")");
                 }
                 else
-                    $("#imagePreview").show().css("background-image", "url("+ IMGURPATH + result.userInfo.profileImageURL+")");
+                    $("#imagePreview").show().css("background-image", "url("+ IMGURPATH + result.profileImageURL+")");
 
                 // iterate over all the educational histories
                 if(result.educationalHistories != null)
@@ -274,11 +274,11 @@
                 }
 
                 // iterate over all the tags user is following
-                if(result.userInfo.tags != null)
+                if(result.tags != null)
                 {
                     // enable follow tag div
                     $('.followtags').show();
-                    jQuery.each(result.userInfo.tags, function(i, value) {
+                    jQuery.each(result.tags, function(i, value) {
                         $('.followtagsbody').append("<div id='tagcontainerdiv' class='col-md-3 col-xs-12'><div class='col-md-1'><i class='fa fa-tags fa-lg'></i></div><div class='col-md-2'><a class='tagname' href='/Feed/FeedByCategory?category=" + value + "'> " + value + "</a></div></div>");
                     });
                 }
