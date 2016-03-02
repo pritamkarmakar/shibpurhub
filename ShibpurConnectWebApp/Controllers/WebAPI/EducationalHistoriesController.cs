@@ -34,7 +34,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _mongoHelper = new MongoHelper<EducationalHistories>();
             _elasticSearchHelper = new ElasticSearchHelper();
         }
-       
+
         // GET: api/Educational/GetEducationalHistories?userId=
         /// <summary>
         /// Api to get all educational histories of a user
@@ -53,7 +53,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (userInfo == null)
                 return NotFound();
 
-            var educationalHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userInfo.Id).ToList();           
+            var educationalHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userInfo.Id).ToList();
 
             return Ok(educationalHistory);
         }
@@ -66,7 +66,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [Authorize]
         [ResponseType(typeof(EducationalHistories))]
         [InvalidateCacheOutput("SearchUsers", typeof(SearchController))]
-        public async Task<IHttpActionResult> PostEducationalHistory(EducationalHistories educationalHistory)
+        public async Task<IHttpActionResult> PostEducationalHistory(EducationalHistoriesDTO educationalHistory)
         {
             if (!ModelState.IsValid)
             {
@@ -96,14 +96,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (contentResult == null)
                 return BadRequest(String.Format("Supplied dept: " + "  {0} is not valid", educationalHistory.Department));
 
-            // save the department id into the educationalHistory object
-            //educationalHistory.Department = contentResult.Content.Id;
-            
-            // generate the unique id for this new record
-            educationalHistory.Id = ObjectId.GenerateNewId().ToString();
+            // check if this is a BEC education
+            bool isBecEducation = helper.CheckUniversityName(educationalHistory.UniversityName);
+
+            // Create the EducationalHistories object to save in the database
+            EducationalHistories educationalHistories = new EducationalHistories()
+            {
+                Department = educationalHistory.Department,
+                GraduateYear = educationalHistory.GraduateYear,
+                Id = ObjectId.GenerateNewId().ToString(),
+                UniversityName = educationalHistory.UniversityName,
+                UserId = userInfo.Id,
+                IsBECEducation = isBecEducation
+            };
 
             // save the entry in the database
-            var result = _mongoHelper.Collection.Save(educationalHistory);
+            var result = _mongoHelper.Collection.Save(educationalHistories);
 
             // if mongo failed to save the data then send error
             if (!result.Ok)
@@ -123,14 +131,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var client = _elasticSearchHelper.ElasticClient();
             client.Index(new EducationalHistories()
             {
-               Id = educationalHistory.Id,
-               UserId = educationalHistory.UserId,
-               Department = educationalHistory.Department,
-               GraduateYear = educationalHistory.GraduateYear,
-               UniversityName = educationalHistory.UniversityName               
+                Id = educationalHistories.Id,
+                UserId = educationalHistories.UserId,
+                Department = educationalHistories.Department,
+                GraduateYear = educationalHistories.GraduateYear,
+                UniversityName = educationalHistories.UniversityName,
+                IsBECEducation = educationalHistories.IsBECEducation
             });
 
-            return CreatedAtRoute("DefaultApi", new { id = educationalHistory.Id }, educationalHistory);
+            return CreatedAtRoute("DefaultApi", new { id = educationalHistories.Id }, educationalHistories);
         }
 
         /// <summary>
@@ -171,11 +180,14 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("You are not allowed to edit this record");
             }
 
-            // update the employment history record with whatever user send
+            // check if this is a BEC education
+            bool isBecEducation = helper.CheckUniversityName(educationalHistories.UniversityName);
+
+            // update the educational history record with whatever user send
             educationHistory.Department = educationalHistories.Department;
             educationHistory.GraduateYear = educationalHistories.GraduateYear;
             educationHistory.UniversityName = educationalHistories.UniversityName;
-            educationalHistories.UserId = userInfo.Id;
+            educationHistory.IsBECEducation = isBecEducation;
 
             // save the record in database
             try
@@ -185,6 +197,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // if mongo failed to save the data then send error
                 if (!result.Ok)
                     return InternalServerError();
+
+                // update same educational history details in elastic search
+                var client = _elasticSearchHelper.ElasticClient();
+                dynamic updateUser = new System.Dynamic.ExpandoObject();
+
+                var response = client.Update<EducationalHistories, object>(u => u
+                    .Index("my_index")
+                    .Id(educationHistory.Id)
+                    .Type("educationalhistories")
+                    .Doc(new
+                    {
+                       Department = educationalHistories.Department,
+                       GraduateYear = educationalHistories.GraduateYear,
+                       UniversityName = educationalHistories.UniversityName,
+                       IsBECEducation = isBecEducation
+                    }));
 
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
@@ -210,7 +238,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public async Task<IHttpActionResult> DeleteEducationalHistory(string id)
         {
             if (string.IsNullOrEmpty(id))
-                return BadRequest("null educationId supplied");            
+                return BadRequest("null educationId supplied");
 
             EducationalHistories educationHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.Id == id).ToList()[0];
             if (educationHistory == null)
@@ -233,7 +261,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (educationHistory.UserId != userInfo.Id)
             {
                 return BadRequest("You are not allowed to edit this record");
-            }            
+            }
 
             // delete the record in database
             try
@@ -274,8 +302,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         internal async void DeleteAllEducationalHistories(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-                throw new ArgumentException("null userId supplied");      
-            
+                throw new ArgumentException("null userId supplied");
+
             try
             {
                 // get the list of documents that will be deleted, we need the ids for doing the clean work in elastic search
@@ -295,8 +323,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 // if mongo failed to save the data then send error
                 if (!result.Ok)
-                    throw new MongoException("failed to delete the educational histories");                              
-               
+                    throw new MongoException("failed to delete the educational histories");
+
             }
             catch (MongoConnectionException ex)
             {

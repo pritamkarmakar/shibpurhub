@@ -9,6 +9,9 @@ using System.Web;
 using ShibpurConnectWebApp.Controllers.WebAPI;
 using System.Configuration;
 using ShibpurConnectWebApp.Models.WebAPI;
+using System.Web.Http.Results;
+using System.Collections.Generic;
+using ShibpurConnectWebApp.Helper;
 
 namespace ShibpurConnectWebApp
 {
@@ -68,7 +71,7 @@ namespace ShibpurConnectWebApp
                 "Discussion/{id}/{answerId}",                            // URL with parameters
                 new { controller = "Discussion", action = "DiscussionDetailWithAnswerID" }  // Parameter defaults
             );
-            
+
             routes.MapRoute(
                 "Default",                                              // Route name
                 "{controller}/{action}/{id}",                           // URL with parameters
@@ -92,9 +95,26 @@ namespace ShibpurConnectWebApp
             //Database.SetInitializer<ApplicationDbContext>(null);
 
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            
+
             var profileController = new ProfileController();
             profileController.UpdateLastSeenTime();
+
+            // check if all departments available in the web.config available in the database, otherwise create the new department
+            DepartmentsController DP = new DepartmentsController();
+            var actionResult = DP.GetDepartments();
+            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
+
+            var _mongoHelper = new MongoHelper<Departments>();
+            foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
+            {
+                if (departmentList.Content.Find(m => m.DepartmentName == department.Trim()) == null)
+                {
+                    // this is a new department save it to database
+                    Departments obj = new Departments();
+                    obj.DepartmentName = department.Trim();
+                    _mongoHelper.Collection.Save(obj);
+                }
+            }
         }
 
         protected void Application_Error()
@@ -131,7 +151,7 @@ namespace ShibpurConnectWebApp
                         routeData.Values["action"] = "Http404";
                         break;
                 }
-            }           
+            }
 
             // if the error is coming from Mongodb then go to Maintenance view
             if (exception.Source == "MongoDB.Driver")

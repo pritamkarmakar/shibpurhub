@@ -19,25 +19,7 @@ namespace ShibpurConnectWebApp.Controllers
             // get the department list and send it to the view
             DepartmentsController DP = new DepartmentsController();
             var actionResult = DP.GetDepartments();
-            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
-
-            // if there is no departments in the db then add the default departments
-            if (departmentList != null && departmentList.Content.Count == 0)
-            {
-                var _mongoHelper = new MongoHelper<Departments>();
-                foreach (var department in ConfigurationManager.AppSettings["departments"].Split(','))
-                {
-                    Departments obj = new Departments();
-                    obj.DepartmentName = department;
-                    //obj.Id = ObjectId.GenerateNewId();
-
-                    _mongoHelper.Collection.Save(obj);
-                }
-
-                // reset the departmentList
-                var actionResult2 = DP.GetDepartments();
-                departmentList = actionResult2 as OkNegotiatedContentResult<List<Departments>>;
-            }
+            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;            
 
             WebAPI.TagsController categoriesController = new WebAPI.TagsController();
             var actionResult3 = categoriesController.GetTags();

@@ -646,6 +646,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        // API to retrieve user specific information that we use while forming individual activity feed content
         public async Task<IHttpActionResult> GetFollowedUserDetails([FromUri] IList<string> userIds)
         {
             if(userIds == null || userIds.Count == 0)

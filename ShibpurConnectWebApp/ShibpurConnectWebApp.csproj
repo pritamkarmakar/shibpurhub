@@ -646,6 +646,7 @@
     <Content Include="Views\PartialViews\_TopNavBar.cshtml" />
     <Content Include="Views\PartialViews\_EditedDepartmentDropdown.cshtml" />
     <Content Include="Views\Settings\_DeleteAccount.cshtml" />
+    <Content Include="Views\PartialViews\_DegreeDropdown.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Error\" />

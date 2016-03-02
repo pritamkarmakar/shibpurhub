@@ -10,11 +10,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 {
     [Serializable]
     [BsonIgnoreExtraElements]
-    public class EducationalHistories
+    public class EducationalHistoriesDTO
     {
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
         [Required]
         [DataMember]
         public string UniversityName { get; set; }       
@@ -23,14 +20,25 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [DataMember]
         [Range(typeof(int), "1950", "2025",
         ErrorMessage =  "Value for 'Gradutiaon year' must be between {1} and {2}")]
-        public int GraduateYear { get; set; }
-
-        [Required]
-        [DataMember]
-        public string UserId { get; set; }
+        public int GraduateYear { get; set; }       
 
         [Required]
         [DataMember]
         public string Department { get; set; }       
+    }
+
+    /// <summary>
+    /// We will use this model to save data into database
+    /// </summary>
+    public class EducationalHistories : EducationalHistoriesDTO
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+
+        [DataMember]
+        public string UserId { get; set; }
+
+        [DataMember]
+        public bool IsBECEducation { get; set; }
     }
 }

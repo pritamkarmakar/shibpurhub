@@ -15,11 +15,15 @@ using System.Web.Http.Filters;
 using System.Collections.Generic;
 using ShibpurConnectWebApp.Controllers.WebAPI;
 using System.Web.Http.Results;
+using System.Configuration;
 
 namespace ShibpurConnectWebApp.Helper
 {
     public class Helper
     {
+        // read the BEC university present and past names
+        private static string becNames = ConfigurationManager.AppSettings["becnames"];
+
         // Bearer token to access the Web API
         public string token = string.Empty;
         TokenApi tokenAPi = null;
@@ -240,7 +244,12 @@ namespace ShibpurConnectWebApp.Helper
                         var educationalHistories = _mongoEducationalHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).OrderByDescending(b => b.GraduateYear).ToList();
                         if (educationalHistories != null && educationalHistories.Count > 0)
                         {
-                            educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
+                            // see if user has any BEC education otherwise consider the latest one. If user has multiple BEC education (BE, ME) then we are considering the BE education
+                            var becEducation = educationalHistories.FindLast(m => m.IsBECEducation == true);
+                            if (becEducation != null)
+                                educationInfo = becEducation.GraduateYear.ToString() + " " + becEducation.Department;
+                            else
+                                educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
                         }
 
                         var _mongEmploymentHistoriesHelper = new MongoHelper<EmploymentHistories>();
@@ -460,6 +469,80 @@ namespace ShibpurConnectWebApp.Helper
             if (questionObj != null) return questionObj.QuestionId;
 
             return null;
+        }
+
+        /// <summary>
+        /// Method to check whether the university name is belongs to BEC
+        /// </summary>
+        /// <param name="universityName"></param>
+        /// <returns></returns>
+        internal bool CheckUniversityName(string universityName)
+        {
+            if(!String.IsNullOrEmpty(becNames))
+            {
+                foreach(string name in becNames.Split(','))
+                {
+                    // before sending for comparison we want to remove the 'Shibpur' word if it is there
+                    string newName = universityName.ToLower().Replace("shibpur", "").Replace(",", "");
+                    int distance = Compute(name.Trim().ToLower(), newName.Trim());
+
+                    if (distance == 0)
+                        return true;
+
+                    if (universityName.Length > 20 && distance < 8)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Compute the distance between two strings. Levenshtein distance algorithm
+        /// </summary>
+        private int Compute(string s, string t)
+        {
+            int n = s.Length;
+            int m = t.Length;
+            int[,] d = new int[n + 1, m + 1];
+
+            // Step 1
+            if (n == 0)
+            {
+                return m;
+            }
+
+            if (m == 0)
+            {
+                return n;
+            }
+
+            // Step 2
+            for (int i = 0; i <= n; d[i, 0] = i++)
+            {
+            }
+
+            for (int j = 0; j <= m; d[0, j] = j++)
+            {
+            }
+
+            // Step 3
+            for (int i = 1; i <= n; i++)
+            {
+                //Step 4
+                for (int j = 1; j <= m; j++)
+                {
+                    // Step 5
+                    int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+
+                    // Step 6
+                    d[i, j] = Math.Min(
+                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                        d[i - 1, j - 1] + cost);
+                }
+            }
+            // Step 7
+            return d[n, m];
         }
     }
 

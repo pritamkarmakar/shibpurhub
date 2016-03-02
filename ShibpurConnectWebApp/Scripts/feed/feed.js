@@ -172,7 +172,10 @@ function createAllQuestions(questions, page)
         if (answerCount > 1) {
             $(htmlItem).find('span.answer-count').text(answerCount + " answers");
         }
-        
+        if (answerCount == 1) {
+            $(htmlItem).find('span.answer-count').text(answerCount + " answer");
+        }
+
         $(htmlItem).find('span.post-pub-time').text(getDateFormattedByMonthYear(question.postedOnUtc));
 
         var tagListUL = $(htmlItem).find('.tagsList');        

@@ -62,15 +62,8 @@
         jQuery.support.cors = true;
         var SERVER = "/api/";
 
-        var userDetails = localStorage.getItem("SC_Session_UserDetails");
-        if (!userDetails) {
-            //TO-DO: Handle if userdetail is not available in Session Storage
-            return;
-        }
-
-        var userInfo = $.parseJSON(userDetails);
         var token = sessionStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#universityname').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + '}';
+        var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#universityname').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + '}';
 
         // add spinner animation in the save button and change the text to 'Saving..'
         $('#addNewEducation > i').addClass('fa fa-circle-o-notch fa-spin');
@@ -183,7 +176,7 @@
 
         // read the corresponding option value and set it in the dropdown
         $('select#EditedDepartmentDropdown').find('option').each(function () {
-            if ($(this).text() == departmentName) {
+            if ($(this).text() == departmentName.trim()) {
                 $("#EditedDepartmentDropdown").val($(this).val()).change();
                 return false;
             }

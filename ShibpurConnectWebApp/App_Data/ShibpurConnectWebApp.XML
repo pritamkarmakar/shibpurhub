@@ -275,31 +275,6 @@
             Initializes a new instance of the <see cref="T:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator"/> class.
             </summary>
         </member>
-        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.ActualHttpMessageTypes">
-            <summary>
-            Gets CLR types that are used as the content of <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/>.
-            </summary>
-        </member>
-        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples">
-            <summary>
-            Gets the objects that are used directly as samples for certain actions.
-            </summary>
-        </member>
-        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects">
-            <summary>
-            Gets the objects that are serialized as samples by the supported formatters.
-            </summary>
-        </member>
-        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.SampleObjectFactories">
-            <summary>
-            Gets factories for the objects that the supported formatters will serialize as samples. Processed in order,
-            stopping when the factory successfully returns a non-<see langref="null"/> object.
-            </summary>
-            <remarks>
-            Collection includes just <see cref="M:ShibpurConnectWebApp.Areas.HelpPage.ObjectGenerator.GenerateObject(System.Type)"/> initially. Use
-            <code>SampleObjectFactories.Insert(0, func)</code> to provide an override and
-            <code>SampleObjectFactories.Add(func)</code> to provide a fallback.</remarks>
-        </member>
         <member name="M:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.GetSampleRequests(System.Web.Http.Description.ApiDescription)">
             <summary>
             Gets the request body samples for a given <see cref="T:System.Web.Http.Description.ApiDescription"/>.
@@ -372,6 +347,31 @@
             <param name="type">The type.</param>
             <param name="mediaType">Type of the media.</param>
             <returns></returns>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.ActualHttpMessageTypes">
+            <summary>
+            Gets CLR types that are used as the content of <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/>.
+            </summary>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples">
+            <summary>
+            Gets the objects that are used directly as samples for certain actions.
+            </summary>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects">
+            <summary>
+            Gets the objects that are serialized as samples by the supported formatters.
+            </summary>
+        </member>
+        <member name="P:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleGenerator.SampleObjectFactories">
+            <summary>
+            Gets factories for the objects that the supported formatters will serialize as samples. Processed in order,
+            stopping when the factory successfully returns a non-<see langref="null"/> object.
+            </summary>
+            <remarks>
+            Collection includes just <see cref="M:ShibpurConnectWebApp.Areas.HelpPage.ObjectGenerator.GenerateObject(System.Type)"/> initially. Use
+            <code>SampleObjectFactories.Insert(0, func)</code> to provide an override and
+            <code>SampleObjectFactories.Add(func)</code> to provide a fallback.</remarks>
         </member>
         <member name="T:ShibpurConnectWebApp.Areas.HelpPage.HelpPageSampleKey">
             <summary>
@@ -757,7 +757,7 @@
             <param name="userId">userId</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.PostEducationalHistory(ShibpurConnectWebApp.Models.WebAPI.EducationalHistories)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.EducationalHistoriesController.PostEducationalHistory(ShibpurConnectWebApp.Models.WebAPI.EducationalHistoriesDTO)">
             <summary>
             Save a new educational history for a user
             </summary>
@@ -1080,90 +1080,6 @@
             </summary>
             <param name="alert"></param>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.GetCommentsForAnswer(System.String)">
-            <summary>
-            Get list of comments available in an answer
-            </summary>
-            <param name="answerId">answerid to search</param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.PostComment(ShibpurConnectWebApp.Models.WebAPI.CommentDTO)">
-            <summary>
-            Add a new comment for a question
-            </summary>
-            <param name="comment">Comment object</param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.EditComment(ShibpurConnectWebApp.Models.WebAPI.Comment)">
-            <summary>
-            Edit a new comment for a question
-            </summary>
-            <param name="comment">Comment object</param>
-            <returns></returns>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfile(System.String)" -->
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfileByUserId(System.String)">
-            <summary>
-            API to get complete user profile (including educational and employment background) using user id
-            We are using this API for the user profile page '/account/profile'
-            </summary>
-            <param name="userId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserInfo(System.String)">
-            <summary>
-            Get details about an user from only users collection
-            </summary>
-            <param name="userEmail">user email</param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UpdateProfileImage(ShibpurConnectWebApp.Models.WebAPI.ImageInfo)">
-            <summary>
-            API to update user profile image
-            </summary>
-            <param name="imageInfo"></param>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UpdateProfile(System.String,System.String,System.String,System.String)">
-            <summary>
-            API to update user personal profile info
-            </summary>
-            <param name="userInfo">CustomUserInfo object</param>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.FollowUser(System.String)">
-            <summary>
-            API to follow a user
-            </summary>
-            <param name="userIdToFollow">userid that we want to follow</param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UnfollowUser(System.String)">
-            <summary>
-            API to unfollow a user
-            </summary>
-            <param name="userIdToFollow">user to unfollow</param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserFollowers(System.String)">
-            <summary>
-            API to get list of followers of a user
-            </summary>
-            <param name="userId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserFollowing(System.String)">
-            <summary>
-            API to get following list of current user
-            </summary>
-            <param name="userId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.CheckUserFollow(System.String)">
-            <summary>
-            API to check if user following another user or not
-            </summary>
-            <param name="userId">userid to check if current user is following this user to or</param>
-            <returns></returns>
-        </member>
         <member name="M:ShibpurConnectWebApp.Helper.CacheManager.SetCacheData(System.String,System.Object)">
             <summary>
             Method to save cache data, if it is not present
@@ -1249,6 +1165,18 @@
             <param name="slugUrl">question slug url</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Helper.Helper.CheckUniversityName(System.String)">
+            <summary>
+            Method to check whether the university name is belongs to BEC
+            </summary>
+            <param name="universityName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Helper.Helper.Compute(System.String,System.String)">
+            <summary>
+            Compute the distance between two strings. Levenshtein distance algorithm
+            </summary>
+        </member>
         <member name="T:ShibpurConnectWebApp.Helper.CacheControlAttribute">
             <summary>
             Custom attribute to set NoStore: this will restrict chrome to cache the API request
@@ -1304,9 +1232,35 @@
             Model with comment user name
             </summary>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.GetCommentsForAnswer(System.String)">
+            <summary>
+            Get list of comments available in an answer
+            </summary>
+            <param name="answerId">answerid to search</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.PostComment(ShibpurConnectWebApp.Models.WebAPI.CommentDTO)">
+            <summary>
+            Add a new comment for a question
+            </summary>
+            <param name="comment">Comment object</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.CommentsController.EditComment(ShibpurConnectWebApp.Models.WebAPI.Comment)">
+            <summary>
+            Edit a new comment for a question
+            </summary>
+            <param name="comment">Comment object</param>
+            <returns></returns>
+        </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.CustomUserInfo">
             <summary>
             We will use this model in the api/FindUser API. Main intention is to send the userid to the API user, so that we can use the userid for other APIs
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.EducationalHistories">
+            <summary>
+            We will use this model to save data into database
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.AskToAnswerDTO">
@@ -1390,6 +1344,69 @@
             <summary>
             Use this model for populating the user profile page with educational history and employment history
             </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfile(System.String)" -->
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetProfileByUserId(System.String)">
+            <summary>
+            API to get complete user profile (including educational and employment background) using user id
+            We are using this API for the user profile page '/account/profile'
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserInfo(System.String)">
+            <summary>
+            Get details about an user from only users collection
+            </summary>
+            <param name="userEmail">user email</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UpdateProfileImage(ShibpurConnectWebApp.Models.WebAPI.ImageInfo)">
+            <summary>
+            API to update user profile image
+            </summary>
+            <param name="imageInfo"></param>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UpdateProfile(System.String,System.String,System.String,System.String)">
+            <summary>
+            API to update user personal profile info
+            </summary>
+            <param name="userInfo">CustomUserInfo object</param>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.FollowUser(System.String)">
+            <summary>
+            API to follow a user
+            </summary>
+            <param name="userIdToFollow">userid that we want to follow</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.UnfollowUser(System.String)">
+            <summary>
+            API to unfollow a user
+            </summary>
+            <param name="userIdToFollow">user to unfollow</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserFollowers(System.String)">
+            <summary>
+            API to get list of followers of a user
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.GetUserFollowing(System.String)">
+            <summary>
+            API to get following list of current user
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.CheckUserFollow(System.String)">
+            <summary>
+            API to check if user following another user or not
+            </summary>
+            <param name="userId">userid to check if current user is following this user to or</param>
+            <returns></returns>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.QuestionDTO">
             <summary>
