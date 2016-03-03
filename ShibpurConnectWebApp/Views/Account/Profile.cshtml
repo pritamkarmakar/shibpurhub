@@ -229,7 +229,7 @@
                 // we set the default image when user sign-up, if it is still that one then don't add imgur domain
                 if(result.profileImageURL == profiledefaultimage)
                 {
-                    $("#imagePreview").show().css("background-image", "url("+ result.userInfo.profileImageURL+")");
+                    $("#imagePreview").show().css("background-image", "url("+ result.profileImageURL+")");
                 }
                 else
                     $("#imagePreview").show().css("background-image", "url("+ IMGURPATH + result.profileImageURL+")");
