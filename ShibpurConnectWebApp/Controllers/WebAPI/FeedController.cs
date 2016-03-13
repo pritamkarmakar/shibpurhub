@@ -69,7 +69,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 if (userDetail == null)
                 {
                     return BadRequest("No UserId is found");
-                }                
+                }
 
                 var userId = userDetail.Id;
                 // taking activities that hasn't been processed, but all these activities are not applicable to this user
@@ -95,7 +95,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                            (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 6 && m.UserId != userDetail.Id) ||
-                                           // when one user will follow another user, we have to make sure the user who is getting followed is not receiving this notification in his feed
+                                              // when one user will follow another user, we have to make sure the user who is getting followed is not receiving this notification in his feed
                                            (m.Activity == 7 && followedUsers.Contains(m.UserId) && m.ActedOnUserId != userDetail.Id) ||
                                            (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
                                            (m.Activity == 10 && m.UserId != userDetail.Id)
@@ -111,22 +111,22 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     allapplicablefeeds = (List<UserActivityLog>)CacheManager.GetCachedData("feed-" + userDetail.Id);
 
                     // if for some reason in-memory cache is missing then get the list from database
-                    if(allapplicablefeeds == null)
+                    if (allapplicablefeeds == null)
                     {
                         allapplicablefeeds = (from m in _mongoHelper.Collection.FindAll()
                                               where (m.Activity == 1 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 2 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 4 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 6 && m.UserId != userDetail.Id) ||
-                                               // when one user will follow another user, we have to make sure the user who is getting followed is not receiving this notification in his feed
+                                                  // when one user will follow another user, we have to make sure the user who is getting followed is not receiving this notification in his feed
                                                (m.Activity == 7 && followedUsers.Contains(m.UserId) && m.ActedOnUserId != userDetail.Id) ||
                                                (m.Activity == 8 && followedUsers.Contains(m.UserId)) ||
                                                (m.Activity == 10 && m.UserId != userDetail.Id)
                                               orderby m.HappenedAtUTC descending
                                               select m).ToList();
                     }
-                    
-                }                               
+
+                }
 
 
                 var feedsFollowedByMe = allapplicablefeeds.Skip(alreadyShown).Take(PAGESIZE * 2).ToList();
@@ -163,7 +163,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         continue;
                     }
-                    
+
                     PersonalizedFeedItem feedContent = null;
                     if (feed.Activity == 6 || feed.Activity == 7)
                     {
@@ -180,12 +180,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         feedContent = allfeedsWithContent.FirstOrDefault(a => a.LogId == feed.ActivityLogId);
                     }
-                    
-                    if(feedContent == null)
+
+                    if (feedContent == null)
                     {
                         continue;
                     }
-                    
+
                     processedItemCount += 1;
 
                     feedContent.ActivityType = feed.Activity;
@@ -195,7 +195,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         distinctUserId.Add(feed.UserId);
                     }
-                    
+
                     feedResults.Add(feedContent);
                 }
 
@@ -318,7 +318,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         if (questionobj != null)
                         {
                             CacheManager.SetCacheData(questionid, questionobj);
-                           
+
                         }
                     }
                     // save the obj in the list if it not null
@@ -361,8 +361,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var isFeedAnAnswer = (feed.Activity == 2 || feed.Activity == 4 || feed.Activity == 5); // Else its a Question
 
                     if (isFeedAnAnswer)
-                    {                        
-                        answer = _answers.FirstOrDefault(a => a.AnswerId == feed.ActedOnObjectId);                        
+                    {
+                        answer = _answers.FirstOrDefault(a => a.AnswerId == feed.ActedOnObjectId);
 
                         if (answer != null)
                         {
@@ -395,7 +395,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     if (feed.Activity == 1 || feed.Activity == 8)
                     {
-                        question = questions.FirstOrDefault(b => b.QuestionId == feed.ActedOnObjectId);                        
+                        question = questions.FirstOrDefault(b => b.QuestionId == feed.ActedOnObjectId);
                     }
 
                     if (feed.Activity == 10)
@@ -406,8 +406,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             continue;
 
                         feedContent.ItemHeader = job.JobTitle;
-                        feedContent.ItemSubHeader = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " | ") 
-                                                + (string.IsNullOrEmpty(job.JobCity) ? "" :  job.JobCity) +
+                        feedContent.ItemSubHeader = (string.IsNullOrEmpty(job.JobCompany) ? "" : job.JobCompany + " | ")
+                                                + (string.IsNullOrEmpty(job.JobCity) ? "" : job.JobCity) +
                                              (string.IsNullOrEmpty(job.JobCountry) ? "" : ", " + job.JobCountry);
                         feedContent.ItemDetail = job.JobDescription;
                         feedContent.PostedDateInUTC = job.PostedOnUtc;
@@ -493,7 +493,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             CacheManager.SetCacheData(userId, userDetail);
                         }
 
-                      
+                        feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
+                        feedContent.TargetAction = userDetail.FirstName + " " + userDetail.LastName;
+                        feedContent.TargetActionUrl = "/Account/Profile?userId=" + userDetail.Id;
+                        return Ok(feedContent);
                     }
                     else if (type == 6)
                     {
@@ -512,33 +515,28 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                             // set the profile in in-memory
                             CacheManager.SetCacheData("completeuserprofile-" + userId, userDetail);
-
-                            // get user BEC education year
-                            string becGraduateYear = string.Empty;
-                            var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
-                            if (becEducation == null)
-                                return NotFound();
-                            else
-                                becGraduateYear = becEducation.GraduateYear.ToString();
-
-                            // match the graduate year
-                            if (becGraduateYear.Trim() == currentUserBECGraduateYear.Trim())
-                            {
-                                feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
-                                feedContent.TargetAction = userDetail.FirstName + " " + userDetail.LastName;
-                                feedContent.TargetActionUrl = "/Account/Profile?userId=" + userDetail.Id;
-                                return Ok(feedContent);
-                            }
                         }
-                    }
-                    
-                    feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
-                    feedContent.TargetAction = userDetail.FirstName + " " + userDetail.LastName;
-                    feedContent.TargetActionUrl = "/Account/Profile?userId=" + userDetail.Id;
-                    return Ok(feedContent);
-                    
-                }
 
+                        // get user BEC education year
+                        string becGraduateYear = string.Empty;
+                        var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
+                        if (becEducation == null)
+                            return NotFound();
+                        else
+                            becGraduateYear = becEducation.GraduateYear.ToString();
+
+                        // match the graduate year
+                        if (becGraduateYear.Trim() == currentUserBECGraduateYear.Trim())
+                        {
+                            feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
+                            feedContent.TargetAction = userDetail.FirstName + " " + userDetail.LastName;
+                            feedContent.TargetActionUrl = "/Account/Profile?userId=" + userDetail.Id;
+                            return Ok(feedContent);
+                        }
+                        else
+                            return NotFound();
+                    }
+                }
                 return NotFound();
             }
             catch (Exception ex)
@@ -678,7 +676,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var questions = from q in _mongoQustionHelper.Collection.AsQueryable<Question>().ToList()
                                     where questionIds.Contains(q.QuestionId)
                                     select q;
-                    foreach(var question in questions.ToList())
+                    foreach (var question in questions.ToList())
                     {
                         var qstatus = new PersonalizedQAStatus(question.QuestionId, true);
                         qstatus.IsAskedByMe = question.UserId == userId;
@@ -715,7 +713,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         // API to retrieve user specific information that we use while forming individual activity feed content
         public async Task<IHttpActionResult> GetFollowedUserDetails([FromUri] IList<string> userIds)
         {
-            if(userIds == null || userIds.Count == 0)
+            if (userIds == null || userIds.Count == 0)
             {
                 return Ok();
             }
