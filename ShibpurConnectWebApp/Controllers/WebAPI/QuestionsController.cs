@@ -102,14 +102,19 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 
                 foreach (var userId in userIds)
                 {
-                    // check if in-memory cache has this answer or retrive from db and save it
+                    // check if in-memory cache has this user information
                     CustomUserInfo userInfo = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + userId);
 
                     if (userInfo == null)
                     {
                         Task<CustomUserInfo> actionResult = helper.FindUserById(userId, true);
                         var userDetail = await actionResult;
-                        userDetails.Add(userId, userDetail);
+                        if (userDetail != null)
+                        {
+                            userDetails.Add(userId, userDetail);
+                            // set the profile in in-memory
+                            CacheManager.SetCacheData("completeuserprofile-" + userId, userDetail);
+                        }
                     }
                     else
                         userDetails.Add(userId, userInfo);

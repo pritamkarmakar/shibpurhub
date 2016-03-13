@@ -193,33 +193,7 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    var educationInfo = string.Empty;
-                    var designation = string.Empty;
-                    if (needEmploymentAndEducationDetails)
-                    {
-                        var _mongoEducationalHistoriesHelper = new MongoHelper<EducationalHistories>();
-                        var educationalHistories = _mongoEducationalHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).OrderByDescending(b => b.GraduateYear).ToList();
-                        if (educationalHistories != null && educationalHistories.Count > 0)
-                        {
-                            educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
-                        }
-
-                        var _mongEmploymentHistoriesHelper = new MongoHelper<EmploymentHistories>();
-                        var employmentHistories = _mongEmploymentHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).ToList();
-                        if (employmentHistories != null && employmentHistories.Count > 0)
-                        {
-                            var currentJob = employmentHistories.FirstOrDefault(b => !b.To.HasValue);
-                            if (currentJob == null)
-                            {
-                                currentJob = employmentHistories.FirstOrDefault();
-                            }
-                            designation = currentJob == null ? string.Empty :
-                                currentJob.Title + ", " + currentJob.CompanyName;
-                        }
-                    }
-
-                    return GetCustomUserInfoFromAppicationUser(user, educationInfo, designation, null, null);
-
+                    return ConstructUserInformation(user, needEmploymentAndEducationDetails);
                 }
             }
         }
@@ -236,49 +210,55 @@ namespace ShibpurConnectWebApp.Helper
                 }
                 else
                 {
-                    var educationInfo = string.Empty;
-                    var designation = string.Empty;
-                    List<EducationalHistories> EducationalHistories = null;
-                    List<EmploymentHistories> EmploymentHistories = null;
-                    if (needEmploymentAndEducationDetails)
-                    {
-                        var _mongoEducationalHistoriesHelper = new MongoHelper<EducationalHistories>();
-                        var educationalHistories = _mongoEducationalHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).OrderByDescending(b => b.GraduateYear).ToList();
-                        if (educationalHistories != null && educationalHistories.Count > 0)
-                        {
-                            // see if user has any BEC education otherwise consider the latest one. If user has multiple BEC education (BE, ME) then we are considering the BE education
-                            var becEducation = educationalHistories.FindLast(m => m.IsBECEducation == true);
-                            if (becEducation != null)
-                                educationInfo = becEducation.GraduateYear.ToString() + " " + becEducation.Department;
-                            else
-                                educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
-
-                            // set the EducationalHistories properties that will have all the education details, required for ProfileController and activity feed to create user card (new user sign-up, follow user)
-                            EducationalHistories = educationalHistories;
-                        }
-
-                        var _mongEmploymentHistoriesHelper = new MongoHelper<EmploymentHistories>();
-                        var employmentHistories = _mongEmploymentHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).ToList();
-                        if (employmentHistories != null && employmentHistories.Count > 0)
-                        {
-                            var currentJob = employmentHistories.FirstOrDefault(b => !b.To.HasValue);
-                            if (currentJob == null)
-                            {
-                                currentJob = employmentHistories.FirstOrDefault();
-                            }
-                            designation = currentJob == null ? string.Empty :
-                                currentJob.Title + ", " + currentJob.CompanyName;
-
-                            // set the EmploymentHistories properties that will have all the education details, required for ProfileController and activity feed to create user card (new user sign-up, follow user)
-                            EmploymentHistories = employmentHistories;
-                        }
-                    }
-
-                    return GetCustomUserInfoFromAppicationUser(user, educationInfo,designation, EducationalHistories, EmploymentHistories);
+                    return ConstructUserInformation(user, needEmploymentAndEducationDetails);
                 }
             }
         }
 
+        private CustomUserInfo ConstructUserInformation(ApplicationUser user, bool needEmploymentAndEducationDetails)
+        {
+            var educationInfo = string.Empty;
+            var designation = string.Empty;
+            List<EducationalHistories> EducationalHistories = null;
+            List<EmploymentHistories> EmploymentHistories = null;
+            if (needEmploymentAndEducationDetails)
+            {
+                var _mongoEducationalHistoriesHelper = new MongoHelper<EducationalHistories>();
+                var educationalHistories = _mongoEducationalHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).OrderByDescending(b => b.GraduateYear).ToList();
+                if (educationalHistories != null && educationalHistories.Count > 0)
+                {
+                    // see if user has any BEC education otherwise consider the latest one. If user has multiple BEC education (BE, ME) then we are considering the BE education
+                    var becEducation = educationalHistories.FindLast(m => m.IsBECEducation == true);
+                    if (becEducation != null)
+                        educationInfo = becEducation.GraduateYear.ToString() + " " + becEducation.Department;
+                    else
+                        educationInfo = educationalHistories.FirstOrDefault().GraduateYear.ToString() + " " + educationalHistories.FirstOrDefault().Department;
+
+                    // set the EducationalHistories properties that will have all the education details, required for ProfileController and activity feed to create user card (new user sign-up, follow user)
+                    EducationalHistories = educationalHistories;
+                }
+
+                var _mongEmploymentHistoriesHelper = new MongoHelper<EmploymentHistories>();
+                var employmentHistories = _mongEmploymentHistoriesHelper.Collection.AsQueryable().Where(a => a.UserId == user.Id).ToList();
+                if (employmentHistories != null && employmentHistories.Count > 0)
+                {
+                    var currentJob = employmentHistories.FirstOrDefault(b => !b.To.HasValue);
+                    if (currentJob == null)
+                    {
+                        currentJob = employmentHistories.FirstOrDefault();
+                    }
+                    designation = currentJob == null ? string.Empty :
+                        currentJob.Title + ", " + currentJob.CompanyName;
+
+                    // set the EmploymentHistories properties that will have all the education details, required for ProfileController and activity feed to create user card (new user sign-up, follow user)
+                    EmploymentHistories = employmentHistories;
+                }
+            }
+
+            return GetCustomUserInfoFromAppicationUser(user, educationInfo, designation, EducationalHistories, EmploymentHistories);
+        }
+
+        
         public CustomUserInfo UpdateReputationCount(string userId, int deltaReputation, bool addReputaion = true)
         {
             using (AuthRepository _repo = new AuthRepository())

@@ -64,7 +64,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var email = principal.Identity.Name;
 
                 Helper.Helper helper = new Helper.Helper();
-                var userResult = helper.FindUserByEmail(email);
+                var userResult = helper.FindUserByEmail(email, true);
                 var userDetail = await userResult;
                 if (userDetail == null)
                 {
@@ -80,6 +80,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // questions that current user following
                 var followedQuestions = userDetail.FollowedQuestions ?? new List<string>();
                 List<UserActivityLog> allapplicablefeeds;
+
+                // get user BEC education year
+                string becGraduateYear = string.Empty;
+                var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
+                if (becEducation != null)
+                    becGraduateYear = becEducation.GraduateYear.ToString();
 
                 // also if user if doing a page refresh or making first time call to the feed api then make db query to get new content if there are any
                 if (alreadyShown == 0)
@@ -161,7 +167,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     PersonalizedFeedItem feedContent = null;
                     if (feed.Activity == 6 || feed.Activity == 7)
                     {
-                        var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, feed.ActedOnObjectId, feed.ActedOnUserId);
+                        var feedContentResult = await GetFeedContent(feed.Activity, feed.UserId, becGraduateYear, feed.ActedOnObjectId, feed.ActedOnUserId);
                         var y = feedContentResult as OkNegotiatedContentResult<PersonalizedFeedItem>;
                         if (y == null)
                         {
@@ -198,11 +204,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 foreach (var id in distinctUserId)
                 {
-                    Task<CustomUserInfo> result = helper.FindUserById(id, true);
-                    var userDetailInList = await result;
+                    // check in-memory
+                    CustomUserInfo userDetailInList = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + id);
 
                     if (userDetailInList == null)
-                        continue;
+                    {
+                        Task<CustomUserInfo> result = helper.FindUserById(id, true);
+                        userDetailInList = await result;
+
+                        if (userDetailInList == null)
+                            continue;
+
+                        // set the profile in in-memory
+                        CacheManager.SetCacheData("completeuserprofile-" + id, userDetailInList);
+
+                    }
 
                     var user = new FeedUserDetail
                     {
@@ -445,9 +461,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
         // Method to retrieve feed content for following activity types
         // 6: Register as new user, 7: Follow an user
-        private async Task<IHttpActionResult> GetFeedContent(int type, string userId, string objectId = "", string objectUserId = "")
+        private async Task<IHttpActionResult> GetFeedContent(int type, string userId, string currentUserBECGraduateYear, string objectId = "", string objectUserId = "")
         {
             var feedContent = new PersonalizedFeedItem();
+            CustomUserInfo userDetail = new CustomUserInfo();
 
             try
             {
@@ -461,16 +478,65 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     var helper = new Helper.Helper();
                     Task<CustomUserInfo> actionResult = null;
                     if (type == 7)
-                         actionResult = helper.FindUserById(objectUserId);
-                    if(type == 6)
-                        actionResult = helper.FindUserById(userId);
-                    var userDetail = await actionResult;
+                    {
+                        // check if we have the userinfo in in-memory cache
+                        userDetail = (CustomUserInfo)CacheManager.GetCachedData(userId);
+                        if (userDetail == null)
+                        {
+                            actionResult = helper.FindUserById(objectUserId);
+                            userDetail = await actionResult;
 
+                            if (userDetail == null)
+                                return NotFound();
+
+                            // set the profile in in-memory
+                            CacheManager.SetCacheData(userId, userDetail);
+                        }
+
+                      
+                    }
+                    else if (type == 6)
+                    {
+                        // for new user registration we want to make sure new user and current user is from same batch. 
+                        // Current plan is to show the feed content only if new user and current user from same batch
+
+                        // check in-memory first
+                        userDetail = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + userId);
+                        if (userDetail == null)
+                        {
+                            actionResult = helper.FindUserById(userId, true);
+                            userDetail = await actionResult;
+
+                            if (userDetail == null)
+                                return NotFound();
+
+                            // set the profile in in-memory
+                            CacheManager.SetCacheData("completeuserprofile-" + userId, userDetail);
+
+                            // get user BEC education year
+                            string becGraduateYear = string.Empty;
+                            var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
+                            if (becEducation == null)
+                                return NotFound();
+                            else
+                                becGraduateYear = becEducation.GraduateYear.ToString();
+
+                            // match the graduate year
+                            if (becGraduateYear.Trim() == currentUserBECGraduateYear.Trim())
+                            {
+                                feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
+                                feedContent.TargetAction = userDetail.FirstName + " " + userDetail.LastName;
+                                feedContent.TargetActionUrl = "/Account/Profile?userId=" + userDetail.Id;
+                                return Ok(feedContent);
+                            }
+                        }
+                    }
+                    
                     feedContent.ItemHeader = userDetail.FirstName + " " + userDetail.LastName;
                     feedContent.TargetAction = userDetail.FirstName + " " + userDetail.LastName;
                     feedContent.TargetActionUrl = "/Account/Profile?userId=" + userDetail.Id;
-
                     return Ok(feedContent);
+                    
                 }
 
                 return NotFound();
