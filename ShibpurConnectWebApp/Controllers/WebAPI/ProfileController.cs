@@ -290,6 +290,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     return errorResult;
                 }
 
+                // remove the in-memory cache for this user
+                CacheManager.RemoveCacheData("completeuserprofile-" + user.Id);
+                CacheManager.RemoveCacheData(user.Id);
+
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 

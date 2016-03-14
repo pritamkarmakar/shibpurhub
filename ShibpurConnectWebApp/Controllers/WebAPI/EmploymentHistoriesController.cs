@@ -87,6 +87,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             if (!result.Ok)
                 return InternalServerError();
 
+            // remove the in-memory cache for this user
+            CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
+
             // invalidate the cache for the action those will get impacted due to this new answer post
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 
@@ -205,6 +208,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // if mongo failed to save the data then send error
                 if (!result.Ok)
                     return InternalServerError();
+
+                // remove the in-memory cache for this user
+                CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
 
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);

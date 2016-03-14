@@ -120,6 +120,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // invalidate the cache for the action those will get impacted due to this new answer post
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 
+            // remove the in-memory cache for this user
+            CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
+
             // invalidate the getemploymenthistories api call for this user
             cache.RemoveStartsWith("educationalhistories-geteducationalhistories-userId=" + userInfo.Id);
             cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
@@ -213,6 +216,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                        UniversityName = educationalHistories.UniversityName,
                        IsBECEducation = isBecEducation
                     }));
+
+                // remove the in-memory cache for this user
+                CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
 
                 // invalidate the cache for the action those will get impacted due to this new answer post
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
