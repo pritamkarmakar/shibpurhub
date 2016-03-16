@@ -83,9 +83,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 // get user BEC education year
                 string becGraduateYear = string.Empty;
-                var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
-                if (becEducation != null)
-                    becGraduateYear = becEducation.GraduateYear.ToString();
+                if (userDetail.EducationalHistories != null)
+                {
+                    var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
+                    if (becEducation != null)
+                        becGraduateYear = becEducation.GraduateYear.ToString();
+                }
 
                 // also if user if doing a page refresh or making first time call to the feed api then make db query to get new content if there are any
                 if (alreadyShown == 0)
@@ -500,6 +503,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     }
                     else if (type == 6)
                     {
+                        if (string.IsNullOrEmpty(currentUserBECGraduateYear))
+                            return NotFound();
+
                         // for new user registration we want to make sure new user and current user is from same batch. 
                         // Current plan is to show the feed content only if new user and current user from same batch
 
@@ -519,11 +525,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                         // get user BEC education year
                         string becGraduateYear = string.Empty;
-                        var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
-                        if (becEducation == null)
-                            return NotFound();
+                        if (userDetail.EducationalHistories != null)
+                        {
+                            var becEducation = userDetail.EducationalHistories.FindLast(m => m.IsBECEducation == true);
+                            if (becEducation == null)
+                                return NotFound();
+                            else
+                                becGraduateYear = becEducation.GraduateYear.ToString();
+                        }
                         else
-                            becGraduateYear = becEducation.GraduateYear.ToString();
+                            return NotFound();                        
 
                         // match the graduate year
                         if (becGraduateYear.Trim() == currentUserBECGraduateYear.Trim())

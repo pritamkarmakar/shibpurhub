@@ -10,6 +10,7 @@ namespace ShibpurConnectWebApp.App_Start
 {
     public class WebApiConfig
     {
+        private static string databaseName = ConfigurationManager.AppSettings["databasename"];
         public static void Register(HttpConfiguration config)
         {
             // enable elmah
@@ -45,11 +46,18 @@ namespace ShibpurConnectWebApp.App_Start
             formatter.SerializerSettings.ContractResolver =
                 new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
 
-            // persistent cache with mongodb for cacheoutput
-            var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
-            var db = client.GetServer().GetDatabase("shibpurconnect");
-            MongoCollection mongocollection = db.GetCollection("cache");
-            GlobalConfiguration.Configuration.CacheOutputConfiguration().RegisterCacheOutputProvider(() => new MongoDbApiOutputCache(db));          
+            try
+            {
+                // persistent cache with mongodb for cacheoutput
+                var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
+                var db = client.GetServer().GetDatabase(databaseName);
+                MongoCollection mongocollection = db.GetCollection("cache");
+                GlobalConfiguration.Configuration.CacheOutputConfiguration().RegisterCacheOutputProvider(() => new MongoDbApiOutputCache(db));
+            }
+            catch(System.Exception ex)
+            {
+
+            }
         }
     }
 }

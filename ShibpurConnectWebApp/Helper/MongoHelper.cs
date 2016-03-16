@@ -11,11 +11,12 @@ namespace ShibpurConnectWebApp.Helper
     public class MongoHelper<T> where T : class
     {
         public MongoCollection<T> Collection { get; private set; }
+        private string databaseName = ConfigurationManager.AppSettings["databasename"];
 
         public MongoHelper()
         {
             var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
-            var db = client.GetServer().GetDatabase("shibpurconnect");
+            var db = client.GetServer().GetDatabase(databaseName);
             Collection = db.GetCollection<T>(typeof(T).Name.ToLower());
         }
     }
@@ -23,11 +24,12 @@ namespace ShibpurConnectWebApp.Helper
     public class MongoHelper
     {
         public MongoCollection Collection { get; private set; }
+        private string databaseName = ConfigurationManager.AppSettings["databasename"];
 
         public MongoHelper(string collectionName)
         {
             var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
-            var db = client.GetServer().GetDatabase("shibpurconnect");
+            var db = client.GetServer().GetDatabase(databaseName);
             Collection = db.GetCollection(collectionName);
         }
     }

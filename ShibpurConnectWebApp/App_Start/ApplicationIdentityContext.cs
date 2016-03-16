@@ -10,6 +10,7 @@ namespace ShibpurConnectWebApp
 
     public class ApplicationIdentityContext : IdentityContext, IDisposable
     {
+        private static string databaseName = ConfigurationManager.AppSettings["databasename"];
         public ApplicationIdentityContext(MongoCollection users, MongoCollection roles) : base(users, roles)
         {
         }
@@ -18,7 +19,7 @@ namespace ShibpurConnectWebApp
         {
             // todo add settings where appropriate to switch server & database in your own application
             var client = new MongoClient(ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString);
-            var database = client.GetServer().GetDatabase("shibpurconnect");
+            var database = client.GetServer().GetDatabase(databaseName);
             var users = database.GetCollection<IdentityUser>("users");
             var roles = database.GetCollection<IdentityRole>("roles");
 

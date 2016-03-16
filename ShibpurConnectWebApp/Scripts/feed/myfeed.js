@@ -30,6 +30,13 @@ function loadFeeds(page) {
 				return;
 			}
 
+            // if no feed content available for this user then ask the user to follow tag or follow friends, to be implemented
+			if (result.feedItems.length == 0)
+			{
+			    $("#loading").hide();
+			    return;
+			}
+
 			var feeds = result.feedItems;
 			$('#alreadyShown').val(result.alreadyProcessedItemCount);
 

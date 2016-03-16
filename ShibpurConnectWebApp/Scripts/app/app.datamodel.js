@@ -16,6 +16,7 @@
     // Data access operations
     self.setAccessToken = function (accessToken) {
         sessionStorage.setItem("accessToken", accessToken);
+        localStorage.clear();
     };
 
     self.getAccessToken = function () {
