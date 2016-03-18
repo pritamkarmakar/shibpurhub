@@ -83,7 +83,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="page">provide the page index</param>
         /// <returns></returns>
         [CacheControl()]
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        [CacheOutput(ServerTimeSpan = 3600, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetQuestions(int page = 0)
         {
             try

@@ -430,7 +430,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         feedContent.AnswersCount = answersCount.Content;
 
                         feedContent.ItemDetail = question.Description;
-                        feedContent.PostedDateInUTC = question.PostedOnUtc;
+                        feedContent.PostedDateInUTC = feed.HappenedAtUTC;
                         feedContent.QuestionId = question.QuestionId;
 
                         if (question.Followers == null)
