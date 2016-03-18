@@ -166,7 +166,7 @@
             loggedInUserId = userInfo.id;
 
         // get the token from the session storage
-        var token = sessionStorage.getItem("accessToken");
+        var token = localStorage.getItem("accessToken");
 
         // If profileId is null then consider loggedInUserId. This will happen when a logged in user will click on the 'Profile' link from the navbar.
         // That url will be '/account/profile' without any userid. But if both are null then redirect to feed/index page

@@ -41,7 +41,7 @@
                 $('.row-offcanvas').toggleClass('active');
             });
             // get the user details only if we have the token for this user and userDetails is null so far
-            var token = sessionStorage.getItem("accessToken");
+            var token = localStorage.getItem("accessToken");
             if (token != null && userDetails == null) {
                 scAjax({
                     "url": "account/me",

@@ -15,11 +15,13 @@
 
     // Data access operations
     self.setAccessToken = function (accessToken) {
-        sessionStorage.setItem("accessToken", accessToken);
         localStorage.clear();
+        localStorage.setItem("accessToken", accessToken);
+        //sessionStorage.setItem("accessToken", accessToken);
     };
 
     self.getAccessToken = function () {
-        return sessionStorage.getItem("accessToken");
+        //return sessionStorage.getItem("accessToken");
+        return localStorage.getItem("accessToken");
     };
 }

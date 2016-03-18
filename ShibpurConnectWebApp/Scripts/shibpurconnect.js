@@ -73,7 +73,7 @@ function scAjax(options) {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + sessionStorage.getItem("accessToken")
+                'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
             },
             success: function (result) {
                 if (options.success && typeof options.success == "function") {

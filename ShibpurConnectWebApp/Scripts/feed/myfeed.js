@@ -3,7 +3,7 @@ var profiledefaultimage = '/Content/images/profile-image.jpg';
 $(document).ready(function () {
     // after login we get the token from web api that stored in the session storage, if token not present 
     // that means user is not yet logged-in
-    var token = sessionStorage.getItem("accessToken");
+    var token = localStorage.getItem("accessToken");
     // reset alreadyShown div
     $('#alreadyShown').val(0);
 

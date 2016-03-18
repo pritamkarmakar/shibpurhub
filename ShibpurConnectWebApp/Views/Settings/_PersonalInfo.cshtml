@@ -44,7 +44,7 @@
                     type: "POST",
                     contentType: 'application/json; charset=utf-8',
                     beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("accessToken"));
+                        xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("accessToken"));
                     },
                     success: function (result) {
                         // update userinfo in the local storage
