@@ -129,10 +129,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     // consider only if question spam count is below the max limit
                     if (question.SpamCount <= maxSpamCount)
                     {
-                        var userData = userDetails[question.UserId];
                         // userdata can be null, for example -> one user posted a question and later on deleted his account. So we will not conside those questions
-                        if (userData != null)
+                        if (userDetails.ContainsKey(question.UserId))
                         {
+                            var userData = userDetails[question.UserId];
+
                             var questionVm = GetQuestionViewModel(question, userData);
                             questionVm.AnswerCount = answerMongoHelper.Collection.AsQueryable().Count(a => a.QuestionId == question.QuestionId);
                             questionVm.TotalPages = totalPages;
