@@ -648,7 +648,6 @@
     <Content Include="Views\PartialViews\_EditedDepartmentDropdown.cshtml" />
     <Content Include="Views\Settings\_DeleteAccount.cshtml" />
     <Content Include="Views\PartialViews\_DegreeDropdown.cshtml" />
-    <Content Include="Views\Settings\AddEducation.cshtml" />
     <Content Include="Views\StepWizard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
