@@ -92,13 +92,7 @@
                     $("#neweducationdiv").slideToggle();
                     // get the latest data from server and update the profile page
                     loadEducations();
-
-                    // this is for the stepwizard page, we will enable the 'GO TO FEED PAGE' button once used add one educational details
-                    if ($("#feed-page-button").length)
-                    {
-                        $("#go-to-feed-page").removeClass("disabled");
-                    }
-
+                   
                     // update the 'SC_Session_UserDetails' info in the browser local storage
                     scAjax({
                         "url": "account/me",
@@ -182,6 +176,15 @@
                         $('.educationbody').append("<hr id='dotted'/>");
                     });
                 }
+
+                // this is for the stepwizard page, we will disable the 'GO TO FEED PAGE' button if there is no educational record available for this user
+                if ($(".educationbody > div").length == 0) {
+                    if ($("#feed-page-button").length) {
+                        $("#go-to-feed-page").hide();
+                    }                    
+                }
+                else
+                    $("#go-to-feed-page").show();
 
                 // hide the loading spinner
                 $('#loadingeducations').hide();
@@ -349,7 +352,7 @@
                     $('#deleteeducationinfobutton > span').text('Delete');
 
                     // get the latest data from server and update the profile page
-                    loadEducations();
+                    loadEducations();                    
 
                     // update the 'SC_Session_UserDetails' info in the browser local storage
                     scAjax({

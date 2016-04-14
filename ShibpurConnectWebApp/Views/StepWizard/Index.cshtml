@@ -94,8 +94,8 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        // disable the go to feed page button
-        $("#go-to-feed-page").prop("disabled", true);
+        // hide the go to feed page button
+        //$("#go-to-feed-page").hide();
 
         var navListItems = $('ul.setup-panel li a'),
             allWells = $('.setup-content');
@@ -113,6 +113,13 @@
                 allWells.hide();
                 $target.show();
             }
+
+            // show hide go to feed button based on the educational div button state
+            if ($('#go-to-feed-page').css('display') == 'none') {
+                $("#go-to-feed-page2").hide();
+            }
+            else
+                $("#go-to-feed-page2").show();           
         });
 
         $('ul.setup-panel li.active a').trigger('click');
@@ -120,11 +127,12 @@
         $('#activate-step-2').on('click', function (e) {
             $('ul.setup-panel li:eq(1)').removeClass('disabled');
             $('ul.setup-panel li a[href="#step-2"]').trigger('click');
-            $(this).remove();
+            $(this).remove();            
         })
 
         loadEducations();
-        loadEmployments();        
+        loadEmployments();   
+      
     });
 </script>
 
@@ -168,7 +176,7 @@
                         @{ Html.RenderPartial("_EducationalHistory"); }
                         <div id="feed-page-button">
                         <button id="activate-step-2" class="btn btn-primary btn-sm">Add Employment&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
-                            <a href="/feed/myfeeds" id="go-to-feed-page" class="btn btn-primary btn-sm disabled" role="button" style="float:right;">Go To Feed Page&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+                            <a href="/feed/myfeeds" id="go-to-feed-page" class="btn btn-primary btn-sm" role="button" style="float:right;display:none;">Go To Feed Page&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
                         </div>
                     </div>
                 </div>
@@ -177,6 +185,9 @@
                 <div class="col-xs-12">
                     <div class="col-md-12">
                         @{ Html.RenderPartial("_EmploymentHistory"); }
+                        <div id="feed-page-button-emp">                           
+                            <a href="/feed/myfeeds" id="go-to-feed-page2" class="btn btn-primary btn-sm" role="button" style="float:right;display:none;">Go To Feed Page&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
