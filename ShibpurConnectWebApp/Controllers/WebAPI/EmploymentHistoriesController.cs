@@ -147,6 +147,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var response = client.Delete("my_index", "employmenthistories", id);
 
             var result = _mongoHelper.Collection.Remove(Query.EQ("_id", new BsonObjectId(new ObjectId(id))), RemoveFlags.Single);
+
+            // remove the in-memory cache for this user
+            CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
+
             // invalidate the cache for the action those will get impacted due to this new answer post
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 

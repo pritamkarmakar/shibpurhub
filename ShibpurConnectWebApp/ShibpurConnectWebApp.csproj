@@ -302,6 +302,7 @@
     <Compile Include="Controllers\CareerController.cs" />
     <Compile Include="Controllers\DiscussionController.cs" />
     <Compile Include="Controllers\LegalController.cs" />
+    <Compile Include="Controllers\StepWizardController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\SlugToIdAttribute.cs">
       <SubType>Code</SubType>
@@ -599,8 +600,8 @@
     <Content Include="Views\Feed\StartDiscussion.cshtml" />
     <Content Include="Views\Feed\MyFeeds.cshtml" />
     <Content Include="Views\PartialViews\_DepartmentDropdown.cshtml" />
-    <Content Include="Views\Settings\_EducationalHistory.cshtml" />
-    <Content Include="Views\Settings\_EmploymentHistory.cshtml" />
+    <Content Include="Views\Shared\_EducationalHistory.cshtml" />
+    <Content Include="Views\Shared\_EmploymentHistory.cshtml" />
     <Content Include="Views\PartialViews\_FeedList.cshtml" />
     <Content Include="Views\Feed\FeedByCategory.cshtml" />
     <Content Include="Views\Notifications\Index.cshtml" />
@@ -647,6 +648,8 @@
     <Content Include="Views\PartialViews\_EditedDepartmentDropdown.cshtml" />
     <Content Include="Views\Settings\_DeleteAccount.cshtml" />
     <Content Include="Views\PartialViews\_DegreeDropdown.cshtml" />
+    <Content Include="Views\Settings\AddEducation.cshtml" />
+    <Content Include="Views\StepWizard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Error\" />

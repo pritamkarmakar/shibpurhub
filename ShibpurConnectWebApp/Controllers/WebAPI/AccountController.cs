@@ -132,7 +132,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var email = principal.Identity.Name;
 
             Helper.Helper helper = new Helper.Helper();
-            var userResult = helper.FindUserByEmail(email);
+            var userResult = helper.FindUserByEmail(email, true);
             var userInfo = await userResult;
             if (userInfo == null)
             {

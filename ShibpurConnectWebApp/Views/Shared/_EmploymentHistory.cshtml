@@ -39,6 +39,15 @@
 
     // function to load all existing employment histories
     function loadEmployments() {
+        // get current user email from session
+        var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        if (!userDetails) {
+            //TO-DO: Handle if userdetail is not available in Session Storage
+            return;
+        }
+
+        var userInfo = $.parseJSON(userDetails);
+
         // disply loading spinner
         $('#loadingexperience').show();
 
@@ -86,7 +95,7 @@
                         toDate = "Present";
                     }
                     $('.experiencebody').append("<div id='"+ val.id +"' class=\"employmentDetails\"><span id=\"companyname\">" + val.companyName + "</span><br><span id=\"designation\">" + val.title + "</span><br><span id=\"joblocation\">" + val.location + "</span><br><span id=\"jobstartdate\" style='display:none;'>" + val.from + "</span><span id=\"jobenddate\" style='display:none;'>" + val.to + "</span><span id=\"timeframe\">" + fromDate + " - " + toDate + "</span></div>");
-                    $('.experiencebody').append("<div style='float:right;'><button class='btn btn-primary btn-xs' id='editexperienceinfobutton' onclick='loadEditEmploymentForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteemploymentinfobutton' onclick='deleteEmployment($(this).parent().prev());'><i></i><span>Delete</span></button></div><br />");
+                    $('.experiencebody').append("<div id='buttons-" + val.id + "'style='float:right;'><button class='btn btn-primary btn-xs' id='editexperienceinfobutton' onclick='loadEditEmploymentForm($(this).parent().prev()); return false;'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary btn-xs' id='deleteemploymentinfobutton' onclick='deleteEmployment($(this).parent().prev());'><i></i><span>Delete</span></button></div><br />");
                     $('.experiencebody').append("<hr id='dotted'/>");
                 });
 
@@ -273,8 +282,10 @@
         var token = localStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
 
         // add spinner animation in the save button and change the text to 'Saving..'
-        $('#deleteemploymentinfobutton > i').addClass('fa fa-circle-o-notch fa-spin');
-        $('#deleteemploymentinfobutton > span').text(' Deleting...');
+        //$('#deleteemploymentinfobutton > i').addClass('fa fa-circle-o-notch fa-spin');
+        //$('#deleteemploymentinfobutton > span').text(' Deleting...');
+        $('#buttons-' + employmentId + ' > button > i').addClass('fa fa-circle-o-notch fa-spin');
+        $('#buttons-' + employmentId + ' > button > span').text(' Deleting...');
 
         $.ajax({
             url: SERVER + "employmenthistories/deleteemploymenthistory?id=" + employmentId,

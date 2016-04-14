@@ -88,10 +88,10 @@
     display: none;
 }
 
-.btn-submit-answer {
+/*.btn-submit-answer {
     background-color: #8bc34a;
     border: 0;
-}
+}*/
 
     .btn-submit-answer.disabled {
         pointer-events: none;
