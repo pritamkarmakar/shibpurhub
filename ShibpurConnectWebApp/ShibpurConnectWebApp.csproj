@@ -302,7 +302,7 @@
     <Compile Include="Controllers\CareerController.cs" />
     <Compile Include="Controllers\DiscussionController.cs" />
     <Compile Include="Controllers\LegalController.cs" />
-    <Compile Include="Controllers\StepWizardController.cs" />
+    <Compile Include="Controllers\CompleteProfileController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\SlugToIdAttribute.cs">
       <SubType>Code</SubType>
@@ -648,7 +648,7 @@
     <Content Include="Views\PartialViews\_EditedDepartmentDropdown.cshtml" />
     <Content Include="Views\Settings\_DeleteAccount.cshtml" />
     <Content Include="Views\PartialViews\_DegreeDropdown.cshtml" />
-    <Content Include="Views\StepWizard\Index.cshtml" />
+    <Content Include="Views\CompleteProfile\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Error\" />

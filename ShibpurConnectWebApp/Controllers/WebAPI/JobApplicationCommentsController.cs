@@ -57,6 +57,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             {
                 return BadRequest("Request body is null. Please send a valid Questions object");
             }
+            if(String.IsNullOrEmpty(comment.CommentText))
+                return BadRequest("Commment can't be empty");
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var email = principal.Identity.Name;

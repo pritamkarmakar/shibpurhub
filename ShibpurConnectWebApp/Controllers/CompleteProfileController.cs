@@ -11,9 +11,9 @@ using System.Web.Mvc;
 
 namespace ShibpurConnectWebApp.Controllers
 {
-    public class StepWizardController : Controller
+    public class CompleteProfileController : Controller
     {
-        public StepWizardController()
+        public CompleteProfileController()
         {
             // get the department list and send it to the view
             DepartmentsController DP = new DepartmentsController();

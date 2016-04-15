@@ -167,6 +167,12 @@
                                 <p class="list-group-item-text">Add your employment background</p>
                             </a>
                         </li>
+                        <li class="disabled">
+                            <a href="#step-3">
+                                <h4 class="list-group-item-heading">Users</h4>
+                                <p class="list-group-item-text">Find and Follow users</p>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -185,7 +191,8 @@
                 <div class="col-xs-12">
                     <div class="col-md-12">
                         @{ Html.RenderPartial("_EmploymentHistory"); }
-                        <div id="feed-page-button-emp">                           
+                        <div id="feed-page-button-emp">   
+                            <button id="activate-step-3" class="btn btn-primary btn-sm">Follow Users&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>                        
                             <a href="/feed/myfeeds" id="go-to-feed-page2" class="btn btn-primary btn-sm" role="button" style="float:right;display:none;">Go To Feed Page&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
                         </div>
                     </div>

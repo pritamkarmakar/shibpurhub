@@ -446,15 +446,15 @@ function createJobApplication(answer) {
                 return;
             }
 
+            saveComment(postComment);
+
             var postComment = {};
             postComment.commentText = commentText;
             postComment.answerId = answer.answerId;
             postComment.userId = userInfo.id;
             postComment.userProfileImage = userInfo.profileImageURL;
             postComment.displayName = userInfo.firstName + " " + userInfo.lastName;
-            postComment.postedOnUtc = new Date();
-
-            saveComment(postComment);
+            postComment.postedOnUtc = new Date();           
 
             $(this).val("");
         }
@@ -476,7 +476,18 @@ function saveComment(comment) {
         "data": JSON.stringify(data, null, 2),
         "success": function (result) {
 
-        }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            // if the request become unauthorize then redirect user 
+            // to login page (this will happen once token will get expire)
+            if (XMLHttpRequest.status == "401")
+                window.location.href = "/account/login";
+            else {
+                var errorText = XMLHttpRequest.responseText.replace(/\{/g, '');
+                errorText = errorText.replace(/\}/g, '').replace("\"message\":","");
+                Command: toastr["error"]("Error: " + errorText);
+            }
+        }        
     });
 }
 
