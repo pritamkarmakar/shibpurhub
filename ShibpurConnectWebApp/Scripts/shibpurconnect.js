@@ -710,6 +710,42 @@ function updateUpVote(answerId, success) {
     });
 }
 
+function markAsAnswer(answerId, success) {
+    var markAsAnswerButton = $(".markanswer-ul a[data-answerId='" + answerId + "']");
+
+    var accepted = true;
+    if ($(markAsAnswerButton).hasClass('active')) {       
+        accepted = false;
+    }
+
+    var textSpan = $(markAsAnswerButton).find('span');
+    var icon = $(markAsAnswerButton).find('i.fa');
+    $(icon).addClass('fa-circle-o-notch fa-spin');
+
+    var answers = [];
+    var answerId = $(markAsAnswerButton).attr('data-answerId');
+    answers.push({ "AnswerID": answerId, "MarkedAsAnswer": accepted });
+    
+    scAjax({
+        "url": "answers/UpdateMarkAsAnswer",
+        "type": "POST",
+        "data": JSON.stringify(answers),
+        "success": function (result) {
+            if (!result) {
+                return;
+            }
+            
+            if (success && typeof success === 'function') {
+                success();
+            }
+
+            $(markAsAnswerButton).addClass('active');
+            $(textSpan).text('Accepted');
+            $(icon).removeClass('fa-arrow-up fa-circle-o-notch fa-spin');
+        }
+    });
+}
+
 function followQuestion(questionId) {
     var button = $("#" + questionId);
     //var questionId = $(button).attr('data-questionId');

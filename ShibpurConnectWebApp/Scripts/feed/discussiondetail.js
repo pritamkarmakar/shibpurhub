@@ -125,6 +125,10 @@ function createQuestion(question)
     {
         $(htmlItem).find('.follow-ul').show();
     }
+    else
+    {
+        $('.markanswer-ul').show();
+    }
     
     var categoryArr = [];
     var tagListUL = $(htmlItem).find('.tagsList');
@@ -232,11 +236,24 @@ function createAnswer(answer)
     var upvoteButton = $(htmlItem).find('.upvote-ul a.thumbs');
     $(upvoteButton).attr({ 'data-answerId': answer.answerId, 'id': answer.answerId });
     
+    var markAsAnswerButton = $(htmlItem).find('.markanswer-ul a.thumbs');
+    $(markAsAnswerButton).attr({ 'data-answerId': answer.answerId });
+    
+    if(answer.markedAsAnswer)
+    {
+        $(htmlItem).addClass('accepted-answer');
+    }
+    
     $("div.answer-container").append(htmlItem);
 
     $(upvoteButton).click(function (event) {
         event.preventDefault();
         updateUpVote(answer.answerId);
+    });
+    
+    $(markAsAnswerButton).click(function (event) {
+        event.preventDefault();
+        markAsAnswer(answer.answerId);
     });
 
     var deleteButton = $(htmlItem).find('.delete-ul a.thumbs');

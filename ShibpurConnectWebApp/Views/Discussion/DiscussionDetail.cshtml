@@ -3,7 +3,7 @@
     ViewBag.Title = "Dicussion - ShibpurHub";
 }
 
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.1")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.2")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/discussion.css")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/magnific-popup.css")"/>
 
@@ -21,7 +21,7 @@
     var answerId = @Html.Raw(Json.Encode(ViewData["answerId"]));
 </script>
 <script src="@Url.Content("~/Scripts/feed/jquery.magnific-popup.min.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=4.4")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/feed/discussiondetail.js?v=4.5")" type="text/javascript"></script>
 
 <div class="detail-container">
 
@@ -126,6 +126,11 @@
                     <div class="row thread-details">
                         <div class="thread-details-container">
                             <div class="col-xs-12 col-md-4">
+                                <ul class="list-inline pull-left markanswer-ul">
+                                    <li>
+                                        <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-check"></i> <span>Accept</span></a>
+                                    </li>
+                                </ul>
                                 <ul class="list-inline pull-left upvote-ul">
                                     <li>
                                         <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>

@@ -477,9 +477,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     Activity = 5,
                     UserId = userInfo.Id,
-                    ActedOnObjectId = answer.AnswerId,
-                    ActedOnUserId = answer.UserId,
-                    PatentObjectId = answer.QuestionId
+                    ActedOnObjectId = answerInDB.AnswerId,
+                    ActedOnUserId = answerInDB.UserId,
+                    PatentObjectId = answerInDB.QuestionId
                 };
 
                 UpdateUserActivityLog(userActivityLog);
