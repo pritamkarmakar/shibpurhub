@@ -708,6 +708,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         var astatus = new PersonalizedQAStatus(answer.AnswerId, false);
                         astatus.IsAnsweredByMe = answer.UserId == userId;
                         astatus.IsUpvotedByMe = answer.UpvotedByUserIds != null && answer.UpvotedByUserIds.Contains(userId);
+                        astatus.MarkedAsAnswer = answer.MarkedAsAnswer;
 
                         statuses.Add(astatus);
                     }

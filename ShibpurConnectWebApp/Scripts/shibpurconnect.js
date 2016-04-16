@@ -632,14 +632,20 @@ function updateQnAStatus(questionIds, answerIds) {
                     }
                 }
                 else {
-                    button = $("a[data-answerId='" + item.id + "']");
+                    var upvoteButton = $(".upvote-ul a[data-answerId='" + item.id + "']");
+                    var markAsAnswerButton = $(".markanswer-ul a[data-answerId='" + item.id + "']");
                     if (!item.isAnsweredByMe) {
-                        $(button).closest('.upvote-ul').show();
+                        $(upvoteButton).closest('.upvote-ul').show();
                     }
                     if (item.isUpvotedByMe) {
-                        $(button).addClass('active');
-                        $(button).find('span').text('Upvoted');
-                        $(button).find('i.fa').removeClass('fa-arrow-up').addClass('fa-thumbs-up');
+                        $(upvoteButton).addClass('active');
+                        $(upvoteButton).find('span').text('Upvoted');
+                        $(upvoteButton).find('i.fa').removeClass('fa-arrow-up').addClass('fa-thumbs-up');
+                    }
+                    if(item.markedAsAnswer)
+                    {
+                        $(markAsAnswerButton).addClass('active');
+                        $(markAsAnswerButton).find('span').text('Accepted');
                     }
                 }
             });
