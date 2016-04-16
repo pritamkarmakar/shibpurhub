@@ -485,11 +485,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 UpdateUserActivityLog(userActivityLog);
             }
             
-            // invalidate the cache for the action those will get impacted due to this new answer post
-            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
-                
-            // invalidate the getquestion api call for the question associated with this answer
-            cache.RemoveStartsWith("questions-getquestion-questionId=" + answerInDB.QuestionId);
+            //var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+            //cache.RemoveStartsWith("questions-getquestion-questionId=" + answerInDB.QuestionId);
 
             return CreatedAtRoute("DefaultApi", null, true);
         }
