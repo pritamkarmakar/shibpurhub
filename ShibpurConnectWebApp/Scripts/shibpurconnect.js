@@ -718,6 +718,8 @@ function updateUpVote(answerId, success) {
 }
 
 function markAsAnswer(answerId, success) {
+    $('.answer.accepted-answer').removeClass('accepted-answer');
+    
     var answers = [];
     var uiAnswers = $('.markanswer-ul:visible');
     var markAsAnswerButton;
@@ -760,7 +762,8 @@ function markAsAnswer(answerId, success) {
             if (success && typeof success === 'function') {
                 success();
             }
-
+            
+            $('.thread.answer#' + answerId).addClass('accepted-answer');
             if(markAsAnswerButton)
             {
                 $(markAsAnswerButton).toggleClass('active');
