@@ -239,11 +239,6 @@ function createAnswer(answer)
     var markAsAnswerButton = $(htmlItem).find('.markanswer-ul a.thumbs');
     $(markAsAnswerButton).attr({ 'data-answerId': answer.answerId });
     
-    if(answer.markedAsAnswer)
-    {
-        $(htmlItem).addClass('accepted-answer');
-    }
-    
     $("div.answer-container").append(htmlItem);
 
     $(upvoteButton).click(function (event) {

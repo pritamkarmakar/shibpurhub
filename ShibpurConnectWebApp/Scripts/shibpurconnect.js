@@ -646,6 +646,7 @@ function updateQnAStatus(questionIds, answerIds) {
                     {
                         $(markAsAnswerButton).addClass('active');
                         $(markAsAnswerButton).find('span').text('Accepted');
+                        $('.thread.answer#' + item.id).addClass('accepted-answer');
                     }
                 }
             });
