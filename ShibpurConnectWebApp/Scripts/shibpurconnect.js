@@ -762,16 +762,20 @@ function markAsAnswer(answerId, success) {
                 success();
             }
             
-            $('.thread.answer#' + answerId).toggleClass('accepted-answer');
             if(markAsAnswerButton)
             {
                 $(markAsAnswerButton).toggleClass('active');
                 $(icon).removeClass('fa-arrow-up fa-circle-o-notch fa-spin');
                 
-                var text = $(markAsAnswerButton).hasClass('active') ? "Accepted" : "Accept";
+                var text = "Accept";
+                if($(markAsAnswerButton).hasClass('active'))
+                {
+                    $('.thread.answer#' + answerId).addClass('accepted-answer');
+                    text = "Accepted";
+                }
+                
                 $(markAsAnswerButton).find('span').text(text);
             }
-            
         }
     });
 }
