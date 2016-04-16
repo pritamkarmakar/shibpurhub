@@ -59,10 +59,7 @@ h1, h2, h3, h4, h5, h6 {
     overflow: auto;
 }
 
-.thread.accepted-answer
-{
-    border-color: #00D8A2;
-}
+
 .accepted-answer .post-header
 {
     background: #E5FBF5 !important

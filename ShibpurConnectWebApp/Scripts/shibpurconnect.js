@@ -717,20 +717,35 @@ function updateUpVote(answerId, success) {
 }
 
 function markAsAnswer(answerId, success) {
-    var markAsAnswerButton = $(".markanswer-ul a[data-answerId='" + answerId + "']");
-
-    var accepted = true;
-    if ($(markAsAnswerButton).hasClass('active')) {       
-        accepted = false;
-    }
-
-    var textSpan = $(markAsAnswerButton).find('span');
-    var icon = $(markAsAnswerButton).find('i.fa');
-    $(icon).addClass('fa-circle-o-notch fa-spin');
-
     var answers = [];
-    var answerId = $(markAsAnswerButton).attr('data-answerId');
-    answers.push({ "AnswerID": answerId, "MarkedAsAnswer": accepted });
+    var uiAnswers = $('.markanswer-ul:visible');
+    var markAsAnswerButton;
+    $(uiAnswers).each(function(i,ul){
+        var anchor = $(ul).find('a');
+        var id = $(anchor).attr('data-answerId');
+        var accepted = $(anchor).hasClass('active');
+        
+        if(id == answerId)
+        {
+            markAsAnswerButton = anchor;
+            answers.push({ "AnswerID": id, 
+                       "MarkedAsAnswer": !accepted });
+        }
+        
+        if(accepted)
+        {
+            answers.push({ "AnswerID": id, 
+                       "MarkedAsAnswer": false });
+            $(anchor).removeClass('active');
+            $(anchor).find('span').text('Accept');
+        }
+    });
+
+    if(markAsAnswerButton)
+    {
+        var icon = $(markAsAnswerButton).find('i.fa');
+        $(icon).addClass('fa-circle-o-notch fa-spin');
+    }
     
     scAjax({
         "url": "answers/UpdateMarkAsAnswer",
@@ -745,9 +760,15 @@ function markAsAnswer(answerId, success) {
                 success();
             }
 
-            $(markAsAnswerButton).addClass('active');
-            $(textSpan).text('Accepted');
-            $(icon).removeClass('fa-arrow-up fa-circle-o-notch fa-spin');
+            if(markAsAnswerButton)
+            {
+                $(markAsAnswerButton).toggleClass('active');
+                $(icon).removeClass('fa-arrow-up fa-circle-o-notch fa-spin');
+                
+                var text = $(markAsAnswerButton).hasClass('active') ? "Accepted" : "Accept";
+                $(markAsAnswerButton).find('span').text(text);
+            }
+            
         }
     });
 }
