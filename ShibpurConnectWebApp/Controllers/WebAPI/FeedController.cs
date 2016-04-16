@@ -797,5 +797,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public bool IsUpvotedByMe { get; set; }
 
         public bool IsQuestion { get; set; }
+        
+        public bool MarkedAsAnswer { get; set; }
     }
 }

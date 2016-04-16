@@ -77,7 +77,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         
         public bool IsUpvotedByme { get; set; }
         
-        public bool MarkedAsAnswer { get; set; }
+        
         
     }
 }
