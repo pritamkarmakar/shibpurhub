@@ -734,8 +734,7 @@ function markAsAnswer(answerId, success) {
             answers.push({ "AnswerID": id, 
                        "MarkedAsAnswer": !accepted });
         }
-        
-        if(accepted)
+        else if(accepted)
         {
             answers.push({ "AnswerID": id, 
                        "MarkedAsAnswer": false });
@@ -763,7 +762,7 @@ function markAsAnswer(answerId, success) {
                 success();
             }
             
-            $('.thread.answer#' + answerId).addClass('accepted-answer');
+            $('.thread.answer#' + answerId).toggleClass('accepted-answer');
             if(markAsAnswerButton)
             {
                 $(markAsAnswerButton).toggleClass('active');
