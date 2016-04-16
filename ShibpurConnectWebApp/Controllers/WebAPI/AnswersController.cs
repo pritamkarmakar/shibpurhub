@@ -485,7 +485,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 UpdateUserActivityLog(userActivityLog);
             }
 
-            return CreatedAtRoute("DefaultApi", null, answerInDB);
+            return CreatedAtRoute("DefaultApi", null, true);
         }
 
         [Authorize]
