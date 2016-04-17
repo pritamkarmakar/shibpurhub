@@ -5,6 +5,7 @@
     $(document).ready(function () {
         // prefill the values from local storage
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        console.info('person');
         if (!userDetails) {
             //TO-DO: Handle if userdetail is not available in Session Storage
             return;

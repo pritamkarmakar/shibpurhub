@@ -28,7 +28,12 @@
     .glyphicon {
         margin-right: 10px;
     }
-
+    
+    
+    .panel-body.no-lr-padding
+    {
+        padding: 0;
+    }
     .panel-body table tr td {
         padding-left: 15px;
     }
@@ -36,19 +41,57 @@
     .panel-body .table {
         margin-bottom: 0px;
     }
+    
+    .links a
+    {
+        border: none;
+        padding-right: 10px;
+        color: #66757f;
+        text-decoration: inherit;
+    }
+    .links tr.selected
+    {
+        font-weight: bold;
+        background-color: #ecf0f1;
+    }
 </style>
 <script type="text/javascript">
-    function DisplayDiv(divName) {
+    function displayDiv(divName) {
         $('.bodycontent').children().hide();
-        $('.' + divName).show();
+        $('#' + divName).show();
+        
+        if(divName == 'manageeducation')
+        {
+            loadEducations();
+        }
+        
+        if(divName == 'manageexperience')
+        {
+            loadEmployments();
+        }
     }
+    $(document).ready(function(){
+        var hash = window.location && window.location.hash;
+	    var id = hash && hash.slice( 1 );
+        if(!id)
+        {
+            return;
+        }
+        displayDiv(id.toLowerCase());
+        
+        $('.links a').click(function(){
+            displayDiv($(this).attr('id'));
+            $('.links tr.selected').removeClass('selected');
+            $(this).closest('tr').addClass('selected');
+        });
+    })
 </script>
 
 <div class="container">
     <div class="row top-buffer">
         <div class="col-sm-3 col-md-3">
             <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
+                <div class="panel panel-info">
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
@@ -56,29 +99,29 @@
                             </a>
                         </h4>
                     </div>
-                    <div id="collapseTwo" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            <table class="table">
-                                <tr>
+                    <div id="collapseTwo" class="panel-collapse collapse in">
+                        <div class="panel-body no-lr-padding">
+                            <table class="table links">
+                                <tr class="selected">
                                     <td>
-                                        <a href="#" onclick="DisplayDiv('personalinfo')">Personal Info</a>
+                                        <a href="#">Personal Info</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="#" onclick="DisplayDiv('educationalbackground');loadEducations();">Manage Education</a>
+                                        <a href="#">Manage Education</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="#" onclick="DisplayDiv('experiencebackground');loadEmployments();">Manage Experience</a>
+                                        <a href="#">Manage Experience</a>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-default">
+                <div class="panel panel-info">
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
@@ -88,10 +131,10 @@
                     </div>
                     <div id="collapseOne" class="panel-collapse collapse">
                         <div class="panel-body">
-                            <table class="table">
+                            <table class="table links">
                                 <tr>
                                     <td>
-                                        <span class="glyphicon glyphicon-trash text-danger"></span><a href="#" onclick="DisplayDiv('deleteaccount');" class="text-danger">
+                                        <span class="glyphicon glyphicon-trash text-danger"></span><a href="#" class="text-danger">
                                             Delete Account
                                         </a>
                                     </td>
@@ -104,19 +147,19 @@
         </div>
         <div class="col-sm-9 col-md-9">
             <div class="bodycontent">
-                <div class="personalinfo">
+                <div id="personalinfo">
                     @{ Html.RenderPartial("_PersonalInfo"); }
                 </div>
-                <div class="changepassword" style="display:none;">
+                <div id="changepassword" style="display:none;">
                     @{ Html.RenderPartial("_ChangePassword"); }
                 </div>
-                <div class="educationalbackground" style="display:none;">
+                <div id="manageeducation" style="display:none;">
                     @{ Html.RenderPartial("_EducationalHistory"); }
                 </div>
-                <div class="experiencebackground" style="display: none;">
+                <div id="manageexperience" style="display: none;">
                     @{ Html.RenderPartial("_EmploymentHistory"); }
                 </div>
-                <div class="deleteaccount" style="display: none;">
+                <div id="deleteaccount" style="display: none;">
                     @{ Html.RenderPartial("_DeleteAccount"); }
                 </div>
             </div>
