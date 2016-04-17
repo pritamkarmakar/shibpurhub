@@ -20,5 +20,8 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public int AnswerCount { get; set; }
 
         public int Reputation { get; set; }
+        
+        public bool IsFollowedByMe { get; set; }
+        
     }
 }
