@@ -57,8 +57,14 @@
 </style>
 <script type="text/javascript">
     function displayDiv(divName) {
+        if(divName)
+        {
+            return;
+        }
         $('.bodycontent').children().hide();
         $('#' + divName).show();
+        $('.links tr.selected').removeClass('selected');
+        $("a[data-manage='" + divName +"']").closest('tr').addClass('selected');
         
         if(divName == 'manageeducation')
         {
@@ -73,17 +79,11 @@
     $(document).ready(function(){
         var hash = window.location && window.location.hash;
 	    var id = hash && hash.slice( 1 );
-        if(!id)
-        {
-            return;
-        }
         displayDiv(id.toLowerCase());
         
-        $('.links a').click(function(event){
+        $('.links tr td a').click(function(event){
             event.preventDefault();
             displayDiv($(this).attr('id'));
-            $('.links tr.selected').removeClass('selected');
-            $(this).closest('tr').addClass('selected');
         });
     })
 </script>
@@ -105,17 +105,17 @@
                             <table class="table links">
                                 <tr class="selected">
                                     <td>
-                                        <a href="#">Personal Info</a>
+                                        <a data-manage="personalinfo" href="#">Personal Info</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="#">Manage Education</a>
+                                        <a data-manage="manageeducation" href="#">Manage Education</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="#">Manage Experience</a>
+                                        <a data-manage="manageexperience" href="#">Manage Experience</a>
                                     </td>
                                 </tr>
                             </table>
@@ -135,7 +135,8 @@
                             <table class="table links">
                                 <tr>
                                     <td>
-                                        <span class="glyphicon glyphicon-trash text-danger"></span><a href="#" class="text-danger">
+                                        <span class="glyphicon glyphicon-trash text-danger"></span>
+                                        <a href="#" data-manage="deleteaccount" class="text-danger">
                                             Delete Account
                                         </a>
                                     </td>
