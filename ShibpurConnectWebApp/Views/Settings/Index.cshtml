@@ -79,7 +79,8 @@
         }
         displayDiv(id.toLowerCase());
         
-        $('.links a').click(function(){
+        $('.links a').click(function(event){
+            event.preventDefault();
             displayDiv($(this).attr('id'));
             $('.links tr.selected').removeClass('selected');
             $(this).closest('tr').addClass('selected');
