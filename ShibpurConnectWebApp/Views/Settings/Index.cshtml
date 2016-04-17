@@ -79,11 +79,12 @@
     $(document).ready(function(){
         var hash = window.location && window.location.hash;
 	    var id = hash && hash.slice( 1 );
-        displayDiv(id.toLowerCase());
+        var divName = id ? id.toLowerCase() : "personalinfo";
+        displayDiv(divName);
         
         $('.links tr td a').click(function(event){
             event.preventDefault();
-            displayDiv($(this).attr('id'));
+            displayDiv($(this).attr('data-manage'));
         });
     })
 </script>
