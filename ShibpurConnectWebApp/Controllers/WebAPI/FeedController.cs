@@ -723,14 +723,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         // API to retrieve user specific information that we use while forming individual activity feed content
+        [Authorize]
         public async Task<IHttpActionResult> GetFollowedUserDetails([FromUri] IList<string> userIds)
         {
             if (userIds == null || userIds.Count == 0)
             {
                 return Ok();
             }
+            
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
 
             var helper = new Helper.Helper();
+            var userResult = helper.FindUserByEmail(email, true);
+            var userDetail = await userResult;
+            
             var feedUserDetails = new List<FeedUserDetail>();
             foreach (var userid in userIds)
             {
@@ -749,7 +756,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     UserId = userid,
                     FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,
                     ImageUrl = userDetailInList.ProfileImageURL,
-                    Reputation = userDetailInList.ReputationCount
+                    Reputation = userDetailInList.ReputationCount,
+                    IsFollowedByMe = userDetail != null && userDetail.Following.Any(a => a == userid) 
                 };
 
                 user.CareerDetail = userDetailInList.Designation + " " +
