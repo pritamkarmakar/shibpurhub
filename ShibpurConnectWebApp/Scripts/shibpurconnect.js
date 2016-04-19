@@ -889,10 +889,10 @@ function getUsers() {
                     $(allusers).each(function (i, userbybatch) {
                         // add the heading
                         if (userbybatch.userList.length > 1) {
-                            $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + "</h2>");
+                            $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + " Batch" + "</h2>");
                         }
                         else if (userbybatch.userList.length == 1 && userbybatch.userList[0].id != userInfo.id) {
-                            $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + "</h2>");
+                            $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + " Batch" + "</h2>");
                         }
 
 
