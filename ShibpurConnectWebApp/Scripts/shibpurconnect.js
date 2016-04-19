@@ -802,3 +802,219 @@ function followQuestion(questionId) {
         });
     }
 }
+
+
+// method to retrieve users based on current user graduation year, used in Users > index page
+function getUsers() {
+    var batchmates = null;
+    var seniors = null;
+    var juniors = null;
+    var allusers = null;
+    var allunknownusers = null;
+
+    // find user graduation year, for multiple BEC educations consider the graduation year
+    var userDetails = localStorage.getItem("SC_Session_UserDetails");
+    var graduationyear = -1;
+    if (userDetails) {
+        var userInfo = $.parseJSON(userDetails);
+        var educationInfo = userInfo.educationalHistories;
+        $(educationInfo).each(function (i, education) {
+            if (education.isbecEducation == true) {
+                if (graduationyear == -1)
+                    graduationyear = education.graduateYear;
+                else {
+                    if (education.graduateYear < graduationyear)
+                        graduationyear = education.graduateYear;
+                }
+            }
+        });
+    }
+
+    $('.table').hide();
+
+    // if user blongs to BEC and has a graduation year then find batchmates, immidiate senior and junior otherwise get all the users
+    if (graduationyear != -1) {
+        var seniorgradyear = graduationyear - 1;
+        var juniorgradyear = graduationyear + 1;
+
+        var doSomethingOnceValueIsPresent = function () {
+            if (batchmates != null && seniors != null && juniors != null && allusers != null) {
+                // hide the loading div
+                $('#loadingusers').hide();
+                // add batchmates
+                if (batchmates && batchmates.length > 0) {
+                    // if there is only one user in the given graduation year and that is the current user then skip following lines
+                    if (batchmates.length == 1 && batchmates[0].id == userInfo.id) {
+                        return;
+                    }
+                    // add the heading
+                    $('#userlist').append("<h2 class='usertype col-md-12'>Batchmates</h2>");
+                    $(batchmates).each(function (i, userinfo) {
+                        $('#userlist').append(getProfileHtml(userinfo));
+                    });
+                }
+
+                // add seniors
+                if (seniors && seniors.length > 0) {
+                    // add the heading
+                    $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Seniors</h2>");
+                    $(seniors).each(function (i, userinfo) {
+                        $('#userlist').append(getProfileHtml(userinfo));
+                    });
+                }
+
+                // add immediate juniors
+                if (juniors && juniors.length > 0) {
+                    // add the heading
+                    $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Juniors</h2>");
+                    $(juniors).each(function (i, userinfo) {
+                        $('#userlist').append(getProfileHtml(userinfo));
+                    });
+                }
+
+                // add all other users
+                if (allusers && allusers.length > 0) {
+                    $(allusers).each(function (i, userbybatch) {
+                        // add the heading
+                        $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + "</h2>");
+
+                        // iterate all users from this graduate year and add here
+                        $(userbybatch.userList).each(function (i, user) {
+                            $('#userlist').append(getProfileHtml(user));
+                        });
+                    });
+                }
+
+                // add all unkownd users
+                if (allunknownusers && allunknownusers.length > 0) {
+                    $('#userlist').append("<h2 class='usertype col-md-12'>Unknown Users</h2>");
+                    $(allunknownusers).each(function (i, userinfo) {
+                        $('#userlist').append(getProfileHtml(userinfo));
+                    });
+                }
+            }
+            else {
+                setTimeout(function () {
+                    doSomethingOnceValueIsPresent()
+                }, 2000);
+            }
+        };
+
+        doSomethingOnceValueIsPresent();
+        scAjax({
+            "url": "users/findusersforayear?graduationYear=" + graduationyear,
+            "success": function (result) {
+
+                batchmates = result;
+
+                handleFollowClick();
+                handleToggleViewClick();
+            }
+        });
+
+        // get immediate senior users
+        scAjax({
+            "url": "users/findusersforayear?graduationYear=" + seniorgradyear,
+            "success": function (result) {
+                // set the seniors variabe to API result
+                seniors = result;
+
+                handleFollowClick();
+                handleToggleViewClick();
+            }
+        });
+
+        // get immediate junior users
+        scAjax({
+            "url": "users/findusersforayear?graduationYear=" + juniorgradyear,
+            "success": function (result) {
+                // set the juniors
+                juniors = result;
+            }
+        });
+
+        var skipYears = graduationyear + "," + seniorgradyear + "," + juniorgradyear;
+
+        scAjax({
+            "url": "users/FindAllBECUsers?skipyears=" + skipYears,
+            "success": function (result) {
+                // save the api result in the global variable 'userlist'
+                allusers = result;
+
+                handleFollowClick();
+                handleToggleViewClick();
+            }
+        });
+
+        scAjax({
+            "url": "users/GetNonBECUsers",
+            "success": function (result) {
+                // save the api result in the global variable 'userlist'
+                allunknownusers = result;
+
+                handleFollowClick();
+                handleToggleViewClick();
+            }
+        });
+    }
+    else {
+        scAjax({
+            "url": "users/FindAllBECUsers?skipyears=",
+            "success": function (result) {
+                // save the api result in the global variable 'userlist'
+                allusers = result;
+                handleFollowClick();
+                handleToggleViewClick();
+            }
+        });
+
+        scAjax({
+            "url": "users/GetNonBECUsers",
+            "success": function (result) {
+                // save the api result in the global variable 'userlist'
+                allunknownusers = result;
+                handleFollowClick();
+                handleToggleViewClick();
+            }
+        });
+
+        var doSomethingOnceValueIsPresent = function () {
+            if (allusers != null && allunknownusers != null) {
+                // hide the loading div
+                $('#loadingusers').hide();
+                // add all other users
+                if (allusers && allusers.length > 0) {
+                    $(allusers).each(function (i, userbybatch) {
+                        // add the heading
+                        $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + " Batch" + "</h2>");
+
+                        // iterate all users from this graduate year and add here
+                        $(userbybatch.userList).each(function (i, user) {
+                            $('#userlist').append(getProfileHtml(user));
+                        });
+                    });
+                }
+                // add all unkownd users
+                if (allunknownusers && allunknownusers.length > 0) {
+                    // add all unkownd users
+                    if (allunknownusers && allunknownusers.length > 0) {
+                        $('#userlist').append("<h2 class='usertype col-md-12'>Unknown Users</h2>");
+                        $(allunknownusers).each(function (i, userinfo) {
+                            $('#userlist').append(getProfileHtml(userinfo));
+                        });
+                    }
+                }
+            }
+            else {
+                setTimeout(function () {
+                    doSomethingOnceValueIsPresent()
+                }, 2000);
+            }
+        };
+
+        doSomethingOnceValueIsPresent();
+    }
+
+}
+
+

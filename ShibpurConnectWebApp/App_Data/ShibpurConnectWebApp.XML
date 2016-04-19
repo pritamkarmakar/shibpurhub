@@ -1036,10 +1036,24 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetAllUsers">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetNonBECUsers">
             <summary>
             Get all system users, this will give result order by (descending) user reputation
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.FindUsersForAYear(System.String)">
+            <summary>
+            API to get list of users of a particular batch
+            </summary>
+            <param name="graduationYear"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.FindAllBecUsers(System.String)">
+            <summary>
+            API to get all BEC Users based on graduation year
+            </summary>
+            <param name="skipyears">if we want to skip any year from this list, we do it in the User > index page to exclude logged-in user senior, junior and his/her graduation year. Because we retrieve those users using FindUsersForAYear API</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetLeaderBoard(System.Int32)">
@@ -1338,6 +1352,11 @@
             Notification types that we support
             ***Don't add a new notification type in between this list as it will break the UI (because each enum correspond to an integer).
             If we need to add a new type then add it at the end ***
+            </summary>
+        </member>
+        <member name="T:ShibpurConnectWebApp.Models.WebAPI.UserByBatch">
+            <summary>
+            Model to hold user by graduation batch. Will use it in Users Page
             </summary>
         </member>
         <member name="T:ShibpurConnectWebApp.Models.WebAPI.UserProfile">

@@ -34,7 +34,10 @@
                     // remove the loading class from save button
                     $('#deleteaccountbutton > i').removeClass('fa fa-circle-o-notch fa-spin');
                     $('#deleteaccountbutton > span').text('Account Deleted');
-                    $('#deleteaccountbutto').class('disabled', 'true');
+                    $('#deleteaccountbutton').addClass('disabled', 'true');
+
+                    // clear local storage
+                    localStorage.clear();
 
                     // redirect to home page
                     window.location.href = "/";

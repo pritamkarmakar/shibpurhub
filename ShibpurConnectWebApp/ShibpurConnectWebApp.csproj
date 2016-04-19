@@ -382,6 +382,7 @@
     <Compile Include="Models\WebAPI\QuestionSpam.cs" />
     <Compile Include="Models\WebAPI\SkillSets.cs" />
     <Compile Include="Models\WebAPI\UserActivityLog.cs" />
+    <Compile Include="Models\WebAPI\UserByBatch.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />
     <Compile Include="Controllers\WebAPI\ProfileController.cs" />
     <Compile Include="Models\WebAPI\Questions.cs" />

@@ -486,7 +486,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         userDetail = (CustomUserInfo)CacheManager.GetCachedData(userId);
                         if (userDetail == null)
                         {
-                            actionResult = helper.FindUserById(objectUserId);
+                            actionResult = helper.FindUserById(userId);
                             userDetail = await actionResult;
 
                             if (userDetail == null)

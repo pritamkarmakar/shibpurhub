@@ -126,6 +126,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // invalidate the getemploymenthistories api call for this user
             cache.RemoveStartsWith("educationalhistories-geteducationalhistories-userId=" + userInfo.Id);
             cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+            cache.RemoveStartsWith("users-findusersforayear-graduationYear=" + educationalHistories.GraduateYear);
 
             // remove in-memory cache
             CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
@@ -226,6 +227,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // invalidate the getemploymenthistories api call for this user
                 cache.RemoveStartsWith("educationalhistories-geteducationalhistories-userId=" + userInfo.Id);
                 cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+                cache.RemoveStartsWith("users-findusersforayear-graduationYear=" + educationHistory.GraduateYear);
 
                 return CreatedAtRoute("DefaultApi", new { id = educationHistory.Id }, educationHistory);
             }
@@ -292,6 +294,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // invalidate the getemploymenthistories api call for this user
                 cache.RemoveStartsWith("educationalhistories-geteducationalhistories-userId=" + userInfo.Id);
                 cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
+                cache.RemoveStartsWith("users-findusersforayear-graduationYear=" + educationHistory.GraduateYear);
 
                 return CreatedAtRoute("DefaultApi", new { id = educationHistory.Id }, educationHistory);
             }
