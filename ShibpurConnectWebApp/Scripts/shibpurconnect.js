@@ -814,6 +814,7 @@ function getUsers() {
 
     // find user graduation year, for multiple BEC educations consider the graduation year
     var userDetails = localStorage.getItem("SC_Session_UserDetails");
+
     var graduationyear = -1;
     if (userDetails) {
         var userInfo = $.parseJSON(userDetails);
@@ -832,43 +833,54 @@ function getUsers() {
 
     $('.table').hide();
 
-    // if user blongs to BEC and has a graduation year then find batchmates, immidiate senior and junior otherwise get all the users
+    // if user blongs to BEC and has a graduation year then find batchmates, immediate seniors and juniors otherwise get all the users
     if (graduationyear != -1) {
         var seniorgradyear = graduationyear - 1;
         var juniorgradyear = graduationyear + 1;
 
         var doSomethingOnceValueIsPresent = function () {
-            if (batchmates != null && seniors != null && juniors != null && allusers != null) {
+            if (batchmates != null && seniors != null && juniors != null && allusers != null && allunknownusers != null) {
                 // hide the loading div
                 $('#loadingusers').hide();
                 // add batchmates
-                if (batchmates && batchmates.length > 0) {
-                    // if there is only one user in the given graduation year and that is the current user then skip following lines
-                    if (batchmates.length == 1 && batchmates[0].id == userInfo.id) {
-                        return;
-                    }
+                if (batchmates && batchmates.length > 1) {
                     // add the heading
                     $('#userlist').append("<h2 class='usertype col-md-12'>Batchmates</h2>");
                     $(batchmates).each(function (i, userinfo) {
-                        $('#userlist').append(getProfileHtml(userinfo));
+                        if (userInfo.id != userinfo.id)
+                            $('#userlist').append(getProfileHtml(userinfo));
                     });
                 }
 
                 // add seniors
                 if (seniors && seniors.length > 0) {
                     // add the heading
-                    $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Seniors</h2>");
+                    if (seniors.length > 1) {
+                        $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Seniors</h2>");
+                    }
+                    else if (seniors.length == 1 && userInfo.id != seniors[0].id) {
+                        $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Seniors</h2>");
+                    }
                     $(seniors).each(function (i, userinfo) {
-                        $('#userlist').append(getProfileHtml(userinfo));
+                        if (userInfo.id != userinfo.id)
+                            $('#userlist').append(getProfileHtml(userinfo));
                     });
+
                 }
 
                 // add immediate juniors
                 if (juniors && juniors.length > 0) {
                     // add the heading
-                    $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Juniors</h2>");
+                    if (juniors.length > 1) {
+                        $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Juniors</h2>");
+                    }
+                    else if (juniors.length == 1 && userInfo.id != juniors[0].id) {
+                        $('#userlist').append("<h2 class='usertype col-md-12'>Immediate Juniors</h2>");
+                    }
+
                     $(juniors).each(function (i, userinfo) {
-                        $('#userlist').append(getProfileHtml(userinfo));
+                        if (userInfo.id != userinfo.id)
+                            $('#userlist').append(getProfileHtml(userinfo));
                     });
                 }
 
@@ -876,20 +888,34 @@ function getUsers() {
                 if (allusers && allusers.length > 0) {
                     $(allusers).each(function (i, userbybatch) {
                         // add the heading
-                        $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + "</h2>");
+                        if (userbybatch.userList.length > 1) {
+                            $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + "</h2>");
+                        }
+                        else if (userbybatch.userList.length == 1 && userbybatch.userList[0].id != userInfo.id) {
+                            $('#userlist').append("<h2 class='usertype col-md-12'>" + userbybatch.graduateYear + "</h2>");
+                        }
+
 
                         // iterate all users from this graduate year and add here
                         $(userbybatch.userList).each(function (i, user) {
-                            $('#userlist').append(getProfileHtml(user));
+                            if (userInfo.id != user.id)
+                                $('#userlist').append(getProfileHtml(user));
                         });
                     });
                 }
 
                 // add all unkownd users
                 if (allunknownusers && allunknownusers.length > 0) {
-                    $('#userlist').append("<h2 class='usertype col-md-12'>Unknown Users</h2>");
+                    if (allunknownusers.length > 1) {
+                        $('#userlist').append("<h2 class='usertype col-md-12'>Unknown Users</h2>");
+                    }
+                    else if (allunknownusers.length == 1 && userInfo.id != allunknownusers[0].id) {
+                        $('#userlist').append("<h2 class='usertype col-md-12'>Unknown Users</h2>");
+                    }
+
                     $(allunknownusers).each(function (i, userinfo) {
-                        $('#userlist').append(getProfileHtml(userinfo));
+                        if (userInfo.id != userinfo.id)
+                            $('#userlist').append(getProfileHtml(userinfo));
                     });
                 }
             }
