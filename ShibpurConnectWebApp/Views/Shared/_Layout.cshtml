@@ -34,6 +34,17 @@
         ga('send', 'pageview');
 
         var userDetails = localStorage.getItem("SC_Session_UserDetails");
+        var tokenTime = localStorage.getItem("tokenTime");
+        if (tokenTime == null)
+            localStorage.clear();
+        else
+        {
+            // find out the token generation time and current time difference, if it is more than 24hrs then clear local storage
+            var diffTime = Math.abs(new Date($.now()).getTime() - new Date(tokenTime).getTime()) / (1000 * 60 * 60);
+            if (diffTime > 24)
+                localStorage.clear();
+        }
+
         var userInfo;
         $(document).ready(function () {
             // get the user details only if we have the token for this user and userDetails is null so far

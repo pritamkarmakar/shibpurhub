@@ -17,6 +17,8 @@
     self.setAccessToken = function (accessToken) {
         localStorage.clear();
         localStorage.setItem("accessToken", accessToken);
+        // add current datetime in the local storage
+        localStorage.setItem("tokenTime", new Date($.now()));
         //sessionStorage.setItem("accessToken", accessToken);
     };
 

@@ -31,7 +31,7 @@ namespace ShibpurConnectWebApp
                 TokenEndpointPath = new PathString("/Token"),
                 AuthorizeEndpointPath = new PathString("/Account/Authorize"),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
                 AllowInsecureHttp = true
             };
         }
