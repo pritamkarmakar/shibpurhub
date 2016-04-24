@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
+using System.Web;
 using System.Runtime.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -17,7 +18,6 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         [JsonProperty(PropertyName = "personalizedFeedItemId")]
-        [DataMember]
         public string PersonalizedFeedItemId { get; set; }
         
         [DataMember]

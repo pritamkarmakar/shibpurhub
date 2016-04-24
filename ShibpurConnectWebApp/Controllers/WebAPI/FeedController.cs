@@ -64,6 +64,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             
             foreach(var activity in allActivities)
             {
+                var pFeedItem = new PersonalizedFeedItem();
+                pFeedItem.CopyFromUserActivityLog(activity);
+                
                 var pItem = pFeedItems.Where(a => a.LogId == activity.ActivityLogId).FirstOrDefault();
                 if(pItem != null)
                 {
@@ -71,13 +74,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 }
                 
                 //Ignore Upvote, Update profile image
-                if (pItem.Activity == 3 || pItem.Activity == 9)
+                if (activity.Activity == 3 || activity.Activity == 9)
                 {
                     continue;
                 }
-                
-                var pFeedItem = new PersonalizedFeedItem();
-                pFeedItem.CopyFromUserActivityLog(activity);
                 
                 var logWithContent = new UserActivityLogWithContent(activity);
                 lstLogsWithContent.Add(logWithContent);
