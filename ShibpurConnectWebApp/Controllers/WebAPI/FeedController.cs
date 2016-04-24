@@ -24,6 +24,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         private MongoHelper<Question> _mongoQustionHelper;
         private QuestionsController _questionController;
         private MongoHelper<Job> _mongoJobHelper;
+        private MongoHelper<PersonalizedFeedItem> _mongoPFeedHelper;
 
         private MongoHelper<Answer> _mongoAnswerHelper;
         private AnswersController _answerController;
@@ -43,9 +44,150 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             _answerController = new AnswersController();
 
             _mongoJobHelper = new MongoHelper<Job>();
+            
+            _mongoPFeedHelper = new MongoHelper<PersonalizedFeedItem>();
 
             _employmentHistoriesController = new EmploymentHistoriesController();
             _educationalHistoriesController = new EducationalHistoriesController();
+        }
+        
+        [Authorize]
+        public async Task<IHttpActionResult> PrepareFeed()
+        {
+            var allActivities = _mongoHelper.Collection.FindAll().ToList();
+            var pFeedItems = new _mongoPFeedHelper.Collection.FindAll().ToList();
+            
+            var distinctUserId = new List<string>();
+            var newFeedItems = new List<PersonalizedFeedItem>();
+            
+            var lstLogsWithContent = new List<UserActivityLogWithContent>();
+            
+            foreach(var activity in allActivities)
+            {
+                var pItem = pFeedItems.Where(a => a.LogId == activity.ActivityLogId).FirstOrDefault();
+                if(pItem != null)
+                {
+                    continue;
+                }
+                
+                //Ignore Upvote, Update profile image
+                if (pItem.Activity == 3 || pItem.Activity == 9)
+                {
+                    continue;
+                }
+                
+                var pFeedItem = new PersonalizedFeedItem();
+                pFeedItem.CopyFromUserActivityLog(activity);
+                
+                var logWithContent = new UserActivityLogWithContent(activity);
+                lstLogsWithContent.Add(logWithContent);
+                
+                if (!string.IsNullOrEmpty(pFeedItem.UserId))
+                {
+                    if (!distinctUserId.Contains(pFeedItem.UserId))
+                    {
+                        distinctUserId.Add(pFeedItem.UserId);
+                    }
+                }
+                
+                newFeedItems.Add(pFeedItem);
+            }
+            
+            var userDetails = new Dictionary<string, FeedUserDetail>();
+            foreach (var id in distinctUserId)
+            {
+                // check in-memory
+                CustomUserInfo userDetailInList = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + id);
+
+                if (userDetailInList == null)
+                {
+                    Task<CustomUserInfo> result = helper.FindUserById(id, true);
+                    userDetailInList = await result;
+
+                    if (userDetailInList == null)
+                        continue;
+
+                    // set the profile in in-memory
+                    CacheManager.SetCacheData("completeuserprofile-" + id, userDetailInList);
+
+                }
+
+                var user = new FeedUserDetail
+                {
+                    FullName = userDetailInList.FirstName + " " + userDetailInList.LastName,
+                    ImageUrl = userDetailInList.ProfileImageURL,
+                    CareerDetail = userDetailInList.Designation + " " +
+                                (string.IsNullOrEmpty(userDetailInList.EducationInfo) ? string.Empty : (
+                                string.IsNullOrEmpty(userDetailInList.Designation) ? userDetailInList.EducationInfo :
+                                    "(" + userDetailInList.EducationInfo + ")")
+                                )
+                };
+
+                userDetails.Add(id, user);
+            }
+            
+            var allfeedsWithContentResult = await GetAllFeedContents(lstLogsWithContent, "");
+            var z = allfeedsWithContentResult as OkNegotiatedContentResult<IList<PersonalizedFeedItem>>;
+            var allfeedsWithContent = z.Content ?? new List<PersonalizedFeedItem>();
+            
+            foreach(var item in newFeedItems)
+            {
+                PersonalizedFeedItem feedContent = null;
+                if (item.ActivityType == 6 || item.ActivityType == 7)
+                {
+                    var feedContentResult = await GetFeedContent(item.ActivityType, 
+                                                                    item.UserId, 
+                                                                    "", 
+                                                                    item.ActedOnObjectId, 
+                                                                    item.ActedOnUserId);
+                                                                    
+                    var y = feedContentResult as OkNegotiatedContentResult<PersonalizedFeedItem>;
+                    if (y == null || y.Content == null)
+                    {
+                        continue;
+                    }
+
+                    feedContent = y.Content;
+                }
+                else
+                {
+                    feedContent = allfeedsWithContent.FirstOrDefault(a => a.LogId == item.LogId);
+                }
+
+                if (feedContent != null)
+                {
+                    item.TargetAction = feedContent.TargetAction;
+                    item.QuestionId = feedContent.QuestionId;
+                    item.AnswerId = feedContent.AnswerId;
+                    item.UpvoteCount = feedContent.UpvoteCount;
+                    item.IsUpvotedByme = feedContent.IsUpvotedByme;
+                    item.ItemHeader = feedContent.ItemHeader;
+                    item.ItemSubHeader = feedContent.ItemSubHeader;
+                    item.ItemDetail = feedContent.ItemDetail;
+                    item.TargetActionUrl = feedContent.TargetActionUrl;
+                    item.FollowedByCount = feedContent.FollowedByCount;
+                    item.IsFollowedByme = feedContent.IsFollowedByme;
+                }
+                    
+                if (userDetails.ContainsKey(item.UserId))
+                {
+                    var matchedUser = userDetails[item.UserId];
+                    if (matchedUser != null)
+                    {
+                        item.UserName = matchedUser.FullName;
+                        if (item.ActivityType != 10)
+                        {
+                            item.ItemSubHeader = matchedUser.CareerDetail;
+                        }
+
+                        item.UserProfileUrl = "/Account/Profile?userId=" + item.UserId;
+                        item.UserProfileImageUrl = matchedUser.ImageUrl;
+                    }
+                }
+                _mongoPFeedHelper.Collection.Save(item);
+            }
+            
+            return Ok();
         }
 
         /// <summary>

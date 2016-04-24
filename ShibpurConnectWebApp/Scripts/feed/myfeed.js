@@ -21,6 +21,15 @@ function getThreadClass(feedType)
 function loadFeeds(page) {
 	$('#currentPage').val(page);
 	var alreadyShown = parseInt($('#alreadyShown').val()) || 0;
+	
+	scAjax({
+		"url": "feed/PrepareFeed",
+		"success": function (result) {
+			if (!result) {
+				return;
+			}
+		}
+	});
 
 	scAjax({
 		"url": "feed/GetPersonalizedFeeds",
