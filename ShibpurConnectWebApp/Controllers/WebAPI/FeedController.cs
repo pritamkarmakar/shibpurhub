@@ -55,12 +55,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public async Task<IHttpActionResult> PrepareFeed()
         {
             var allActivities = _mongoHelper.Collection.FindAll().ToList();
-            var pFeedItems = new _mongoPFeedHelper.Collection.FindAll().ToList();
+            var pFeedItems = _mongoPFeedHelper.Collection.FindAll().ToList();
             
             var distinctUserId = new List<string>();
             var newFeedItems = new List<PersonalizedFeedItem>();
             
             var lstLogsWithContent = new List<UserActivityLogWithContent>();
+            var helper = new Helper.Helper();
             
             foreach(var activity in allActivities)
             {
