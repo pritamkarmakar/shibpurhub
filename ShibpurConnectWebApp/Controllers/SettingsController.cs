@@ -19,7 +19,7 @@ namespace ShibpurConnectWebApp.Controllers
             // get the department list and send it to the view
             DepartmentsController DP = new DepartmentsController();
             var actionResult = DP.GetDepartments();
-            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;            
+            var departmentList = actionResult as OkNegotiatedContentResult<List<Departments>>;
 
             WebAPI.TagsController categoriesController = new WebAPI.TagsController();
             var actionResult3 = categoriesController.GetTags();
@@ -39,7 +39,13 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
             ViewBag.Departments = departmentList.Content;
-        }
+
+            // add all BEC names into viewbag that we will use to populate 'Add Education' form dropdown
+            var _mongounHelper = new MongoHelper<UniversityName>();
+            var unlist = _mongounHelper.Collection.FindAllAs<UniversityName>().ToList();
+            ViewBag.UniversityNames = unlist;
+        }          
+    
 
         // GET: Settings
         public ActionResult Index()

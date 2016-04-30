@@ -12,6 +12,7 @@ using ShibpurConnectWebApp.Models.WebAPI;
 using System.Web.Http.Results;
 using System.Collections.Generic;
 using ShibpurConnectWebApp.Helper;
+using MongoDB.Driver.Builders;
 
 namespace ShibpurConnectWebApp
 {
@@ -113,6 +114,22 @@ namespace ShibpurConnectWebApp
                     Departments obj = new Departments();
                     obj.DepartmentName = department.Trim();
                     _mongoHelper.Collection.Save(obj);
+                }
+            }
+
+            // check if all different BEC names are in db otherwise add the new one in db
+            var _mongounHelper = new MongoHelper<UniversityName>();
+            var unlist =_mongounHelper.Collection.FindAll();
+
+            foreach (var uname in ConfigurationManager.AppSettings["universitynames"].Split(';'))
+            {
+                var query = Query<UniversityName>.Where(u => u.UName.ToLower() == uname.ToLower());
+                if (unlist.Collection.FindAs<UniversityName>(query).Count() == 0)
+                {
+                    // this is a new department save it to database
+                    UniversityName obj = new UniversityName();
+                    obj.UName = uname;
+                    _mongounHelper.Collection.Save(obj);
                 }
             }
         }

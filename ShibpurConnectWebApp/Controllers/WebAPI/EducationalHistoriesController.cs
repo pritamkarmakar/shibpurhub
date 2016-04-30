@@ -75,6 +75,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
             if (educationalHistory == null)
                 return BadRequest("Request body is null. Please send a valid EducationalHistory object");
+            if (educationalHistory.UniversityName == "--Select University--")
+                return BadRequest("Invalid university name");
+            if (educationalHistory.Department == "--Select Department--")
+                return BadRequest("Invalid department name");
 
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var email = principal.Identity.Name;
@@ -158,7 +162,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("null educationalHistories supplied");
             if(educationalHistories.Id == null)
                 return BadRequest("educationalHistories id can't be null");
-            if(educationalHistories.Department == "--Select Department--")
+            if (string.IsNullOrEmpty(educationalHistories.UniversityName) || educationalHistories.UniversityName == "--Select University--")
+                return BadRequest("Invalid university name");
+            if (string.IsNullOrEmpty(educationalHistories.Department) || educationalHistories.Department == "--Select Department--")
                 return BadRequest("Invalid department name");
 
             EducationalHistories educationHistory = _mongoHelper.Collection.AsQueryable().Where(m => m.Id == educationalHistories.Id).ToList()[0];

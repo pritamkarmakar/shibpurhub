@@ -1,0 +1,9 @@
+﻿@model ShibpurConnectWebApp.Models.WebAPI.UniversityName
+  
+
+<div class="form-group">
+    <label for="DepartmentName" class="col-md-3 control-label">University name</label>
+    <div class="col-md-9">
+        @Html.DropDownListFor(model => model.Id, new SelectList(ViewBag.UniversityNames, "Id", "UName"), "--Select University--", new { @class = "form-control", @Id = "EditUniversityDropdown", @required = "" })
+    </div>
+</div>

@@ -381,6 +381,7 @@
     <Compile Include="Models\WebAPI\PersonalizedFeedItem.cs" />
     <Compile Include="Models\WebAPI\QuestionSpam.cs" />
     <Compile Include="Models\WebAPI\SkillSets.cs" />
+    <Compile Include="Models\WebAPI\UniversityName.cs" />
     <Compile Include="Models\WebAPI\UserActivityLog.cs" />
     <Compile Include="Models\WebAPI\UserByBatch.cs" />
     <Compile Include="Models\WebAPI\UserProfile.cs" />
@@ -650,6 +651,9 @@
     <Content Include="Views\Settings\_DeleteAccount.cshtml" />
     <Content Include="Views\PartialViews\_DegreeDropdown.cshtml" />
     <Content Include="Views\CompleteProfile\Index.cshtml" />
+    <Content Include="Views\Shared\_Users.cshtml" />
+    <Content Include="Views\PartialViews\_UniversityDropdown.cshtml" />
+    <Content Include="Views\PartialViews\_EditUniversityDropdown.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Error\" />

@@ -38,6 +38,11 @@ namespace ShibpurConnectWebApp.Controllers
             }
 
             ViewBag.Departments = departmentList.Content;
+
+            // add all BEC names into viewbag that we will use to populate 'Add Education' form dropdown
+            var _mongounHelper = new MongoHelper<UniversityName>();
+            var unlist = _mongounHelper.Collection.FindAllAs<UniversityName>().ToList();
+            ViewBag.UniversityNames = unlist;
         }
 
         // GET: Registration

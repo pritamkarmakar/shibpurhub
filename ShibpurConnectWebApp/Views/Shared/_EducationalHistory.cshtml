@@ -40,7 +40,27 @@
         }       
 
         var userInfo = $.parseJSON(userDetails);
-        profileEmail = userInfo.email;        
+        profileEmail = userInfo.email;
+
+        // if university name is other then enable the special field so user can add university name there
+        $("#UniversityDropdown").change(function () {
+            // if Others is selected as university then read from the separate field
+            if ($('#UniversityDropdown option:selected').text().trim() == "Others") {
+                $(".OtherUniversityNameDiv").css("display", "block");
+            }
+            else
+                $(".OtherUniversityNameDiv").css("display", "none");
+        });
+
+        // if university name is other then enable the special field so user can add university name there
+        $("#EditUniversityDropdown").change(function () {
+            // if Others is selected as university then read from the separate field
+            if ($('#EditUniversityDropdown option:selected').text().trim() == "Others") {
+                $(".OtherUniversityNameDiv").css("display", "block");
+            }
+            else
+                $(".OtherUniversityNameDiv").css("display", "none");
+        });
 
         //save new education
         $('#addNewEducation').on('click', function (e) {
@@ -54,6 +74,12 @@
         // expand the new education form on click of ' Add education' button
         $("#newEducation").on('click', function (e) {
             $("#neweducationdiv").slideToggle();
+            // hide the OtherUniversityName field
+            $(".OtherUniversityNameDiv").css("display", "none");
+            // clear the previous values
+            $("#UniversityDropdown").val("");
+            $("#DepartmentDropdown").val("");
+            $(".GraduateYear").val("");
         });
     });
 
@@ -64,7 +90,11 @@
         var SERVER = "/api/";
 
         var token = localStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#universityname').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + '}';
+        if ($('#UniversityDropdown option:selected').text().trim() == "Others") {
+            var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#OtherUniversityName').val() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + '}';
+        }
+        else
+            var educationalHistory = '{"Department":' + '"' + $('#DepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#UniversityDropdown option:selected').text() + '"' + ',"GraduateYear":' + '"' + $('#GraduateYear').val() + '"' + '}';
 
         // add spinner animation in the save button and change the text to 'Saving..'
         $('#addNewEducation > i').addClass('fa fa-circle-o-notch fa-spin');
@@ -205,13 +235,18 @@
     // this method will populate the values in the form field
     function loadEditEducationForm(req) {
         $("#editeducationdiv").slideToggle();
+        // reset dropdowns
+        $("#EditedDepartmentDropdown option:eq(0)").prop("selected", true);
+        $("#EditUniversityDropdown option:eq(0)").prop("selected", true);
+
+        $(".OtherUniversityNameDiv").css("display", "none");
         var universityname = req.find('span#collegeName').text();
         var graduateyear = req.find('span#year').text();
         var departmentName = req.find('span#department').text();
 
         // set the form field values
         $("#editEducationButton").attr("onclick", "saveEditEducation('" + req[0].id + "'); return false;");
-        $(".editeduniversityname").val(universityname);
+        //$(".editeduniversityname").val(universityname);
         $(".editedgraduateyear").val(graduateyear);
 
         // read the corresponding option value and set it in the dropdown
@@ -221,6 +256,27 @@
                 return false;
             }
         });
+
+        // read the corresponding option value and set it in the dropdown
+        $('select#EditUniversityDropdown').find('option').each(function () {
+            if ($(this).text() == universityname.trim()) {
+                $("#EditUniversityDropdown").val($(this).val()).change();
+                return false;
+            }
+        });
+
+        // if still the university dropdown value is '--Select University--' that means the Other university name was selected
+        if($('#EditUniversityDropdown option:selected').text().trim() == "--Select University--")
+        {
+            // set Others value in the dropdown and enable the other university field
+            //var theText = " Others";
+            //$("#EditUniversityDropdown option:contains(" + theText + ")").attr('selected', 'selected');
+            // above option was not setting others if we do edit twice where we have different university name, so going with this hard coded way. 
+            // Will see in future to replace this
+            $("#EditUniversityDropdown").val("572381b48b975312a4a475b8");
+            $(".OtherUniversityNameDiv").css("display", "block");
+            $(".edituniversityname").val(req.find('span#collegeName').text());
+        }
     }
 
     // if user click on the Cancel button in the newEducation div then collapse that div
@@ -241,7 +297,11 @@
 
         var userInfo = $.parseJSON(userDetails);
         var token = localStorage.getItem("accessToken") || "PTLp2jwqIgLZmDBqjtADmHdtHmKpEmy-KtrdrocIBR5dz2k0uHNdgLdeqm6bFODmjUxsgNkcr0LI2UGaT6xve1gxPaHjLAyqneD69pKNIVwpo6mGtiaemzfJFVgV_FS_Q6TzA5InNb16tGCu3VNoYdqQEJu-jLiX3uN3FNAjAUKElpYZbjk5fYZ7ZKZ3T0w7utu0rbNI2BWuxo4HADZ4wrvI1J_-8qnd4Sq1kYWBkdPFeqDO2HQ8Io-IiKSDmnFS";
-        var educationalHistory = '{"Id":' + '"' + educationId + '"' + ',"Department":' + '"' + $('#EditedDepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('.editeduniversityname').val() + '"' + ',"GraduateYear":' + '"' + $('.editedgraduateyear').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + '}';
+        if ($('#EditUniversityDropdown option:selected').text().trim() == "Others") {
+            var educationalHistory = '{"Id":' + '"' + educationId + '"' + ',"Department":' + '"' + $('#EditedDepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('.edituniversityname').val() + '"' + ',"GraduateYear":' + '"' + $('.editedgraduateyear').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + '}';
+        }
+        else
+            var educationalHistory = '{"Id":' + '"' + educationId + '"' + ',"Department":' + '"' + $('#EditedDepartmentDropdown option:selected').text() + '"' + ',"UniversityName":' + '"' + $('#EditUniversityDropdown option:selected').text() + '"' + ',"GraduateYear":' + '"' + $('.editedgraduateyear').val() + '"' + ',"UserId":' + '"' + userInfo.id + '"' + '}';
 
         // add spinner animation in the save button and change the text to 'Saving..'
         $('#editEducationButton > i').addClass('fa fa-circle-o-notch fa-spin');
@@ -411,13 +471,14 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <form class="educationform top-buffer2 form-horizontal" method="post">
-                <div class="form-group">
-                    <label for="universityname" class="col-md-3 control-label">University name</label>
+               
+                @Html.Partial("../PartialViews/_UniversityDropdown")
+                <div class="form-group OtherUniversityNameDiv" style="display:none;">
+                    <label for="GraduateYear" class="col-md-3 control-label"></label>
                     <div class="col-md-9">
-                        <input class="form-control universityname" data-val="true" data-val-required="The Password field is required." id="universityname" name="UniversityName" placeholder="University name" type="text" aria-required="true" required>
+                        <input class="form-control" data-val="true" id="OtherUniversityName" name="Password" placeholder="Other University Name" type="text" aria-required="true">
                     </div>
                 </div>
-
                 @Html.Partial("../PartialViews/_DepartmentDropdown")
 
                 <div class="form-group">
@@ -444,13 +505,14 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <form class="educationform top-buffer2 form-horizontal" method="post">
-                <div class="form-group">
-                    <label for="universityname" class="col-md-3 control-label">University name</label>
+               
+                @Html.Partial("../PartialViews/_EditUniversityDropdown")
+                <div class="form-group OtherUniversityNameDiv" style="display:none;">
+                    <label for="GraduateYear" class="col-md-3 control-label"></label>
                     <div class="col-md-9">
-                        <input class="form-control editeduniversityname" data-val="true" data-val-required="The Password field is required." id="universityname" name="UniversityName" placeholder="University name" type="text" aria-required="true" required>
+                        <input class="form-control edituniversityname" data-val="true" data-val-required="The Password field is required." name="Password" placeholder="Other University Name" type="text" aria-required="true" required>
                     </div>
                 </div>
-
                 @Html.Partial("../PartialViews/_EditedDepartmentDropdown")
 
                 <div class="form-group">
