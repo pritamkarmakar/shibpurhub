@@ -22,8 +22,8 @@
         font-size: 18px;
     }
 
-    .input-group {
-        width: 600px;
+    .usersearchdiv {
+        /*width: 600px;*/
         margin-left: auto;
         margin-right: auto;
     }
@@ -305,20 +305,9 @@
                     // user have cleared all text from the text field so load all previous users
                     // clear the existing users
                     $('#userlist').empty();
+                    getUsers();
                     // hide the loading
-                    $('#loadingusers').hide();
-
-                    // if no user found then show this message
-                    if (allusers.length == 0) {
-                        $('#userlist').append("<span>No user found</span>");
-                        return;
-                    }
-                    else {
-                        $(allusers).each(function (i, userinfo) {
-                            $('#userlist').append(getProfileHtml(userinfo));
-                        });
-                        handleFollowClick();
-                    }
+                    //$('#loadingusers').hide();                   
                 }
             }, 400);
         });
@@ -336,22 +325,17 @@
         </div>
     </div>
     <div class="row">
-        <div class="row">
-            <form role="search">
-                <div class="col-md-11">
-                    <div class="input-group input-group-sm" id="the-basics">
-                        <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">
-                        @*<div class="input-group-btn">
-                                <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
-                            </div>*@
-                    </div>
+        <form role="search">
+            <div class="col-md-10 col-md-push-2">
+                <div class="usersearchdiv col-md-10" id="the-basics">
+                    <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">                    
                 </div>
-                <button class="btn-default toggle-view grid-view"> <i class="fa fa-list"></i> </button>
-            </form>
-            @*<div id="the-basics">
-                    <input class="typeahead" type="text" placeholder="States of USA">
-                </div>*@
-        </div>
+                <div>
+                    <button class="btn-default toggle-view grid-view"> <i class="fa fa-list"></i> </button>
+                </div>
+            </div>
+
+        </form>
     </div>
     <div id="userlist">
 
