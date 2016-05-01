@@ -452,109 +452,110 @@
 
 </script>
 
-<!--div for loading spinner-->
-<div id="loadingeducations" class="center-block col-md-4" style="float: none;margin-left:300px;margin-top:150px; display:none; position:fixed;">
-    <i class="fa fa-spinner fa-spin fa-3x"></i>
-</div>
-
 <div class="panel panel-default">
-    <div class="panel-heading educationheading">Manage Education</div>
-    <div class="panel-body">
-        <div class="educationbody">
-        </div>
-        <button class="btn btn-primary btn-xs" id="newEducation">Add Education</button><br />      
-    </div>
-</div>
-
- <!--Add new education div -->
-<div id="neweducationdiv" style="display:none">
-    <div class="panel panel-default">
+        <div class="panel-heading educationheading">Manage Education</div>
         <div class="panel-body">
-            <form class="educationform top-buffer2 form-horizontal" method="post">
-               
-                @Html.Partial("../PartialViews/_UniversityDropdown")
-                <div class="form-group OtherUniversityNameDiv" style="display:none;">
-                    <label for="GraduateYear" class="col-md-3 control-label"></label>
-                    <div class="col-md-9">
-                        <input class="form-control" data-val="true" id="OtherUniversityName" name="Password" placeholder="Other University Name" type="text" aria-required="true">
-                    </div>
+            <!--div for loading spinner-->
+            <div class="parentloadingdiv">
+                <div id="loadingeducations">
+                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
                 </div>
-                @Html.Partial("../PartialViews/_DepartmentDropdown")
-
-                <div class="form-group">
-                    <label for="GraduateYear" class="col-md-3 control-label">Graduation year</label>
-                    <div class="col-md-9">
-                        <input class="form-control GraduateYear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout year/expected passout year" type="text" aria-required="true" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-3 col-md-10">
-                        <button type="submit" id="addNewEducation" class="btn btn-primary btn-sm">
-                            <i></i><span>Save</span>
-                        </button>
-                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEducationalHistory(); return false;" />
-                    </div>
-                    </div>
-            </form>
+            </div>
+            <div class="educationbody">
+            </div>
+            <button class="btn btn-primary btn-xs" id="newEducation">Add Education</button><br />
         </div>
     </div>
-</div>
 
- <!--Add new edit education div -->
-<div id="editeducationdiv" style="display: none">
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <form class="educationform top-buffer2 form-horizontal" method="post">
-               
-                @Html.Partial("../PartialViews/_EditUniversityDropdown")
-                <div class="form-group OtherUniversityNameDiv" style="display:none;">
-                    <label for="GraduateYear" class="col-md-3 control-label"></label>
-                    <div class="col-md-9">
-                        <input class="form-control edituniversityname" data-val="true" data-val-required="The Password field is required." name="Password" placeholder="Other University Name" type="text" aria-required="true" required>
+    <!--Add new education div -->
+    <div id="neweducationdiv" style="display:none">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="educationform top-buffer2 form-horizontal" method="post">
+
+                    @Html.Partial("../PartialViews/_UniversityDropdown")
+                    <div class="form-group OtherUniversityNameDiv" style="display:none;">
+                        <label for="GraduateYear" class="col-md-3 control-label"></label>
+                        <div class="col-md-9">
+                            <input class="form-control" data-val="true" id="OtherUniversityName" name="Password" placeholder="Other University Name" type="text" aria-required="true">
+                        </div>
                     </div>
-                </div>
-                @Html.Partial("../PartialViews/_EditedDepartmentDropdown")
+                    @Html.Partial("../PartialViews/_DepartmentDropdown")
 
-                <div class="form-group">
-                    <label for="GraduateYear" class="col-md-3 control-label">Graduation year</label>
-                    <div class="col-md-9">
-                        <input class="form-control editedgraduateyear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout year/expected passout year" type="text" aria-required="true" required>
+                    <div class="form-group">
+                        <label for="GraduateYear" class="col-md-3 control-label">Graduation year</label>
+                        <div class="col-md-9">
+                            <input class="form-control GraduateYear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout year/expected passout year" type="text" aria-required="true" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-3 col-md-10">
-                        <button type="submit" id="editEducationButton" class="btn btn-primary btn-sm">
-                            <i></i><span>Update</span>
-                        </button>
-                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEducationHistory(); return false;"/>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-10">
+                            <button type="submit" id="addNewEducation" class="btn btn-primary btn-sm">
+                                <i></i><span>Save</span>
+                            </button>
+                            <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEducationalHistory(); return false;" />
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!--Modal to delete an educational details-->
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="deleteducationemodal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">Delete Education History</h4>
-            </div>
-
-            <div class="modal-body">
-                <p>You are about to delete your education history.</p>
-                <p>Do you want to proceed?</p>
-                <p class="debug-url"></p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger btn-ok" id="deleteconfirm">Delete</a>
+                </form>
             </div>
         </div>
     </div>
-</div>
+
+    <!--Add new edit education div -->
+    <div id="editeducationdiv" style="display: none">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="educationform top-buffer2 form-horizontal" method="post">
+
+                    @Html.Partial("../PartialViews/_EditUniversityDropdown")
+                    <div class="form-group OtherUniversityNameDiv" style="display:none;">
+                        <label for="GraduateYear" class="col-md-3 control-label"></label>
+                        <div class="col-md-9">
+                            <input class="form-control edituniversityname" data-val="true" data-val-required="The Password field is required." name="Password" placeholder="Other University Name" type="text" aria-required="true" required>
+                        </div>
+                    </div>
+                    @Html.Partial("../PartialViews/_EditedDepartmentDropdown")
+
+                    <div class="form-group">
+                        <label for="GraduateYear" class="col-md-3 control-label">Graduation year</label>
+                        <div class="col-md-9">
+                            <input class="form-control editedgraduateyear" data-val="true" data-val-required="The Password field is required." id="GraduateYear" name="Password" placeholder="Passout year/expected passout year" type="text" aria-required="true" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-10">
+                            <button type="submit" id="editEducationButton" class="btn btn-primary btn-sm">
+                                <i></i><span>Update</span>
+                            </button>
+                            <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEducationHistory(); return false;" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal to delete an educational details-->
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="deleteducationemodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Delete Education History</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>You are about to delete your education history.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger btn-ok" id="deleteconfirm">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
 

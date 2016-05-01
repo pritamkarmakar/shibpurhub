@@ -325,139 +325,141 @@
     }
 </script>
 
-<!--div for loading spinner-->
-<div id="loadingexperience" class="center-block col-md-4" style="float: none;margin-left:300px;margin-top:150px; display:none; position:fixed;">
-    <i class="fa fa-spinner fa-spin fa-3x"></i>
-</div>
 
 <div class="panel panel-default">
-    <div class="panel-heading experienceheading">Manage Experience</div>
-    <div class="panel-body">
-        <div class="experiencebody"></div>
-        <button class="btn btn-primary btn-xs" id="newExperience" style="margin-top:10px;">Add Experience</button><br />
-    </div>
-</div>
-
-<div id="newemploymentdiv" style="display: none">
-    <div class="panel panel-default">
+        <div class="panel-heading experienceheading">Manage Experience</div>
         <div class="panel-body">
-            <form class="newemploymentform form-horizontal" method="post">
-                <div class="form-group">
-                    @Html.LabelFor(m => m.CompanyName, "Company Name", new {@class = "col-md-2 control-label"})
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.CompanyName, new {@class = "form-control", @placeholder = "Company Name"})
-                    </div>
+            <!--div for loading spinner-->
+            <div class="parentloadingdiv">
+                <div id="loadingexperience">
+                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
                 </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Title, "Job Title", new {@class = "col-md-2 control-label"})
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Title, new {@class = "form-control", @placeholder = "Your job title/designation"})
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Location, new {@class = "col-md-2 control-label"})
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Location, new {@class = "form-control", @placeholder = "Location of this employment"})
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="date-picker" class="col-md-2 control-label">Employment start date</label>
-                    <div class="controls col-md-10">
-                        <div class="input-group">
-                            <input id="employmentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)"/>
-                            <label for="employmentfromdate" class="input-group-addon btn">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="date-picker" class="col-md-2 control-label">Employment end date</label>
-                    <div class="controls col-md-10">
-                        <div class="input-group">
-                            <input id="employmenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)"/>
-                            <label for="employmenttodate" class="input-group-addon btn">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" id="addNewEmployment" class="btn btn-primary btn-sm">
-                            <i></i><span>Save</span>
-                        </button>
-                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEmploymentHistory(); return false;"/>
-                    </div>
-
-                </div>
-            </form>
+            </div>
+            <div class="experiencebody"></div>
+            <button class="btn btn-primary btn-xs" id="newExperience" style="margin-top:10px;">Add Experience</button><br />
         </div>
     </div>
-</div>
 
-<div id="editemploymentdiv" style="display:none">
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <form class="newemploymentform form-horizontal" method="post">
-                <div class="form-group">
-                    @Html.LabelFor(m => m.CompanyName, "Company Name", new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control editedCompanyName", @placeholder = "Company Name" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Title, "Job Title", new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control editedDesignation", @placeholder = "Your job title/designation" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Location, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Location, new { @class = "form-control editedJobLocation", @placeholder = "Location of this employment" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="date-picker" class="col-md-2 control-label">Employment start date</label>
-                    <div class="controls col-md-10">
-                        <div class="input-group">
-                            <input id="editedemploymentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)" />
-                            <label for="editedemploymentfromdate" class="input-group-addon btn">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </label>
+    <div id="newemploymentdiv" style="display: none">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="newemploymentform form-horizontal" method="post">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CompanyName, "Company Name", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control", @placeholder = "Company Name" })
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="date-picker" class="col-md-2 control-label">Employment end date</label>
-                    <div class="controls col-md-10">
-                        <div class="input-group">
-                            <input id="editedemploymenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)" />
-                            <label for="editedemploymenttodate" class="input-group-addon btn">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </label>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Title, "Job Title", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control", @placeholder = "Your job title/designation" })
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" id="editEmploymentDetails" class="btn btn-primary btn-sm">
-                            <i></i><span>Update</span>
-                        </button>
-                        <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEmploymentHistory(); return false;" />
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Location, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Location, new { @class = "form-control", @placeholder = "Location of this employment" })
+                        </div>
                     </div>
 
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label for="date-picker" class="col-md-2 control-label">Employment start date</label>
+                        <div class="controls col-md-10">
+                            <div class="input-group">
+                                <input id="employmentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)" />
+                                <label for="employmentfromdate" class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date-picker" class="col-md-2 control-label">Employment end date</label>
+                        <div class="controls col-md-10">
+                            <div class="input-group">
+                                <input id="employmenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)" />
+                                <label for="employmenttodate" class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" id="addNewEmployment" class="btn btn-primary btn-sm">
+                                <i></i><span>Save</span>
+                            </button>
+                            <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelSaveEmploymentHistory(); return false;" />
+                        </div>
+
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+
+    <div id="editemploymentdiv" style="display:none">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="newemploymentform form-horizontal" method="post">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CompanyName, "Company Name", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control editedCompanyName", @placeholder = "Company Name" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Title, "Job Title", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control editedDesignation", @placeholder = "Your job title/designation" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Location, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Location, new { @class = "form-control editedJobLocation", @placeholder = "Location of this employment" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date-picker" class="col-md-2 control-label">Employment start date</label>
+                        <div class="controls col-md-10">
+                            <div class="input-group">
+                                <input id="editedemploymentfromdate" type="text" class="date-picker form-control" placeholder="From (mm/dd/yyyy)" />
+                                <label for="editedemploymentfromdate" class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date-picker" class="col-md-2 control-label">Employment end date</label>
+                        <div class="controls col-md-10">
+                            <div class="input-group">
+                                <input id="editedemploymenttodate" type="text" class="date-picker form-control" placeholder="To (mm/dd/yyy or left empty for current job)" />
+                                <label for="editedemploymenttodate" class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" id="editEmploymentDetails" class="btn btn-primary btn-sm">
+                                <i></i><span>Update</span>
+                            </button>
+                            <input type="submit" class="btn btn-primary btn-sm" value="Cancel" onclick="cancelEditEmploymentHistory(); return false;" />
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
