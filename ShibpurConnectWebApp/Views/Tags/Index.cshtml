@@ -176,10 +176,9 @@
 
                     $(followButton).click(function (event) {
                         event.preventDefault();
-                        followtag(this);
-
-                        $(this).toggleClass('active');
-                        $(this).find('i.fa').toggleClass('fa-plus fa-check');
+                        followunfollowtag(this);
+                        $(this).find('i.fa').removeClass('fa-plus');
+                        $(this).find('i.fa').addClass('fa-spinner');
                     });
                 });
 
@@ -205,6 +204,84 @@
             }
         });
     });
+
+    // function to follow a new tag
+    function followunfollowtag(event) {
+        var tagname = event.id;
+        var shouldFollowTag = event.firstElementChild.outerHTML.indexOf('fa-plus') > 0;
+
+        if (shouldFollowTag) {
+            scAjax({
+                "url": "tags/FollowNewTag?tagName=" + tagname,
+                "type": "POST",
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+
+                    $(event).toggleClass('active');
+                    $(event).find('i.fa').removeClass('fa-spinner');
+                    $(event).find('i.fa').addClass('fa-check');
+
+                    Command: toastr["success"]("Successfully subscribed to " + tagname);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest.status == "401")
+                        window.location.href = "/account/login";
+                    else
+                        Command: toastr["error"](tagname + " is not a valid tag");
+                }
+            });
+        }
+        else {
+            scAjax({
+                "url": "tags/unfollowtag?tagName=" + tagname,
+                "type": "POST",
+                "success": function (result) {
+                    if (!result) {
+                        return;
+                    }
+
+                    $(event).toggleClass('active');
+                    $(event).find('i.fa').removeClass('fa-spinner');
+                    $(event).find('i.fa').removeClass('fa-check');
+                    $(event).find('i.fa').addClass('fa-plus');                    
+                    Command: toastr["success"]("Successfully unsubscribed " + tagname);
+                },
+                "error": function () {
+                    Command: toastr["error"]("Failed to unsubscribed this tag. Please try again");
+                }
+            });
+        }
+    }
+
+    // change icon on mouse hover tag > index page
+    function changetextonmouseoverfortagpage(event) {
+        //$("#" + event.id + " > span").attr('style', 'color:black;font-weight:bold');
+
+        if (event.firstElementChild.outerHTML.indexOf('fa-check') > 0) {
+            $(event).find('i.fa').removeClass('fa-check');
+            $(event).find('i.fa').addClass('fa-minus');                
+        }
+        else if (event.firstElementChild.outerHTML.indexOf('fa-minus') > 0) {
+            $(event).find('i.fa').removeClass('fa-minus');
+            $(event).find('i.fa').addClass('fa-check');
+        }
+    }
+
+    // change text of the follow button on mouse out
+    function changetextonmouseoutfortagpage(event) {
+        //$("#" + event.id + " > span").attr('style', 'color:black;font-weight:normal');
+
+        if (event.firstElementChild.outerHTML.indexOf('fa-minus') > 0) {
+            $(event).find('i.fa').removeClass('fa-minus');
+            $(event).find('i.fa').addClass('fa-check');
+        }
+        else if (event.firstElementChild.outerHTML.indexOf('fa-check') > 0) {
+            $(event).find('i.fa').removeClass('fa-check');
+            $(event).find('i.fa').addClass('fa-minus');
+        }
+    }
 </script>
 
 <div class="taglistcontainer">
@@ -216,10 +293,12 @@
                     <div>
                         <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
                     </div>
-                    <div class="question-count" title="Number of questions"><i class="fa fa-question"></i><span></span></div>
+                    <div class="question-count" title="Number of questions"><i class="fa fa-star"></i><span></span></div>
                     @if (User.Identity.IsAuthenticated)
                     {
-                    <div class="follow-small" id=""><i class="fa fa-plus"></i> </div>
+                        <div class="follow-small" id="" onmouseout='changetextonmouseoutfortagpage(this);' onmouseover='    changetextonmouseoverfortagpage(this);'>
+                            <i class="fa fa-plus"></i>
+                        </div>
                     }
                 </div>
             </div>
