@@ -184,6 +184,27 @@
                     $('#Location').val("");
                     // get the latest data from server and update the profile page
                     loadEmployments();
+
+                    // update the 'SC_Session_UserDetails' info in the browser local storage
+                    scAjax({
+                        "url": "account/me",
+                        "success": function (result) {
+                            if (!result) {
+                                return;
+                            }
+
+                            userDetails = JSON.stringify(result);
+                            localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
+                            // change the html with user first name
+                            if (userDetails) {
+                                userInfo = $.parseJSON(userDetails);
+                                $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
+                            }
+                        },
+                        "error": function (err) {
+
+                        }
+                    });
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -243,6 +264,27 @@
 
                     // get the latest data from server and update the profile page
                     loadEmployments();
+
+                    // update the 'SC_Session_UserDetails' info in the browser local storage
+                    scAjax({
+                        "url": "account/me",
+                        "success": function (result) {
+                            if (!result) {
+                                return;
+                            }
+
+                            userDetails = JSON.stringify(result);
+                            localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
+                            // change the html with user first name
+                            if (userDetails) {
+                                userInfo = $.parseJSON(userDetails);
+                                $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
+                            }
+                        },
+                        "error": function (err) {
+
+                        }
+                    });
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -309,6 +351,27 @@
 
                     // get the latest data from server and update the profile page
                     loadEmployments();
+
+                    // update the 'SC_Session_UserDetails' info in the browser local storage
+                    scAjax({
+                        "url": "account/me",
+                        "success": function (result) {
+                            if (!result) {
+                                return;
+                            }
+
+                            userDetails = JSON.stringify(result);
+                            localStorage.setItem("SC_Session_UserDetails", JSON.stringify(result));
+                            // change the html with user first name
+                            if (userDetails) {
+                                userInfo = $.parseJSON(userDetails);
+                                $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
+                            }
+                        },
+                        "error": function (err) {
+
+                        }
+                    });
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

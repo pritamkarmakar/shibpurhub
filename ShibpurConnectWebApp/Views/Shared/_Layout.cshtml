@@ -47,6 +47,25 @@
 
         var userInfo;
         $(document).ready(function () {
+            // toast notification configuration
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "3000",
+                "hideDuration": "1000",
+                "timeOut": "8000",
+                "extendedTimeOut": "6000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
             // get the user details only if we have the token for this user and userDetails is null so far
             var token = localStorage.getItem("accessToken");
             if (token != null && userDetails == null) {
@@ -75,29 +94,41 @@
                 userInfo = $.parseJSON(userDetails);
                 $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
 
-                // if user doesn't have any education/employment details then redirect to step wizard page
-                if (userInfo.educationInfo.length == 0)
-                    window.location = "/completeprofile";
-            }
+                var edutoastslastshownon = localStorage.getItem("edu-toastnotification-lastshown");
+                var emptoastslastshownon = localStorage.getItem("emp-toastnotification-lastshown");
+                if (edutoastslastshownon == null && emptoastslastshownon == null)
+                {
+                    toastr.options.tapToDismiss = false;
+                    toastr.options.timeOut = 0;
+                    toastr.options.extendedTimeOut = 0;
+                    // show toastr notification to ask user to add details
+                    Command: toastr["info"]("<div><p>Could you please spend few minutes to complete your profile?</p><button type='button' id='bothnull' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='bothnullclear' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
+                }
 
-            // toast notification configuration
-            toastr.options = {
-                "closeButton": false,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": false,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "3000",
-                "hideDuration": "1000",
-                "timeOut": "8000",
-                "extendedTimeOut": "6000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            }
+                var edudiffTime = Math.abs(new Date($.now()).getTime() - new Date(edutoastslastshownon).getTime()) / (1000 * 60 * 60);
+                if (edutoastslastshownon!= null && edudiffTime > 48) {
+                    // if user doesn't have any education/employment details then redirect to step wizard page
+                    if (userInfo.educationalHistories == null) {
+                        toastr.options.tapToDismiss = false;
+                        toastr.options.timeOut = 0;
+                        toastr.options.extendedTimeOut = 0;
+                        // show toastr notification to ask user to add details
+                        Command: toastr["info"]("<div><p>You haven't added any educational details. Could you please spend few minutes to complete your profile?</p><button type='button' id='edudetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='educlear' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
+                    }
+                }
+                // if user doesn't have any employment details then show the toastr notification only if last shown toastr is 7 days before
+                var empdiffTime = Math.abs(new Date($.now()).getTime() - new Date(emptoastslastshownon).getTime()) / (1000 * 60 * 60);
+                if (emptoastslastshownon != null && empdiffTime > 168) {
+                    if (userInfo.employmentHistories == null) {
+                        toastr.options.tapToDismiss = false;
+                        toastr.options.timeOut = 0;
+                        toastr.options.extendedTimeOut = 0;
+                        // show toastr notification to ask user to add details
+                        Command: toastr["info"]("<div><p>You haven't added any employment details. Could you please spend few minutes to complete your profile?</p><button type='button' id='empdetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='empclear' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
+                    }
+                }
+            }        
+         
 
             // we don't want to check notification when user in the login or register page. Otherwise the login page will reload again and again.
             // previous issue: user has an invalid token in the local storage and this if condition was not here, so it was making getnewnotification api call with that token, and this api returning 401.
@@ -178,7 +209,7 @@
                         //window.location.href = "/Notifications";
                     });
                 }
-            }
+            }            
 
             // back to top animation
             $(function () {
@@ -203,6 +234,44 @@
             }
 
         });
+        
+        // method to set when we shown the last toast notification
+        function updatetoastrnotificationtime(obj) {
+            if (obj.id == "bothnull")
+            {
+                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));
+                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
+                window.location = "/completeprofile";
+            }
+            else if(obj.id == "edudetails")
+            {
+                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));           
+                window.location = "/completeprofile";
+            }
+            else if (obj.id == "empdetails") {
+                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
+                window.location = "/completeprofile";
+            }
+            
+        }
+
+        // method to clear the toast notification
+        function cleartoastnotification(obj) {
+            if (obj.id == "bothnullclear") {
+                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));
+                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
+                $("#toast-container").hide();
+            }
+            else if (obj.id == "educlear") {
+                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));
+                $("#toast-container").hide();
+            }
+            else if (obj.id == "empclear") {
+                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
+                $("#toast-container").hide();
+            }
+
+        }
 
         // when user will click on any notification we will mark that as visited and next time the background color will change
         function MarkItRead(url, notificationId) {
