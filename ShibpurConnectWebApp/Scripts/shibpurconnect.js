@@ -833,11 +833,12 @@ function getUsers() {
 
     $('.table').hide();
 
-    // if user blongs to BEC and has a graduation year then find batchmates, immediate seniors and juniors otherwise get all the users
+    // if user belongs to BEC and has a graduation year then find batchmates, immediate seniors and juniors otherwise get all the users
     if (graduationyear != -1) {
         var seniorgradyear = graduationyear - 1;
         var juniorgradyear = graduationyear + 1;
 
+        // here we are trying to get the response from all the apis and then adding the response back in the html page
         var doSomethingOnceValueIsPresent = function () {
             if (batchmates != null && seniors != null && juniors != null && allusers != null && allunknownusers != null) {
                 // hide the loading div
@@ -918,6 +919,8 @@ function getUsers() {
                             $('#userlist').append(getProfileHtml(userinfo));
                     });
                 }
+
+                handleFollowClick();
             }
             else {
                 setTimeout(function () {
@@ -933,7 +936,7 @@ function getUsers() {
 
                 batchmates = result;
 
-                handleFollowClick();
+                //handleFollowClick();
                 handleToggleViewClick();
             }
         });
@@ -945,7 +948,7 @@ function getUsers() {
                 // set the seniors variabe to API result
                 seniors = result;
 
-                handleFollowClick();
+                //handleFollowClick();
                 handleToggleViewClick();
             }
         });
@@ -967,7 +970,7 @@ function getUsers() {
                 // save the api result in the global variable 'userlist'
                 allusers = result;
 
-                handleFollowClick();
+                //handleFollowClick();
                 handleToggleViewClick();
             }
         });
@@ -978,7 +981,7 @@ function getUsers() {
                 // save the api result in the global variable 'userlist'
                 allunknownusers = result;
 
-                handleFollowClick();
+                //handleFollowClick();
                 handleToggleViewClick();
             }
         });
@@ -1042,5 +1045,3 @@ function getUsers() {
     }
 
 }
-
-

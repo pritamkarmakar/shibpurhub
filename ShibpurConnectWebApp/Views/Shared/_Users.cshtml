@@ -199,16 +199,79 @@
             $(e).click(function () {
                 var button = $(this);
                 var profileid = $(button).attr('id');
-                if ($(button).hasClass('active')) {
-                    unfollowuser(null, profileid);
+                if ($(button).hasClass('active')) {                    
+                    $(this).find('i.fa').removeClass('fa-plus');
+                    $(this).find('i.fa').addClass('fa-spinner');
+                    unfollowuser(button, profileid);                   
                 }
                 else {
-                    followuser(null, profileid);
-                }
-
-                $(button).toggleClass('active');
-                $(button).find('i.fa').toggleClass('fa-plus fa-check');
+                    $(this).addClass('active');
+                    $(this).find('i.fa').removeClass('fa-plus');
+                    $(this).find('i.fa').addClass('fa-spinner');
+                    followuser(button, profileid);                   
+                }               
             });
+        });
+    }
+
+    // method to follow a user
+    function followuser(obj, profileId) {
+        scAjax({
+            "url": "profile/followuser?userIdToFollow=" + profileId,
+            "type": "POST",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+                if (result == "you have alrady reported this before") {
+                    Command: toastr["info"](result);
+                }
+                else {
+                    Command: toastr["success"](result);
+                    if (!obj) {
+                        return;
+                    }
+                    $(obj).find('i.fa').removeClass('fa-spinner');
+                    $(obj).find('i.fa').addClass('fa-check');                    
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                if (XMLHttpRequest.status == "401")
+                    window.location.href = "/account/login";
+                else
+                    Command: toastr["error"]("Error: " + textStatus);
+            }
+        });
+    }
+
+    // method to unfollow user
+    function unfollowuser(obj, profileId) {
+        scAjax({
+            "url": "profile/unfollowuser?userToUnfollow=" + profileId,
+            "type": "POST",
+            "success": function (result) {
+                if (!result) {
+                    return;
+                }
+                if (result == "you are not following this user") {
+                    Command: toastr["info"](result);
+                }
+                else {
+                    Command: toastr["success"](result);
+                    if (!obj) {
+                        return;
+                    }
+                    $(obj).find('i.fa').removeClass('fa-spinner');
+                    $(obj).find('i.fa').addClass('fa-plus');
+                    $(obj).removeClass('active');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                if (XMLHttpRequest.status == "401")
+                    window.location.href = "/account/login";
+                else
+                    Command: toastr["error"]("Error: " + textStatus);
+            }
         });
     }
 

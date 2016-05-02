@@ -335,11 +335,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var email = principal.Identity.Name;
 
-            // check if userIdToFollow is a valid userid or not
             Helper.Helper helper = new Helper.Helper();
-            if (helper.FindUserById(userIdToFollow) == null)
-                return BadRequest("supplied userIdToFollow is not valid userid");
+            // get userToUnfollow profile from in-memory cache if available otherwise will do database query
+            CustomUserInfo userToFollowProfile = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + userIdToFollow);
+            if (userToFollowProfile == null)
+            {
+                Task<CustomUserInfo> result2 = helper.FindUserById(userIdToFollow, true);
+                userToFollowProfile = await result2;
 
+                if (userToFollowProfile == null)
+                    return BadRequest("supplied userid is not valid");
+
+                // set the profile in in-memory
+                CacheManager.SetCacheData("completeuserprofile-" + userIdToFollow, userToFollowProfile);
+            }
+          
             var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
@@ -373,6 +383,26 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             // invalidate the notification cache for this user
             cache.RemoveStartsWith("notifications-getnewnotifications-userId=" + userIdToFollow);
             cache.RemoveStartsWith("notifications-getnotifications-userId=" + userIdToFollow);
+
+            // invalidate the cahce user/finduserforayear from the batch where the usertounfollow belongs to
+            if (!string.IsNullOrEmpty(userToFollowProfile.EducationInfo))
+            {
+                MongoHelper<EducationalHistories> _mongoEdu = new MongoHelper<EducationalHistories>();
+                var result2 = _mongoEdu.Collection.FindAll().Where(m => m.UserId == userIdToFollow && m.IsBECEducation == true).FirstOrDefault();
+                if (result2 != null)
+                {
+                    string graduateYear = userToFollowProfile.EducationInfo.Substring(0, 4);
+                    cache.RemoveStartsWith("users-findusersforayear-graduationYear=" + graduateYear);
+                }
+                else
+                    cache.RemoveStartsWith("users-getnonbecusers");
+            }
+
+            // remove user profiles from in-memory cache
+            CacheManager.RemoveCacheData("completeuserprofile-" + userIdToFollow);
+            CacheManager.RemoveCacheData(userIdToFollow);
+            CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
+            CacheManager.RemoveCacheData(userInfo.Id);
 
             // send notification to the user who is getting followed
             Uri myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
@@ -412,7 +442,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             };
             userActivityController.PostAnActivity(userActivityLog);
 
-            return Ok("now you are following this user");
+            return Ok("You are following this user");
 
         }
 
@@ -432,11 +462,21 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var email = principal.Identity.Name;
 
-            // check if userToUnfollow is a valid userid or not
             Helper.Helper helper = new Helper.Helper();
-            if (helper.FindUserById(userToUnfollow) == null)
-                return BadRequest("supplied userIdToFollow is not valid userid");
+            // get userToUnfollow profile from in-memory cache if available otherwise will do database query
+            CustomUserInfo userToUnfollowProfile = (CustomUserInfo)CacheManager.GetCachedData("completeuserprofile-" + userToUnfollow);
+            if (userToUnfollowProfile == null)
+            {
+                Task<CustomUserInfo> result = helper.FindUserById(userToUnfollow, true);
+                userToUnfollowProfile = await result;
 
+                if (userToUnfollowProfile == null)
+                    return BadRequest("supplied userid is not valid");
+
+                // set the profile in in-memory
+                CacheManager.SetCacheData("completeuserprofile-" + userToUnfollow, userToUnfollowProfile);
+            }
+         
             var userResult = helper.FindUserByEmail(email);
             var userInfo = await userResult;
             if (userInfo == null)
@@ -445,7 +485,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             //process this only if the userToUnfollow is present in the current user profile collection
             if (userInfo.Following != null && userInfo.Following.Contains(userToUnfollow))
             {
-                // if we are here that means this user is not following this user so we have to add it
                 AuthRepository _repo = new AuthRepository();
                 IdentityResult result = await _repo.UnFollowUser(userInfo.Id, userToUnfollow);
                 IHttpActionResult errorResult = GetErrorResult(result);
@@ -461,11 +500,31 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // invalidate the getuserfollowing api 
                 cache.RemoveStartsWith("profile-getuserfollowing-userId=" + userInfo.Id);
 
-                return Ok("suceessfully unfollowed this user");
+                // remove user profiles from in-memory cache
+                CacheManager.RemoveCacheData("completeuserprofile-" + userToUnfollow);
+                CacheManager.RemoveCacheData(userToUnfollow);
+                CacheManager.RemoveCacheData("completeuserprofile-" + userInfo.Id);
+                CacheManager.RemoveCacheData(userInfo.Id);
+
+                // invalidate the cahce user/finduserforayear from the batch where the usertounfollow belongs to
+                if(!string.IsNullOrEmpty(userToUnfollowProfile.EducationInfo))
+                {
+                    MongoHelper<EducationalHistories> _mongoEdu = new MongoHelper<EducationalHistories>();
+                    var result2 = _mongoEdu.Collection.FindAll().Where(m => m.UserId == userToUnfollow && m.IsBECEducation == true).FirstOrDefault();
+                    if (result2 != null)
+                    {
+                        string graduateYear = userToUnfollowProfile.EducationInfo.Substring(0, 4);
+                        cache.RemoveStartsWith("users-findusersforayear-graduationYear=" + graduateYear);
+                    }
+                    else
+                        cache.RemoveStartsWith("users-getnonbecusers");
+                }
+
+                return Ok("Operation completed");
             }
 
             // if we are here that means the user is not following the user
-            return Ok("you are not following this user");
+            return Ok("You are not following this user");
         }
 
         /// <summary>

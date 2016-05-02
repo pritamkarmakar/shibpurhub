@@ -176,8 +176,7 @@
 
                     $(followButton).click(function (event) {
                         event.preventDefault();
-                        followunfollowtag(this);
-                        $(this).find('i.fa').removeClass('fa-plus');
+                        followunfollowtag(this);                        
                         $(this).find('i.fa').addClass('fa-spinner');
                     });
                 });
@@ -211,6 +210,8 @@
         var shouldFollowTag = event.firstElementChild.outerHTML.indexOf('fa-plus') > 0;
 
         if (shouldFollowTag) {
+            $(event).addClass('active');
+            $(event).find('i.fa').removeClass('fa-plus');
             scAjax({
                 "url": "tags/FollowNewTag?tagName=" + tagname,
                 "type": "POST",
@@ -218,8 +219,6 @@
                     if (!result) {
                         return;
                     }
-
-                    $(event).toggleClass('active');
                     $(event).find('i.fa').removeClass('fa-spinner');
                     $(event).find('i.fa').addClass('fa-check');
 
@@ -293,10 +292,10 @@
                     <div>
                         <a class="tagname" href="/Feed/FeedByCategory?category=shibpurhub"> shibpurhub</a>
                     </div>
-                    <div class="question-count" title="Number of questions"><i class="fa fa-star"></i><span></span></div>
+                    <div class="question-count" title="Number of questions"><i class="fa fa-star-o"></i><span></span></div>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <div class="follow-small" id="" onmouseout='changetextonmouseoutfortagpage(this);' onmouseover='    changetextonmouseoverfortagpage(this);'>
+                        <div class="follow-small" id="" title="Follow/unfollow tag" onmouseout='changetextonmouseoutfortagpage(this);' onmouseover='    changetextonmouseoverfortagpage(this);'>
                             <i class="fa fa-plus"></i>
                         </div>
                     }

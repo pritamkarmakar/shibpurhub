@@ -1049,7 +1049,7 @@
             <param name="graduationYear"></param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.FindAllBecUsers(System.String)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.FindAllBECUsers(System.String)">
             <summary>
             API to get all BEC Users based on graduation year
             </summary>

@@ -30,6 +30,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// Get all system users, this will give result order by (descending) user reputation
         /// </summary>
         /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetNonBECUsers()
         {
             int gradYear = 0;           
@@ -155,7 +156,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [HttpGet]
         [ResponseType(typeof(UserByBatch))]
         [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
-        public async Task<IHttpActionResult> FindAllBecUsers(string skipyears = "")
+        public async Task<IHttpActionResult> FindAllBECUsers(string skipyears = "")
         {
             MongoHelper<EducationalHistories> _mongoEdu = new MongoHelper<EducationalHistories>();
             
