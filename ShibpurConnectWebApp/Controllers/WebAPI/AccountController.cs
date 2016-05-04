@@ -233,7 +233,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
             cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + user.Id);
 
-            return CreatedAtRoute("DefaultApi", new { id = user.Id }, "Updated last seen time");
+            return CreatedAtRoute("DefaultApi", new { id = user.Id }, user.LastSeenOn);
         }
 
         /// <summary>
