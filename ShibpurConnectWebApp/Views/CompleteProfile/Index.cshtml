@@ -1,57 +1,9 @@
 ﻿@{
     ViewBag.Title = "Complete User Profile";
-    Layout = "";
 }
 
-@Styles.Render("~/Content/css")
-@Styles.Render("~/content/themes/base/jquery")
-@Scripts.Render("~/bundles/modernizr")
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/shibpurconnect")
-@Scripts.Render("~/bundles/select2")
-@Scripts.Render("~/bundles/jqueryval")
-
 <style type="text/css">
-    /*overridding default bootstrap button style*/
-    .btn {
-        /*padding: 14px 24px;*/
-        border: 0 none;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-
-        .btn:focus, .btn:active:focus, .btn.active:focus {
-            outline: 0 none;
-        }
-
-    .btn-primary {
-        background: #0099cc;
-        color: #ffffff;
-    }
-
-        .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
-            background: #33a6cc;
-        }
-
-        .btn-primary:active, .btn-primary.active {
-            background: #007299;
-            box-shadow: none;
-        }
-
-        .btn-primary.outline:hover, .btn-primary.outline:focus, .btn-primary.outline:active, .btn-primary.outline.active, .open > .dropdown-toggle.btn-primary {
-            color: #33a6cc;
-            border-color: #33a6cc;
-        }
-
-        .btn-primary.outline:active, .btn-primary.outline.active {
-            border-color: #007299;
-            color: #007299;
-            box-shadow: none;
-        }
-
-    body {
+     body {
         margin-top: 20px;
     }
 
@@ -149,24 +101,7 @@
 
 <body>
     <div id="wrap">
-        <div class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    @Html.ActionLink("ShibpurHub", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            @*<div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                Please complete your profile by adding your educational/employment background.
-            </div>*@           
+        <div class="container">       
             <div class="row form-group">
                 <div class="col-xs-12">
                     <ul class="nav nav-pills nav-justified thumbnail setup-panel">
@@ -222,17 +157,7 @@
             </div>
 
         </div>
-    </div>
-    <div id="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-8 sitefooter">
-                    <ul class="list-unstyled list-inline pull-left"></ul>
-                </div>
-                <p class="text-muted pull-right">&copy; @DateTime.Now.Year - ShibpurHub</p>
-            </div>
-        </div>
-    </div>
+    </div>   
 </body>
 
 

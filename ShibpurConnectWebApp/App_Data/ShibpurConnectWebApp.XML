@@ -1036,6 +1036,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UserActivityController.GetUserLoginLog">
+            <summary>
+            API to get user last login log
+            </summary>
+            <param name="loginlog"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetNonBECUsers">
             <summary>
             Get all system users, this will give result order by (descending) user reputation

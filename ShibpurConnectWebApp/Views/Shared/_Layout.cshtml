@@ -48,8 +48,9 @@
         var userInfo;
         $(document).ready(function () {
             // toast notification configuration
+            $("#toast-container").show();
             toastr.options = {
-                "closeButton": false,
+                "closeButton": true,
                 "debug": false,
                 "newestOnTop": false,
                 "progressBar": false,
@@ -98,14 +99,32 @@
                 var emptoastslastshownon = localStorage.getItem("emp-toastnotification-lastshown");
                 if (edutoastslastshownon == null && emptoastslastshownon == null)
                 {
-                    toastr.options.tapToDismiss = false;
-                    toastr.options.timeOut = 0;
-                    toastr.options.extendedTimeOut = 0;
-                    // show toastr notification to ask user to add details
-                    Command: toastr["info"]("<div><p>Could you please spend few minutes to complete your profile?</p><button type='button' id='bothnull' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='bothnullclear' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
+                    // get the user login log from api
+                    scAjax({
+                        url: "useractivity/getuserloginlog",
+                        type: "GET",
+                        dataType: "json",
+                        contentType: "application/json",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        success: function (result) {
+                            if (!result) {
+                                return;                               
+                            }
+                            // set the values that we got from API
+                            localStorage.setItem("edu-toastnotification-lastshown", result.eduToastNotificationShownOn);
+                            localStorage.setItem("emp-toastnotification-lastshown", result.empToastNotificationShownOn);
+                        },
+                        error: function (err) {
+                            // send alert to admin team
+                        }
+                    });
                 }
 
                 var edudiffTime = Math.abs(new Date($.now()).getTime() - new Date(edutoastslastshownon).getTime()) / (1000 * 60 * 60);
+                var empdiffTime = Math.abs(new Date($.now()).getTime() - new Date(emptoastslastshownon).getTime()) / (1000 * 60 * 60);
                 if (edutoastslastshownon!= null && edudiffTime > 48) {
                     // if user doesn't have any education/employment details then redirect to step wizard page
                     if (userInfo.educationalHistories == null) {
@@ -113,18 +132,17 @@
                         toastr.options.timeOut = 0;
                         toastr.options.extendedTimeOut = 0;
                         // show toastr notification to ask user to add details
-                        Command: toastr["info"]("<div><p>You haven't added any educational details. Could you please spend few minutes to complete your profile?</p><button type='button' id='edudetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='educlear' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
+                        Command: toastr["info"]("<div><p>You haven't added any educational details. Could you please spend few minutes to complete your profile?</p><button type='button' id='edudetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='edudetails' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
                     }
                 }
                 // if user doesn't have any employment details then show the toastr notification only if last shown toastr is 7 days before
-                var empdiffTime = Math.abs(new Date($.now()).getTime() - new Date(emptoastslastshownon).getTime()) / (1000 * 60 * 60);
-                if (emptoastslastshownon != null && empdiffTime > 168) {
+                else if (emptoastslastshownon != null && empdiffTime > 168) {
                     if (userInfo.employmentHistories == null) {
                         toastr.options.tapToDismiss = false;
                         toastr.options.timeOut = 0;
                         toastr.options.extendedTimeOut = 0;
                         // show toastr notification to ask user to add details
-                        Command: toastr["info"]("<div><p>You haven't added any employment details. Could you please spend few minutes to complete your profile?</p><button type='button' id='empdetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='empclear' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
+                        Command: toastr["info"]("<div><p>You haven't added any employment details. Could you please spend few minutes to complete your profile?</p><button type='button' id='empdetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='empdetails' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button>");
                     }
                 }
             }        
@@ -237,42 +255,76 @@
         
         // method to set when we shown the last toast notification
         function updatetoastrnotificationtime(obj) {
-            if (obj.id == "bothnull")
-            {
-                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));
-                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
-                window.location = "/completeprofile";
-            }
-            else if(obj.id == "edudetails")
-            {
-                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));           
-                window.location = "/completeprofile";
+            var type = null;
+            if (obj.id == "edudetails") {
+                type = "edu";
             }
             else if (obj.id == "empdetails") {
-                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
-                window.location = "/completeprofile";
-            }
+                type = "emp";
+            }           
             
+            // update the user login log
+            scAjax({
+                url: "useractivity/updateuserloginlog?type=" + type,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                success: function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    // set the values that we got from API
+                    localStorage.setItem("edu-toastnotification-lastshown", result.eduToastNotificationShownOn);
+                    localStorage.setItem("emp-toastnotification-lastshown", result.empToastNotificationShownOn);
+
+                    window.location = "/completeprofile";
+                },
+                error: function (err) {
+                    // send alert to admin team
+                }
+            });          
+        }        
+
+        function cleartoastnotification(obj)
+        {
+            $("#toast-container").hide();
+            // update the user login log into database
+            var type = null;
+            if (obj.id == "edudetails") {
+                type = "edu";
+            }
+            else if (obj.id == "empdetails") {
+                type = "emp";
+            }
+
+            // update the user login log
+            scAjax({
+                url: "useractivity/updateuserloginlog?type=" + type,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                success: function (result) {
+                    if (!result) {
+                        return;
+                    }
+                    // set the values that we got from API
+                    localStorage.setItem("edu-toastnotification-lastshown", result.eduToastNotificationShownOn);
+                    localStorage.setItem("emp-toastnotification-lastshown", result.empToastNotificationShownOn);
+                },
+                error: function (err) {
+                    // send alert to admin team
+                }
+            });
         }
-
-        // method to clear the toast notification
-        function cleartoastnotification(obj) {
-            if (obj.id == "bothnullclear") {
-                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));
-                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
-                $("#toast-container").hide();
-            }
-            else if (obj.id == "educlear") {
-                localStorage.setItem("edu-toastnotification-lastshown", new Date($.now()));
-                $("#toast-container").hide();
-            }
-            else if (obj.id == "empclear") {
-                localStorage.setItem("emp-toastnotification-lastshown", new Date($.now()));
-                $("#toast-container").hide();
-            }
-
-        }
-
+        
         // when user will click on any notification we will mark that as visited and next time the background color will change
         function MarkItRead(url, notificationId) {
             var SERVER = "/api/";
