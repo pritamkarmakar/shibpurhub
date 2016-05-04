@@ -377,7 +377,7 @@
     <Compile Include="Models\WebAPI\ImageInfo.cs" />
     <Compile Include="Models\WebAPI\JobApplication.cs" />
     <Compile Include="Models\WebAPI\JobDTO.cs" />
-    <Compile Include="Models\WebAPI\LoginLog.cs" />
+    <Compile Include="Models\WebAPI\ToastNotificationLog.cs" />
     <Compile Include="Models\WebAPI\Notifications.cs" />
     <Compile Include="Models\WebAPI\PersonalizedFeedItem.cs" />
     <Compile Include="Models\WebAPI\QuestionSpam.cs" />

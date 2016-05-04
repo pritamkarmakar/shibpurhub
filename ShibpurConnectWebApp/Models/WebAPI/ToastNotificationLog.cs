@@ -14,7 +14,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
     [DataContract(IsReference = true)]
     [JsonObject(IsReference = false)]
     [BsonIgnoreExtraElements]
-    public class LoginLog
+    public class ToastNotificationLog
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -22,6 +22,5 @@ namespace ShibpurConnectWebApp.Models.WebAPI
         public string UserId { get; set; }
         public DateTime EduToastNotificationShownOn { get; set; }
         public DateTime EmpToastNotificationShownOn { get; set; }
-        public DateTime LastSeen { get; set; }
     }
 }

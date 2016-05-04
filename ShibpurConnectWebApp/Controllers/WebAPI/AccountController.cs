@@ -202,6 +202,41 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
+        /// API to update user last login time
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public async Task<IHttpActionResult> UpdateLastSeenTime()
+        {
+            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            var email = principal.Identity.Name;
+
+            var user = await _repo.FindUserByEmail(email);
+            if (user == null)
+            {
+                return BadRequest("No UserId is found");
+            }
+
+            try
+            {
+                user.LastSeenOn = DateTime.UtcNow;
+                await _repo.UpdateUser(user);
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error occured. Stack Trace:" + e.Message);
+            }
+
+            // invalidate the cache for this user
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+            cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + user.Id);
+
+            return CreatedAtRoute("DefaultApi", new { id = user.Id }, "Updated last seen time");
+        }
+
+        /// <summary>
         /// This is where Hangfire will do the background task
         /// We will remove all the educational, employment, answer, comments details associated with this user, when user will delete his/her account
         /// </summary>

@@ -123,18 +123,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("No UserId is found");
             }
 
-            MongoHelper<LoginLog> _mongoHelper2 = new MongoHelper<LoginLog>();          
+            MongoHelper<ToastNotificationLog> _mongoHelper2 = new MongoHelper<ToastNotificationLog>();          
             // check if user has any previous login log then return that one or else create a new log and save to database and then return the same
             var loginLog = _mongoHelper2.Collection.AsQueryable().Where(m => m.UserId == userInfo.Id).ToList();
             if (loginLog.Count == 0)
             {
-                LoginLog newloginLog = new LoginLog()
+                ToastNotificationLog newloginLog = new ToastNotificationLog()
                 {
                     LogId = ObjectId.GenerateNewId().ToString(),
                     UserId = userInfo.Id,
                     EduToastNotificationShownOn = DateTime.UtcNow,
-                    EmpToastNotificationShownOn = DateTime.UtcNow,
-                    LastSeen = DateTime.UtcNow
+                    EmpToastNotificationShownOn = DateTime.UtcNow
                 };
                 _mongoHelper2.Collection.Save(newloginLog);
 
@@ -147,12 +146,13 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <summary>
         /// API to update user login details, mainly to track when we have shown the toast notification to update user profile and when user logged in into the system
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">edu = when user saw last toast notification to update educational background toast notification
+        /// emp = when user saw last toast notification to update employment background toast notification</param>
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        [ResponseType(typeof(LoginLog))]
-        public async Task<IHttpActionResult> UpdateUserLoginLog(string type)
+        [ResponseType(typeof(ToastNotificationLog))]
+        public async Task<IHttpActionResult> ToastNotificationLog(string type)
         {
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
             var email = principal.Identity.Name;
@@ -165,18 +165,17 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 return BadRequest("No UserId is found");
             }
 
-            MongoHelper<LoginLog> _mongoHelper2 = new MongoHelper<LoginLog>();
+            MongoHelper<ToastNotificationLog> _mongoHelper2 = new MongoHelper<ToastNotificationLog>();
             // check if user has any previous login log then return that one or else create a new log and save to database and then return the same
             var loginLog = _mongoHelper2.Collection.AsQueryable().Where(m => m.UserId == userInfo.Id).ToList();
             if (loginLog.Count == 0)
             {
-                LoginLog newloginLog = new LoginLog()
+                ToastNotificationLog newloginLog = new ToastNotificationLog()
                 {
                     LogId = ObjectId.GenerateNewId().ToString(),
                     UserId = userInfo.Id,
                     EduToastNotificationShownOn = DateTime.UtcNow,
-                    EmpToastNotificationShownOn = DateTime.UtcNow,
-                    LastSeen = DateTime.UtcNow
+                    EmpToastNotificationShownOn = DateTime.UtcNow
                 };
                 _mongoHelper2.Collection.Save(newloginLog);
 
@@ -184,7 +183,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
             else
             {
-                if(type == "edu")
+                if (type == "edu")
                 {
                     loginLog[0].EduToastNotificationShownOn = DateTime.UtcNow;
                     _mongoHelper2.Collection.Save(loginLog[0]);
@@ -195,8 +194,6 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     _mongoHelper2.Collection.Save(loginLog[0]);
                 }
             }
-
-
             return Ok(loginLog[0]);
         }
     }

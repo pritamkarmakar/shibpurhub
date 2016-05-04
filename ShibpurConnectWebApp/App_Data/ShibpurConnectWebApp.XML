@@ -1000,6 +1000,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AccountController.UpdateLastSeenTime">
+            <summary>
+            API to update user last login time
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.AccountController.DeleteAllRecords(System.String)">
             <summary>
             This is where Hangfire will do the background task
@@ -1038,9 +1044,17 @@
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UserActivityController.GetUserLoginLog">
             <summary>
-            API to get user last login log
+            API to get user last login log (when we have shown the toast notification to update user profile and when user logged in into the system)
             </summary>
             <param name="loginlog"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UserActivityController.ToastNotificationLog(System.String)">
+            <summary>
+            API to update user login details, mainly to track when we have shown the toast notification to update user profile and when user logged in into the system
+            </summary>
+            <param name="type">edu = when user saw last toast notification to update educational background toast notification
+            emp = when user saw last toast notification to update employment background toast notification</param>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetNonBECUsers">

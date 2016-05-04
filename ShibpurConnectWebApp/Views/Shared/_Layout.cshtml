@@ -92,6 +92,32 @@
             }
 
             if (userDetails) {
+
+                // save user lastlogin to database
+                var lastseen = localStorage.getItem("lastseen");
+                if (Math.abs(new Date($.now()).getTime() - new Date(lastseen).getTime()) / (1000 * 60 * 60) > 24) {
+                    scAjax({
+                        url: "account/updatelastseentime",
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        success: function (result) {
+                            if (!result) {
+                                return;
+                            }
+                            // set the values that we got from API
+                            localStorage.setItem("lastseen", result.lastSeen);            
+                        },
+                        error: function (err) {
+                            // send alert to admin team
+                        }
+                    });
+                }
+
                 userInfo = $.parseJSON(userDetails);
                 $('#loggedinuser').html(userInfo.firstName + " <span class='caret'></span>");
 
@@ -265,7 +291,7 @@
             
             // update the user login log
             scAjax({
-                url: "useractivity/updateuserloginlog?type=" + type,
+                url: "useractivity/ToastNotificationLog?type=" + type,
                 type: "POST",
                 dataType: "json",
                 contentType: "application/json",
@@ -303,7 +329,7 @@
 
             // update the user login log
             scAjax({
-                url: "useractivity/updateuserloginlog?type=" + type,
+                url: "useractivity/ToastNotificationLog?type=" + type,
                 type: "POST",
                 dataType: "json",
                 contentType: "application/json",
