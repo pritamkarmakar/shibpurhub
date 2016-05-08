@@ -110,7 +110,7 @@
                                 return;
                             }
                             // set the values that we got from API
-                            localStorage.setItem("lastseen", result);            
+                            localStorage.setItem("lastseen", result);
                         },
                         error: function (err) {
                             // send alert to admin team
@@ -137,7 +137,7 @@
                         },
                         success: function (result) {
                             if (!result) {
-                                return;                               
+                                return;
                             }
                             // set the values that we got from API
                             localStorage.setItem("edu-toastnotification-lastshown", result.eduToastNotificationShownOn);
@@ -171,8 +171,8 @@
                         Command: toastr["info"]("<div><p>You haven't added any employment details. Could you please spend few minutes to complete your profile?</p><button type='button' id='empdetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='empdetails' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button>");
                     }
                 }
-            }        
-         
+            }
+
 
             // we don't want to check notification when user in the login or register page. Otherwise the login page will reload again and again.
             // previous issue: user has an invalid token in the local storage and this if condition was not here, so it was making getnewnotification api call with that token, and this api returning 401.
@@ -253,7 +253,7 @@
                         //window.location.href = "/Notifications";
                     });
                 }
-            }            
+            }
 
             // back to top animation
             $(function () {
@@ -278,7 +278,7 @@
             }
 
         });
-        
+
         // method to set when we shown the last toast notification
         function updatetoastrnotificationtime(obj) {
             var type = null;
@@ -287,8 +287,8 @@
             }
             else if (obj.id == "empdetails") {
                 type = "emp";
-            }           
-            
+            }
+
             // update the user login log
             scAjax({
                 url: "useractivity/ToastNotificationLog?type=" + type,
@@ -312,8 +312,8 @@
                 error: function (err) {
                     // send alert to admin team
                 }
-            });          
-        }        
+            });
+        }
 
         function cleartoastnotification(obj)
         {
@@ -350,7 +350,7 @@
                 }
             });
         }
-        
+
         // when user will click on any notification we will mark that as visited and next time the background color will change
         function MarkItRead(url, notificationId) {
             var SERVER = "/api/";
@@ -484,6 +484,16 @@
         }
     </script>
     <style type="text/css">
+        .navbar-default .navbar-nav > .active {
+            background: none;
+            text-decoration: underline;
+        }
+
+            .navbar-default .navbar-nav > .active > a,
+            .navbar-default .navbar-nav > .active > a:hover,
+            .navbar-default .navbar-nav > .active > a:focus {
+                background: none;
+            }
         /*overridding bootstrap default button style*/
         .btn {
             /*padding: 14px 24px;*/

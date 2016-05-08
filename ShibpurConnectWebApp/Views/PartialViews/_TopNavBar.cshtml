@@ -19,8 +19,10 @@
             <ul class="nav navbar-nav">
                 @if (User.Identity.IsAuthenticated)
                 {
+                    if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "index" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "notifications")
+                {
                 <!-- Notification center-->
-                    <li id="notification_li">
+                    <li id="notification_li" class="active">
                         <span id="notification_count" style="display:none;"></span>
                         <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
                         <div id="notificationContainer">
@@ -30,20 +32,75 @@
                         </div>
                     </li>
                 }
+                   else
+                   {
+                    <li id="notification_li">
+                        <span id="notification_count" style="display:none;"></span>
+                        <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span>  Notifications</a>
+                        <div id="notificationContainer">
+                            <div id="notificationTitle">Notifications</div>
+                            <div id="notificationsBody" class="notifications"></div>
+                            <div id="notificationFooter"><a href="/notifications">See All</a></div>
+                        </div>
+                    </li>
+                   }
+                }
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li><a href="/feed/myfeeds">Activity</a></li>
+                    if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "myfeeds" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "feed")
+                    {
+                        <li class="active"><a href="/feed/myfeeds">Activity</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="/feed/myfeeds">Activity</a></li>
+                    }
                 }
 
-                <li>@Html.ActionLink("Discussions", "Index", "feed")</li>
-                <li>@Html.ActionLink("Tags", "Index", "tags")</li>
-                <li>@Html.ActionLink("Career", "Index", "career")</li>
-                <li>@Html.ActionLink("Users", "Index", "users")</li>
+                @if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "index" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "feed")
+                {
+                    <li class="active">@Html.ActionLink("Discussions", "Index", "feed")</li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("Discussions", "Index", "feed")</li>
+                }
+                @if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "index" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "tags")
+                {
+                    <li class="active">@Html.ActionLink("Tags", "Index", "tags")</li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("Tags", "Index", "tags")</li>
+                }
+                @if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "index" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "career")
+                {
+                    <li class="active">@Html.ActionLink("Career", "Index", "career")</li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("Career", "Index", "career")</li>
+                }
+                @if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "index" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "users")
+                {
+                    <li class="active">@Html.ActionLink("Users", "Index", "users")</li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("Users", "Index", "users")</li>
+                }
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li>
-                        <a href="/feed/startdiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
-                    </li>
+                    if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "startdiscussion" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "feed")
+                    {
+                        <li class="active">
+                            <a href="/feed/startdiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a href="/feed/startdiscussion" id="notificationLink"><span class="glyphicon glyphicon-question-sign"></span>  Ask Question</a></li>
+                    }
                 }
             </ul>
             @Html.Partial("_LoginPartial")
