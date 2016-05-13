@@ -1029,6 +1029,14 @@
             <param name="searchTerm">comma (,) separeted search term</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersAskToAnswer(System.String,System.String)">
+            <summary>
+            API to search user who can answer a specific question based on the question tagging. This is very similar to 'SearchUsers' 
+            API but here we will include the users that we manually searched and asked to answer this question
+            </summary>
+            <param name="searchTerm"></param>
+            <returns></returns>
+        </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.SearchController.SearchUsersByNameEmail(System.String)">
             <summary>
             Method to search user by email or name. We are using this API in 'Ask To Answer' search box
