@@ -5,7 +5,7 @@
 
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.3")" />
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/discussion.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/magnific-popup.css")"/>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/magnific-popup.css")" />
 
 <!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
 @if (User.Identity.IsAuthenticated)
@@ -31,372 +31,377 @@
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
             </div>
         </div>
-            <div class="feed-list">
-                <div class="row item question hide">
-                    <div class="col-xs-12 thread">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row post-header">
-                                    <div class="col-sm-12 col-xs-12 headers-col">
-                                        <div class="profile-img-col">
-                                            <a href="#" class="post-creator-image"></a>
-                                        </div>
-                                        <p class="header-text-content ">
-                                            <a href="#" class="name-link"></a>
-                                            <span class="spanEditQuestion hide"> <a href="#editquestion" data-effect="mfp-zoom-in">Edit</a> </span>
-                                        </p>
-                                        <p class="tagline-text-content designation"></p>
+        <div class="feed-list">
+            <div class="row item question hide">
+                <div class="col-xs-12 thread">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row post-header">
+                                <div class="col-sm-12 col-xs-12 headers-col">
+                                    <div class="profile-img-col">
+                                        <a href="#" class="post-creator-image"></a>
                                     </div>
+                                    <p class="header-text-content ">
+                                        <a href="#" class="name-link"></a>
+                                        <span class="spanEditQuestion hide"> <a href="#editquestion" data-effect="mfp-zoom-in">Edit</a> </span>
+                                    </p>
+                                    <p class="tagline-text-content designation"></p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-12 top-question">
-                                        <h2 class="title">
-                                            <a href="#" data-type="text">Need help to create shibpurhub animated video</a>
-                                        </h2>
-                                        <div class="post-description">
-                                            <p data-type="text">
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 top-question">
+                                    <h2 class="title">
+                                        <a href="#" data-type="text">Need help to create shibpurhub animated video</a>
+                                    </h2>
+                                    <div class="post-description">
+                                        <p data-type="text">
 
-                                            </p>
-                                        </div>
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="row tags-area">
-                                    <div class="col-xs-12 tags-container">
-                                        <ul class="tagsList">
-                                            @*
+                            </div>
+                            <div class="row tags-area">
+                                <div class="col-xs-12 tags-container">
+                                    <ul class="tagsList">
+                                        @*
                                             <li><a href="#"><span>shibpurhub </span></a></li>*@
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row thread-details">
-                            <div class="thread-details-container">
-                                <div class="col-xs-12 col-md-2">
-                                    <ul class="list-inline pull-left follow-ul">
-                                        <li>
-                                            <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-plus-circle"></i> <span>Follow</span></a>
-                                        </li>
-                                    </ul>
-
-                                </div>
-                                <div class="col-xs-12 col-md-10 hidden-xs">
-                                    <ul class="extra-details pull-right list-inline">
-                                        <li>
-                                            <span class="view-count"></span>
-                                        </li>
-                                        <li>
-                                            <span class="answer-count"></span>
-                                        </li>
-                                        <li>
-                                            <span class="post-pub-time">Jul 31, 2015</span>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div class="row thread-details">
+                        <div class="thread-details-container">
+                            <div class="col-xs-12 col-md-2">
+                                <ul class="list-inline pull-left follow-ul">
+                                    <li>
+                                        <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-plus-circle"></i> <span>Follow</span></a>
+                                    </li>
+                                </ul>
 
-                <div class="row item answer thread hide">
-                    <div class="col-xs-12">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row post-header">
-                                    <div class="col-sm-12 col-xs-12 headers-col">
-                                        <div class="profile-img-col">
-                                            <a href="#" class="post-creator-image"></a>
-                                        </div>
-                                        <p class="header-text-content ">
-                                            <a href="#" class="name-link"></a>
+                            </div>
+                            <div class="col-xs-12 col-md-10 hidden-xs">
+                                <ul class="extra-details pull-right list-inline">
+                                    <li>
+                                        <span class="view-count"></span>
+                                    </li>
+                                    <li>
+                                        <span class="answer-count"></span>
+                                    </li>
+                                    <li>
+                                        <span class="post-pub-time">Jul 31, 2015</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row item answer thread hide">
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row post-header">
+                                <div class="col-sm-12 col-xs-12 headers-col">
+                                    <div class="profile-img-col">
+                                        <a href="#" class="post-creator-image"></a>
+                                    </div>
+                                    <p class="header-text-content ">
+                                        <a href="#" class="name-link"></a>
+                                    </p>
+                                    <p class="tagline-text-content designation"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12 ">
+
+                                    <div class="post-description">
+                                        <p>
+
                                         </p>
-                                        <p class="tagline-text-content designation"></p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-12 ">
-
-                                        <div class="post-description">
-                                            <p>
-
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row thread-details">
-                            <div class="thread-details-container">
-                                <div class="col-xs-12 col-md-6">
-                                    <ul class="list-inline pull-left markanswer-ul">
-                                        <li>
-                                            <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-check"></i> <span>Accept</span></a>
-                                        </li>
-                                    </ul>
-                                    <ul class="list-inline pull-left upvote-ul">
-                                        <li>
-                                            <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
-                                        </li>
-                                    </ul>
-                                    @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin)
-                                    {
-                                        <ul class="list-inline pull-left delete-ul">
-                                            <li>
-                                                <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-trash-o"></i> <span>Delete</span></a>
-                                            </li>
-                                        </ul>
-                                    }
-                                </div>
-                                <div class="col-xs-12 col-md-6 hidden-xs">
-                                    <ul class="extra-details pull-right list-inline">
-                                        <li>
-                                            <span class="view-count"></span>
-                                        </li>
-                                        <li>
-                                            <span class="answer-count"></span>
-                                        </li>
-                                        <li>
-                                            <span class="post-pub-time">Jul 31, 2015</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="comments">
-                        <div class="col-xs-12 post-comment hide">
-                            <div class="row">
-                                <div class="col-md-1 col-xs-2 comment-photo-container">
-                                    <a href="#" class="img-container" style="background-image: url('')"></a>
-                                </div>
-                                <div class="col-md-11 col-xs-10 comment-photo-container">
-                                    <div class="comment-text">
-                                        <input type="hidden" value="xzxzxzxzxzxz" class="initial-content">
-
-                                        <div class="commentContent show"><p>xzxzxzxzxzxz</p></div>
-
-                                        <div class="form-group hide">
-
-                                            <textarea class="form-control hide" data-comment-id="56163190ad669c4758e3a30e"
-                                                      style="overflow: hidden; word-wrap: break-word; height: 74px;">
-                                                xzxzxzxzxzxz
-                                            </textarea>
-                                        </div>
-
-                                        <ul class="list-inline comment-details">
-
-                                            <li><a href="#" class="comment-author-name"></a></li>
-                                            <li><span class="comment-time"></span></li>
-                                            <li><a href="#" class="editCommentBtn hide"><i class="fa fa-pencil"></i> edit</a></li>
-                                            <li><a href="#" class="deleteCommentBtn hide"><i class="fa fa-trash"></i> delete</a></li>
-
-                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div class="col-xs-12 post-comment hidden-xs hidden-sm">
-                            <div class="row">
-                                <div class="col-md-1 col-xs-2 comment-photo-container">
-                                    <a href="#" class="img-container myimg" style="background-image: url('/Content/images/profile-image.jpg');"></a>
-                                </div>
-                                <div class="col-md-11 col-xs-10 comment-photo-container">
-                                    <div class="comment-text">
-                                        <div class="form-group">
-                                            <textarea placeholder="Comment on this answer" rows="1"
-                                                      class="form-control write-comment" data-reply-to="56163190ad669c4758e3a30e"
-                                                      style="overflow: hidden; word-wrap: break-word; height: 54px;"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="row thread-details">
+                        <div class="thread-details-container">
+                            <div class="col-xs-12 col-md-6">
+                                <ul class="list-inline pull-left markanswer-ul">
+                                    <li>
+                                        <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-check"></i> <span>Accept</span></a>
+                                    </li>
+                                </ul>
+                                <ul class="list-inline pull-left upvote-ul">
+                                    <li>
+                                        <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-arrow-up"></i> <span>Upvote</span></a>
+                                    </li>
+                                </ul>
+                                @if (ViewBag.IsAdmin != null && ViewBag.IsAdmin)
+                                {
+                                    <ul class="list-inline pull-left delete-ul">
+                                        <li>
+                                            <a href="#" class="thumbs" data-allowed="true"><i class="fa fa-trash-o"></i> <span>Delete</span></a>
+                                        </li>
+                                    </ul>
+                                }
+                            </div>
+                            <div class="col-xs-12 col-md-6 hidden-xs">
+                                <ul class="extra-details pull-right list-inline">
+                                    <li>
+                                        <span class="view-count"></span>
+                                    </li>
+                                    <li>
+                                        <span class="answer-count"></span>
+                                    </li>
+                                    <li>
+                                        <span class="post-pub-time">Jul 31, 2015</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                    }
+                    </div>
+
                 </div>
-                <div class="question-container">
+                <div class="comments">
+                    <div class="col-xs-12 post-comment hide">
+                        <div class="row">
+                            <div class="col-md-1 col-xs-2 comment-photo-container">
+                                <a href="#" class="img-container" style="background-image: url('')"></a>
+                            </div>
+                            <div class="col-md-11 col-xs-10 comment-photo-container">
+                                <div class="comment-text">
+                                    <input type="hidden" value="xzxzxzxzxzxz" class="initial-content">
+
+                                    <div class="commentContent show"><p>xzxzxzxzxzxz</p></div>
+
+                                    <div class="form-group hide">
+
+                                        <textarea class="form-control hide" data-comment-id="56163190ad669c4758e3a30e"
+                                                  style="overflow: hidden; word-wrap: break-word; height: 74px;">
+                                            xzxzxzxzxzxz
+                                        </textarea>
+                                    </div>
+
+                                    <ul class="list-inline comment-details">
+
+                                        <li><a href="#" class="comment-author-name"></a></li>
+                                        <li><span class="comment-time"></span></li>
+                                        <li><a href="#" class="editCommentBtn hide"><i class="fa fa-pencil"></i> edit</a></li>
+                                        <li><a href="#" class="deleteCommentBtn hide"><i class="fa fa-trash"></i> delete</a></li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <div class="submit-answer-container">
-                        <div class="col-xs-12">
-                            <h4 class="answer-header">Reply to this post</h4>
-                        </div>
-                        <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none; padding: 5px; margin-bottom: 15px;" id="errormessage">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>Error!</strong>
-                        </div>
-                        <div class="row item">
-                            <div class="col-xs-12 thread">
-                                <div class="write-answer" style="margin:20px 0px; padding-left: 0;">
-                                    @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
-                                    <div class="text-wrapper col-md-12 col-xs-12">
-                                        <div class="toolbar-container">
-                                            <span class="ql-format-group">
-                                                <select title="Size" class="ql-size">
-                                                    <option value="10px">Small</option>
-                                                    <option value="13px" selected>Normal</option>
-                                                    <option value="18px">Large</option>
-                                                    <option value="32px">Huge</option>
-                                                </select>
-                                            </span>
-                                            <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
-                                                <select title="Text Color" class="ql-color">
-                                                    <option value="rgb(0, 0, 0)" selected></option>
-                                                    <option value="rgb(230, 0, 0)"></option>
-                                                    <option value="rgb(255, 153, 0)"></option>
-                                                    <option value="rgb(255, 255, 0)"></option>
-                                                    <option value="rgb(0, 138, 0)"></option>
-                                                    <option value="rgb(0, 102, 204)"></option>
-                                                    <option value="rgb(153, 51, 255)"></option>
-                                                    <option value="rgb(255, 255, 255)"></option>
-                                                    <option value="rgb(250, 204, 204)"></option>
-                                                    <option value="rgb(255, 235, 204)"></option>
-                                                    <option value="rgb(255, 255, 204)"></option>
-                                                    <option value="rgb(204, 232, 204)"></option>
-                                                    <option value="rgb(204, 224, 245)"></option>
-                                                    <option value="rgb(235, 214, 255)"></option>
-                                                    <option value="rgb(187, 187, 187)"></option>
-                                                    <option value="rgb(240, 102, 102)"></option>
-                                                    <option value="rgb(255, 194, 102)"></option>
-                                                    <option value="rgb(255, 255, 102)"></option>
-                                                    <option value="rgb(102, 185, 102)"></option>
-                                                    <option value="rgb(102, 163, 224)"></option>
-                                                    <option value="rgb(194, 133, 255)"></option>
-                                                    <option value="rgb(136, 136, 136)"></option>
-                                                    <option value="rgb(161, 0, 0)"></option>
-                                                    <option value="rgb(178, 107, 0)"></option>
-                                                    <option value="rgb(178, 178, 0)"></option>
-                                                    <option value="rgb(0, 97, 0)"></option>
-                                                    <option value="rgb(0, 71, 178)"></option>
-                                                    <option value="rgb(107, 36, 178)"></option>
-                                                    <option value="rgb(68, 68, 68)"></option>
-                                                    <option value="rgb(92, 0, 0)"></option>
-                                                    <option value="rgb(102, 61, 0)"></option>
-                                                    <option value="rgb(102, 102, 0)"></option>
-                                                    <option value="rgb(0, 55, 0)"></option>
-                                                    <option value="rgb(0, 41, 102)"></option>
-                                                    <option value="rgb(61, 20, 102)"></option>
-                                                </select><span class="ql-format-separator"></span>
-                                                <select title="Background Color" class="ql-background">
-                                                    <option value="rgb(0, 0, 0)"></option>
-                                                    <option value="rgb(230, 0, 0)"></option>
-                                                    <option value="rgb(255, 153, 0)"></option>
-                                                    <option value="rgb(255, 255, 0)"></option>
-                                                    <option value="rgb(0, 138, 0)"></option>
-                                                    <option value="rgb(0, 102, 204)"></option>
-                                                    <option value="rgb(153, 51, 255)"></option>
-                                                    <option value="rgb(255, 255, 255)" selected></option>
-                                                    <option value="rgb(250, 204, 204)"></option>
-                                                    <option value="rgb(255, 235, 204)"></option>
-                                                    <option value="rgb(255, 255, 204)"></option>
-                                                    <option value="rgb(204, 232, 204)"></option>
-                                                    <option value="rgb(204, 224, 245)"></option>
-                                                    <option value="rgb(235, 214, 255)"></option>
-                                                    <option value="rgb(187, 187, 187)"></option>
-                                                    <option value="rgb(240, 102, 102)"></option>
-                                                    <option value="rgb(255, 194, 102)"></option>
-                                                    <option value="rgb(255, 255, 102)"></option>
-                                                    <option value="rgb(102, 185, 102)"></option>
-                                                    <option value="rgb(102, 163, 224)"></option>
-                                                    <option value="rgb(194, 133, 255)"></option>
-                                                    <option value="rgb(136, 136, 136)"></option>
-                                                    <option value="rgb(161, 0, 0)"></option>
-                                                    <option value="rgb(178, 107, 0)"></option>
-                                                    <option value="rgb(178, 178, 0)"></option>
-                                                    <option value="rgb(0, 97, 0)"></option>
-                                                    <option value="rgb(0, 71, 178)"></option>
-                                                    <option value="rgb(107, 36, 178)"></option>
-                                                    <option value="rgb(68, 68, 68)"></option>
-                                                    <option value="rgb(92, 0, 0)"></option>
-                                                    <option value="rgb(102, 61, 0)"></option>
-                                                    <option value="rgb(102, 102, 0)"></option>
-                                                    <option value="rgb(0, 55, 0)"></option>
-                                                    <option value="rgb(0, 41, 102)"></option>
-                                                    <option value="rgb(61, 20, 102)"></option>
-                                                </select><span class="ql-format-separator"></span>
-
-                                            </span><span class="ql-format-group">
-                                                <span title="List" class="ql-format-button ql-list"></span>
-                                                <span class="ql-format-separator"></span>
-                                                <span title="Bullet" class="ql-format-button ql-bullet"></span>
-                                                <span class="ql-format-separator"></span>
-                                                <select title="Text Alignment" class="ql-align">
-                                                    <option value="left" selected></option>
-                                                    <option value="center"></option>
-                                                    <option value="right"></option>
-                                                    <option value="justify"></option>
-                                                </select>
-                                            </span>
-                                            <span class="ql-format-group">
-                                                <span title="Link" class="ql-format-button ql-link"></span>
-                                                <span class="ql-format-separator"></span>
-                                                <span title="Image" class="ql-format-button ql-image"></span>
-                                            </span>
-                                        </div>
-                                        <div class="editor-container"></div>
+                    <div class="col-xs-12 post-comment hidden-xs hidden-sm">
+                        <div class="row">
+                            <div class="col-md-1 col-xs-2 comment-photo-container">
+                                <a href="#" class="img-container myimg" style="background-image: url('/Content/images/profile-image.jpg');"></a>
+                            </div>
+                            <div class="col-md-11 col-xs-10 comment-photo-container">
+                                <div class="comment-text">
+                                    <div class="form-group">
+                                        <textarea placeholder="Comment on this answer" rows="1"
+                                                  class="form-control write-comment" data-reply-to="56163190ad669c4758e3a30e"
+                                                  style="overflow: hidden; word-wrap: break-word; height: 54px;"></textarea>
                                     </div>
-                                    @*<a class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 10px;">Submit Answer</a>*@
-                                    <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 15px;">
-                                        <i></i><span>Submit Reply</span>
-                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 }
-                <div class="answer-container">
+            </div>
+            <div class="question-container">
+            </div>
+
+            <div class="submit-answer-container">
+                <div class="col-xs-12">
+                    <h4 class="answer-header">Reply to this post</h4>
+                </div>
+                <div class="alert alert-danger alert-dismissible col-md-10 col-md-offset-1" role="alert" style="display:none; padding: 5px; margin-bottom: 15px;" id="errormessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Error!</strong>
+                </div>
+                <div class="row item">
+                    <div class="col-xs-12 thread">
+                        <div class="write-answer" style="margin:20px 0px; padding-left: 0;">
+                            @*<textarea class="textarea" placeholder="Write your answer" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; padding: 10px 10px 10px 10px"></textarea>*@
+                            <div class="text-wrapper col-md-12 col-xs-12">
+                                <div class="toolbar-container">
+                                    <span class="ql-format-group">
+                                        <select title="Size" class="ql-size">
+                                            <option value="10px">Small</option>
+                                            <option value="13px" selected>Normal</option>
+                                            <option value="18px">Large</option>
+                                            <option value="32px">Huge</option>
+                                        </select>
+                                    </span>
+                                    <span class="ql-format-group"><span title="Bold" class="ql-format-button ql-bold"></span><span class="ql-format-separator"></span><span title="Italic" class="ql-format-button ql-italic"></span><span class="ql-format-separator"></span><span title="Underline" class="ql-format-button ql-underline"></span></span><span class="ql-format-group">
+                                        <select title="Text Color" class="ql-color">
+                                            <option value="rgb(0, 0, 0)" selected></option>
+                                            <option value="rgb(230, 0, 0)"></option>
+                                            <option value="rgb(255, 153, 0)"></option>
+                                            <option value="rgb(255, 255, 0)"></option>
+                                            <option value="rgb(0, 138, 0)"></option>
+                                            <option value="rgb(0, 102, 204)"></option>
+                                            <option value="rgb(153, 51, 255)"></option>
+                                            <option value="rgb(255, 255, 255)"></option>
+                                            <option value="rgb(250, 204, 204)"></option>
+                                            <option value="rgb(255, 235, 204)"></option>
+                                            <option value="rgb(255, 255, 204)"></option>
+                                            <option value="rgb(204, 232, 204)"></option>
+                                            <option value="rgb(204, 224, 245)"></option>
+                                            <option value="rgb(235, 214, 255)"></option>
+                                            <option value="rgb(187, 187, 187)"></option>
+                                            <option value="rgb(240, 102, 102)"></option>
+                                            <option value="rgb(255, 194, 102)"></option>
+                                            <option value="rgb(255, 255, 102)"></option>
+                                            <option value="rgb(102, 185, 102)"></option>
+                                            <option value="rgb(102, 163, 224)"></option>
+                                            <option value="rgb(194, 133, 255)"></option>
+                                            <option value="rgb(136, 136, 136)"></option>
+                                            <option value="rgb(161, 0, 0)"></option>
+                                            <option value="rgb(178, 107, 0)"></option>
+                                            <option value="rgb(178, 178, 0)"></option>
+                                            <option value="rgb(0, 97, 0)"></option>
+                                            <option value="rgb(0, 71, 178)"></option>
+                                            <option value="rgb(107, 36, 178)"></option>
+                                            <option value="rgb(68, 68, 68)"></option>
+                                            <option value="rgb(92, 0, 0)"></option>
+                                            <option value="rgb(102, 61, 0)"></option>
+                                            <option value="rgb(102, 102, 0)"></option>
+                                            <option value="rgb(0, 55, 0)"></option>
+                                            <option value="rgb(0, 41, 102)"></option>
+                                            <option value="rgb(61, 20, 102)"></option>
+                                        </select><span class="ql-format-separator"></span>
+                                        <select title="Background Color" class="ql-background">
+                                            <option value="rgb(0, 0, 0)"></option>
+                                            <option value="rgb(230, 0, 0)"></option>
+                                            <option value="rgb(255, 153, 0)"></option>
+                                            <option value="rgb(255, 255, 0)"></option>
+                                            <option value="rgb(0, 138, 0)"></option>
+                                            <option value="rgb(0, 102, 204)"></option>
+                                            <option value="rgb(153, 51, 255)"></option>
+                                            <option value="rgb(255, 255, 255)" selected></option>
+                                            <option value="rgb(250, 204, 204)"></option>
+                                            <option value="rgb(255, 235, 204)"></option>
+                                            <option value="rgb(255, 255, 204)"></option>
+                                            <option value="rgb(204, 232, 204)"></option>
+                                            <option value="rgb(204, 224, 245)"></option>
+                                            <option value="rgb(235, 214, 255)"></option>
+                                            <option value="rgb(187, 187, 187)"></option>
+                                            <option value="rgb(240, 102, 102)"></option>
+                                            <option value="rgb(255, 194, 102)"></option>
+                                            <option value="rgb(255, 255, 102)"></option>
+                                            <option value="rgb(102, 185, 102)"></option>
+                                            <option value="rgb(102, 163, 224)"></option>
+                                            <option value="rgb(194, 133, 255)"></option>
+                                            <option value="rgb(136, 136, 136)"></option>
+                                            <option value="rgb(161, 0, 0)"></option>
+                                            <option value="rgb(178, 107, 0)"></option>
+                                            <option value="rgb(178, 178, 0)"></option>
+                                            <option value="rgb(0, 97, 0)"></option>
+                                            <option value="rgb(0, 71, 178)"></option>
+                                            <option value="rgb(107, 36, 178)"></option>
+                                            <option value="rgb(68, 68, 68)"></option>
+                                            <option value="rgb(92, 0, 0)"></option>
+                                            <option value="rgb(102, 61, 0)"></option>
+                                            <option value="rgb(102, 102, 0)"></option>
+                                            <option value="rgb(0, 55, 0)"></option>
+                                            <option value="rgb(0, 41, 102)"></option>
+                                            <option value="rgb(61, 20, 102)"></option>
+                                        </select><span class="ql-format-separator"></span>
+
+                                    </span><span class="ql-format-group">
+                                        <span title="List" class="ql-format-button ql-list"></span>
+                                        <span class="ql-format-separator"></span>
+                                        <span title="Bullet" class="ql-format-button ql-bullet"></span>
+                                        <span class="ql-format-separator"></span>
+                                        <select title="Text Alignment" class="ql-align">
+                                            <option value="left" selected></option>
+                                            <option value="center"></option>
+                                            <option value="right"></option>
+                                            <option value="justify"></option>
+                                        </select>
+                                    </span>
+                                    <span class="ql-format-group">
+                                        <span title="Link" class="ql-format-button ql-link"></span>
+                                        <span class="ql-format-separator"></span>
+                                        <span title="Image" class="ql-format-button ql-image"></span>
+                                    </span>
+                                </div>
+                                <div class="editor-container"></div>
+                            </div>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <button type="submit" id="btn_Save" class="btn btn-primary btn-submit-answer btn-sm" style=" margin-top: 15px;">
+                                    <i></i><span>Submit Reply</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" id="btn_Save" class="btn btn-primary btn-to-login btn-sm" style=" margin-top: 15px;">
+                                    <i></i><span>Login To Reply</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!--div to show Ask to Answer module-->
-            @if (User.Identity.IsAuthenticated)
-            {
-                <div class="" id="userToAnswer" style="margin-top:30px;display:none">
-                    <h4 class="section-header">Ask to answer</h4>
-                    <div class="col-md-12 col-xs-12">
-                        <form role="search">
-                            <div class="form-group">
-                                <input type="text" id="usernametext" class="form-control" placeholder="Search a user to answer your question" aria-describedby="sizing-addon3" style="width:99%">
-                            </div>
-                        </form>
-                    </div>
-                    <!--div for loading message for the ask to answer module-->
-                    <div class="parentloadingdiv">
-                        <div id="loadingasktoanswer">
-                            <i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-xs-12" id="userlistasktoanswer">
-                    </div>
-                </div>
-            }
-
-            <!-- EDIT QUESTION START-->
-            <div id="editquestion" class="editQuesDiv white-popup mfp-with-anim mfp-hide">
-                <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
-                    <label class="control-label col-md-3" for="Question">Question title</label>
-                    <div id="questiontitlediv">
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <input class="form-control" id="txt_question_edit" type="text" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @{ Html.RenderPartial("_RichTextBox"); }
-                <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
-                    <i></i><span>Save question</span>
-                </button>
+            <div class="answer-container">
             </div>
-            <!-- EDIT QUESTION END-->
         </div>
+
+        <!--div to show Ask to Answer module-->
+
+        <div class="" id="userToAnswer" style="margin-top:30px;display:none">
+            <h4 class="section-header">Ask to answer</h4>
+            <div class="col-md-12 col-xs-12">
+                <form role="search">
+                    <div class="form-group">
+                        <input type="text" id="usernametext" class="form-control" placeholder="Search a user to answer your question" aria-describedby="sizing-addon3" style="width:99%">
+                    </div>
+                </form>
+            </div>
+            <!--div for loading message for the ask to answer module-->
+            <div class="parentloadingdiv">
+                <div id="loadingasktoanswer">
+                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12" id="userlistasktoanswer">
+            </div>
+        </div>
+
+        <!-- EDIT QUESTION START-->
+        <div id="editquestion" class="editQuesDiv white-popup mfp-with-anim mfp-hide">
+            <div class="form-group" style="margin-bottom: 15px; overflow: auto;">
+                <label class="control-label col-md-3" for="Question">Question title</label>
+                <div id="questiontitlediv">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input class="form-control" id="txt_question_edit" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @{ Html.RenderPartial("_RichTextBox"); }
+            <button type="submit" id="btn_Edit_Question" class="btn btn-primary btn-xs" style="margin: 15px 0 0 15px; float: left;">
+                <i></i><span>Save question</span>
+            </button>
+        </div>
+        <!-- EDIT QUESTION END-->
+    </div>
     <div class="col-xs-12 col-md-3">
         @Html.Partial("~/Views/PartialViews/_PopularTags.cshtml")
-        @Html.Partial("~/Views/PartialViews/_LeaderBoard.cshtml")        
+        @Html.Partial("~/Views/PartialViews/_LeaderBoard.cshtml")
         @Html.Partial("~/Views/PartialViews/_PopularQuestions.cshtml")
     </div>
 
