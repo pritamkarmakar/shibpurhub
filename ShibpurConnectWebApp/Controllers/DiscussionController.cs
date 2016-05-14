@@ -14,7 +14,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         [SlugToId]
         [ActionName("DiscussionDetail")]
-        public ActionResult DiscussionDetail(string id)
+        public ActionResult DiscussionDetail(string id, string title)
         {
             var name = User.Identity.GetUserName();
             var admins = ConfigurationManager.AppSettings["adminsEmail"];
@@ -23,23 +23,24 @@ namespace ShibpurConnectWebApp.Controllers
                 ViewBag.IsAdmin = admins.Contains(name);
             }
             TempData["SelectedPage"] = "Threads";
-
             ViewData["questionId"] = id;
+            ViewData["questionTitle"] = title;
             return View();
         }
 
-        [ActionName("DiscussionDetailWithAnswerID")]
-        public ActionResult DiscussionDetail(string id, string answerId)
-        {            
-            TempData["SelectedPage"] = "Threads";
+        /*Not sure why we created this controller. Commenting it for now as I need same method signature in above function*/
+        //[ActionName("DiscussionDetailWithAnswerID")]
+        //public ActionResult DiscussionDetail(string id, string answerId)
+        //{
+        //    TempData["SelectedPage"] = "Threads";
 
-            ViewData["questionId"] = id;
-            if (!string.IsNullOrEmpty(answerId))
-            {
-                ViewData["answerId"] = answerId;
-            }
+        //    ViewData["questionId"] = id;
+        //    if (!string.IsNullOrEmpty(answerId))
+        //    {
+        //        ViewData["answerId"] = answerId;
+        //    }
 
-            return View("DiscussionDetail");
-        }
+        //    return View("DiscussionDetail");
+        //}
     }
 }

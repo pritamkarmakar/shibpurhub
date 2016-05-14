@@ -20,9 +20,12 @@ namespace ShibpurConnectWebApp.Controllers
             {
                 // retrieve the questionid from database
                 Helper.Helper helper = new Helper.Helper();
-                var questionId = helper.GetQuestionIdFromSlug(slug);
-                if (questionId != null)
-                    filterContext.ActionParameters["id"] = questionId;
+                var questionObj = helper.GetQuestionIdFromSlug(slug);
+                if (questionObj != null)
+                {
+                    filterContext.ActionParameters["id"] = questionObj.QuestionId;
+                    filterContext.ActionParameters["title"] = questionObj.Title;
+                }
             }
             base.OnActionExecuting(filterContext);
         }

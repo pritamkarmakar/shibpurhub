@@ -91,8 +91,6 @@ function RedirectToLogin() {
 }
 
 function createQuestion(question) {
-    document.title = question.title + " - ShibpurHub";
-
     var htmlItem = $('div.item.question.hide').clone().removeClass('hide');
 
     var creatorImage = $(htmlItem).find('.post-creator-image');

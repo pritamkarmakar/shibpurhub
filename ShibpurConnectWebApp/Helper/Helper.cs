@@ -449,14 +449,19 @@ namespace ShibpurConnectWebApp.Helper
         /// </summary>
         /// <param name="slugUrl">question slug url</param>
         /// <returns></returns>
-        internal string GetQuestionIdFromSlug(string slugUrl)
+        internal QuestionDTO GetQuestionIdFromSlug(string slugUrl)
         {
             MongoHelper<Question> _mongoHelper = new MongoHelper<Question>();
 
             //find out the question object using the slugurl
             var questionObj = _mongoHelper.Collection.AsQueryable().FirstOrDefault(m => m.UrlSlug == slugUrl);
 
-            if (questionObj != null) return questionObj.QuestionId;
+            if (questionObj != null)
+                return new QuestionDTO
+                {
+                    QuestionId = questionObj.QuestionId,
+                    Title = questionObj.Title
+                };               
 
             return null;
         }
