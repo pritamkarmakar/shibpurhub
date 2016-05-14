@@ -263,10 +263,15 @@ namespace ShibpurConnectWebApp.Controllers
         }
 
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult Profile(string userId)
+        public async Task<ActionResult> Profile(string userId)
         {
             ViewData["userId"] = userId;
             TempData["SelectedPage"] = "Users";
+
+            var userInfo = UserManager.FindById(userId);
+            if (userInfo != null)
+                ViewData["userName"] = userInfo.FirstName + " " + userInfo.LastName;
+
             return View();
         }
 

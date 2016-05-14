@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = ViewData["userName"] + " - ShibpurHub";
 }
 
 <!--this knockout js will save the token in the session storage and we want to make the call only when user is logged in-->
@@ -208,7 +209,7 @@
                 }
 
                 // set page title
-                document.title = result.firstName + " " + result.lastName + " - ShibpurHub";
+                //document.title = result.firstName + " " + result.lastName + " - ShibpurHub";
                 var registeredOn = result.registeredOn;
                 var lastSeenOn = result.lastSeenOn;
                 $(".userdisplayname").text(result.firstName + " " + result.lastName);
