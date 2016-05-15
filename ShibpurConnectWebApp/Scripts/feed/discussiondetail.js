@@ -267,21 +267,23 @@ function createAnswer(answer) {
     $('.myimg').css('background-image', "url(" + profiledefaultimage + ")");
     
     if (answer.userId == userId) {
-        $('.spanEditAnswer').removeClass('hide');
+        var editSpan = $(htmlItem).find('.spanEditAnswer');
+        $(editSpan).removeClass('hide');
+        
+        $(editSpan).magnificPopup({
+            type: 'inline',
+            delegate: 'a',
+            removalDelay: 500, //delay removal by X to allow out-animation
+            callbacks: {
+                beforeOpen: function () {
+                    this.st.mainClass = this.st.el.attr('data-effect');
+                    $('#btn_Edit_Answer').attr('data-answer-id', answer.answerId);
+                    setUpEditAnswer(answer);
+                }
+            },
+            midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+        });
     }
-    $('.spanEditAnswer').magnificPopup({
-        type: 'inline',
-        delegate: 'a',
-        removalDelay: 500, //delay removal by X to allow out-animation
-        callbacks: {
-            beforeOpen: function () {
-                this.st.mainClass = this.st.el.attr('data-effect');
-                $('#btn_Edit_Answer').attr('data-answer-id', answer.answerId);
-                setUpEditAnswer(answer);
-            }
-        },
-        midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
-    });
 
     var comments = answer.comments;
     if (!comments) {
@@ -572,12 +574,13 @@ function setUpEditQuestion() {
     });
 
     qustionRTBoxEditor.setHTML($('div.post-description p.top').html());
+    $('.editQuesDiv .toolbar-container').show();
     
-    qustionRTBoxEditor.on('text-change', function (delta, source) {
-        if (!$('.editQuesDiv .toolbar-container').is(":visible")) {
-            $('.editQuesDiv .toolbar-container').show("slide", { "direction": "down" });
-        }
-    });
+    //qustionRTBoxEditor.on('text-change', function (delta, source) {
+    //    if (!$('.editQuesDiv .toolbar-container').is(":visible")) {
+    //        $('.editQuesDiv .toolbar-container').show("slide", { "direction": "down" });
+    //    }
+    //});
     
 
     $('#btn_Edit_Question').click(function () {
@@ -636,11 +639,12 @@ function setUpEditAnswer(answer)
     
     answerEditRTBoxEditor.setHTML(answer.answerText);
     
-    answerEditRTBoxEditor.on('text-change', function (delta, source) {
-        if (!$('.editAnswerDiv .toolbar-container').is(":visible")) {
-            $('.editAnswerDiv .toolbar-container').show("slide", { "direction": "down" });
-        }
-    });
+    $('.editAnswerDiv .toolbar-container').show();
+    //answerEditRTBoxEditor.on('text-change', function (delta, source) {
+    //    if (!$('.editAnswerDiv .toolbar-container').is(":visible")) {
+    //        $('.editAnswerDiv .toolbar-container').show("slide", { "direction": "down" });
+    //    }
+    //});
     
     $('#btn_Edit_Answer').click(function () {
         $.magnificPopup.close();
