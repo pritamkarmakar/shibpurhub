@@ -572,6 +572,13 @@ function setUpEditQuestion() {
     });
 
     qustionRTBoxEditor.setHTML($('div.post-description p.top').html());
+    
+    qustionRTBoxEditor.on('text-change', function (delta, source) {
+        if (!$('.editQuesDiv .toolbar-container').is(":visible")) {
+            $('.editQuesDiv .toolbar-container').show("slide", { "direction": "down" });
+        }
+    });
+    
 
     $('#btn_Edit_Question').click(function () {
         $.magnificPopup.close();
@@ -608,6 +615,8 @@ function setUpEditAnswer(answer)
         return;
     }
     
+    var rtContainer = $('.editAnswerDiv .richtextbox-container');
+    $(rtContainer).find('.control-label').text('Answer');
     answerEditRTBoxEditor = new Quill('.editAnswerDiv .richtextbox-container .text-wrapper .editor-container', {
         modules: {
             'authorship': {
@@ -626,6 +635,12 @@ function setUpEditAnswer(answer)
     });
     
     answerEditRTBoxEditor.setHTML(answer.answerText);
+    
+    answerEditRTBoxEditor.on('text-change', function (delta, source) {
+        if (!$('.editAnswerDiv .toolbar-container').is(":visible")) {
+            $('.editAnswerDiv .toolbar-container').show("slide", { "direction": "down" });
+        }
+    });
     
     $('#btn_Edit_Answer').click(function () {
         $.magnificPopup.close();
