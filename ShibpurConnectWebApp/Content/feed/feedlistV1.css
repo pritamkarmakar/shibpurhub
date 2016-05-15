@@ -95,7 +95,12 @@ a.post-creator-image {
     min-width: 95%;
 }
 
-.edit a {
+span.edit
+{
+    float: right;
+}
+
+span.edit a {
     color: #BABABA;
     font-size: 12px;
 }
