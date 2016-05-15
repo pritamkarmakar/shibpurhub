@@ -18,6 +18,8 @@ if (userInfo != null) {
 
 //used to reference rich textbox editor for question edit
 var qustionRTBoxEditor;
+var answerEditRTBoxEditor;
+
 var categoryArr = [];
 $(document).ready(function () {
     scrollToADivOnPageLoad();
@@ -178,6 +180,23 @@ function createQuestion(question) {
     // show the 'ask to answer module'
     $('#userToAnswer').show();
 
+    if (question.userId == userId) {
+        $('.spanEditQuestion').removeClass('hide');
+    }
+    $('.spanEditQuestion').magnificPopup({
+        type: 'inline',
+        delegate: 'a',
+        removalDelay: 500, //delay removal by X to allow out-animation
+        callbacks: {
+            beforeOpen: function () {
+                this.st.mainClass = this.st.el.attr('data-effect');
+                $('#btn_Edit_Question').attr('data-question-id', question.questionId);
+                setUpEditQuestion();
+            }
+        },
+        midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+    });
+    
     var answers = question.answers;
     if (!answers) {
         return;
@@ -194,22 +213,8 @@ function createQuestion(question) {
     if (answerId && answerId != "") {
         $('html,body').animate({ scrollTop: $('#' + answerId).offset().top - 70 }, 'fast');
     }
-
-    if (question.userId == userId) {
-        $('.spanEditQuestion').removeClass('hide');
-    }
-    $('.spanEditQuestion').magnificPopup({
-        delegate: 'a',
-        removalDelay: 500, //delay removal by X to allow out-animation
-        callbacks: {
-            beforeOpen: function () {
-                this.st.mainClass = this.st.el.attr('data-effect');
-                $('#btn_Edit_Question').attr('data-question-id', question.questionId);
-                setUpEditQuestion();
-            }
-        },
-        midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
-    });
+    
+    
 }
 
 
@@ -260,6 +265,23 @@ function createAnswer(answer) {
     }
 
     $('.myimg').css('background-image', "url(" + profiledefaultimage + ")");
+    
+    if (answer.userId == userId) {
+        $('.spanEditAnswer').removeClass('hide');
+    }
+    $('.spanEditAnswer').magnificPopup({
+        type: 'inline',
+        delegate: 'a',
+        removalDelay: 500, //delay removal by X to allow out-animation
+        callbacks: {
+            beforeOpen: function () {
+                this.st.mainClass = this.st.el.attr('data-effect');
+                $('#btn_Edit_Answer').attr('data-answer-id', answer.answerId);
+                setUpEditAnswer(answer);
+            }
+        },
+        midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+    });
 
     var comments = answer.comments;
     if (!comments) {
@@ -576,6 +598,53 @@ function setUpEditQuestion() {
         $('h2.title a.top').text(newTitle);
         $('div.post-description p.top').html(newDescription);
 
+    });
+}
+
+function setUpEditAnswer(answer)
+{
+    if(!answer)
+    {
+        return;
+    }
+    
+    answerEditRTBoxEditor = new Quill('.editAnswerDiv .richtextbox-container .text-wrapper .editor-container', {
+        modules: {
+            'authorship': {
+                authorId: 'advanced',
+                enabled: true
+            },
+            'toolbar': {
+                container: '.editAnswerDiv .richtextbox-container .text-wrapper .toolbar-container'
+            },
+            'link-tooltip': true,
+            'image-tooltip': true,
+            'multi-cursor': true
+        },
+        styles: false,
+        theme: 'snow'
+    });
+    
+    answerEditRTBoxEditor.setHTML(answer.answerText);
+    
+    $('#btn_Edit_Answer').click(function () {
+        $.magnificPopup.close();
+        var newText = answerEditRTBoxEditor.getHTML();
+        var data = {
+            "answerId": $(this).attr('data-answer-id'),
+            "answerText": newText
+        };
+
+        scAjax({
+            "url": "answers/EditAnswer",
+            "type": "POST",
+            "data": JSON.stringify(data, null, 2),
+            "success": function (result) {
+                
+            }
+        });
+        
+        $('.answer#'+answer.answerId).find('div.post-description p').html(newText);
     });
 }
 

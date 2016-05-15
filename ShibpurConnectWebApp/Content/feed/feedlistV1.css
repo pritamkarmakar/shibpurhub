@@ -92,7 +92,12 @@ a.post-creator-image {
     line-height: 1;
     margin-bottom: 5px;
     float: left;
-    min-width: 80%;
+    min-width: 95%;
+}
+
+.edit a {
+    color: #BABABA;
+    font-size: 12px;
 }
 
 .thread .post-header p {
