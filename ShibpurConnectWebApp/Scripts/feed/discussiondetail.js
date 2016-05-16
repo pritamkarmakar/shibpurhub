@@ -21,6 +21,8 @@ var qustionRTBoxEditor;
 var categoryArr = [];
 $(document).ready(function () {
     scrollToADivOnPageLoad();
+    // enable tooltip
+    $('[data-toggle="tooltip"]').tooltip();
     // hide the submit answer rich text control
     $('.submit-answer-container').hide();
 
