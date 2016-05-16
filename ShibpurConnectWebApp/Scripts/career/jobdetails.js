@@ -25,7 +25,7 @@ $(document).ready(function () {
     // hide the submit answer rich text control
     $('.submit-answer-container').hide();
     // hide the right side panel
-    $('.jobapplicationprivate').hide();
+    //$('.jobapplicationprivate').hide();
     // hide the right column modules, we will enable inside respective the partial view once receive the server response
     $('.tagcontainermaindiv').hide();
     $('.popularquestioncontainerdiv').hide();
@@ -79,7 +79,16 @@ $(document).ready(function () {
             jobdetails = result;
             $('#details').show();
 
-            $('.jobapplicationprivate').show();
+            if (!jobdetails.hasClosed & userInfo != null) {
+                // increase toastr timeout
+                toastr.options = {                   
+                    "timeOut": "12000",
+                    "extendedTimeOut": "6000"
+                }
+                Command: toastr["info"]("<div><p>Your job application can only be viewed by the person who submitted the job, no one else will come to know about this.</p><div>");
+            }
+
+            //$('.jobapplicationprivate').show();
             if (jobdetails.hasClosed) {
                 // disable close job button
                 $('.closejob').text("Job closed");
@@ -88,7 +97,7 @@ $(document).ready(function () {
 
                 $('.submit-answer-container').empty();
                 $('.jobclosedalert').show();
-                $('.jobapplicationprivate').hide();
+                //$('.jobapplicationprivate').hide();
             }
 
             createJobDetails(jobdetails);
@@ -190,7 +199,7 @@ function createJobDetails(jobDetails) {
         // if this user is the job poster then he/she can post additional update
         $('.submit-answer-container').html("<div style='font-size:20px;margin-bottom:10px;'>Applications</div>");
         $('.closejob').show();
-        $('.jobapplicationprivate').hide();
+        //$('.jobapplicationprivate').hide();
         $('.jobclosedalert').hide();
     }
 
@@ -208,7 +217,7 @@ function createJobDetails(jobDetails) {
         createApplication(jobapplication);
     });
 
-    updateQnAStatus(questionIds, answerIds);
+    //updateQnAStatus(questionIds, answerIds);
 
     if (answerId && answerId != "") {
         $('html,body').animate({ scrollTop: $('#' + answerId).offset().top - 70 }, 'fast');
