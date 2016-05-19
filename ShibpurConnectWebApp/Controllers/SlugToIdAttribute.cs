@@ -24,7 +24,7 @@ namespace ShibpurConnectWebApp.Controllers
                 if (questionObj != null)
                 {
                     filterContext.ActionParameters["id"] = questionObj.QuestionId;
-                    filterContext.ActionParameters["title"] = questionObj.Title;
+                    filterContext.RouteData.Values.Add("title", questionObj.Title);
                 }
             }
             base.OnActionExecuting(filterContext);

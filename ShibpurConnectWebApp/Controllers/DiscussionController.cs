@@ -14,7 +14,7 @@ namespace ShibpurConnectWebApp.Controllers
 
         [SlugToId]
         [ActionName("DiscussionDetail")]
-        public ActionResult DiscussionDetail(string id, string title)
+        public ActionResult DiscussionDetail(string id)
         {
             var name = User.Identity.GetUserName();
             var admins = ConfigurationManager.AppSettings["adminsEmail"];
@@ -24,23 +24,29 @@ namespace ShibpurConnectWebApp.Controllers
             }
             TempData["SelectedPage"] = "Threads";
             ViewData["questionId"] = id;
-            ViewData["questionTitle"] = title;
+            ViewData["questionTitle"] = RouteData.Values["title"];
             return View();
         }
 
-        /*Not sure why we created this controller. Commenting it for now as I need same method signature in above function*/
-        //[ActionName("DiscussionDetailWithAnswerID")]
-        //public ActionResult DiscussionDetail(string id, string answerId)
-        //{
-        //    TempData["SelectedPage"] = "Threads";
+        /// <summary>
+        /// We use this action for the feed content appear in the activity page.
+        /// For example when user will click on someone's answer feed then this action will be called
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="answerId"></param>
+        /// <returns></returns>
+        [ActionName("DiscussionDetailWithAnswerID")]
+        public ActionResult DiscussionDetail(string id, string answerId)
+        {
+            TempData["SelectedPage"] = "Threads";
 
-        //    ViewData["questionId"] = id;
-        //    if (!string.IsNullOrEmpty(answerId))
-        //    {
-        //        ViewData["answerId"] = answerId;
-        //    }
+            ViewData["questionId"] = id;
+            if (!string.IsNullOrEmpty(answerId))
+            {
+                ViewData["answerId"] = answerId;
+            }
 
-        //    return View("DiscussionDetail");
-        //}
+            return View("DiscussionDetail");
+        }
     }
 }
