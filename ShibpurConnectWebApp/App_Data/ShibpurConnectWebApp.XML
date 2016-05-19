@@ -502,6 +502,15 @@
             </summary>
             <param name="documentPath">The physical path to XML document.</param>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.DiscussionController.DiscussionDetail(System.String,System.String)">
+            <summary>
+            We use this action for the feed content appear in the activity page.
+            For example when user will click on someone's answer feed then this action will be called
+            </summary>
+            <param name="id"></param>
+            <param name="answerId"></param>
+            <returns></returns>
+        </member>
         <member name="T:ShibpurConnectWebApp.Controllers.SlugToIdAttribute">
             <summary>
             Filter to retrieve the question id using the seo friendly url (slug)

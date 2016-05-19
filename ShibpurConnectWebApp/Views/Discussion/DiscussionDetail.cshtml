@@ -1,6 +1,13 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = ViewData["questionTitle"] + " - ShibpurHub"; ;
+    if (ViewData["questionTitle"] != null)
+    {
+        ViewBag.Title = ViewData["questionTitle"] + " - ShibpurHub";
+    }
+    else
+    { 
+        ViewBag.Title = "Answer of a question" + " - ShibpurHub";
+    }
 }
 
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/feed/feedlistV1.css?v=1.5")" />
