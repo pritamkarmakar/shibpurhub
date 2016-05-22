@@ -132,8 +132,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     LogId = ObjectId.GenerateNewId().ToString(),
                     UserId = userInfo.Id,
-                    EduToastNotificationShownOn = DateTime.UtcNow,
-                    EmpToastNotificationShownOn = DateTime.UtcNow
+                    EduToastNotificationShownOn = DateTime.MinValue,
+                    EmpToastNotificationShownOn = DateTime.MinValue
                 };
                 _mongoHelper2.Collection.Save(newloginLog);
 
@@ -183,6 +183,16 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
             else
             {
+                //for first time user will have both notification time as '0001-01-01' so in that case we want to update both edu and emp toast time
+                if(loginLog[0].EduToastNotificationShownOn.Year == 1 && loginLog[0].EmpToastNotificationShownOn.Year == 1)
+                {
+                    loginLog[0].EduToastNotificationShownOn = DateTime.UtcNow;
+                    loginLog[0].EmpToastNotificationShownOn = DateTime.UtcNow;
+                    _mongoHelper2.Collection.Save(loginLog[0]);
+                    
+                    return Ok(loginLog[0]);
+                }
+
                 if (type == "edu")
                 {
                     loginLog[0].EduToastNotificationShownOn = DateTime.UtcNow;
