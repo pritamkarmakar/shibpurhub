@@ -264,9 +264,20 @@ namespace ShibpurConnectWebApp.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         public async Task<ActionResult> Profile(string userId)
-        {
-            ViewData["userId"] = userId;
+        {            
             TempData["SelectedPage"] = "Users";
+            // for '/account/profile' no userid will be supplied, but as user already signed-in so we can find out the userid
+            if(string.IsNullOrEmpty(userId))
+            {
+                userId = User.Identity.GetUserId();
+                if(string.IsNullOrEmpty(userId))
+                    return View("Http404");
+                else
+                    ViewData["userId"] = userId;
+
+            }
+            else
+                ViewData["userId"] = userId;
 
             var userInfo = UserManager.FindById(userId);
             if (userInfo != null)

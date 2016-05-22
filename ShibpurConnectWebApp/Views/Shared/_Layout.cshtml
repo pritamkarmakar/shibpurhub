@@ -152,15 +152,15 @@
 
                 var edudiffTime = Math.abs(new Date($.now()).getTime() - new Date(edutoastslastshownon).getTime()) / (1000 * 60 * 60);
                 var empdiffTime = Math.abs(new Date($.now()).getTime() - new Date(emptoastslastshownon).getTime()) / (1000 * 60 * 60);
-                if (edutoastslastshownon!= null && edudiffTime > 48) {
+                if (edutoastslastshownon != null && edudiffTime > 48 && userInfo.educationalHistories == null) {
                     // if user doesn't have any education/employment details then redirect to step wizard page
-                    if (userInfo.educationalHistories == null) {
+                    //if (userInfo.educationalHistories == null) {
                         toastr.options.tapToDismiss = false;
                         toastr.options.timeOut = 0;
                         toastr.options.extendedTimeOut = 0;
                         // show toastr notification to ask user to add details
                         Command: toastr["info"]("<div><p>You haven't added any educational details. Could you please spend few minutes to complete your profile?</p><button type='button' id='edudetails' onclick='updatetoastrnotificationtime(this)' class='btn btn-default btn-xs'>Sure</button>&nbsp;&nbsp;&nbsp;<button type='button' id='edudetails' onclick='cleartoastnotification(this)' class='btn btn-default btn-xs'>Not Today</button><div>");
-                    }
+                   // }
                 }
                 // if user doesn't have any employment details then show the toastr notification only if last shown toastr is 7 days before
                 else if (emptoastslastshownon != null && empdiffTime > 168) {
