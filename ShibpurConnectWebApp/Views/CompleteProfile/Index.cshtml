@@ -51,8 +51,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        // hide the go to feed page button
-        //$("#go-to-feed-page").hide();
+       
+
+        var completeprofilesection =  @Html.Raw(Json.Encode(ViewData["completeprofilesection"]));
 
         var navListItems = $('ul.setup-panel li a'),
             allWells = $('.setup-content');
@@ -76,26 +77,37 @@
                 $("#go-to-feed-page2").hide();
             }
             else
-                $("#go-to-feed-page2").show();           
+                $("#go-to-feed-page2").show();
         });
 
-        $('ul.setup-panel li.active a').trigger('click');
+       
 
-        $('#activate-step-2').on('click', function (e) {
+        if(completeprofilesection == null || completeprofilesection == "edu")
+        {
+            $('ul.setup-panel li.active a').trigger('click');
+        }
+        else if(completeprofilesection == "emp")
+        {
             $('ul.setup-panel li:eq(1)').removeClass('disabled');
             $('ul.setup-panel li a[href="#step-2"]').trigger('click');
-            $(this).remove();            
-        })
-
-        $('#activate-step-3').on('click', function (e) {
-            $('ul.setup-panel li:eq(2)').removeClass('disabled');
-            $('ul.setup-panel li a[href="#step-3"]').trigger('click');
             $(this).remove();
-        })
+        }
+
+        //$('#activate-step-2').on('click', function (e) {
+        //    $('ul.setup-panel li:eq(1)').removeClass('disabled');
+        //    $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+        //    $(this).remove();
+        //})
+
+        //$('#activate-step-3').on('click', function (e) {
+        //    $('ul.setup-panel li:eq(2)').removeClass('disabled');
+        //    $('ul.setup-panel li a[href="#step-3"]').trigger('click');
+        //    $(this).remove();
+        //})
 
         loadEducations();
-        loadEmployments();   
-      
+        loadEmployments();
+
     });
 </script>
 
@@ -111,13 +123,13 @@
                                 <p class="list-group-item-text">Add your educational background</p>
                             </a>
                         </li>
-                        <li class="disabled">
+                        <li>
                             <a href="#step-2">
                                 <h4 class="list-group-item-heading">Employment</h4>
                                 <p class="list-group-item-text">Add your employment background</p>
                             </a>
                         </li>
-                        <li class="disabled">
+                        <li>
                             <a href="#step-3">
                                 <h4 class="list-group-item-heading">Users</h4>
                                 <p class="list-group-item-text">Find and Follow users</p>
@@ -131,7 +143,7 @@
                     <div class="col-md-12">
                         @{ Html.RenderPartial("_EducationalHistory"); }
                         <div id="feed-page-button">
-                        <button id="activate-step-2" class="btn btn-primary btn-sm">Add Employment&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
+                        @*<button id="activate-step-2" class="btn btn-primary btn-sm">Add Employment&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>*@
                             <a href="/feed/myfeeds" id="go-to-feed-page" class="btn btn-primary btn-sm" role="button" style="float:right;display:none;">Go To Feed Page&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
                         </div>
                     </div>
@@ -142,7 +154,7 @@
                     <div class="col-md-12">
                         @{ Html.RenderPartial("_EmploymentHistory"); }
                         <div id="feed-page-button-emp">   
-                            <button id="activate-step-3" class="btn btn-primary btn-sm">Follow Users&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>                        
+                            @*<button id="activate-step-3" class="btn btn-primary btn-sm">Follow Users&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>*@                        
                             <a href="/feed/myfeeds" id="go-to-feed-page2" class="btn btn-primary btn-sm" role="button" style="float:right;display:none;">Go To Feed Page&nbsp;&nbsp;<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
                         </div>
                     </div>

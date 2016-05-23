@@ -46,8 +46,11 @@ namespace ShibpurConnectWebApp.Controllers
         }
 
         // GET: Registration
-        public ActionResult Index()
+        public ActionResult Index(string type)
         {
+            // save which section user wants to see
+            ViewData["completeprofilesection"] = type;
+
             return View();
         }
 

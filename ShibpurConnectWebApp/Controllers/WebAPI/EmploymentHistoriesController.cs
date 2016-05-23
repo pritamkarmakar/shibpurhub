@@ -55,7 +55,12 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                string errMessage = string.Empty;
+                foreach (var error in ModelState.Values)
+                {
+                    errMessage += error.Errors[0].ErrorMessage + "\n";
+                }
+                return BadRequest(errMessage);
             }
             if (employmentHistory == null)
             {

@@ -308,7 +308,7 @@
                     localStorage.setItem("edu-toastnotification-lastshown", result.eduToastNotificationShownOn);
                     localStorage.setItem("emp-toastnotification-lastshown", result.empToastNotificationShownOn);
 
-                    window.location = "/completeprofile";
+                    window.location = "/completeprofile/?type=" + type;
                 },
                 error: function (err) {
                     // send alert to admin team
