@@ -59,8 +59,8 @@ Do git pull/push, you shouldn't be asked for the password anymore.
 1. Elastic Search: Install-Package NEST. Details [here](https://www.nuget.org/packages/NEST/0.9.19)
 2. Mongodb Driver: Install-Package mongocsharpdriver. Details [here](https://www.nuget.org/packages/mongocsharpdriver/)
 
-## To see all the documents in Elastic Search?
-https://shibpurconnect.east-us.azr.facetflow.io/my_index/_search/?size=1000&pretty=1
+## To see all the documents in Elastic Search for a type?
+http://shibpurhub-beconnect.rhcloud.com/my_index/educationalhistories/_search?pretty=true&count=30
 
 ### Sample elastic search operations ###
 To search for a userid
