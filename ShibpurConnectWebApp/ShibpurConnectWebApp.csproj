@@ -417,11 +417,7 @@
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
-    <Content Include="Content\images\community2.jpg" />
-    <Content Include="Content\images\communitycrop.jpg" />
-    <Content Include="Content\images\communitycrop2.jpg" />
     <Content Include="Content\images\communitycropfinal.jpg" />
-    <Content Include="Content\images\question.jpg" />
     <Content Include="Content\images\profile-image.jpg" />
     <Content Include="Content\images\shareknowledge.png" />
     <Content Include="Content\images\shibpur1.jpg" />
