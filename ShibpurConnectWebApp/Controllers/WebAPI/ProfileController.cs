@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
+﻿using Hangfire;
+using Microsoft.AspNet.Identity;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using ShibpurConnectWebApp.Helper;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Models.WebAPI;
@@ -8,6 +9,7 @@ using ShibpurConnectWebApp.Providers;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -17,7 +19,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
-using WebApi.OutputCache.Core.Cache;
 using WebApi.OutputCache.V2;
 
 namespace ShibpurConnectWebApp.Controllers.WebAPI
@@ -277,12 +278,15 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                 if (!string.IsNullOrEmpty(firstName))
                     user.FirstName = firstName;
+                else
+                    return BadRequest("First Name, Last Name are mandatory fields");
                 if (!string.IsNullOrEmpty(lastName))
                     user.LastName = lastName;
-                if (!string.IsNullOrEmpty(location))
-                    user.Location = location;
-                if (!string.IsNullOrEmpty(aboutMe))
-                    user.AboutMe = aboutMe;
+                else
+                    return BadRequest("First Name, Last Name are mandatory fields");
+                user.Location = location;               
+                user.AboutMe = aboutMe;
+
                 IdentityResult result = await _repo.UpdateUser(user);
                 IHttpActionResult errorResult = GetErrorResult(result);
                 if (errorResult != null)
@@ -304,6 +308,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // invalidate the getuserinfo api call for the user who updating profile
                 cache.RemoveStartsWith("profile-getuserinfo-userId=" + user.Id);
 
+                // hangfire to invalidate cache of all the questions posted by this user, otherwise user details at the top of the question will be stale
+                BackgroundJob.Enqueue(() => InvalidateAllQuestionsCachePostedByAUser(user.Id));
+
 
                 return Ok(new CustomUserInfo
                 {
@@ -316,6 +323,43 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     AboutMe = user.AboutMe,
                     ProfileImageURL = user.ProfileImageURL
                 });
+            }
+        }
+
+        /// <summary>
+        /// Not a Public API, will be used by Hangfire to invalidate the cache of all question posted by a user, if the user update his/her account
+        /// </summary>
+        /// <param name="userId"></param>
+        [DisableConcurrentExecution(3600)]
+        public async void InvalidateAllQuestionsCachePostedByAUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("null userId supplied");
+
+            try
+            {
+                MongoHelper<Question> _mongoHelper = new MongoHelper<Question>();
+                // find list of questions those will be affected due to this user profile update, we will remove the cache for those questions
+                var questionList = _mongoHelper.Collection.AsQueryable().Where(m => m.UserId == userId).Select(x => x.QuestionId).Distinct().ToList().ToList();
+                
+                // invalidate the getquestions api cache
+                if (questionList.Count > 0)
+                {
+                    var chacheKey = "questions-getquestions";
+                    BackgroundJob.Enqueue(() => WebApiCacheHelper.InvalidateCacheByKey(chacheKey));
+                }
+                
+                var keys = new List<string>();
+                foreach (string questionid in questionList)
+                {
+                    var key = "questions-getquestion-questionId=" + questionid;
+                    keys.Add(key);
+                }
+                WebApiCacheHelper.InvalidateCacheByKeys(keys);
+            }
+            catch (MongoConnectionException ex)
+            {
+                throw new MongoException("failed to remove cache");
             }
         }
 

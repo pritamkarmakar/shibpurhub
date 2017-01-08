@@ -417,9 +417,19 @@
     <Content Include="Content\cosmo.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\images\community2.jpg" />
+    <Content Include="Content\images\communitycrop.jpg" />
+    <Content Include="Content\images\communitycrop2.jpg" />
+    <Content Include="Content\images\communitycropfinal.jpg" />
+    <Content Include="Content\images\question.jpg" />
     <Content Include="Content\images\profile-image.jpg" />
+    <Content Include="Content\images\shareknowledge.png" />
     <Content Include="Content\images\shibpur1.jpg" />
     <Content Include="Content\images\Splitter.png" />
+    <Content Include="Content\images\community.jpg" />
+    <Content Include="Content\landing\bootstrap.css" />
+    <Content Include="Content\landing\bootstrap.min.css" />
+    <Content Include="Content\landing\landing-page.css" />
     <Content Include="Content\quill.base.css" />
     <Content Include="Content\quill.snow.css" />
     <Content Include="Content\richtextform\bootstrap3-wysihtml5.min.css" />
@@ -505,7 +515,6 @@
     <None Include="Properties\PublishProfiles\shibpur %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\shibpur %284%29.pubxml" />
     <None Include="Properties\PublishProfiles\shibpur.pubxml" />
-    <None Include="Properties\PublishProfiles\ShibpurConnect.pubxml" />
     <Content Include="Scripts\admin\admin.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app\app.datamodel.js" />
@@ -518,6 +527,7 @@
     <Content Include="Scripts\career\career.js" />
     <Content Include="Scripts\career\jobdetails.js" />
     <Content Include="Scripts\date.js" />
+    <None Include="Properties\PublishProfiles\shibpurhub.pubxml" />
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
     <Content Include="Scripts\feed\details.js" />
     <Content Include="Scripts\feed\feed.js" />

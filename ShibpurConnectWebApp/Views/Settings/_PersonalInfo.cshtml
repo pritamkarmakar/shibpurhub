@@ -31,7 +31,7 @@
 
         $('#submitpersonalinfo').on('click', function (e) {
             e.preventDefault();
-            if ($(".personalinfoform")[0].checkValidity()) {
+            //if ($(".personalinfoform")[0].checkValidity()) {
                 // add spinner animation in the save button and change the text to 'Saving..'
                 $('#submitpersonalinfo > i').addClass('fa fa-circle-o-notch fa-spin');
                 $('#submitpersonalinfo > span').text(' Saving...');
@@ -66,20 +66,22 @@
                         $('#locationlabel').text(location);
                         $('#aboutmelabel').text(aboutme);
                     },
-                    error: function (err) {
-                        if (err.status == "401") {
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        if (XMLHttpRequest.status == "401") {
                             $('#personalinfofailuremessage').css('display', 'block');
-                            Command: toastr["error"]("Sorry, failed to save your data. Please login again and try")
+                            Command: toastr["error"]("Sorry, failed to save your data. Please login again and try");
                         }
-                        else
-                            Command: toastr["error"](err.responseText)                      
+                        else {
+                            var errorresponse = jQuery.parseJSON(XMLHttpRequest.responseText);
+                            Command: toastr["error"](errorresponse.message);
+                        }
 
                         // remove the loading class from save button
                         $('#submitpersonalinfo > i').removeClass('fa fa-circle-o-notch fa-spin');
                         $('#submitpersonalinfo > span').text('Save');
                     }
                 });
-            } else Command: toastr["error"]("All form fields are mandatory")
+            //} else Command: toastr["error"]("All form fields are mandatory")
 
         });
     });

@@ -23,6 +23,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             cache.RemoveStartsWith(cacheKey);
         }
 
+        /// <summary>
+        /// Invalidate a particular cache using the provided key
+        /// </summary>
+        /// <param name="key"></param>
         public static void InvalidateCacheByKey(string key)
         {
             var config = GlobalConfiguration.Configuration;
@@ -34,6 +38,10 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }
         }
 
+        /// <summary>
+        /// Invalidate multiple cache using the list keys
+        /// </summary>
+        /// <param name="keys"></param>
         public static void InvalidateCacheByKeys(IList<string> keys)
         {
             var config = GlobalConfiguration.Configuration;

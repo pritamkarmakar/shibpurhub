@@ -1108,6 +1108,18 @@
             <param name="searchTerm">search term (can be location/company name/ user name/email etc)</param>
             <returns></returns>
         </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.WebApiCacheHelper.InvalidateCacheByKey(System.String)">
+            <summary>
+            Invalidate a particular cache using the provided key
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.WebApiCacheHelper.InvalidateCacheByKeys(System.Collections.Generic.IList{System.String})">
+            <summary>
+            Invalidate multiple cache using the list keys
+            </summary>
+            <param name="keys"></param>
+        </member>
         <member name="T:ShibpurConnectWebApp.Controllers.WebAPI.WebsiteAlertController">
             <summary>
             Controller to keep all website maintenance, connectivity issue alerts
@@ -1429,6 +1441,12 @@
             API to update user personal profile info
             </summary>
             <param name="userInfo">CustomUserInfo object</param>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.InvalidateAllQuestionsCachePostedByAUser(System.String)">
+            <summary>
+            Not a Public API, will be used by Hangfire to invalidate the cache of all question posted by a user, if the user update his/her account
+            </summary>
+            <param name="userId"></param>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.ProfileController.FollowUser(System.String)">
             <summary>
