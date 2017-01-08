@@ -422,7 +422,6 @@
     <Content Include="Content\images\shareknowledge.png" />
     <Content Include="Content\images\shibpur1.jpg" />
     <Content Include="Content\images\Splitter.png" />
-    <Content Include="Content\images\community.jpg" />
     <Content Include="Content\landing\bootstrap.css" />
     <Content Include="Content\landing\bootstrap.min.css" />
     <Content Include="Content\landing\landing-page.css" />
