@@ -109,7 +109,7 @@ $(document).ready(function () {
 
 // create the entire job details, including job applications, comments
 function createJobDetails(jobDetails) {
-    document.title = jobDetails.jobTitle + " - ShibpurHub";
+    document.title = jobDetails.jobTitle + " - SnapResponses";
 
     var htmlItem = $('div.item.question.hide').clone().removeClass('hide');
 

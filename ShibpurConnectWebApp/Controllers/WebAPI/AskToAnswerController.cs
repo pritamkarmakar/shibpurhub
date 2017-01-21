@@ -144,7 +144,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
                         " requested you to answer <a href='" + hostName + "/feed/"  + question.Content.UrlSlug + "' style='text-decoration:none'>" +
                         question.Content.Title + "</a>",
-                    Subject = "ShibpurHub | You have a new request to answer a question"
+                    Subject = "SnapResponses | You have a new request to answer a question"
                 });
 
                 // save this new request in the notification collection, so that user will get that bubble notification in the header

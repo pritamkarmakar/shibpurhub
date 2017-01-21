@@ -180,7 +180,7 @@ function loadFeeds(page) {
 	});
 }
 
-// mostly use it to create user div, when someone following other user or someone joined shibpurhub
+// mostly use it to create user div, when someone following other user or someone joined SnapResponses
 function createUserFeeds(userIds)
 {
     if(!userIds || userIds.length == 0)

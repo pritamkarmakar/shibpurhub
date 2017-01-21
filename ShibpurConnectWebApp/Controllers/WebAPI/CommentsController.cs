@@ -141,7 +141,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
                         " posted a comment to your answer in question <a href='" + hostName + "/feed/" +
                         question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a><i>" + comment.CommentText + "</i>",
-                    Subject = "ShibpurHub | New comment to your answer \"" + question.Content.Title + "\""
+                    Subject = "SnapResponses | New comment to your answer \"" + question.Content.Title + "\""
                 });
 
                 notificationsController.PostNotification(new Notifications()
@@ -167,7 +167,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 {
                     UserId = question.Content.UserId,
                     Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a><i>" + comment.CommentText + "</i>",
-                    Subject = "ShibpurHub | New comment to your question \"" + question.Content.Title + "\""
+                    Subject = "SnapResponses | New comment to your question \"" + question.Content.Title + "\""
                 });
 
                 notificationsController.PostNotification(new Notifications()

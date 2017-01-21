@@ -17,6 +17,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
     {
         private ApplicationUserManager _userManager;
         private string emailTemplate = ConfigurationManager.AppSettings["emailTemplate"];
+        private string emailFrom = ConfigurationSettings.AppSettings["mailFrom"];
+        private string emailSenderDisplayName = ConfigurationSettings.AppSettings["mailSenderDisplayName"];
 
         /// <summary>
         /// API to send email to end user
@@ -49,7 +51,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             }           
            
             myMessage.From = new System.Net.Mail.MailAddress(
-                                "info@shibpurhub.com", "ShibpurHub");
+                                emailFrom, emailSenderDisplayName);
             myMessage.Subject = message.Subject;
             myMessage.Text = message.Body;
             myMessage.Html= "<p>" + message.Body + "</p>";

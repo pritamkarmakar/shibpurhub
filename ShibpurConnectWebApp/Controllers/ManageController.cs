@@ -264,7 +264,7 @@ namespace ShibpurConnectWebApp.Controllers
                     {
                         string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        await UserManager.SendEmailAsync(user.Id, "Hello from ShibpurHub", "Thanks for joining ShibpurHub. Please click <a href=\"" + callbackUrl + "\">here</a> to confirm your account<br/>Regards,<br/>ShibpurHub Team");
+                        await UserManager.SendEmailAsync(user.Id, "Hello from SnapResponses", "Thanks for joining SnapResponses. Please click <a href=\"" + callbackUrl + "\">here</a> to confirm your account<br/>Regards,<br/>SnapResponses Team");
                     }
                     if (user != null)
                     {

@@ -113,7 +113,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
                         " posted a comment to your job application <a href='" + hostName + "/career/jobdetails?jobid=" +
                         jobDetails.JobId + "' style='text-decoration:none'>" + jobDetails.JobTitle + "</a><i>" + comment.CommentText + "</i>",
-                    Subject = "ShibpurHub | New comment to your job application \"" + jobDetails.JobTitle + "\""
+                    Subject = "SnapResponses | New comment to your job application \"" + jobDetails.JobTitle + "\""
                 });
 
                 notificationsController.PostNotification(new Notifications()

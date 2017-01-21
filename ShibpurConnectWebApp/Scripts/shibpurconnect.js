@@ -188,7 +188,7 @@ function SendNotificationForWebSiteError(error) {
 
     // send email notification
     var alertdata = {
-        "Content": "<h2 style='color:red;'>ShibpurHub is down!!!</h2>Detaill Error message: <br>" + error,
+        "Content": "<h2 style='color:red;'>SnapResponses is down!!!</h2>Detaill Error message: <br>" + error,
         "EmailSentTo": "pritam83@gmail.com"
     };
 

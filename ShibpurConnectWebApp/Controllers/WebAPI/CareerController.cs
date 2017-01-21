@@ -560,7 +560,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     {
                         UserId = jobInfo.UserId,
                         Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " applied to your job <a href='" + hostName + "/career/jobdetails?jobid=" + jobInfo.JobId + "' style='text-decoration:none'>" + jobInfo.JobTitle + "</a><i>" + jobApplication.CoverLetter + "</i>",
-                        Subject = "ShibpurHub | New application to your job \"" + jobInfo.JobTitle + "\""
+                        Subject = "SnapResponses | New application to your job \"" + jobInfo.JobTitle + "\""
                     });
 
                     notificationsController.PostNotification(new Notifications()

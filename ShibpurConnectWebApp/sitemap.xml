@@ -7,59 +7,55 @@
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 <url>
-  <loc>http://www.shibpurhub.com/</loc>
+  <loc>http://www.snapresponses.com/</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Account/Login</loc>
+  <loc>http://www.snapresponses.com/Account/Login</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Account/Register</loc>
+  <loc>http://www.snapresponses.com/Account/Register</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Home/LearnMore</loc>
+  <loc>http://www.snapresponses.com/feed</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/feed</loc>
+  <loc>http://www.snapresponses.com/tags</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/tags</loc>
+  <loc>http://www.snapresponses.com/users</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/users</loc>
+  <loc>http://www.snapresponses.com/Account/ForgotPassword</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Account/ForgotPassword</loc>
+  <loc>http://www.snapresponses.com/Account/Profile</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/\Account\Profile</loc>
+  <loc>http://www.snapresponses.com/Account/Profile?userId="%20+%20userinfo.id%20+%20"</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Account/Profile?userId="%20+%20userinfo.id%20+%20"</loc>
+  <loc>http://www.snapresponses.com/Feed/FeedByCategory?category="%20+%20value.categoryName%20+%20"</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Feed/FeedByCategory?category="%20+%20value.categoryName%20+%20"</loc>
+  <loc>http://www.snapresponses.com/Feed/FeedByCategory?category="%20+%20value%20+%20"</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Feed/FeedByCategory?category="%20+%20value%20+%20"</loc>
+  <loc>http://www.snapresponses.com/Account/Profile?userId="%20+%20val.id%20+%20"</loc>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://www.shibpurhub.com/Account/Profile?userId="%20+%20val.id%20+%20"</loc>
-  <changefreq>daily</changefreq>
-</url>
-<url>
-  <loc>http://www.shibpurhub.com/Feed/\Account\Profile</loc>
+  <loc>http://www.snapresponses.com/Feed/\Account\Profile</loc>
   <changefreq>daily</changefreq>
 </url>
 </urlset>

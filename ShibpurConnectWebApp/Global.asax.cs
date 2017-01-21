@@ -174,7 +174,7 @@ namespace ShibpurConnectWebApp
             if (exception.Source == "MongoDB.Driver")
             {
                 routeData.Values["action"] = "Maintenance";
-                webSiteAlert.Content = "<h2 style='color:red;'>ShibpurHub is down!!!</h2>Detaill Error message: <br>" + exception.Message;
+                webSiteAlert.Content = "<h2 style='color:red;'>SnapResponses is down!!!</h2>Detaill Error message: <br>" + exception.Message;
                 // send email notifications to admin as this is critical                
                 alertController.SendEmailNotificationForOutage(webSiteAlert);
             }

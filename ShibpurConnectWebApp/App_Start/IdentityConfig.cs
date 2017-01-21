@@ -18,6 +18,9 @@ namespace ShibpurConnectWebApp
 {
     public class EmailService : IIdentityMessageService
     {
+        private string emailFrom = ConfigurationSettings.AppSettings["mailFrom"];
+        private string mailSenderDisplayName = ConfigurationSettings.AppSettings["mailSenderDisplayName"];
+
         public Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
@@ -27,11 +30,10 @@ namespace ShibpurConnectWebApp
 
         private async Task configSendGridasync(IdentityMessage message)
         {
-            //var myMessage = new MailMessage("pritam83@gmail.com", "metricsqa@gmail.com");
             var myMessage = new SendGridMessage();
             myMessage.AddTo(message.Destination);
             myMessage.From = new System.Net.Mail.MailAddress(
-                                "info@shibpurhub.com", "ShibpurHub");
+                                emailFrom, mailSenderDisplayName);
             myMessage.Subject = message.Subject;
             myMessage.Text = message.Body;
             myMessage.Html = message.Body;

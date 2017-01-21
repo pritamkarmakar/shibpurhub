@@ -53,7 +53,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     await emailController.SendEmail(new Email
                     {
                         Body = alert.Content,
-                        Subject = "ShibpurHub: ALERT !!!",
+                        Subject = "SnapResponses: ALERT !!!",
                         UserId = alert.EmailSentTo
                     });
 
@@ -78,7 +78,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                             await emailController.SendEmail(new Email
                             {
                                 Body = alert.Content,
-                                Subject = "ShibpurHub: ALERT !!!",
+                                Subject = "SnapResponses: ALERT !!!",
                                 UserId = alert.EmailSentTo
                             });
 
@@ -98,7 +98,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         await emailController.SendEmail(new Email
                         {
                             Body = alert.Content,
-                            Subject = "ShibpurHub: ALERT !!!",
+                            Subject = "SnapResponses: ALERT !!!",
                             UserId = alert.EmailSentTo
                         });
 

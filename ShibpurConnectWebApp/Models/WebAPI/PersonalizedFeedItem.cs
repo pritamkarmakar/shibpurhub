@@ -139,7 +139,7 @@ namespace ShibpurConnectWebApp.Models.WebAPI
 
             if (type == 6)
             {
-                return " joined ShibpurHub";
+                return " joined SnapResponses";
             }
 
             if (type == 7 || type == 8)

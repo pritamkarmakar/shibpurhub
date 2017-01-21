@@ -418,8 +418,11 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\communitycropfinal.jpg" />
+    <Content Include="Content\images\landing\banna-Edit.png" />
+    <Content Include="Content\images\landing\banna.jpeg" />
     <Content Include="Content\images\landing\contact-bg.jpg" />
     <Content Include="Content\images\landing\home-bg.jpg" />
+    <Content Include="Content\images\landing\macbookgrey.png" />
     <Content Include="Content\images\landing\software-img.png" />
     <Content Include="Content\images\profile-image.jpg" />
     <Content Include="Content\images\shareknowledge.png" />

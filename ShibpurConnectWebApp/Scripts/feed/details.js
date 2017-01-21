@@ -93,7 +93,7 @@ $(document).ready(function () {
             });
 
             // set page title
-            document.title = question.title + " - ShibpurHub";
+            document.title = question.title + " - SnapResponses";
             $('.header h2').text(question.title);
             $('.header h2').append("<hr/>");
             $('.description').html(question.description.replace("<img", "<img style='max-width:730px;'"));
