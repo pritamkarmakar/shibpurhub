@@ -405,6 +405,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\career\career.css" />
     <Content Include="Content\career\jobdetails.css" />
+    <Content Include="Content\EmailTemplate\EmailTemplate.html" />
     <Content Include="Content\feed\details.css" />
     <Content Include="Content\feed\detailsmobile.css" />
     <Content Include="Content\feed\discussion.css" />
@@ -418,6 +419,7 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\communitycropfinal.jpg" />
+    <Content Include="Content\images\landing\askaquestion.png" />
     <Content Include="Content\images\landing\contact-bg.jpg" />
     <Content Include="Content\images\landing\finallanding.png" />
     <Content Include="Content\images\landing\home-bg.jpg" />

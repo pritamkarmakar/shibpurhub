@@ -270,7 +270,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     await emailsController.SendEmail(new Email()
                     {
                         UserId = question.UserId,
-                        Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to your question <a href='" + hostName + "/feed/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a><i>" + answerdto.AnswerText + "</i>",
+                        Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted an answer to your question <a href='" + hostName + "/discussion/" + question.UrlSlug + "' style='text-decoration:none'>" + question.Title + "</a><i>" + answerdto.AnswerText + "</i>",
                         Subject = "SnapResponses | New answer to your question \"" + question.Title + "\""
                     });
 
@@ -552,7 +552,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                                 "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id +
                                 "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName +
                                 "</a>" +
-                                " posted an answer to the question <a href='" + hostName + "/feed/" + question.UrlSlug +
+                                " posted an answer to the question <a href='" + hostName + "/discussion/" + question.UrlSlug +
                                 "' style='text-decoration:none'>" + question.Title + "</a><i>" + answerText + "</i>",
                             Subject = "SnapResponses | New answer to the question \"" + question.Title + "\""
                         });

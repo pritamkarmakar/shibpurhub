@@ -833,7 +833,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             //check if this slug already exist then send error to user
             if (helper.GetQuestionIdFromSlug(urlSlug) != null)
             {
-                ModelState.AddModelError("", "Duplicate question: Please take a look in this question -  <a href ='http://" + Request.RequestUri.Authority + "/feed/" + urlSlug + "'>" + question.Title + "</a>");
+                ModelState.AddModelError("", "Duplicate question: Please take a look in this question -  <a href ='http://" + Request.RequestUri.Authority + "/discussion/" + urlSlug + "'>" + question.Title + "</a>");
                 return BadRequest(ModelState);
             }
 

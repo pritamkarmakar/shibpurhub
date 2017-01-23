@@ -357,9 +357,9 @@ img
 /* start contact */
 #contact
     {
-        background: url('../../Content/images/landing/contact-bg.jpg') no-repeat;
         background-size: cover;
         color: #fff;
+        background-color:#24252b;
     }
 #contact h2
     {

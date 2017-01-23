@@ -139,7 +139,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                     Body =
                         "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id +
                         "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" +
-                        " posted a comment to your answer in question <a href='" + hostName + "/feed/" +
+                        " posted a comment to your answer in question <a href='" + hostName + "/discussion/" +
                         question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a><i>" + comment.CommentText + "</i>",
                     Subject = "SnapResponses | New comment to your answer \"" + question.Content.Title + "\""
                 });
@@ -166,7 +166,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 await emailsController.SendEmail(new Email()
                 {
                     UserId = question.Content.UserId,
-                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/feed/" + question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a><i>" + comment.CommentText + "</i>",
+                    Body = "<a href='" + hostName + "/Account/Profile?userId=" + userInfo.Id + "' style='text-decoration:none'>" + userInfo.FirstName + " " + userInfo.LastName + "</a>" + " posted a comment to your question <a href='" + hostName + "/discussion/" + question.Content.UrlSlug + "' style='text-decoration:none'>" + question.Content.Title + "</a><i>" + comment.CommentText + "</i>",
                     Subject = "SnapResponses | New comment to your question \"" + question.Content.Title + "\""
                 });
 
