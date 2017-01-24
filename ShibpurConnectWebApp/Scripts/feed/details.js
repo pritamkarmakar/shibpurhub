@@ -263,7 +263,7 @@ $(document).ready(function () {
 // function to send notification to the specific user from 'Ask to Answer' module
 function SendNotification(elm) {
     if(userInfo){
-        // disable the Ask button and change the test to Asked
+        // disable the Ask button and change the text to 'Already Asked'
         $(elm).text("Asked");
         $(elm).attr("disabled", "disabled");
 
@@ -1063,3 +1063,5 @@ $(function () {
         }, 400);
     });
 });
+
+

@@ -246,20 +246,20 @@ img
 /* end feature */
 
 /* start feature1 */
-#feature1
+#feature1, #feature2
     {
         padding-top: 60px;
         padding-bottom: 60px;
     }
-#feature1 p
+#feature1 p, #feature2 p
     {
         padding-top: 10px;
     }
-#feature1 span
+#feature1 span, #feature2 span
     {
         float: left;
     }
-#feature1 .fa
+#feature1 .fa, #feature2 .fa
     {
         background: #28a7e9;
         border-radius: 50%;

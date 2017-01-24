@@ -420,7 +420,9 @@
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\communitycropfinal.jpg" />
     <Content Include="Content\images\landing\askaquestion.png" />
+    <Content Include="Content\images\landing\asktoanswermb.png" />
     <Content Include="Content\images\landing\contact-bg.jpg" />
+    <Content Include="Content\images\landing\emailnotification.png" />
     <Content Include="Content\images\landing\finallanding.png" />
     <Content Include="Content\images\landing\home-bg.jpg" />
     <Content Include="Content\images\landing\software-img.png" />

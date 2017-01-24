@@ -20,10 +20,21 @@
     <link rel="stylesheet" href="~/Content/landing/font-awesome.min.css">
     <!-- google font -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,700,800' rel='stylesheet' type='text/css'>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/shibpurconnect")
+    <script type="text/javascript">
+        function contactUs(obj)
+        {
+            var name = obj[0].value;
+            var email = obj[1].value;
+            var subject = obj[2].value;
+            var message = obj[3].value;
 
+            alert(name + email + subject + message);
+        }
+    </script>
     <!-- custom css -->
-    <link rel="stylesheet" href="~/Content/landing/templatemo-style.css?v=1.5">
-
+    <link rel="stylesheet" href="~/Content/landing/templatemo-style.css?v=1.6">    
 </head>
 <body>
     <!-- start preloader -->
@@ -46,7 +57,6 @@
                 <ul class="nav navbar-nav navbar-right text-uppercase">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#feature">Features</a></li>
-                   @* <li><a href="#pricing">Pricing</a></li>*@
                     <li><a href="#livedemo">Live Demo</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -100,7 +110,7 @@
             <div class="row">
                 <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
                     <h2 class="text-uppercase">Ask new question</h2>
-                    <p>Ask a new question when you need the information from the community</p>                   
+                    <p>Ask a new question when you need the information from the community.</p>                   
                 </div>
                 <div class="col-md-6 wow fadeInRight" data-wow-delay="0.6s">
                     <img src="~/Content/images/landing/askaquestion.png" class="img-responsive" alt="feature img">
@@ -114,11 +124,25 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                    <img src="~/Content/images/landing/finallanding.png" class="img-responsive" alt="feature img">
+                    <img src="~/Content/images/landing/asktoanswermb.png" class="img-responsive" alt="feature img">
                 </div>
                 <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
                     <h2 class="text-uppercase">Ask to Answer</h2>
-                    <p>An 'Ask to Answer' feature which shows list of users who can best answer a question. The asker of the question or anyone else from can also specifically request users for answers.</p>
+                    <p> SnapResponses 'Ask to Answer' feature shows list of users who can best answer a question. The asker of the question or anyone else from the community can specifically request users for answers. Or user can search for a specific user to answer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="feature2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
+                    <h2 class="text-uppercase">Instant notification</h2>
+                    <p>SnapResponses will send instant notification for any activity. For example, when one user will ask another user to answer a question or a new answer get posted in a user question or someone comment on a user answer and many more.</p>
+                </div>
+                <div class="col-md-6 wow fadeInRight" data-wow-delay="0.6s">
+                    <img src="~/Content/images/landing/emailnotification.png" class="img-responsive" alt="feature img">
                 </div>
             </div>
         </div>
@@ -129,14 +153,14 @@
     <section id="livedemo">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
-                    <h2 class="text-uppercase">Live Demo</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
-                    <button class="btn btn-primary text-uppercase" onclick="location.href = 'http://www.snapresponses.com/feed';">Live Demo</button>
-                </div>
                 <div class="col-md-6 wow fadeInRight" data-wow-delay="0.6s">
                     <img src="~/Content/images/landing/finallanding.png" class="img-responsive" alt="feature img">
                 </div>
+                <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
+                    <h2 class="text-uppercase">Live Demo</h2>
+                    <p>Help us to improve SnapResponses. Please join SnapResponses community and share your feedback. </p>
+                    <button class="btn btn-primary text-uppercase" onclick="location.href = 'http://www.snapresponses.com/feed';">Live Demo</button>
+                </div>               
             </div>
         </div>
     </section>
@@ -157,18 +181,18 @@
                     </div>
                     <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
                         <div class="contact-form">
-                            <form action="#" method="post">
+                            <form action="#" method="post" onsubmit="return contactUs(this);">
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Name">
+                                    <input type="text" class="form-control name" placeholder="Name">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="email" class="form-control" placeholder="Email">
+                                    <input type="email" class="form-control email" placeholder="Email">
                                 </div>
                                 <div class="col-md-12">
-                                    <input type="text" class="form-control" placeholder="Subject">
+                                    <input type="text" class="form-control subject" placeholder="Subject">
                                 </div>
                                 <div class="col-md-12">
-                                    <textarea class="form-control" placeholder="Message" rows="4"></textarea>
+                                    <textarea class="form-control message" placeholder="Message" rows="4"></textarea>
                                 </div>
                                 <div class="col-md-8">
                                     <input type="submit" class="form-control text-uppercase" value="Send">
