@@ -23,18 +23,18 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/shibpurconnect")
     <script type="text/javascript">
-        function contactUs(obj)
-        {
-            var name = obj[0].value;
-            var email = obj[1].value;
-            var subject = obj[2].value;
-            var message = obj[3].value;
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-            alert(name + email + subject + message);
-        }
+        ga('create', 'UA-91403917-1', 'auto');
+        ga('send', 'pageview');
     </script>
     <!-- custom css -->
-    <link rel="stylesheet" href="~/Content/landing/templatemo-style.css?v=1.6">    
+    <link rel="stylesheet" href="~/Content/landing/templatemo-style.css?v=1.8">
 </head>
 <body>
     <!-- start preloader -->
@@ -43,7 +43,7 @@
     </div>
     <!-- end preloader -->
     <!-- start navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top templatemo-nav" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top templatemo-nav" role="navigation">        
         <div class="container">
             <div class="navbar-header">
                 <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -57,8 +57,8 @@
                 <ul class="nav navbar-nav navbar-right text-uppercase">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#feature">Features</a></li>
-                    <li><a href="#livedemo">Live Demo</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#livedemo">Demo</a></li>                   
+                    <li><a href="#contact2">Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -71,8 +71,8 @@
                 <div class="row">
                     <div class="col-md-1"></div>
                     <div class="col-md-10 wow fadeIn" data-wow-delay="0.3s">
-                        <h1 class="text-upper">SnapResponses</h1>
-                        <p class="tm-white">Open source Q&amp;A platform - inspired by <a href="http://stackoverflow.com">stackoverflow</a>. Share knowledge and build your community</p>
+                        <h1 class="text-upper">SnapResponses - Open Source Q&A Platform</h1>                        
+                        <p class="tm-white">Inspired by <a href="http://stackoverflow.com">stackoverflow</a>. Build your own community without any limitation</p>
                         <img src="~/Content/images/landing/finallanding.png" class="img-responsive" alt="home img">
                     </div>
                     <div class="col-md-1"></div>
@@ -91,15 +91,15 @@
                     <p>ASP.NET MVC, MongoDB, Elasticsearch, SendGrid</p>
                 </div>
                 <div class="col-md-6 wow fadeInUp templatemo-box" data-wow-delay="0.3s">
-                    <i class="fa fa-heart"></i>
+                    <i class="fa fa-github"></i>
                     <h3 class="text-uppercase">Open Source Rocks</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
+                    <p>Our code is open source. Feel free to <a href="http://github.com/pritamkarmakar/shibpurhub">Fork it on Github</a></p>
                 </div>
                 @*<div class="col-md-4 wow fadeInUp templatemo-box" data-wow-delay="0.3s">
-                    <i class="fa fa-font"></i>
-                    <h3 class="text-uppercase">GOOGLE FONT</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
-                </div>*@
+                        <i class="fa fa-font"></i>
+                        <h3 class="text-uppercase">GOOGLE FONT</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. </p>
+                    </div>*@
             </div>
         </div>
     </section>
@@ -110,7 +110,7 @@
             <div class="row">
                 <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
                     <h2 class="text-uppercase">Ask new question</h2>
-                    <p>Ask a new question when you need the information from the community.</p>                   
+                    <p>Ask a new question when you need the information from the community.</p>
                 </div>
                 <div class="col-md-6 wow fadeInRight" data-wow-delay="0.6s">
                     <img src="~/Content/images/landing/askaquestion.png" class="img-responsive" alt="feature img">
@@ -127,13 +127,13 @@
                     <img src="~/Content/images/landing/asktoanswermb.png" class="img-responsive" alt="feature img">
                 </div>
                 <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                    <h2 class="text-uppercase">Ask to Answer</h2>
+                    <h2 class="text-uppercase">Experts to answer your question</h2>
                     <p> SnapResponses 'Ask to Answer' feature shows list of users who can best answer a question. The asker of the question or anyone else from the community can specifically request users for answers. Or user can search for a specific user to answer.</p>
                 </div>
             </div>
         </div>
     </section>
-
+    <!-- start feature2 -->
     <section id="feature2">
         <div class="container">
             <div class="row">
@@ -147,9 +147,9 @@
             </div>
         </div>
     </section>
-    <!-- end feature1 -->
-
-    <!-- start download -->
+    <!-- end feature2 -->
+    
+    <!-- start demo -->
     <section id="livedemo">
         <div class="container">
             <div class="row">
@@ -157,53 +157,23 @@
                     <img src="~/Content/images/landing/finallanding.png" class="img-responsive" alt="feature img">
                 </div>
                 <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.6s">
-                    <h2 class="text-uppercase">Live Demo</h2>
-                    <p>Help us to improve SnapResponses. Please join SnapResponses community and share your feedback. </p>
-                    <button class="btn btn-primary text-uppercase" onclick="location.href = 'http://www.snapresponses.com/feed';">Live Demo</button>
-                </div>               
-            </div>
-        </div>
-    </section>
-    <!-- end download -->
-    <!-- start contact -->
-    <section id="contact">
-        <div class="overlay">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <h2 class="text-uppercase">Get in touch</h2>
-                        <p>Got any questions? We would love to hear from you.</p>
-                        <!--<address>
-                            <p><i class="fa fa-map-marker"></i>36 Street Name, City Name, United States</p>
-                            <p><i class="fa fa-phone"></i> 010-010-0110 or 020-020-0220</p>
-                            <p><i class="fa fa-envelope-o"></i> info@company.com</p>
-                        </address>-->
-                    </div>
-                    <div class="col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="contact-form">
-                            <form action="#" method="post" onsubmit="return contactUs(this);">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control name" placeholder="Name">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="email" class="form-control email" placeholder="Email">
-                                </div>
-                                <div class="col-md-12">
-                                    <input type="text" class="form-control subject" placeholder="Subject">
-                                </div>
-                                <div class="col-md-12">
-                                    <textarea class="form-control message" placeholder="Message" rows="4"></textarea>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="submit" class="form-control text-uppercase" value="Send">
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    <h2 class="text-uppercase">Demo</h2>
+                    <p>Join SnapResponses community and see how it works.</p>
+                    <button class="btn btn-primary text-uppercase" onclick="location.href = 'http://www.snapresponses.com/feed';">Snapresponses community</button>
                 </div>
             </div>
         </div>
+    </section>   
+    <!-- end demo -->
+    <!-- start contact -->
+    <section id="contact2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 i text-center"><h2>Contact</h2><p><i class="fa fa-envelope-o"></i><a href="mailto: team@snapresponses.com" title="team@snapresponses.com" target="_blank" style="font-size:16px;">team@snapresponses.com</a></p><p class="text-center info">Have any question related to SnapResponses? Feel free to reach out to us</p></div>
+                </div>
+            </div>
     </section>
+
     <!-- end contact -->
     <!-- start footer -->
     <footer>
