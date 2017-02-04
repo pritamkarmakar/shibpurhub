@@ -12,6 +12,7 @@ using Owin;
 using ShibpurConnectWebApp.Models;
 using ShibpurConnectWebApp.Providers;
 using System;
+using System.Configuration;
 
 namespace ShibpurConnectWebApp
 {
@@ -19,7 +20,14 @@ namespace ShibpurConnectWebApp
     {
         public static string PublicClientId { get; private set; }
         public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
+        private static string fbAppID = ConfigurationManager.AppSettings["fbAppID"];
+        private static string fbAppSecret = ConfigurationManager.AppSettings["fbAppSecret"];
 
+        private static string googleAppID = ConfigurationManager.AppSettings["googleAppID"];
+        private static string googleAppSecret = ConfigurationManager.AppSettings["googleAppSecret"];
+
+        private static string linkedinAppID = ConfigurationManager.AppSettings["linkedinAppID"];
+        private static string linkedinAppSecret = ConfigurationManager.AppSettings["linkedinAppSecret"];
 
         // Enable the application to use OAuthAuthorization. You can then secure your Web APIs
         static Startup()
@@ -73,8 +81,8 @@ namespace ShibpurConnectWebApp
 
             // added email in the scope
             FacebookAuthenticationOptions fbao = new FacebookAuthenticationOptions();
-            fbao.AppId = "1561377064127021";
-            fbao.AppSecret = "3c8a3bc7ee6151ae4b341f502e8a13f3";
+            fbao.AppId = fbAppID;
+            fbao.AppSecret = fbAppSecret;
             fbao.Scope.Add("email");
             fbao.Scope.Add("public_profile");
             //fbao.Scope.Add("last_name");
@@ -84,12 +92,12 @@ namespace ShibpurConnectWebApp
 
             app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             {
-                ClientId = "108349931194-2h3peq298hndtckune1h1tqi96dbh8bg.apps.googleusercontent.com",
-                ClientSecret = "xKb09OnMBqPZMVnHKCOTPfcJ"
+                ClientId =googleAppID,
+                ClientSecret = googleAppSecret
             });
 
             // LinkedIn login
-            app.UseLinkedInAuthentication("75quv1nghp28f9", "8MObI4ue573QE3wy");
+            app.UseLinkedInAuthentication(linkedinAppID, linkedinAppSecret);
 
             // hangfire configuration
             GlobalConfiguration.Configuration.UseMemoryStorage();
