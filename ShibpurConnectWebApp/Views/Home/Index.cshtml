@@ -32,6 +32,11 @@
 
         ga('create', 'UA-91403917-1', 'auto');
         ga('send', 'pageview');
+
+        function signup()
+        {
+            location.href = "/account/register";
+        }
     </script>
     <!-- custom css -->
     <link rel="stylesheet" href="~/Content/landing/templatemo-style.css?v=1.8">
@@ -58,7 +63,8 @@
                     <li><a href="#home">Home</a></li>
                     <li><a href="#feature">Features</a></li>
                     <li><a href="#livedemo">Demo</a></li>                   
-                    <li><a href="#contact2">Contact</a></li>
+                    <li><a href="#contact2">Contact</a></li>                   
+                    <li><a href="/Account/Register" onclick="signup(); return false;">Sign Up</a></li>             
                 </ul>
             </div>
         </div>
