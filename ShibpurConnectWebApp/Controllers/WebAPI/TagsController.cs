@@ -218,6 +218,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
             // invalidate the findusertags api 
             cache.RemoveStartsWith("tags-findusertags-userId=" + userInfo.Id);
+            // invalidate the getprofilebyuserid api for the user who is following this new tag
+            cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
 
             return Ok("{'status': 'success'}");
         }
@@ -275,6 +277,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
                 // invalidate the findusertags api 
                 cache.RemoveStartsWith("tags-findusertags-userId=" + userInfo.Id);
+                // invalidate the getprofilebyuserid api for the user who is following this new tag
+                cache.RemoveStartsWith("profile-getprofilebyuserid-userId=" + userInfo.Id);
             }
 
             return Ok("{'status': 'success'}");
