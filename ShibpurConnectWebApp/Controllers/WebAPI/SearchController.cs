@@ -111,10 +111,8 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         /// <param name="searchTerm">comma (,) separeted search term</param>
         /// <returns></returns>
         [HttpGet]
-        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> SearchUsers(string searchTerm)
         {
-
             Helper.Helper helper = new Helper.Helper();
             int from = 0;
             long totalHits = 0;
@@ -196,7 +194,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                         {
                             Id = (string)userData["id"],
                             AboutMe = (string)userData["aboutMe"],
-                            Email = (string)userData["email"],
+                            Email = null,
                             FirstName = (string)userData["firstName"],
                             LastName = (string)userData["lastName"],
                             Location = (string)userData["location"],
@@ -396,6 +394,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
                 // add the response in final result object
                 foreach (CustomUserInfo doc in response.Documents)
                 {
+                    doc.Email = null;
                     result.Add(doc);
                 }
             }

@@ -33,7 +33,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
         public async Task<IHttpActionResult> GetNonBECUsers()
         {
-            int gradYear = 0;           
+            int gradYear = 0;
 
             // final list of user to return
             List<CustomUserInfo> list = new List<CustomUserInfo>();
@@ -43,7 +43,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             var unknowns = _mongoEdu.Collection.FindAll().Where(m => m.IsBECEducation == false).ToList();
 
             // find the unique users
-            var uniqueusers = (from m in unknowns                              
+            var uniqueusers = (from m in unknowns
                                select m.UserId).Distinct();
 
             foreach (string userId in uniqueusers)
@@ -130,7 +130,7 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
 
                     // set the profile in in-memory
                     CacheManager.SetCacheData(userId, userDetail);
-                }               
+                }
 
                 CustomUserInfo userProfile = new CustomUserInfo();
                 userProfile.FirstName = userDetail.FirstName;
@@ -159,9 +159,9 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         public async Task<IHttpActionResult> FindAllBECUsers(string skipyears = "")
         {
             MongoHelper<EducationalHistories> _mongoEdu = new MongoHelper<EducationalHistories>();
-            
+
             // final list to return
-            List<UserByBatch> listOfUserByBatch = new List<UserByBatch>();           
+            List<UserByBatch> listOfUserByBatch = new List<UserByBatch>();
             // get all the bec users graduation year
             var becusers = _mongoEdu.Collection.FindAll().Where(m => m.IsBECEducation == true).ToList();
 
@@ -173,11 +173,11 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
             foreach (int graduateYear in uniqueyears)
             {
                 // if current year is part of the skip years then skip processing further
-                if (skipyears!=null && skipyears.Contains(Convert.ToString(graduateYear)))
+                if (skipyears != null && skipyears.Contains(Convert.ToString(graduateYear)))
                     continue;
 
                 // list of CustomUserInfo for a given year
-                List<CustomUserInfo> list = new List<CustomUserInfo>();      
+                List<CustomUserInfo> list = new List<CustomUserInfo>();
                 // create userByBatch object
                 UserByBatch userByBatch = new UserByBatch();
                 userByBatch.GraduateYear = graduateYear;
@@ -228,39 +228,59 @@ namespace ShibpurConnectWebApp.Controllers.WebAPI
         }
 
         /// <summary>
-        /// Get specific no of users who has highest reputation
+        /// Get list of users based on reputation
         /// </summary>
-        /// <param name="count">total user to return</param>
+        /// <param name="startIndex">startindex for pagination</param>
+        /// <param name="count">total no of users we want</param>
         /// <returns></returns>
         [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
-        public async Task<IHttpActionResult> GetLeaderBoard(int count)
+        public async Task<IHttpActionResult> GetUsersByReputation(int startIndex, int count)
         {
+            // validate startIndex
+            if (startIndex < 0 || count < 0)
+            {
+                throw new ArgumentException("Invalid argument supplied, can't be a negative number");
+            }
+
             try
             {
-                int from = 0;
-                long totalHits = 0;
+                int from = startIndex;
                 int resultRetrieved = 0;
                 List<CustomUserInfo> result = new List<CustomUserInfo>();
                 var client = _elasticSearchHealer.ElasticClient();
 
-                while (resultRetrieved <= totalHits)
+                // get all the users from elastic search. We are using elastic search because we don't have any API that will give all the users data from mongodb. This is good for security point of view
+                var response = client.Search<object>(s => s.AllIndices().Type(typeof(CustomUserInfo)).SortDescending("reputationCount").From(startIndex).Size(count));
+                // add the response in final result object
+                foreach (CustomUserInfo doc in response.Documents)
                 {
-                    var response = client.Search<object>(s => s.AllIndices().Type(typeof(CustomUserInfo)).From(from));
-                    // get the total count of hits
-                    if (totalHits == 0)
-                        totalHits = response.Total;
-                    // increase the result retrieve + 10 as elastic search by default return this many documents
-                    resultRetrieved += 10;
-                    // increase the from to go to next page
-                    from += 10;
-                    // add the response in final result object
-                    foreach (CustomUserInfo doc in response.Documents)
-                    {
-                        result.Add(doc);
-                    }
+                    //set email to null as we don't want to expose this
+                    doc.Email = null;
+                    result.Add(doc);
                 }
 
-                return Ok(result.OrderByDescending(m => m.ReputationCount).ToList().Take(count));
+                return Ok(result.ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get total users count in the application
+        /// </summary>
+        /// <returns></returns>
+        [CacheOutput(ServerTimeSpan = 864000, ExcludeQueryStringFromCacheKey = true, NoCache = true)]
+        public async Task<IHttpActionResult> GetTotalUserCount()
+        {
+            try
+            {
+                var client = _elasticSearchHealer.ElasticClient();
+                // get all the users count from elastic search. We are using elastic search because we don't have any API that will give all the users data from mongodb. This is good for security point of view
+                var response = client.Search<object>(s => s.AllIndices().Size(100).Type(typeof(CustomUserInfo)).MatchAll()).Documents.Count();
+
+                return Ok(response);
             }
             catch (Exception ex)
             {

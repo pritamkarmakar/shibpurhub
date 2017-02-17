@@ -3,7 +3,7 @@
     var profiledefaultimage = '/Content/images/profile-image.jpg';
     $(document).ready(function () {
         scAjax({
-            "url": "users/GetLeaderBoard?count=10",
+            "url": "users/GetUsersByReputation?startIndex=0&count=10",
             "success": function (result) {
                 if (!result) {
                     return;

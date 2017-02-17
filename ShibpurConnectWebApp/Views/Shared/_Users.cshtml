@@ -199,17 +199,17 @@
             $(e).click(function () {
                 var button = $(this);
                 var profileid = $(button).attr('id');
-                if ($(button).hasClass('active')) {                    
+                if ($(button).hasClass('active')) {
                     $(this).find('i.fa').removeClass('fa-plus');
                     $(this).find('i.fa').addClass('fa-spinner');
-                    unfollowuser(button, profileid);                   
+                    unfollowuser(button, profileid);
                 }
                 else {
                     $(this).addClass('active');
                     $(this).find('i.fa').removeClass('fa-plus');
                     $(this).find('i.fa').addClass('fa-spinner');
-                    followuser(button, profileid);                   
-                }               
+                    followuser(button, profileid);
+                }
             });
         });
     }
@@ -232,7 +232,7 @@
                         return;
                     }
                     $(obj).find('i.fa').removeClass('fa-spinner');
-                    $(obj).find('i.fa').addClass('fa-check');                    
+                    $(obj).find('i.fa').addClass('fa-check');
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -322,10 +322,75 @@
     $(document).ready(function () {
         jQuery.support.cors = true;
         var SERVER = "/api/";
-        getUsers();
+        getUsersByReputation();
+
+        // pagination script
+        scAjax({
+            "url": "users/GetTotalUserCount",
+            "success": function (result) {
+                var pagesrequired = result / 30;
+                var remainder = result % 30;
+                if (remainder != 0)
+                    pagesrequired += 1;
+                $('#pagination-here').bootpag({
+                    total: pagesrequired,
+                    wrapClass: 'pagination pagination-sm'
+                }).on("page", function (event, /* page number here */ num) {
+                    // change the content based on pagination
+                    $('#userlist').empty();
+                    $('#loadingusers').show();
+
+                    if (num == 1)
+                        startIndex = 0;
+                    else
+                        startIndex = (num - 1) * 30 + 1;
+
+                    scAjax({
+                        "url": "users/GetUsersByReputation?startIndex=" + startIndex + "&count=30",
+                        "success": function (result) {
+                            // hide loading div
+                            $('#loadingusers').hide();
+                            if (!result) {
+                                return;
+                            }
+
+                            if (result && result.length > 0) {
+                                $(result).each(function (i, user) {
+                                    $('#userlist').append(getProfileHtml(user));
+                                });
+                            }
+                        }
+                    });
+                });
+            }
+        });
     });
 
-    // This method will execute when user will type user details in the serach box
+    // method to retrieve users by reputation
+    function getUsersByReputation() {
+        $('.table').hide();
+        $('#user-pagination').hide();
+        scAjax({
+            "url": "users/GetUsersByReputation?startIndex=0&count=30",
+            "success": function (result) {
+                // hide loading div
+                $('#loadingusers').hide();
+                if (!result) {
+                    return;
+                }
+
+                if (result && result.length > 0) {
+                    $(result).each(function (i, user) {
+                        $('#userlist').append(getProfileHtml(user));
+                    });
+                }
+
+                $('#user-pagination').show();
+            }
+        });
+    }
+
+    // This method will execute when user will type something in the serach box
     $(function () {
         $('#usernametext').keyup(function (event) {
             var searchValue = $(this).val();
@@ -337,17 +402,16 @@
                 if (searchValue == $('#usernametext').val() && searchValue != null && searchValue != "") {
                     scAjax({
                         "url": "search/SearchUsers",
-                        "data": { "searchTerm": searchValue },
+                        "data": { "searchTerm": searchValue.toString() },
                         "success": function (result) {
-                            if (!result) {
-                                return;
-                            }
-
-                            // clear the users
-                            $('#userlist').empty();
                             // hide the loading
                             $('#loadingusers').hide();
 
+                            if (!result) {
+                                return;
+                            }
+                            // clear the users
+                            $('#userlist').empty();
                             // if no user found then show this message
                             if (result.length == 0) {
                                 $('#userlist').append("<span>No user found</span>");
@@ -368,9 +432,7 @@
                     // user have cleared all text from the text field so load all previous users
                     // clear the existing users
                     $('#userlist').empty();
-                    getUsers();
-                    // hide the loading
-                    //$('#loadingusers').hide();                   
+                    getUsersByReputation();
                 }
             }, 400);
         });
@@ -391,7 +453,7 @@
         <form role="search">
             <div class="col-md-10 col-md-push-2">
                 <div class="usersearchdiv col-md-10" id="the-basics">
-                    <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">                    
+                    <input type="text" id="usernametext" class="form-control" placeholder="Search user by name, email, company" aria-describedby="sizing-addon3">
                 </div>
                 <div>
                     <button class="btn-default toggle-view grid-view"> <i class="fa fa-list"></i> </button>
@@ -405,11 +467,12 @@
             <i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
         </div>
     </div>
-    <div id="userlist">
-    </div>    
-        <table class="table table-condensed table-striped">
-            <tbody></tbody>
-        </table>
+    <div id="userlist" class="row">
     </div>
+    <div id="user-pagination" class="pull-right">
+        <p id="pagination-here"></p>
+    </div>
+</div>
+
 
 

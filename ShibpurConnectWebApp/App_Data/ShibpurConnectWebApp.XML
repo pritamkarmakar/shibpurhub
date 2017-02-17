@@ -1094,11 +1094,18 @@
             <param name="skipyears">if we want to skip any year from this list, we do it in the User > index page to exclude logged-in user senior, junior and his/her graduation year. Because we retrieve those users using FindUsersForAYear API</param>
             <returns></returns>
         </member>
-        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetLeaderBoard(System.Int32)">
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetUsersByReputation(System.Int32,System.Int32)">
             <summary>
-            Get specific no of users who has highest reputation
+            Get list of users based on reputation
             </summary>
-            <param name="count">total user to return</param>
+            <param name="startIndex">startindex for pagination</param>
+            <param name="count">total no of users we want</param>
+            <returns></returns>
+        </member>
+        <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetTotalUserCount">
+            <summary>
+            Get total users count in the application
+            </summary>
             <returns></returns>
         </member>
         <member name="M:ShibpurConnectWebApp.Controllers.WebAPI.UsersController.GetUsersByTerm(System.String)">
