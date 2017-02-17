@@ -72,15 +72,7 @@
                 else
                 {
                     <li>@Html.ActionLink("Tags", "Index", "tags")</li>
-                }
-                @if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "index" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "career")
-                {
-                    <li class="active">@Html.ActionLink("Career", "Index", "career")</li>
-                }
-                else
-                {
-                    <li>@Html.ActionLink("Career", "Index", "career")</li>
-                }
+                }                
                 @if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "index" && ViewContext.RouteData.Values["controller"].ToString().ToLower() == "users")
                 {
                     <li class="active">@Html.ActionLink("Users", "Index", "users")</li>

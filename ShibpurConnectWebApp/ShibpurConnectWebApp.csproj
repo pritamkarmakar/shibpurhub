@@ -526,6 +526,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="ConnectionStrings.config" />
     <None Include="Properties\PublishProfiles\shibpur %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\shibpur %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\shibpur %284%29.pubxml" />
@@ -662,7 +663,6 @@
     <Content Include="Views\Manage\ManageLogins_.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Settings\Index.cshtml" />
-    <Content Include="Views\Shared\_Layout.Mobile.cshtml" />
     <Content Include="Views\Feed\Index.Mobile.cshtml" />
     <Content Include="Views\PartialViews\_FeedList.Mobile.cshtml" />
     <Content Include="Views\Feed\FeedByCategory.Mobile.cshtml" />
